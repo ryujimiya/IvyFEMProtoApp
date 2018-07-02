@@ -12,7 +12,7 @@
             <Button x:Name="cad2DBtn" Content="Cad2D" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" RenderTransformOrigin="-0.04,0.15" Click="cad2DBtn_Click"/>
         </WrapPanel>
         <WindowsFormsHost Margin="0,41,0,0">
-            <OpenTK:GLControl x:Name="glControl" Load="glControl_Load" Resize="glControl_Resize" Paint="glControl_Paint" />
+            <OpenTK:GLControl x:Name="glControl" Load="glControl_Load" Resize="glControl_Resize" Paint="glControl_Paint" MouseClick="glControl_MouseClick" KeyDown="glControl_KeyDown" KeyUp="glControl_KeyUp" />
         </WindowsFormsHost>
     </Grid>
 </Window>

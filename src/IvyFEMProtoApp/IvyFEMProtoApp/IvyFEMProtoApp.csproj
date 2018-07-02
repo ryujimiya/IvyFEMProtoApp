@@ -80,14 +80,17 @@
     <Compile Include="DrawPart.cs" />
     <Compile Include="Edge2D.cs" />
     <Compile Include="HalfEdge.cs" />
+    <Compile Include="IDrawer.cs" />
     <Compile Include="ItrLoop.cs" />
     <Compile Include="ItrVertex.cs" />
     <Compile Include="Loop2D.cs" />
     <Compile Include="MeshUtils.cs" />
+    <Compile Include="PickedObject.cs" />
     <Compile Include="Point2D.cs" />
     <Compile Include="Problem.cs" />
     <Compile Include="Quad2D.cs" />
     <Compile Include="QuadArray2D.cs" />
+    <Compile Include="SelectedObject.cs" />
     <Compile Include="Tri2D.cs" />
     <Compile Include="TriArray2D.cs" />
     <Compile Include="UseLoop.cs" />

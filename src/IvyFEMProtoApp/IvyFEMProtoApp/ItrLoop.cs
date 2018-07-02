@@ -71,7 +71,7 @@ namespace IvyFEM
             HEId = uL.HEId;
         }
 
-        public static ItrLoop operator ++(ItrLoop src)
+        public static ItrLoop operator++ (ItrLoop src)
         {
             ItrLoop dest = new ItrLoop(src);
             if (!src.IsValid)

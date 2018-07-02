@@ -26,8 +26,34 @@ namespace IvyFEMProtoApp
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// 問題
+        /// </summary>
         private Problem Problem = null;
+
+        /// <summary>
+        /// カメラ
+        /// </summary>
         private Camera Camera = new Camera();
+
+        /// <summary>
+        /// マウス移動量X方向
+        /// </summary>
+        private double MovBeginX = 0;
+
+        /// <summary>
+        /// マウス移動量Y方向
+        /// </summary>
+        private double MovBeginY = 0;
+
+        /// <summary>
+        /// キー入力修飾子
+        /// </summary>
+        private System.Windows.Forms.Keys Modifiers = new System.Windows.Forms.Keys();
+
+        /// <summary>
+        /// 描画アレイ
+        /// </summary>
         private DrawerArray DrawerArray = new DrawerArray();
 
         private BitmapData TextureBitmapData;
@@ -58,45 +84,7 @@ namespace IvyFEMProtoApp
         /// <param name="e"></param>
         private void glControl_Load(object sender, EventArgs e)
         {
-            GL.ClearColor(Color4.White);
             GL.Enable(EnableCap.DepthTest);
-            // test
-            //GL.Enable(EnableCap.Lighting);
-            //GL.Enable(EnableCap.Texture2D);
-
-            // test
-            // テクスチャー画像ファイル
-            Bitmap file = new Bitmap("texture.png");
-
-            //png画像の反転を直す
-            file.RotateFlip(RotateFlipType.RotateNoneFlipY);
-
-            //データ読み込み
-            TextureBitmapData = file.LockBits(new System.Drawing.Rectangle(0, 0, file.Width, file.Height),
-                ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
-            //Textureの許可
-            GL.Enable(EnableCap.Texture2D);
-
-            //テクスチャ用バッファの生成
-            Texture = GL.GenTexture();
-
-            //テクスチャ用バッファのひもづけ
-            GL.BindTexture(TextureTarget.Texture2D, Texture);
-
-            //テクスチャの設定
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,
-                (int)TextureMinFilter.Nearest);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter,
-                (int)TextureMagFilter.Nearest);
-
-            //テクスチャ用バッファに色情報を流し込む
-            GL.TexImage2D(TextureTarget.Texture2D, 0,
-                PixelInternalFormat.Rgba,
-                TextureBitmapData.Width, TextureBitmapData.Height, 0,
-                OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
-                PixelType.UnsignedByte,
-                TextureBitmapData.Scan0);
         }
 
         /// <summary>
@@ -118,7 +106,64 @@ namespace IvyFEMProtoApp
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
             DrawerGLUtils.SetProjectionTransform(Camera);
+        }
 
+        /// <summary>
+        /// glControl キーが押下された
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void glControl_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            Modifiers = e.Modifiers;
+        }
+
+        /// <summary>
+        /// glControl キーが離された
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void glControl_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            Modifiers = new System.Windows.Forms.Keys();
+        }
+
+        /// <summary>
+        /// glControl クリックされた
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void glControl_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            int[] viewport = new int[4];
+            GL.GetInteger(GetPName.Viewport, viewport);
+            int winW = viewport[2];
+            int winH = viewport[3];
+            MovBeginX = (2.0 * e.X - winW) / winW;
+            MovBeginY = (winH - 2.0 * e.Y) / winH;
+            if (e.Button == System.Windows.Forms.MouseButtons.Left &&
+                !Modifiers.HasFlag(System.Windows.Forms.Keys.Control) &&
+                !Modifiers.HasFlag(System.Windows.Forms.Keys.Shift))
+            {
+                int sizeBuffer = 2048;
+                int[] pickSelectBuffer = new int[sizeBuffer];
+
+                DrawerGLUtils.PickPre(
+                    sizeBuffer, pickSelectBuffer,
+                    (uint)e.X, (uint)e.Y, 5, 5, Camera);
+                DrawerArray.DrawSelection();
+
+                IList<SelectedObject> selectedObjs = DrawerGLUtils.PickPost(pickSelectBuffer,
+                    (uint)e.X, (uint)e.Y, Camera);
+
+                DrawerArray.ClearSelected();
+                if (selectedObjs.Count > 0)
+                {
+                    DrawerArray.AddSelected(selectedObjs[0].Name);
+                    System.Diagnostics.Debug.WriteLine("selectedObjs[0].Name[1] = " + selectedObjs[0].Name[1]);
+                }
+                glControl.Invalidate();
+            }
         }
 
         /// <summary>
@@ -128,17 +173,15 @@ namespace IvyFEMProtoApp
         /// <param name="e"></param>
         private void glControl_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
         {
+            GL.ClearColor(Color4.White);
+            //GL.ClearColor(0.2f, 0.7f, 0.7f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            GL.Enable(EnableCap.PolygonOffsetFill);
+            GL.PolygonOffset(1.1f, 4.0f);
+            GL.MatrixMode(MatrixMode.Modelview);
+            GL.LoadIdentity();
+            DrawerGLUtils.SetModelViewTransform(Camera);
 
-            /*
-            GL.Color4(Color4.Black);
-            GL.Begin(BeginMode.Polygon);
-            GL.Vertex3(0.5, 0.5, 0.0);
-            GL.Vertex3(-0.5, 0.5, 0.0);
-            GL.Vertex3(-0.5, -0.5, 0.0);
-            GL.Vertex3(0.5, -0.5, 0.0);
-            GL.End();
-            */
             DrawerArray.Draw();
 
             glControl.SwapBuffers();

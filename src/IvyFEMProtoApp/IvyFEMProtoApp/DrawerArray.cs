@@ -8,14 +8,14 @@ namespace IvyFEM
 {
     class DrawerArray
     {
-        public IList<CadObject2DDrawer> Drawers { get; } = new List<CadObject2DDrawer>();
+        public IList<IDrawer> Drawers { get; } = new List<IDrawer>();
 
         public DrawerArray()
         {
 
         }
 
-        public void Add(CadObject2DDrawer drawer)
+        public void Add(IDrawer drawer)
         {
             System.Diagnostics.Debug.Assert(drawer != null);
             Drawers.Add(drawer);
@@ -34,35 +34,29 @@ namespace IvyFEM
             }
         }
 
-        /*
         public void DrawSelection()
         {
-            for (int idraw = 0; idraw < Drawers.Count; idraw++)
+            for (uint idraw = 0; idraw < Drawers.Count; idraw++)
             {
-                Drawers[idraw].DrawSelection(idraw);
+                Drawers[(int)idraw].DrawSelection(idraw);
             }
         }
-        */
 
-        /*
         public void AddSelected(int[] selectFlg)
         {
-            for (int idraw = 0; idraw < Drawers.Count; idraw++)
+            for (uint idraw = 0; idraw < Drawers.Count; idraw++)
             {
-                Drawers[idraw].AddSelected(selectFlg);
+                Drawers[(int)idraw].AddSelected(selectFlg);
             }
         }
-        */
 
-        /*
         public void ClearSelected()
         {
-            for (int idraw = 0; idraw < Drawers.Count; idraw++)
+            for (uint idraw = 0; idraw < Drawers.Count; idraw++)
             {
-                Drawers[idraw].ClearSelected();
+                Drawers[(int)idraw].ClearSelected();
             }
         }
-        */
 
         public BoundingBox3D GetBoundingBox(double[] rot)
         {

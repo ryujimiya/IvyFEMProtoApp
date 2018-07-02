@@ -10,12 +10,12 @@ using OpenTK.Graphics.OpenGL;
 
 namespace IvyFEM
 {
-    class CadObject2DDrawer
+    class CadObject2DDrawer : IDrawer
     {
-        //private bool IsShow = true;
         public uint SutableRotMode { get; private set; } = 1;
         public bool IsAntiAliasing { get; set; } = false;
 
+        private double[] SelectedColor = { 1.0, 0.5, 1.0 }; //{ 1.0, 1.0, 0.0 };
         private byte[] Mask = new byte[128];
         private IList<DrawPart> DrawParts = new List<DrawPart>();
         private IList<VertexDrawPart> VertexDrawParts = new List<VertexDrawPart>();
@@ -204,15 +204,21 @@ namespace IvyFEM
                 uint nvec = (uint)vecs.Count;
                 uint ndim = 2;
                 VertexArray.SetSize(nvec, ndim);
+                System.Diagnostics.Debug.WriteLine("VertexCoordArray");
                 for (int ivec = 0; ivec < nvec; ivec++)
                 {
                     VertexArray.VertexCoordArray[ivec * ndim] = vecs[ivec].X;
                     VertexArray.VertexCoordArray[ivec * ndim + 1] = vecs[ivec].Y;
+                    System.Diagnostics.Debug.WriteLine(VertexArray.VertexCoordArray[ivec * ndim] + ", " +
+                        VertexArray.VertexCoordArray[ivec * ndim + 1]);
                 }
+                System.Diagnostics.Debug.WriteLine("UVCoordArray");
                 for (int ivec = 0; ivec < nvec; ivec++)
                 {
                     VertexArray.UVCoordArray[ivec * ndim] = vecs[ivec].X * TexScale;
                     VertexArray.UVCoordArray[ivec * ndim + 1] = vecs[ivec].Y * TexScale;
+                    System.Diagnostics.Debug.WriteLine(VertexArray.UVCoordArray[ivec * ndim] + ", " +
+                        VertexArray.UVCoordArray[ivec * ndim + 1]);
                 }
             }
 
@@ -243,6 +249,7 @@ namespace IvyFEM
                 ////////////////
                 GL.PointSize(PointSize);
                 GL.Begin(BeginMode.Points);
+                System.Diagnostics.Debug.WriteLine("Points");
                 for (uint iver = 0; iver < VertexDrawParts.Count; iver++)
                 {
                     if (!VertexDrawParts[(int)iver].IsShow)
@@ -252,7 +259,7 @@ namespace IvyFEM
                     double height = VertexDrawParts[(int)iver].Height;
                     if (VertexDrawParts[(int)iver].IsSelected)
                     {
-                        GL.Color3(1.0, 1.0, 0.0);
+                        GL.Color3(SelectedColor[0], SelectedColor[1], SelectedColor[2]);
                     }
                     else
                     {
@@ -263,6 +270,10 @@ namespace IvyFEM
                         VertexArray.VertexCoordArray[ipo0 * ndim + 0],
                         VertexArray.VertexCoordArray[ipo0 * ndim + 1],
                         height);
+                    System.Diagnostics.Debug.WriteLine(iver + " ip0 = " + ipo0 +
+                        " [" + (ipo0 * ndim + 0) + "] = " + VertexArray.VertexCoordArray[ipo0 * ndim + 0] +
+                        " [" + (ipo0 * ndim + 1) + "] = " + VertexArray.VertexCoordArray[ipo0 * ndim + 1] +
+                        " height = " + height);
                 }
                 GL.End();
                 if (isTexture)
@@ -282,12 +293,16 @@ namespace IvyFEM
                 GL.LoadIdentity();
                 GL.Translate(-TexCentX, -TexCentY, 0.0);
             }
+            System.Diagnostics.Debug.WriteLine("DrawParts");
             for (uint idp = 0; idp < DrawParts.Count; idp++)
             {
                 DrawPart part = DrawParts[(int)idp];
                 double height = part.Height;
                 double dispX = part.DispX;
                 double dispY = part.DispY;
+                System.Diagnostics.Debug.WriteLine(idp + " Type = " + part.Type +
+                    " CadId = " + part.CadId + " MshId = " + part.MshId +
+                    " height = " + height + " dispX = " + dispX + " dispY = " + dispY);
                 if (part.Type == CadElemType.EDGE)
                 {
                     // draw edge
@@ -307,7 +322,7 @@ namespace IvyFEM
                     }
                     if (part.IsSelected)
                     {
-                        GL.Color3(1.0, 1.0, 0.0);
+                        GL.Color3(SelectedColor[0], SelectedColor[1], SelectedColor[2]);
                     }
                     else
                     {
@@ -330,7 +345,7 @@ namespace IvyFEM
                     {
                         GL.Enable(EnableCap.PolygonStipple);
                         GL.PolygonStipple(Mask);
-                        GL.Color3(1.0, 1.0, 0.0);
+                        GL.Color3(SelectedColor[0], SelectedColor[1], SelectedColor[2]);
                         GL.Translate(0.0, 0.0, +height + 0.001);
                         part.DrawElements();
                         GL.Translate(0.0, 0.0, -height - 0.001);
@@ -375,5 +390,112 @@ namespace IvyFEM
             }
         }
 
+        public void DrawSelection(uint idraw)
+        {
+            bool isBlend = GL.IsEnabled(EnableCap.Blend);
+            bool isLineSmooth = GL.IsEnabled(EnableCap.LineSmooth);
+            bool isTexture = GL.IsEnabled(EnableCap.Texture2D);
+            GL.Disable(EnableCap.Blend);
+            GL.Disable(EnableCap.LineSmooth);
+            GL.Disable(EnableCap.Texture2D);
+            uint ndim = VertexArray.NDim;
+
+            GL.PushName(idraw);
+            // モデルの描画
+            GL.EnableClientState(ArrayCap.VertexArray);
+
+            GL.VertexPointer((int)ndim, VertexPointerType.Double, 0, VertexArray.VertexCoordArray);
+            for (uint idp = 0; idp < DrawParts.Count; idp++)
+            {
+                DrawPart part = DrawParts[(int)idp];
+                double height = part.Height;
+
+                GL.PushName(part.MshId);
+                if (part.Type == CadElemType.EDGE)
+                {
+                    GL.Translate(0.0, 0.0, +height);
+                    part.DrawElements();
+                    GL.Translate(0.0, 0.0, -height);
+                }
+                else if (part.Type == CadElemType.LOOP)
+                {
+                    GL.Translate(0.0, 0.0, +height);
+                    part.DrawElements();
+                    GL.Translate(0.0, 0.0, -height);
+                }
+                GL.PopName();
+            }
+            GL.DisableClientState(ArrayCap.VertexArray);
+
+            GL.PointSize(5);
+            for (uint iver = 0; iver < VertexDrawParts.Count; iver++)
+            {
+                VertexDrawPart vdp = VertexDrawParts[(int)iver];
+                uint ipo0 = vdp.VId;
+                double height = vdp.Height;
+                uint mshId = vdp.MshId;
+
+                GL.PushName(mshId);
+
+                GL.Begin(BeginMode.Points);
+
+                GL.Vertex3(
+                    VertexArray.VertexCoordArray[ipo0 * ndim + 0],
+                    VertexArray.VertexCoordArray[ipo0 * ndim + 1],
+                    height);
+
+                GL.End();
+
+                GL.PopName();
+            }
+            GL.PopName();
+
+            if (isBlend)
+            {
+                GL.Enable(EnableCap.Blend);
+            }
+            if (isLineSmooth)
+            {
+                GL.Enable(EnableCap.LineSmooth);
+            }
+            if (isTexture)
+            {
+                GL.Enable(EnableCap.Texture2D);
+            }
+
+            return;
+        }
+
+        public void AddSelected(int[] selectFlag)
+        {
+            for (uint idp = 0; idp < DrawParts.Count; idp++)
+            {
+                if ((int)DrawParts[(int)idp].MshId == selectFlag[1])
+                {
+                    DrawParts[(int)idp].IsSelected = true;
+                }
+            }
+            for (uint iv = 0; iv < VertexDrawParts.Count; iv++)
+            {
+                if ((int)VertexDrawParts[(int)iv].MshId == selectFlag[1])
+                {
+                    VertexDrawParts[(int)iv].IsSelected = true;
+                }
+            }
+        }
+
+        public void ClearSelected()
+        {
+            for (uint idp = 0; idp < DrawParts.Count; idp++)
+            {
+                DrawParts[(int)idp].IsSelected = false;
+            }
+            for (uint iv = 0; iv < VertexDrawParts.Count; iv++)
+            {
+                VertexDrawParts[(int)iv].IsSelected = false;
+            }
+        }
+
     }
+
 }

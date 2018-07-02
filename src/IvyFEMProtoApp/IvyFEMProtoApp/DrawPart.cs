@@ -83,9 +83,14 @@ namespace IvyFEM
                 }
             }
 
+            /*
             Color[0] = 0.8f;
             Color[1] = 0.8f;
             Color[2] = 0.8f;
+            */
+            Color[0] = 0.2f;
+            Color[1] = 0.2f;
+            Color[2] = 0.2f;
 
             return true;
         }

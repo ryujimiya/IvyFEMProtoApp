@@ -13,9 +13,14 @@ namespace IvyFEM
 
         public Loop2D()
         {
+            /*
             Color[0] = 0.8;
             Color[1] = 0.8;
             Color[2] = 0.8;
+            */
+            Color[0] = 0.2;
+            Color[1] = 0.2;
+            Color[2] = 0.2;
             Layer = 0;
         }
 
