@@ -646,7 +646,7 @@ namespace IvyFEM
                 {
                     if (!LoopSet.IsObjectId(lIds[(int)i]))
                     {
-                        System.Diagnostics.Debug.WriteLine(lIds[(int)i]);
+                        //System.Diagnostics.Debug.WriteLine(lIds[(int)i]);
                         return 7;
                     }
                 }

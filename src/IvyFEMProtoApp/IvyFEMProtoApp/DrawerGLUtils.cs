@@ -14,7 +14,7 @@ namespace IvyFEM
     {
         public static void SetProjectionTransform(Camera camera)
         {
-            System.Diagnostics.Debug.WriteLine("SetProjectionTransform");
+            //System.Diagnostics.Debug.WriteLine("SetProjectionTransform");
             if (camera.IsPers)
             {
                 // 透視投影変換
@@ -33,10 +33,10 @@ namespace IvyFEM
             else
             {
                 // 正規投影変換
-                System.Diagnostics.Debug.WriteLine("正規投影変換");
-                System.Diagnostics.Debug.WriteLine("scale = " + camera.Scale +
-                    " windowAspect = " + camera.WindowAspect +
-                    " halfViewHeight = " + camera.HalfViewHeight);
+                //System.Diagnostics.Debug.WriteLine("正規投影変換");
+                //System.Diagnostics.Debug.WriteLine("scale = " + camera.Scale +
+                //    " windowAspect = " + camera.WindowAspect +
+                //    " halfViewHeight = " + camera.HalfViewHeight);
                 double invScale = 1.0 / camera.Scale;
                 double asp = camera.WindowAspect;
                 double hH = camera.HalfViewHeight * invScale;
@@ -49,14 +49,14 @@ namespace IvyFEM
 
         public static void SetModelViewTransform(Camera camera)
         {
-            System.Diagnostics.Debug.WriteLine("SetModelViewTransform");
+            //System.Diagnostics.Debug.WriteLine("SetModelViewTransform");
             {
                 // pan the object
                 double x;
                 double y;
                 double z;
                 camera.GetCenterPosition(out x, out y, out z);
-                System.Diagnostics.Debug.WriteLine("CenterPosition = " + x + ", " + y + ", " + z);
+                //System.Diagnostics.Debug.WriteLine("CenterPosition = " + x + ", " + y + ", " + z);
 
                 GL.Translate(x, y, z);
             }
@@ -64,12 +64,14 @@ namespace IvyFEM
                 // rotate
                 double[] rot = new double[16];
                 camera.RotMatrix44Trans(rot);
+                /*
                 System.Diagnostics.Debug.WriteLine("RotMatrix44");
                 for (int i = 0; i < 16; i++)
                 {
                     System.Diagnostics.Debug.Write(rot[i] + " ");
                 }
                 System.Diagnostics.Debug.WriteLine("");
+                */
 
                 GL.MultMatrix(rot);
             }
@@ -82,7 +84,7 @@ namespace IvyFEM
                 x = objCenter.X;
                 y = objCenter.Y;
                 z = objCenter.Z;
-                System.Diagnostics.Debug.WriteLine("objCenter = " + x + ", " + y + ", " + z);
+                //System.Diagnostics.Debug.WriteLine("objCenter = " + x + ", " + y + ", " + z);
 
                 GL.Translate(-x, -y, -z);
             }
@@ -188,10 +190,12 @@ namespace IvyFEM
             objectY = outV.X * outV.Z;
             objectZ = outV.Y * outV.Z;
 
+            /*
             System.Diagnostics.Debug.WriteLine("GluUnProject");
             System.Diagnostics.Debug.WriteLine("objectX = " + objectX);
             System.Diagnostics.Debug.WriteLine("objectY = " + objectY);
             System.Diagnostics.Debug.WriteLine("objectZ = " + objectZ);
+            */
             return 1;
         }
 
@@ -292,6 +296,7 @@ namespace IvyFEM
                     }
                 }
             }
+            /*
             // DEBUG
             System.Diagnostics.Debug.WriteLine("Picked Object nHits = " + nHits);
             for (int i = 0; i < pickedObjs.Count; i++)
@@ -306,6 +311,7 @@ namespace IvyFEM
                 }
                 System.Diagnostics.Debug.WriteLine("");
             }
+            */
 
             selectedObjs.Clear();
             for (int i = 0; i < pickedObjs.Count; i++)

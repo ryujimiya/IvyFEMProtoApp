@@ -263,6 +263,7 @@ namespace IvyFEM
                 }
 
                 // コメントアウトされてた部分　↓
+                /*
                 {
                     Vector2 v0 = pts[(int)tri.V[0]].Point;
                     Vector2 v1 = pts[(int)tri.V[1]].Point;
@@ -313,6 +314,7 @@ namespace IvyFEM
                     System.Diagnostics.Debug.Assert(Math.Abs(constTerm[2] + dldx[2][0] * v2.X +
                         dldx[2][1] * v2.Y - 1.0) < 1.0e-10);
                 }
+                */
             }
 
             return true;
@@ -622,7 +624,7 @@ namespace IvyFEM
                         // Delaunay条件が満たされない場合
 
                         // 辺を切り替える
-                        // FlipEdgeによってitri_curは時計回り側の３角形に切り替わる
+                        // FlipEdgeによってiCurTriは時計回り側の３角形に切り替わる
                         FlipEdge(iCurTri, iNoCurTri, points, tris);
 
                         iNoCurTri = 2;
@@ -1041,6 +1043,143 @@ namespace IvyFEM
 
             return false;
         }
+
+        public static void LaplacianSmoothing(IList<Point2D> points, IList<Tri2D> tris, IList<uint> isntMoves)
+        {
+            for (uint ipt = 0; ipt < points.Count; ipt++)
+            {   // 点周りの点を探索して調べる。
+                if (ipt < isntMoves.Count)
+                {
+                    if (isntMoves[(int)ipt] == 1)
+                    {
+                        continue;
+                    }
+                }
+                uint itriIni = (uint)points[(int)ipt].Elem;
+                uint inoELCIni = points[(int)ipt].Dir;
+                System.Diagnostics.Debug.Assert(itriIni < tris.Count);
+                System.Diagnostics.Debug.Assert(inoELCIni < 3);
+                System.Diagnostics.Debug.Assert(tris[(int)itriIni].V[inoELCIni] == ipt);
+                uint itri0 = itriIni;
+                uint iNoELC0 = inoELCIni;
+                uint iNoELB0 = NoELTriEdge[iNoELC0][0];
+                bool isBound = false;
+                Vector2 vecDelta = points[(int)ipt].Point;
+                uint ntriAround = 1;
+                for (;;)
+                {
+                    System.Diagnostics.Debug.Assert(itri0 < tris.Count);
+                    System.Diagnostics.Debug.Assert(iNoELC0 < 3);
+                    System.Diagnostics.Debug.Assert(tris[(int)itri0].V[iNoELC0] == ipt);
+                    {
+                        vecDelta.X += points[(int)tris[(int)itri0].V[iNoELB0]].Point.X;
+                        vecDelta.Y += points[(int)tris[(int)itri0].V[iNoELB0]].Point.Y;
+                        ntriAround++;
+                    }
+                    if (tris[(int)itri0].G2[iNoELB0] == -2)
+                    {
+                        uint itri1 = tris[(int)itri0].S2[iNoELB0];
+                        uint rel01 = tris[(int)itri0].R2[iNoELB0];
+                        uint inoel_c1 = RelTriTri[rel01][iNoELC0];
+                        uint inoel_b1 = RelTriTri[rel01][NoELTriEdge[iNoELC0][1]];
+                        System.Diagnostics.Debug.Assert(itri1 < tris.Count);
+                        System.Diagnostics.Debug.Assert(
+                            tris[(int)itri1].S2[RelTriTri[rel01][iNoELB0]] == itri0);
+                        System.Diagnostics.Debug.Assert(tris[(int)itri1].V[inoel_c1] == ipt);
+                        if (itri1 == itriIni)
+                        {
+                            break;
+                        }
+                        itri0 = itri1;
+                        iNoELC0 = inoel_c1;
+                        iNoELB0 = inoel_b1;
+                    }
+                    else
+                    {   // この点は境界上の点だから動かしてはならない。
+                        isBound = true;
+                        break;
+                    }
+                }
+                if (isBound)
+                {
+                    continue;
+                }
+                points[(int)ipt].Point = new Vector2(
+                    vecDelta.X / ntriAround,
+                    vecDelta.Y / ntriAround);
+            }
+        }
+
+        public static void LaplaceDelaunaySmoothing(IList<Point2D> points, IList<Tri2D> tris, IList<uint> isntMoves)
+        {
+            for (uint ipt = 0; ipt < points.Count; ipt++)
+            {
+                // 点周りの点を探索して調べる。
+                if (ipt < isntMoves.Count)
+                {
+                    if (isntMoves[(int)ipt] == 1)
+                    {
+                        continue;
+                    }
+                }
+                uint itriIni = (uint)points[(int)ipt].Elem;
+                uint iNoELCIni = points[(int)ipt].Dir;
+                System.Diagnostics.Debug.Assert(itriIni < tris.Count);
+                System.Diagnostics.Debug.Assert(iNoELCIni < 3);
+                System.Diagnostics.Debug.Assert(tris[(int)itriIni].V[iNoELCIni] == ipt);
+                uint itri0 = itriIni;
+                uint iNoELC0 = iNoELCIni;
+                uint iNoELB0 = NoELTriEdge[iNoELC0][0];
+                bool isBound = false;
+                Vector2 vecDelta = points[(int)ipt].Point;
+                uint ntriAround = 1;
+                for (;;)
+                { 
+                    // 点の周りの要素を一回りする
+                    System.Diagnostics.Debug.Assert(itri0 < tris.Count);
+                    System.Diagnostics.Debug.Assert(iNoELC0 < 3);
+                    System.Diagnostics.Debug.Assert(tris[(int)itri0].V[iNoELC0] == ipt);
+                    {
+                        vecDelta.X += points[(int)tris[(int)itri0].V[iNoELB0]].Point.X;
+                        vecDelta.Y += points[(int)tris[(int)itri0].V[iNoELB0]].Point.Y;
+                        ntriAround++;
+                    }
+                    if (tris[(int)itri0].G2[iNoELB0] == -2)
+                    {
+                        uint itri1 = tris[(int)itri0].S2[iNoELB0];
+                        uint rel01 = tris[(int)itri0].R2[iNoELB0];
+                        uint iNoELC1 = RelTriTri[rel01][iNoELC0];
+                        uint iNoELB1 = RelTriTri[rel01][NoELTriEdge[iNoELC0][1]];
+                        System.Diagnostics.Debug.Assert(itri1 < tris.Count);
+                        System.Diagnostics.Debug.Assert(
+                            tris[(int)itri1].S2[RelTriTri[rel01][iNoELB0]] == itri0);
+                        System.Diagnostics.Debug.Assert(tris[(int)itri1].V[iNoELC1] == ipt);
+                        if (itri1 == itriIni)
+                        {
+                            break;
+                        }
+                        itri0 = itri1;
+                        iNoELC0 = iNoELC1;
+                        iNoELB0 = iNoELB1;
+                    }
+                    else
+                    {
+                        // この点は境界上の点だから動かしてはならない。
+                        isBound = true;
+                        break;
+                    }
+                }
+                if (isBound)
+                {
+                    continue;
+                }
+                points[(int)ipt].Point = new Vector2(
+                    vecDelta.X / ntriAround,
+                    vecDelta.Y / ntriAround);
+                DelaunayAroundPoint(ipt, points, tris);
+            }
+        }
+
 
     }
 }

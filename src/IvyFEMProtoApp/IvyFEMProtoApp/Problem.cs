@@ -12,7 +12,7 @@ namespace IvyFEMProtoApp
     {
         private double WaveguideWidth = 0;
         private double InputWGLength = 0;
-        public CadObject2DDrawer Drawer { get; private set; } = null;
+        public IDrawer Drawer { get; private set; } = null;
 
         public Problem()
         {
@@ -40,5 +40,51 @@ namespace IvyFEMProtoApp
                 Drawer = new CadObject2DDrawer(cad2D);
             }
         }
+
+        public void MakeCoarseMesh()
+        {
+            {
+                CadObject2D cad2D = new CadObject2D();
+                // 図面作成
+                IList<Vector2> pts = new List<Vector2>();
+                pts.Add(new Vector2(0.0f, (float)WaveguideWidth));  // 頂点1
+                pts.Add(new Vector2(0.0f, 0.0f)); // 頂点2
+                pts.Add(new Vector2((float)InputWGLength, 0.0f)); // 頂点3
+                pts.Add(new Vector2((float)InputWGLength, (float)(-InputWGLength))); // 頂点4
+                pts.Add(new Vector2((float)(InputWGLength + WaveguideWidth), (float)(-InputWGLength))); // 頂点5
+                pts.Add(new Vector2((float)(InputWGLength + WaveguideWidth), (float)WaveguideWidth)); // 頂点6
+                var res = cad2D.AddPolygon(pts);
+                System.Diagnostics.Debug.WriteLine(res.Dump());
+                System.Diagnostics.Debug.WriteLine(cad2D.Dump());
+
+                Mesher2D mesher2D = new Mesher2D(cad2D);
+
+                Drawer = new Mesher2DDrawer(mesher2D);
+            }
+        }
+
+        public void MakeMesh()
+        {
+            {
+                CadObject2D cad2D = new CadObject2D();
+                // 図面作成
+                IList<Vector2> pts = new List<Vector2>();
+                pts.Add(new Vector2(0.0f, (float)WaveguideWidth));  // 頂点1
+                pts.Add(new Vector2(0.0f, 0.0f)); // 頂点2
+                pts.Add(new Vector2((float)InputWGLength, 0.0f)); // 頂点3
+                pts.Add(new Vector2((float)InputWGLength, (float)(-InputWGLength))); // 頂点4
+                pts.Add(new Vector2((float)(InputWGLength + WaveguideWidth), (float)(-InputWGLength))); // 頂点5
+                pts.Add(new Vector2((float)(InputWGLength + WaveguideWidth), (float)WaveguideWidth)); // 頂点6
+                var res = cad2D.AddPolygon(pts);
+                System.Diagnostics.Debug.WriteLine(res.Dump());
+                System.Diagnostics.Debug.WriteLine(cad2D.Dump());
+
+                double eLen = 0.1;
+                Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
+
+                Drawer = new Mesher2DDrawer(mesher2D);
+            }
+        }
+
     }
 }

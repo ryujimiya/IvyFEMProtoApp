@@ -84,6 +84,9 @@
     <Compile Include="ItrLoop.cs" />
     <Compile Include="ItrVertex.cs" />
     <Compile Include="Loop2D.cs" />
+    <Compile Include="Mesher2DDrawer.cs" />
+    <Compile Include="Mesher2DDrawPart.cs" />
+    <Compile Include="Mesher2DVertexDrawPart.cs" />
     <Compile Include="MeshUtils.cs" />
     <Compile Include="PickedObject.cs" />
     <Compile Include="Point2D.cs" />

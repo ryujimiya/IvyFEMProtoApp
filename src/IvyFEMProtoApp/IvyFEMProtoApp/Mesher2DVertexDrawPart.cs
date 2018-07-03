@@ -10,22 +10,13 @@ using OpenTK.Graphics.OpenGL;
 
 namespace IvyFEM
 {
-    class VertexDrawPart
+    class Mesher2DVertexDrawPart
     {
         public uint VId { get; set; } = 0;
         public uint CadId { get; set; } = 0;
         public uint MshId { get; set; } = 0;
-
         public bool IsSelected { get; set; } = false;
-        public bool IsShow { get; set; } = false;
-        public float[] Color { get;} = new float[3];
-
         public double Height { get; set; } = 0;
-
-        public VertexDrawPart()
-        {
-
-        }
-
     }
+
 }

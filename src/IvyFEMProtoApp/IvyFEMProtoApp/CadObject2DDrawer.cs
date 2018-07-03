@@ -201,24 +201,24 @@ namespace IvyFEM
 
             {
                 IList<System.Numerics.Vector2> vecs = mesh.GetVectors();
-                uint nvec = (uint)vecs.Count;
-                uint ndim = 2;
-                VertexArray.SetSize(nvec, ndim);
-                System.Diagnostics.Debug.WriteLine("VertexCoordArray");
-                for (int ivec = 0; ivec < nvec; ivec++)
+                uint nVec = (uint)vecs.Count;
+                uint nDim = 2;
+                VertexArray.SetSize(nVec, nDim);
+                //System.Diagnostics.Debug.WriteLine("VertexCoordArray");
+                for (int ivec = 0; ivec < nVec; ivec++)
                 {
-                    VertexArray.VertexCoordArray[ivec * ndim] = vecs[ivec].X;
-                    VertexArray.VertexCoordArray[ivec * ndim + 1] = vecs[ivec].Y;
-                    System.Diagnostics.Debug.WriteLine(VertexArray.VertexCoordArray[ivec * ndim] + ", " +
-                        VertexArray.VertexCoordArray[ivec * ndim + 1]);
+                    VertexArray.VertexCoordArray[ivec * nDim] = vecs[ivec].X;
+                    VertexArray.VertexCoordArray[ivec * nDim + 1] = vecs[ivec].Y;
+                    //System.Diagnostics.Debug.WriteLine(VertexArray.VertexCoordArray[ivec * nDim] + ", " +
+                    //    VertexArray.VertexCoordArray[ivec * nDim + 1]);
                 }
-                System.Diagnostics.Debug.WriteLine("UVCoordArray");
-                for (int ivec = 0; ivec < nvec; ivec++)
+                //System.Diagnostics.Debug.WriteLine("UVCoordArray");
+                for (int ivec = 0; ivec < nVec; ivec++)
                 {
-                    VertexArray.UVCoordArray[ivec * ndim] = vecs[ivec].X * TexScale;
-                    VertexArray.UVCoordArray[ivec * ndim + 1] = vecs[ivec].Y * TexScale;
-                    System.Diagnostics.Debug.WriteLine(VertexArray.UVCoordArray[ivec * ndim] + ", " +
-                        VertexArray.UVCoordArray[ivec * ndim + 1]);
+                    VertexArray.UVCoordArray[ivec * nDim] = vecs[ivec].X * TexScale;
+                    VertexArray.UVCoordArray[ivec * nDim + 1] = vecs[ivec].Y * TexScale;
+                    //System.Diagnostics.Debug.WriteLine(VertexArray.UVCoordArray[ivec * nDim] + ", " +
+                    //    VertexArray.UVCoordArray[ivec * nDim + 1]);
                 }
             }
 
@@ -249,7 +249,7 @@ namespace IvyFEM
                 ////////////////
                 GL.PointSize(PointSize);
                 GL.Begin(BeginMode.Points);
-                System.Diagnostics.Debug.WriteLine("Points");
+                //System.Diagnostics.Debug.WriteLine("Points");
                 for (uint iver = 0; iver < VertexDrawParts.Count; iver++)
                 {
                     if (!VertexDrawParts[(int)iver].IsShow)
@@ -270,10 +270,10 @@ namespace IvyFEM
                         VertexArray.VertexCoordArray[ipo0 * ndim + 0],
                         VertexArray.VertexCoordArray[ipo0 * ndim + 1],
                         height);
-                    System.Diagnostics.Debug.WriteLine(iver + " ip0 = " + ipo0 +
-                        " [" + (ipo0 * ndim + 0) + "] = " + VertexArray.VertexCoordArray[ipo0 * ndim + 0] +
-                        " [" + (ipo0 * ndim + 1) + "] = " + VertexArray.VertexCoordArray[ipo0 * ndim + 1] +
-                        " height = " + height);
+                    //System.Diagnostics.Debug.WriteLine(iver + " ip0 = " + ipo0 +
+                    //    " [" + (ipo0 * ndim + 0) + "] = " + VertexArray.VertexCoordArray[ipo0 * ndim + 0] +
+                    //    " [" + (ipo0 * ndim + 1) + "] = " + VertexArray.VertexCoordArray[ipo0 * ndim + 1] +
+                    //    " height = " + height);
                 }
                 GL.End();
                 if (isTexture)
@@ -293,16 +293,16 @@ namespace IvyFEM
                 GL.LoadIdentity();
                 GL.Translate(-TexCentX, -TexCentY, 0.0);
             }
-            System.Diagnostics.Debug.WriteLine("DrawParts");
+            //System.Diagnostics.Debug.WriteLine("DrawParts");
             for (uint idp = 0; idp < DrawParts.Count; idp++)
             {
                 DrawPart part = DrawParts[(int)idp];
                 double height = part.Height;
                 double dispX = part.DispX;
                 double dispY = part.DispY;
-                System.Diagnostics.Debug.WriteLine(idp + " Type = " + part.Type +
-                    " CadId = " + part.CadId + " MshId = " + part.MshId +
-                    " height = " + height + " dispX = " + dispX + " dispY = " + dispY);
+                //System.Diagnostics.Debug.WriteLine(idp + " Type = " + part.Type +
+                //    " CadId = " + part.CadId + " MshId = " + part.MshId +
+                //    " height = " + height + " dispX = " + dispX + " dispY = " + dispY);
                 if (part.Type == CadElemType.EDGE)
                 {
                     // draw edge

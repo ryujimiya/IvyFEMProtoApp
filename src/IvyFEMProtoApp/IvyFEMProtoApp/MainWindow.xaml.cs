@@ -56,8 +56,8 @@ namespace IvyFEMProtoApp
         /// </summary>
         private DrawerArray DrawerArray = new DrawerArray();
 
-        private BitmapData TextureBitmapData;
-        private int Texture;
+        //private BitmapData TextureBitmapData;
+        //private int Texture;
 
         /// <summary>
         /// コンストラクタ
@@ -193,7 +193,28 @@ namespace IvyFEMProtoApp
             var drawer = Problem.Drawer;
             DrawerArray.Clear();
             DrawerArray.Add(drawer);
-            //Camera.IsPers = true; // test
+            DrawerArray.InitTransform(Camera);
+            glControl_ResizeProc();
+            glControl.Invalidate();
+        }
+
+        private void coarseMesh2DBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.MakeCoarseMesh();
+            var drawer = Problem.Drawer;
+            DrawerArray.Clear();
+            DrawerArray.Add(drawer);
+            DrawerArray.InitTransform(Camera);
+            glControl_ResizeProc();
+            glControl.Invalidate();
+        }
+
+        private void mesh2DBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.MakeMesh();
+            var drawer = Problem.Drawer;
+            DrawerArray.Clear();
+            DrawerArray.Add(drawer);
             DrawerArray.InitTransform(Camera);
             glControl_ResizeProc();
             glControl.Invalidate();

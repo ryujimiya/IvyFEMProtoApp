@@ -1537,7 +1537,7 @@ namespace IvyFEM
                         Vector2 vec0 = SPt + tDiv * idiv;
                         pts.Add(vec0);
                     }
-                    System.Diagnostics.Debug.Assert(pts.Count == ndiv);
+                    System.Diagnostics.Debug.Assert(pts.Count <= ndiv);
                     return true;
                 }
                 else if (Type == CurveType.CURVE_ARC)
@@ -1556,7 +1556,7 @@ namespace IvyFEM
                             (float)Math.Sin(curTheta) * ly) * (float)radius + cPt;
                         pts.Add(vec0);
                     }
-                    System.Diagnostics.Debug.Assert(pts.Count == ndiv);
+                    System.Diagnostics.Debug.Assert(pts.Count <= ndiv);
                     return true;
                 }
                 else if (Type == CurveType.CURVE_POLYLINE)
@@ -1648,7 +1648,7 @@ namespace IvyFEM
                             curRatio0 = 0;
                         }
                     }
-                    System.Diagnostics.Debug.Assert(pts.Count == nPt1);
+                    System.Diagnostics.Debug.Assert(pts.Count <= nPt1);
                     return true;
                 }
                 else if (Type == CurveType.CURVE_BEZIER)
