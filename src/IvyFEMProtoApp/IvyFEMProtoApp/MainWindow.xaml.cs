@@ -135,12 +135,6 @@ namespace IvyFEMProtoApp
         /// <param name="e"></param>
         private void glControl_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            int[] viewport = new int[4];
-            GL.GetInteger(GetPName.Viewport, viewport);
-            int winW = viewport[2];
-            int winH = viewport[3];
-            MovBeginX = (2.0 * e.X - winW) / winW;
-            MovBeginY = (winH - 2.0 * e.Y) / winH;
             if (e.Button == System.Windows.Forms.MouseButtons.Left &&
                 !Modifiers.HasFlag(System.Windows.Forms.Keys.Control) &&
                 !Modifiers.HasFlag(System.Windows.Forms.Keys.Shift))
@@ -167,29 +161,78 @@ namespace IvyFEMProtoApp
         }
 
         /// <summary>
+        /// glControl マウスボタンが押された
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void glControl_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            int[] viewport = new int[4];
+            GL.GetInteger(GetPName.Viewport, viewport);
+            int winW = viewport[2];
+            int winH = viewport[3];
+            MovBeginX = (2.0 * e.X - winW) / winW;
+            MovBeginY = (winH - 2.0 * e.Y) / winH;
+        }
+
+        /// <summary>
         /// glControl マウスが移動した
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void glControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            int[] viewport = new int[4];
-            GL.GetInteger(GetPName.Viewport, viewport);
+            if (e.Button == System.Windows.Forms.MouseButtons.None)
+            {
+                // ドラッグ中でない
+                return;
+            }
+            else if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                int[] viewport = new int[4];
+                GL.GetInteger(GetPName.Viewport, viewport);
 
-            int winW = viewport[2];
-            int winH = viewport[3];
-            double movEndX = (2.0 * e.X - winW) / winW;
-            double movEndY = (winH - 2.0 * e.Y) / winH;
-            if (Modifiers.HasFlag(System.Windows.Forms.Keys.Control))
-            {
-                Camera.MouseRotation(MovBeginX, MovBeginY, movEndX, movEndY);
+                int winW = viewport[2];
+                int winH = viewport[3];
+                double movEndX = (2.0 * e.X - winW) / winW;
+                double movEndY = (winH - 2.0 * e.Y) / winH;
+                if (Modifiers.HasFlag(System.Windows.Forms.Keys.Control))
+                {
+                    Camera.MouseRotation(MovBeginX, MovBeginY, movEndX, movEndY);
+                }
+                else if (Modifiers.HasFlag(System.Windows.Forms.Keys.Shift))
+                {
+                    Camera.MousePan(MovBeginX, MovBeginY, movEndX, movEndY);
+                }
+                MovBeginX = movEndX;
+                MovBeginY = movEndY;
+                glControl.Invalidate();
             }
-            else if (Modifiers.HasFlag(System.Windows.Forms.Keys.Shift))
+        }
+
+        /// <summary>
+        /// glControl マウスホイール
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void glControl_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            double delta = e.Delta;
+            double scale = Camera.Scale;
+
+            scale += delta / 720.0;
+
+            if (scale > 5.0f)
             {
-                Camera.MousePan(MovBeginX, MovBeginY, movEndX, movEndY);
+                scale = 5.0f;
             }
-            MovBeginX = movEndX;
-            MovBeginY = movEndY;
+            if (scale < 0.1f)
+            {
+                scale = 0.1f;
+            }
+            Camera.Scale = scale;
+
+            glControl_ResizeProc();
             glControl.Invalidate();
         }
 

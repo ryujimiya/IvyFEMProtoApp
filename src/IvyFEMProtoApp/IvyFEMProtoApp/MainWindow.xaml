@@ -14,7 +14,7 @@
             <Button x:Name="mesh2DBtn" Content="Mesh2D" Width="75" Click="mesh2DBtn_Click"/>
         </WrapPanel>
         <WindowsFormsHost Margin="0,41,0,0">
-            <OpenTK:GLControl x:Name="glControl" Load="glControl_Load" Resize="glControl_Resize" Paint="glControl_Paint" MouseClick="glControl_MouseClick" KeyDown="glControl_KeyDown" KeyUp="glControl_KeyUp" MouseMove="glControl_MouseMove" />
+            <OpenTK:GLControl x:Name="glControl" Load="glControl_Load" Resize="glControl_Resize" Paint="glControl_Paint" MouseClick="glControl_MouseClick" KeyDown="glControl_KeyDown" KeyUp="glControl_KeyUp" MouseMove="glControl_MouseMove" MouseDown="glControl_MouseDown" MouseWheel="glControl_MouseWheel"/>
         </WindowsFormsHost>
     </Grid>
 </Window>
