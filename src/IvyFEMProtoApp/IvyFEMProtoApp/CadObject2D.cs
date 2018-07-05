@@ -8,24 +8,6 @@ using System.Numerics;
 
 namespace IvyFEM
 {
-    public enum CurveType
-    {
-        CURVE_END_POINT,
-        CURVE_LINE,
-        CURVE_ARC,
-        CURVE_POLYLINE,
-        CURVE_BEZIER
-    }
-
-    enum CadElemType
-    {
-        NOT_SET,
-        VERTEX,
-        EDGE,
-        LOOP,
-        SOLID,
-    }
-
     class ResAddVertex
     {
         public uint AddVId { get; set; } = 0;
@@ -489,7 +471,7 @@ namespace IvyFEM
         {
             System.Diagnostics.Debug.Assert(EdgeSet.IsObjectId(eId));
             Edge2D e = EdgeSet.GetObject(eId);
-            return e.Type;
+            return e.CurveType;
         }
 
         public bool GetCurveAsPolyline(uint eId, out IList<Vector2> points, double elen = -1)
@@ -914,7 +896,7 @@ namespace IvyFEM
                 return res;
             }
 
-            if (edge.Type == CurveType.CURVE_LINE)
+            if (edge.CurveType == CurveType.CURVE_LINE)
             {
                 IList<uint> eIds = EdgeSet.GetObjectIds();
                 for (uint i = 0; i < eIds.Count; i++)
@@ -922,7 +904,7 @@ namespace IvyFEM
                     uint eId = eIds[(int)i];
                     System.Diagnostics.Debug.Assert(EdgeSet.IsObjectId(eId));
                     Edge2D e = GetEdge(eId);
-                    if (e.Type != CurveType.CURVE_LINE)
+                    if (e.CurveType != CurveType.CURVE_LINE)
                     {
                         continue;
                     }

@@ -7,16 +7,6 @@ using System.Numerics;
 
 namespace IvyFEM
 {
-    enum MshType
-    {
-        VERTEX,
-        BAR,
-        TRI,
-        QUAD,
-        TET,
-        HEX
-    }
-
     class Mesher2D
     {
         private HashSet<uint> CutMeshLCadIdSet = new HashSet<uint>();
@@ -28,10 +18,10 @@ namespace IvyFEM
         private IList<int> ElemLocs = new List<int>();
         private IList<IList<uint>> IncludeRelations = new List<IList<uint>>();
 
-        private IList<Vertex> Vertexs = new List<Vertex>();
-        private IList<BarArray> BarArrays = new List<BarArray>();
-        private IList<TriArray2D> TriArrays = new List<TriArray2D>();
-        private IList<QuadArray2D> QuadArrays = new List<QuadArray2D>();
+        private IList<MeshVertex> Vertexs = new List<MeshVertex>();
+        private IList<MeshBarArray> BarArrays = new List<MeshBarArray>();
+        private IList<MeshTriArray2D> TriArrays = new List<MeshTriArray2D>();
+        private IList<MeshQuadArray2D> QuadArrays = new List<MeshQuadArray2D>();
 
         private IList<Vector2> Vec2Ds = new List<Vector2>();
 
@@ -86,10 +76,10 @@ namespace IvyFEM
                 IncludeRelations.Add(new List<uint>(src.IncludeRelations[i]));
             }
 
-            Vertexs = new List<Vertex>(src.Vertexs);
-            BarArrays = new List<BarArray>(src.BarArrays);
-            TriArrays = new List<TriArray2D>(src.TriArrays);
-            QuadArrays = new List<QuadArray2D>(src.QuadArrays);
+            Vertexs = new List<MeshVertex>(src.Vertexs);
+            BarArrays = new List<MeshBarArray>(src.BarArrays);
+            TriArrays = new List<MeshTriArray2D>(src.TriArrays);
+            QuadArrays = new List<MeshQuadArray2D>(src.QuadArrays);
 
             Vec2Ds = new List<Vector2>(src.Vec2Ds);
         }
@@ -117,22 +107,22 @@ namespace IvyFEM
             Vec2Ds.Clear();
         }
 
-        public IList<TriArray2D> GetTriArrays()
+        public IList<MeshTriArray2D> GetTriArrays()
         {
             return TriArrays;
         }
 
-        public IList<QuadArray2D> GetQuadArrays()
+        public IList<MeshQuadArray2D> GetQuadArrays()
         {
             return QuadArrays;
         }
 
-        public IList<BarArray> GetBarArrays()
+        public IList<MeshBarArray> GetBarArrays()
         {
             return BarArrays;
         }
 
-        public IList<Vertex> GetVertexs()
+        public IList<MeshVertex> GetVertexs()
         {
             return Vertexs;
         }
@@ -140,6 +130,85 @@ namespace IvyFEM
         public IList<Vector2> GetVectors()
         {
             return Vec2Ds;
+        }
+
+        public bool GetMeshInfo(uint id, 
+            out uint nElem, out MeshType meshType, out int loc, out uint cadId)
+        {
+            nElem = 0;
+            meshType = MeshType.VERTEX;
+            loc = 0;
+            cadId = 0;
+
+            if (!IsId(id))
+            {
+                return false;
+            }
+            System.Diagnostics.Debug.Assert(id < ElemLocs.Count);
+            System.Diagnostics.Debug.Assert(id < ElemTypes.Count);
+            int type = ElemTypes[(int)id];
+            loc = ElemLocs[(int)id];
+            System.Diagnostics.Debug.Assert(type >= 0);
+            switch (type)
+            {
+                case 0:
+                    {
+                        System.Diagnostics.Debug.Assert(loc < Vertexs.Count);
+                        MeshVertex vertex = Vertexs[loc];
+                        cadId = vertex.VCadId;
+                        nElem = 1;
+                        meshType = MeshType.VERTEX;
+                        break;
+                    }
+
+                case 1:
+                    {
+                        System.Diagnostics.Debug.Assert(loc <BarArrays.Count);
+                        MeshBarArray barArray = BarArrays[loc];
+
+                        cadId = barArray.ECadId;
+
+                        nElem = (uint)barArray.Bars.Count;
+
+                        meshType = MeshType.BAR;
+                        break;
+
+                    }
+
+                case 2:
+                    {
+                        System.Diagnostics.Debug.Assert(loc < TriArrays.Count);
+                        MeshTriArray2D triArray = TriArrays[loc];
+
+                        cadId = triArray.LCadId;
+
+                        nElem = (uint)triArray.Tris.Count;
+
+                        meshType = MeshType.TRI;
+                        break;
+
+                    }
+
+                case 3:
+                    {
+                        System.Diagnostics.Debug.Assert(loc < QuadArrays.Count);
+                        MeshQuadArray2D quadArray = QuadArrays[loc];
+
+                        cadId = quadArray.LCadId;
+
+                        nElem = (uint)quadArray.Quads.Count;
+
+                        meshType = MeshType.QUAD;
+                        break;
+
+                    }
+
+                default:
+                    System.Diagnostics.Debug.Assert(false);
+                    throw new NotSupportedException();
+                    break;
+            }
+            return true;
         }
 
         public bool IsId(uint id)
@@ -233,7 +302,7 @@ namespace IvyFEM
                     Vector2 vec2d = cad2D.GetVertex(vId);
                     Vec2Ds.Add(vec2d);
                     {
-                        Vertex tmpVer = new Vertex();
+                        MeshVertex tmpVer = new MeshVertex();
                         tmpVer.Id = addId;
                         tmpVer.VCadId = vId;
                         tmpVer.V = (uint)(Vec2Ds.Count - 1);
@@ -305,7 +374,7 @@ namespace IvyFEM
                     System.Diagnostics.Debug.Assert(false);
                 }
                 System.Diagnostics.Debug.Assert(type == 0 && loc < Vertexs.Count);
-                Vertex sVer = Vertexs[(int)loc];
+                MeshVertex sVer = Vertexs[(int)loc];
                 iSP = sVer.V;
                 sMshId = sVer.Id;
                 if (!FindElemLocTypeFromCadIdType(out loc, out type, eVId, CadElemType.VERTEX))
@@ -314,7 +383,7 @@ namespace IvyFEM
                 }
                 System.Diagnostics.Debug.Assert(type == 0 && loc < Vertexs.Count);
 
-                Vertex eVer = Vertexs[(int)loc];
+                MeshVertex eVer = Vertexs[(int)loc];
                 iEP = eVer.V;
                 eMshId = eVer.Id;
             }
@@ -338,9 +407,9 @@ namespace IvyFEM
             int barArrayCnt = BarArrays.Count;
             for (int i = barArrayCnt; i < barArrayCnt + 1; i++)
             {
-                BarArrays.Add(new BarArray());
+                BarArrays.Add(new MeshBarArray());
             }
-            BarArray barArray = BarArrays[(int)ibarary0];
+            MeshBarArray barArray = BarArrays[(int)ibarary0];
             IList<Vector2> pts;
             cad2D.GetCurveAsPolyline(eId, out pts, -1);
 
@@ -366,7 +435,7 @@ namespace IvyFEM
                 int barsCnt = barArray.Bars.Count;
                 for (int i = barsCnt; i < ndiv; i++)
                 {
-                    barArray.Bars.Add(new Bar());
+                    barArray.Bars.Add(new MeshBar());
                 }
                 barArray.SEId[0] = sMshId;
                 barArray.SEId[1] = eMshId;
@@ -389,7 +458,7 @@ namespace IvyFEM
 
         private bool TessellateLoop(CadObject2D cad2D, uint lId)
         {
-            IList<Point2D> points = new List<Point2D>();
+            IList<MeshPoint2D> points = new List<MeshPoint2D>();
             IList<int> vec2Pt = new List<int>();
             {
                 // 要素分割する領域の節点　Pt2Dsを作成
@@ -418,7 +487,7 @@ namespace IvyFEM
                                     System.Diagnostics.Debug.Assert(false);
                                 }
                                 System.Diagnostics.Debug.Assert(typeTmp == 0 && locTmp < Vertexs.Count);
-                                Vertex ver = Vertexs[(int)locTmp];
+                                MeshVertex ver = Vertexs[(int)locTmp];
                                 vec2Pt[(int)ver.V] = 1;
                             }
                             uint eId;
@@ -435,9 +504,9 @@ namespace IvyFEM
                             }
                             System.Diagnostics.Debug.Assert(loc < BarArrays.Count);
                             System.Diagnostics.Debug.Assert(type == 1);
-                            BarArray barArray = BarArrays[(int)loc];
+                            MeshBarArray barArray = BarArrays[(int)loc];
                             System.Diagnostics.Debug.Assert(barArray.ECadId == eId);
-                            IList<Bar> bars = barArray.Bars;
+                            IList<MeshBar> bars = barArray.Bars;
                             for (uint ibar = 0; ibar < bars.Count; ibar++)
                             {
                                 vec2Pt[(int)bars[(int)ibar].V[0]] = 1;
@@ -464,7 +533,7 @@ namespace IvyFEM
                     int cntPts = points.Count;
                     for (int i = cntPts; i < ipt; i++)
                     {
-                        points.Add(new Point2D());
+                        points.Add(new MeshPoint2D());
                     }
                 }
                 for (uint ivec = 0; ivec < vec2Pt.Count; ivec++)
@@ -480,7 +549,7 @@ namespace IvyFEM
                 }
             }
 
-            IList<Tri2D> tris = new List<Tri2D>();
+            IList<MeshTri2D> tris = new List<MeshTri2D>();
             {
                 // 与えられた点群を内部に持つ、大きな三角形を作る
                 System.Diagnostics.Debug.Assert(Vec2Ds.Count >= 3);
@@ -523,7 +592,7 @@ namespace IvyFEM
                 int npo = points.Count;
                 for (int i = npo; i < npo + 3; i++)
                 {
-                    points.Add(new Point2D());
+                    points.Add(new MeshPoint2D());
                 }
                 points[npo + 0].Point = new Vector2(
                     (float)center[0],
@@ -544,7 +613,7 @@ namespace IvyFEM
                 int trisCnt = tris.Count;
                 for (int i = trisCnt; i < 1; i++)
                 {
-                    tris.Add(new Tri2D());
+                    tris.Add(new MeshTri2D());
                 }
                 tris[0].V[0] = (uint)(npo + 0);
                 tris[0].V[1] = (uint)(npo + 1);
@@ -593,7 +662,7 @@ namespace IvyFEM
                 {
                     iflg1 = 0;
                     iflg2 = 0;
-                    Tri2D tri = tris[(int)itri];
+                    MeshTri2D tri = tris[(int)itri];
                     if (CadUtils.TriArea(addPo,
                         points[(int)tri.V[1]].Point, points[(int)tri.V[2]].Point) > CadUtils.MinTriArea)
                     {
@@ -718,9 +787,9 @@ namespace IvyFEM
                         }
                         System.Diagnostics.Debug.Assert(loc < BarArrays.Count);
                         System.Diagnostics.Debug.Assert(type == 1);
-                        BarArray barArray = BarArrays[(int)loc];
+                        MeshBarArray barArray = BarArrays[(int)loc];
                         System.Diagnostics.Debug.Assert(eId == barArray.ECadId);
-                        IList<Bar> bars = barArray.Bars;
+                        IList<MeshBar> bars = barArray.Bars;
                         uint barArrayId = barArray.Id;
                         System.Diagnostics.Debug.Assert(barArrayId != newTriId);
                         for (uint ibar = 0; ibar < bars.Count; ibar++)
@@ -874,9 +943,9 @@ namespace IvyFEM
                         }
                         System.Diagnostics.Debug.Assert(loc < BarArrays.Count);
                         System.Diagnostics.Debug.Assert(type == 1);
-                        BarArray barArray = BarArrays[(int)loc];
+                        MeshBarArray barArray = BarArrays[(int)loc];
                         System.Diagnostics.Debug.Assert(eId == barArray.ECadId);
-                        IList<Bar> bars = barArray.Bars;
+                        IList<MeshBar> bars = barArray.Bars;
                         uint barArrayId = barArray.Id;
                         System.Diagnostics.Debug.Assert(barArrayId != newTriId);
                         for (uint ibar = 0; ibar < bars.Count; ibar++)
@@ -980,9 +1049,9 @@ namespace IvyFEM
                         }
                         System.Diagnostics.Debug.Assert(loc < BarArrays.Count);
                         System.Diagnostics.Debug.Assert(type == 1);
-                        BarArray barArray = BarArrays[(int)loc];
+                        MeshBarArray barArray = BarArrays[(int)loc];
                         System.Diagnostics.Debug.Assert(eId == barArray.ECadId);
-                        IList<Bar> bars = barArray.Bars;
+                        IList<MeshBar> bars = barArray.Bars;
                         uint barArrayId = barArray.Id;
                         System.Diagnostics.Debug.Assert(barArrayId != newTriId);
                         if (barArray.LRId[0] == newTriId)
@@ -990,7 +1059,7 @@ namespace IvyFEM
                             // 左側を切り離す
                             for (uint ibar = 0; ibar < bars.Count; ibar++)
                             {
-                                Bar bar = bars[(int)ibar];
+                                MeshBar bar = bars[(int)ibar];
                                 uint itri0 = bar.S2[0];
                                 uint ied0 = bar.R2[0];
                                 System.Diagnostics.Debug.Assert(itri0 < tris.Count);
@@ -1037,7 +1106,7 @@ namespace IvyFEM
                             // 辺の右側を切り離す
                             for (uint ibar = 0; ibar < bars.Count; ibar++)
                             {
-                                Bar bar = bars[(int)ibar];
+                                MeshBar bar = bars[(int)ibar];
                                 uint itri0 = bar.S2[1];
                                 uint ied0 = bar.R2[1];
                                 if (tris[(int)itri0].G2[ied0] == barArrayId)
@@ -1090,7 +1159,7 @@ namespace IvyFEM
             // 外側の３角形の消去
             ////////////////////////////////////////////////
 
-            IList<Tri2D> inTris = new List<Tri2D>();    // 内側の三角形
+            IList<MeshTri2D> inTris = new List<MeshTri2D>();    // 内側の三角形
             {
                 // 外側の三角形の除去
                 // 内側にある三角形をひとつ(iKerTri0)見つける
@@ -1110,9 +1179,9 @@ namespace IvyFEM
                         }
                         System.Diagnostics.Debug.Assert(type == 1);
                         System.Diagnostics.Debug.Assert(loc < BarArrays.Count);
-                        BarArray barArray = BarArrays[(int)loc];
+                        MeshBarArray barArray = BarArrays[(int)loc];
                         System.Diagnostics.Debug.Assert(eId == barArray.ECadId);
-                        IList<Bar> bars = barArray.Bars;
+                        IList<MeshBar> bars = barArray.Bars;
                         if (barArray.LRId[0] == newTriId)
                         {
                             for (uint ibar = 0; ibar < bars.Count; ibar++)
@@ -1174,7 +1243,7 @@ namespace IvyFEM
                 // フラグ配列に沿って内側の三角形を集めた配列in_Triを作る
                 for (int i = 0; i < nInTri; i++)
                 {
-                    inTris.Add(new Tri2D());
+                    inTris.Add(new MeshTri2D());
                 }
                 for (uint itri = 0; itri < tris.Count; itri++)
                 {
@@ -1222,16 +1291,16 @@ namespace IvyFEM
                             }
                             System.Diagnostics.Debug.Assert(loc < BarArrays.Count);
                             System.Diagnostics.Debug.Assert(type == 1);
-                            BarArray barArray = BarArrays[(int)loc];
+                            MeshBarArray barArray = BarArrays[(int)loc];
                             System.Diagnostics.Debug.Assert(eId == barArray.ECadId);
-                            IList<Bar> bars = barArray.Bars;
+                            IList<MeshBar> bars = barArray.Bars;
                             int barArrayId = (int)barArray.Id;
                             System.Diagnostics.Debug.Assert(barArrayId != newTriId);
                             uint iside = (isSameDir) ? 0 : 1u;
                             System.Diagnostics.Debug.Assert(barArray.LRId[iside] == newTriId);
                             for (uint ibar = 0; ibar < bars.Count; ibar++)
                             {
-                                Bar bar = bars[(int)ibar];
+                                MeshBar bar = bars[(int)ibar];
                                 int iSTri0 = (int)bar.S2[(int)iside];
                                 System.Diagnostics.Debug.Assert(iSTri0 >= 0 && iSTri0 < tris.Count);
                                 int iSInTri0 = inoutFlgs[iSTri0];
@@ -1323,7 +1392,7 @@ namespace IvyFEM
                 uint itriary = (uint)TriArrays.Count;
                 for (int i = (int)itriary; i < itriary + 1; i++)
                 {
-                    TriArrays.Add(new TriArray2D());
+                    TriArrays.Add(new MeshTriArray2D());
                 }
                 TriArrays[(int)itriary].Tris = inTris;
                 TriArrays[(int)itriary].LCadId = lId;
@@ -1576,7 +1645,7 @@ namespace IvyFEM
                     int loc0 = ElemLocs[(int)id0];
                     System.Diagnostics.Debug.Assert(loc0 == (int)iver);
                     System.Diagnostics.Debug.Assert(Vertexs.Count > loc0);
-                    Vertex ver0 = Vertexs[(int)loc0];
+                    MeshVertex ver0 = Vertexs[(int)loc0];
                     System.Diagnostics.Debug.Assert(ver0.Id == id0);
                 }
                 for (uint ibarary = 0; ibarary < BarArrays.Count; ibarary++)
@@ -1592,7 +1661,7 @@ namespace IvyFEM
                     int loc0 = ElemLocs[(int)id0];
                     System.Diagnostics.Debug.Assert(loc0 == (int)ibarary);
                     System.Diagnostics.Debug.Assert(BarArrays.Count > loc0);
-                    BarArray bar0 = BarArrays[(int)loc0];
+                    MeshBarArray bar0 = BarArrays[(int)loc0];
                     System.Diagnostics.Debug.Assert(bar0.Id == id0);
                 }
                 for (uint itriary = 0; itriary< TriArrays.Count; itriary++)
@@ -1608,7 +1677,7 @@ namespace IvyFEM
                     int loc0 = ElemLocs[(int)id0];
                     System.Diagnostics.Debug.Assert(loc0 == (int)itriary);
                     System.Diagnostics.Debug.Assert(TriArrays.Count > loc0);
-                    TriArray2D tri0 = TriArrays[(int)loc0];
+                    MeshTriArray2D tri0 = TriArrays[(int)loc0];
                     System.Diagnostics.Debug.Assert(tri0.Id == id0);
                 }
                 for (uint iquadary = 0; iquadary< QuadArrays.Count;iquadary++)
@@ -1624,7 +1693,7 @@ namespace IvyFEM
                     int loc0 = ElemLocs[(int)id0];
                     System.Diagnostics.Debug.Assert(loc0 == (int)iquadary);
                     System.Diagnostics.Debug.Assert(QuadArrays.Count > loc0);
-                    QuadArray2D quad0 = QuadArrays[loc0];
+                    MeshQuadArray2D quad0 = QuadArrays[loc0];
                     System.Diagnostics.Debug.Assert(quad0.Id == id0);
                 }
                 System.Diagnostics.Debug.Assert(maxId == FindMaxId());
@@ -1678,7 +1747,7 @@ namespace IvyFEM
             {
                 uint mshBarId = BarArrays[(int)ibarary].Id;
                 int barLoc = ElemLocs[(int)mshBarId];
-                IList<Bar> bars = BarArrays[barLoc].Bars;
+                IList<MeshBar> bars = BarArrays[barLoc].Bars;
                 for (uint isidebar = 0; isidebar < 2; isidebar++)
                 {
                     int mshAdjId = (int)BarArrays[barLoc].LRId[isidebar];
@@ -1691,7 +1760,7 @@ namespace IvyFEM
                     if (ElemTypes[mshAdjId] == 2)
                     {
                         // 三角形と接している場合
-                        IList<Tri2D> tris = TriArrays[adjLoc].Tris;
+                        IList<MeshTri2D> tris = TriArrays[adjLoc].Tris;
                         for (uint ibar = 0; ibar < bars.Count; ibar++)
                         {
                             uint itri = bars[(int)ibar].S2[isidebar];
@@ -1843,7 +1912,7 @@ namespace IvyFEM
                     Vector2 vec2d = cad2D.GetVertex(vId);
                     Vec2Ds.Add(vec2d);
                     {
-                        Vertex tmpVer = new Vertex();
+                        MeshVertex tmpVer = new MeshVertex();
                         tmpVer.Id = addId;
                         tmpVer.VCadId = vId;
                         tmpVer.Layer = cad2D.GetLayer(CadElemType.VERTEX, vId);
@@ -1940,7 +2009,7 @@ namespace IvyFEM
                     System.Diagnostics.Debug.Assert(false);
                 }
                 System.Diagnostics.Debug.Assert(type == 0 && loc < Vertexs.Count);
-                Vertex sVP = Vertexs[(int)loc];
+                MeshVertex sVP = Vertexs[(int)loc];
                 sPId = sVP.V;
                 sMshId = sVP.Id;
                 if (!FindElemLocTypeFromCadIdType(out loc, out type, eVId, CadElemType.VERTEX))
@@ -1948,7 +2017,7 @@ namespace IvyFEM
                     System.Diagnostics.Debug.Assert(false);
                 }
                 System.Diagnostics.Debug.Assert(type == 0 && loc < Vertexs.Count);
-                Vertex eVP = Vertexs[(int)loc];
+                MeshVertex eVP = Vertexs[(int)loc];
                 ePId = eVP.V;
                 eMshId = eVP.Id;
             }
@@ -1957,7 +2026,7 @@ namespace IvyFEM
             uint ibarary0 = (uint)BarArrays.Count;
             for (int i = (int)ibarary0; i < ibarary0 + 1; i++)
             {
-                BarArrays.Add(new BarArray());
+                BarArrays.Add(new MeshBarArray());
             }
             {
                 int locsCnt = ElemLocs.Count;
@@ -1973,7 +2042,7 @@ namespace IvyFEM
                 ElemLocs[(int)newElemId] = (int)ibarary0;
                 ElemTypes[(int)newElemId] = 1;
             }
-            BarArray barArray = BarArrays[(int)ibarary0];
+            MeshBarArray barArray = BarArrays[(int)ibarary0];
             IList<Vector2> pts;
             cad2D.GetCurveAsPolyline(eId, out pts, len);
             ////////////////
@@ -2003,7 +2072,7 @@ namespace IvyFEM
                 barArray.Bars.Clear();
                 for (int ibar = 0; ibar < nDiv; ibar++)
                 {
-                    Bar bar = new Bar();
+                    MeshBar bar = new MeshBar();
                     bar.V[0] = ptIds[ibar];
                     bar.V[1] = ptIds[ibar + 1];
                     bar.S2[0] = 0;
@@ -2026,8 +2095,8 @@ namespace IvyFEM
                 return false;
             }
 
-            IList<Point2D> points = new List<Point2D>();
-            IList<Tri2D> tris = new List<Tri2D>();
+            IList<MeshPoint2D> points = new List<MeshPoint2D>();
+            IList<MeshTri2D> tris = new List<MeshTri2D>();
             // MSH節点番号vecからローカル節点番号poへのフラグ、対応してない場合は-2が入る
             IList<int> vec2Pt = new List<int>();
             {
@@ -2044,11 +2113,11 @@ namespace IvyFEM
                 }
                 System.Diagnostics.Debug.Assert(type == 2);
                 System.Diagnostics.Debug.Assert(loc < TriArrays.Count);
-                TriArray2D triArray = TriArrays[(int)loc];
-                IList<Tri2D> iniTris = new List<Tri2D>();
+                MeshTriArray2D triArray = TriArrays[(int)loc];
+                IList<MeshTri2D> iniTris = new List<MeshTri2D>();
                 for (int i = 0; i < triArray.Tris.Count; i++)
                 {
-                    iniTris.Add(new Tri2D(triArray.Tris[i]));
+                    iniTris.Add(new MeshTri2D(triArray.Tris[i]));
                 }
                 for (uint itri = 0; itri < iniTris.Count; itri++)
                 { 
@@ -2076,7 +2145,7 @@ namespace IvyFEM
                 int cntPts1 = points.Count;
                 for (int i = cntPts1; i < npo; i++)
                 {
-                    points.Add(new Point2D());
+                    points.Add(new MeshPoint2D());
                 }
                 for (uint ivec = 0; ivec < Vec2Ds.Count; ivec++)
                 {
@@ -2094,7 +2163,7 @@ namespace IvyFEM
                 tris.Clear();
                 for (int i = 0; i < iniTris.Count; i++)
                 {
-                    tris.Add(new Tri2D(iniTris[i]));
+                    tris.Add(new MeshTri2D(iniTris[i]));
                 }
                 for (uint itri = 0; itri < iniTris.Count; itri++)
                 {
@@ -2168,7 +2237,7 @@ namespace IvyFEM
                             int cntPts3 = points.Count;
                             for (int iTmp = cntPts3; iTmp < cntPts3 + 1; iTmp++)
                             {
-                                points.Add(new Point2D());
+                                points.Add(new MeshPoint2D());
                             }
                             points[(int)ipo0].Point = new Vector2(
                                 (float)((points[(int)tris[(int)itri].V[0]].Point.X +
@@ -2272,7 +2341,7 @@ namespace IvyFEM
                 }
                 System.Diagnostics.Debug.Assert(type == 2);
                 System.Diagnostics.Debug.Assert(loc < TriArrays.Count);
-                TriArray2D triArray = TriArrays[(int)loc];
+                MeshTriArray2D triArray = TriArrays[(int)loc];
                 thisLoopId = triArray.Id;
             }
 
@@ -2295,10 +2364,10 @@ namespace IvyFEM
                         if (type0 == 1)
                         {
                             System.Diagnostics.Debug.Assert(loc0 < BarArrays.Count);
-                            BarArray barArray = BarArrays[loc0];
+                            MeshBarArray barArray = BarArrays[loc0];
                             System.Diagnostics.Debug.Assert(barArray.Id == id0);
                             System.Diagnostics.Debug.Assert(ele0 < barArray.Bars.Count);
-                            Bar bar = barArray.Bars[(int)ele0];
+                            MeshBar bar = barArray.Bars[(int)ele0];
                             uint iver0 = tris[(int)itri].V[MeshUtils.NoELTriEdge[ifatri][0]];
                             uint iver1 = tris[(int)itri].V[MeshUtils.NoELTriEdge[ifatri][1]];
                             if (iver0 == bar.V[0] && iver1 == bar.V[1])

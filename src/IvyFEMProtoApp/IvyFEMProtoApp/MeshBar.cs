@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IvyFEM
 {
-    class Bar
+    class MeshBar
     {
         public uint[] V { get; } = new uint[2];
         public uint[] S2 { get; } = new uint[2];

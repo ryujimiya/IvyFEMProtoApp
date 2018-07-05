@@ -257,6 +257,7 @@ namespace IvyFEM
             {
                 return selectedObjs;
             }
+            System.Diagnostics.Debug.WriteLine("Picked Object nHits = " + nHits);
 
             IList<PickedObject> pickedObjs = new List<PickedObject>();
             {
@@ -298,7 +299,6 @@ namespace IvyFEM
             }
             /*
             // DEBUG
-            System.Diagnostics.Debug.WriteLine("Picked Object nHits = " + nHits);
             for (int i = 0; i < pickedObjs.Count; i++)
             {
                 System.Diagnostics.Debug.WriteLine("pickedObjs[" + i + "]");
@@ -355,6 +355,10 @@ namespace IvyFEM
             return selectedObjs;
         }
 
+        public static void GLVertex2(System.Numerics.Vector2 p)
+        {
+            GL.Vertex2(p.X, p.Y);
+        }
 
     }
 }

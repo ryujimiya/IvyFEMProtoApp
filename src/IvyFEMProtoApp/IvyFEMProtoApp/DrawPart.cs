@@ -12,8 +12,7 @@ namespace IvyFEM
 {
     class DrawPart
     {
-        public bool IsShow { get; set; } = true;
-        public bool IsSelected { get; set; } = false;
+        public int ShowMode { get; set; } = 0;  // -1:not_show 0:default 1:hilight 2:selected
         public float[] Color { get; } = new float[3] { 0, 0, 0 };
 
         public CadElemType Type { get; set; } = CadElemType.VERTEX;
@@ -28,6 +27,9 @@ namespace IvyFEM
         public double DispX { get; set; } = 0;
         public double DispY { get; set; } = 0;
 
+        public CurveType CurveType;
+        public IList<System.Numerics.Vector2> CtrlPoints = new List<System.Numerics.Vector2>();
+
         public DrawPart()
         {
 
@@ -35,8 +37,7 @@ namespace IvyFEM
 
         public DrawPart(DrawPart src)
         {
-            IsShow = src.IsShow;
-            IsSelected = src.IsSelected;
+            ShowMode = src.ShowMode;
             for (int i = 0; i < 3; i++)
             {
                 Color[i] = src.Color[i];
@@ -55,6 +56,12 @@ namespace IvyFEM
             Height = src.Height;
             DispX = src.DispX;
             DispY = src.DispY;
+            CurveType = src.CurveType;
+            CtrlPoints.Clear();
+            for (int i = 0; i < src.CtrlPoints.Count; i++)
+            {
+                CtrlPoints.Add(src.CtrlPoints[i]);
+            }
         }
 
         public void Clear()
@@ -64,7 +71,7 @@ namespace IvyFEM
             NPtElem = 0;
         }
 
-        public bool Set(TriArray2D TriAry)
+        public bool SetTriAry(MeshTriArray2D TriAry)
         {
             CadId = TriAry.LCadId;
             System.Diagnostics.Debug.Assert(CadId != 0);
@@ -96,7 +103,7 @@ namespace IvyFEM
             return true;
         }
 
-        public bool Set(BarArray BarArray)
+        public bool SetBarAry(MeshBarArray BarArray)
         {
             CadId = BarArray.ECadId;
             System.Diagnostics.Debug.Assert(CadId != 0);
@@ -122,14 +129,33 @@ namespace IvyFEM
             return true;
         }
 
-        public void SetHeight(double h)
+        public bool SetVertex(MeshVertex vtx)
         {
-            Height = h;
+            CadId = vtx.VCadId;
+            System.Diagnostics.Debug.Assert(CadId != 0);
+            MshId = vtx.Id;
+            System.Diagnostics.Debug.Assert(MshId != 0);
+            Type = CadElemType.VERTEX;
+
+            NPtElem = 1;
+            NElem = 1;
+            Indexs = new uint[NElem * NPtElem];
+            Indexs[0] = vtx.V;
+
+            Color[0] = 0.0f;
+            Color[1] = 0.0f;
+            Color[2] = 0.0f;
+            return true;
         }
 
         public void DrawElements()
         {
-            if (NPtElem == 2)
+            if (NPtElem == 1)
+            {
+                GL.DrawElements(BeginMode.Points, (int)(NElem * NPtElem), DrawElementsType.UnsignedInt, Indexs);
+                return;
+            }
+            else if (NPtElem == 2)
             {
                 GL.DrawElements(BeginMode.Lines, (int)(NElem * NPtElem), DrawElementsType.UnsignedInt, Indexs);
                 return;

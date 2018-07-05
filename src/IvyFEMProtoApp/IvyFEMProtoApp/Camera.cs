@@ -7,19 +7,12 @@ using System.Numerics;
 
 namespace IvyFEM
 {
-    enum RotationMode
-    {
-        ROT_2D,     // 2dim rotation
-        ROT_2DH,    // z axis is allways pararell to the upright direction of screan
-        ROT_3D      // track ball rotation
-    };
-
-    class Camera
+    abstract class Camera
     {
         public double WindowAspect { get; set; }
 
         public Vector2 WindowCenter { get; set; } = new Vector2();
-        private double InvScale;
+        protected double InvScale;
         public double Scale
         {
             get
@@ -33,15 +26,10 @@ namespace IvyFEM
         }
         public double HalfViewHeight { get; private set; }
 
-        private double ObjW;
-        private double ObjH;
-        private double ObjD;
+        private double ObjectW;
+        private double ObjectH;
+        private double ObjectD;
         public Vector3 ObjectCenter { get; set; } = new Vector3();
-
-        public RotationMode RotationMode { get; set; }
-        private Quaternion RotQuat;
-        private double Theta;
-        private double Phi;
 
         private bool isPers;
         public bool IsPers
@@ -55,7 +43,18 @@ namespace IvyFEM
                 SetIsPers(value);
             }
         }
-        private double FovY;
+        private double fovY;
+        public double FovY
+        {
+            get
+            {
+                return GetFovY();
+            }
+            set
+            {
+                SetFovY(value);
+            }
+        }
         private double Dist;
 
         public Camera()
@@ -66,41 +65,23 @@ namespace IvyFEM
             InvScale = 1.0;
             WindowCenter = new Vector2(0.0f, 0.0f);
 
-            ObjW = 1.0;
-            ObjH = 1.0;
-            ObjD = 1.0;
+            ObjectW = 1.0;
+            ObjectH = 1.0;
+            ObjectD = 1.0;
             ObjectCenter = Vector3.Zero;
 
-            RotationMode = RotationMode.ROT_2D;
-            Theta = 0;
-            Phi = -60.0 * 3.1415926 / 180.0;
-            RotQuat = Quaternion.Identity;
-
             IsPers = false;
-            FovY = 30.0 * 3.1415926 / 180.0;
-            Dist = HalfViewHeight / Math.Tan(FovY * 0.5) + ObjD * 0.5;
+            fovY = 30.0 * Math.PI / 180.0;
+            Dist = HalfViewHeight / Math.Tan(fovY * 0.5) + ObjectD * 0.5;
         }
 
         private void SetIsPers(bool value)
         {
-            if (RotationMode == RotationMode.ROT_2D)
-            {
-                return;
-            }
             isPers = value;
             if (IsPers)
             {
-                Dist = HalfViewHeight * InvScale / Math.Tan(FovY * 0.5) + ObjD * 0.5;
+                Dist = HalfViewHeight * InvScale / Math.Tan(fovY * 0.5) + ObjectD * 0.5;
             }
-        }
-
-        public void GetPerspective(out double fovY, out double aspect,
-            out double clipNear, out double clipFar)
-        {
-            fovY = this.FovY * 180.0 / 3.1415926;
-            aspect = WindowAspect;
-            clipNear = 0.001;
-            clipFar = Dist * 2.0 + ObjD * 20.0 + 100.0;
         }
 
         private double GetScale()
@@ -122,104 +103,60 @@ namespace IvyFEM
             {
                 InvScale = 1.0 / value;
             }
-            Dist = HalfViewHeight * InvScale / Math.Tan(FovY * 0.5) + ObjD * 0.5;
+            Dist = HalfViewHeight * InvScale / Math.Tan(fovY * 0.5) + ObjectD * 0.5;
         }
 
-        public void RotMatrix33(double[] rot)
+        private double GetFovY()
         {
-            if (RotationMode == RotationMode.ROT_2D)
-            {
-                double ct = Math.Cos(Theta);
-                double st = Math.Sin(Theta);
-                rot[0] = ct;
-                rot[1] = -st;
-                rot[2] = 0.0;
-                rot[3] = st;
-                rot[4] = ct;
-                rot[5] = 0.0;
-                rot[6] = 0.0;
-                rot[7] = 0.0;
-                rot[8] = 1.0;
-            }
-            else if (RotationMode == RotationMode.ROT_2DH)
-            {
-                double ct = Math.Cos(Theta);
-                double st = Math.Sin(Theta);
-                double cp = Math.Cos(Phi);
-                double sp = Math.Sin(Phi);
-                rot[0] = ct;
-                rot[1] = -st;
-                rot[2] = 0.0;
-                rot[3] = cp * st;
-                rot[4] = cp * ct;
-                rot[5] = -sp;
-                rot[6] = sp * st;
-                rot[7] = sp * ct;
-                rot[8] = cp;
-            }
-            else if (RotationMode == RotationMode.ROT_3D)
-            {
-                CadUtils.RotMatrix33(RotQuat, rot);
-            }
+            return fovY * 180.0/Math.PI;
         }
 
-        public void RotMatrix44Trans(double[] rot)
+        private void SetFovY(double fovY)
         {
-            double[] rot1 = new double[9];
-            RotMatrix33(rot1);
-
-            rot[0] = rot1[0];
-            rot[1] = rot1[3];
-            rot[2] = rot1[6];
-            rot[3] = 0.0;
-            rot[4] = rot1[1];
-            rot[5] = rot1[4];
-            rot[6] = rot1[7];
-            rot[7] = 0.0;
-            rot[8] = rot1[2];
-            rot[9] = rot1[5];
-            rot[10] = rot1[8];
-            rot[11] = 0.0;
-            rot[12] = 0.0;
-            rot[13] = 0.0;
-            rot[14] = 0.0;
-            rot[15] = 1.0;
-        }
-
-        public void Fit()
-        {
-            const double margin = 1.5;
-            double objAspect = ObjW / ObjH;
-            InvScale = 1.0;
-            if (objAspect < WindowAspect)
+            if (!IsPers)
             {
-                HalfViewHeight = ObjH * 0.5 * margin;
+                return;
+            }
+            double _fovY = fovY;
+            if (fovY < 15.0)
+            {
+                _fovY = 15.0;
+            }
+            else if (fovY > 90.0)
+            {
+                _fovY = 90.0;
             }
             else
             {
-                double tmpH = ObjW / WindowAspect;
-                HalfViewHeight = tmpH * 0.5 * margin;
+                _fovY = fovY;
             }
-            Dist = HalfViewHeight * InvScale / Math.Tan(FovY * 0.5) + ObjD * 0.5;
-            WindowCenter = new Vector2(0.0f, 0.0f);
+            this.fovY = _fovY * Math.PI / 180.0;
+            Dist = HalfViewHeight * InvScale / Math.Tan(this.fovY * 0.5) + ObjectD * 0.5;
         }
 
-        public void Fit(BoundingBox3D bb)
+        public void GetPerspective(out double fovY, out double aspect,
+            out double clipNear, out double clipFar)
         {
-            ObjectCenter = new Vector3(
-                (float)((bb.MinX + bb.MaxX) * 0.5),
-                (float)((bb.MinY + bb.MaxY) * 0.5),
-                (float)((bb.MinZ + bb.MaxZ) * 0.5));
-            ObjW = bb.MaxX - bb.MinX;
-            ObjH = bb.MaxY - bb.MinY;
-            ObjD = bb.MaxZ - bb.MinZ;
-            Fit();
+            fovY = this.fovY * 180.0 / Math.PI;
+            aspect = WindowAspect;
+            clipNear = 0.001;
+            clipFar = Dist * 2.0 + ObjectD * 20.0 + 100.0;
+        }
+
+        public void GetOrtho(out double hw, out double hh, out double hd)
+        {
+            hw = HalfViewHeight * InvScale * WindowAspect;
+            hh = HalfViewHeight * InvScale;
+            hd = (ObjectD * 20.0 > 1.0e-4) ? ObjectD * 20.0 : 1.0e-4;
+            hd = (ObjectW * 20.0 > hd) ? ObjectW * 20.0 : hd;
+            hd = (ObjectH * 20.0 > hd) ? ObjectH * 20.0 : hd;
         }
 
         public void GetCenterPosition(out double x, out double y, out double z)
         {
             if (IsPers)
             {
+                System.Diagnostics.Debug.Assert(false);
                 x = 0.0;
                 y = 0.0;
                 z = -Dist;
@@ -234,17 +171,127 @@ namespace IvyFEM
 
         public Vector3 GetCenterPosition()
         {
-            double x, y, z;
+            double x;
+            double y;
+            double z;
             GetCenterPosition(out x, out y, out z);
             return new Vector3((float)x, (float)y, (float)z);
         }
 
-        public void MousePan(double mov_begin_x, double mov_begin_y, double mov_end_x, double mov_end_y)
+        public void GetObjectCenter(out double x, out double y, out double z)
+    	{
+            x = ObjectCenter.X;
+            y = ObjectCenter.Y;
+            z = ObjectCenter.Z;
+        }
+
+        public Vector3 GetObjectCenter()
         {
-            Vector2 prev = new Vector2(WindowCenter.X, WindowCenter.Y);
-            WindowCenter = new Vector2(
-                (float)(prev.X + (mov_end_x - mov_begin_x) * InvScale),
-                (float)(prev.Y + (mov_end_y - mov_begin_y) * InvScale));
+            return ObjectCenter;
+        }
+
+        public void SetObjectCenter(double x, double y, double z)
+        {
+            ObjectCenter = new Vector3((float)x, (float)y, (float)z);
+        }
+
+        public void GetObjectSize(out double w, out double h, out double d)
+        {
+            w = ObjectW;
+            h = ObjectH;
+            d = ObjectD;
+        }
+
+        public void SetObjectSize(double w, double h, double d)
+        {
+            ObjectW = w;
+            ObjectH = h;
+            ObjectD = d;
+        }
+
+        public void SetObjectBoundingBox(BoundingBox3D bb)
+        {
+            ObjectCenter = new Vector3(
+                (float)((bb.MinX + bb.MaxX) * 0.5),
+                (float)((bb.MinY + bb.MaxY) * 0.5),
+                (float)((bb.MinZ + bb.MaxZ) * 0.5)
+                );
+            ObjectW = bb.MaxX - bb.MinX;
+            ObjectH = bb.MaxY - bb.MinY;
+            ObjectD = bb.MaxZ - bb.MinZ;
+        }
+
+        public void Fit()
+        {
+            double margin = 1.5;
+            double objAspect = ObjectW / ObjectH;
+            InvScale = 1.0;
+            if (objAspect < WindowAspect)
+            {
+                HalfViewHeight = ObjectH * 0.5 * margin;
+            }
+            else
+            {
+                double tmpH = ObjectW / WindowAspect;
+                HalfViewHeight = tmpH * 0.5 * margin;
+            }
+            Dist = HalfViewHeight * InvScale / Math.Tan(fovY * 0.5) + ObjectD * 0.5;
+            WindowCenter = new Vector2(0.0f, 0.0f);
+        }
+
+        public void Fit(BoundingBox3D bb)
+        {
+            SetObjectBoundingBox(bb);
+            Fit();
+        }
+
+        public void MousePan(double movBeginX, double movBeginY, double movEndX, double movEndY)
+        {
+            double x = WindowCenter.X;
+            double y = WindowCenter.Y;
+            
+            x += (movEndX - movBeginX) * InvScale;
+            y += (movEndY - movBeginY) * InvScale;
+
+            WindowCenter = new Vector2((float)x, (float)y);
+        }
+
+        public abstract void MouseRotation(double movBeginX, double movBeginY, double movEndX, double movEndY);
+
+        public abstract void RotMatrix33(double[] rot);
+
+        public double[] RotMatrix33()
+        {
+            double[] rot = new double[9];
+            RotMatrix33(rot);
+            return rot;
+        }
+
+        public void RotMatrix44Trans(double[] rot)
+        {
+            double[] rot1 = new double[9];
+
+            RotMatrix33(rot1);
+
+            rot[0] = rot1[0];
+            rot[1] = rot1[3];
+            rot[2] = rot1[6];
+            rot[3] = 0.0;
+
+            rot[4] = rot1[1];
+            rot[5] = rot1[4];
+            rot[6] = rot1[7];
+            rot[7] = 0.0;
+
+            rot[8] = rot1[2];
+            rot[9] = rot1[5];
+            rot[10] = rot1[8];
+            rot[11] = 0.0;
+
+            rot[12] = 0.0;
+            rot[13] = 0.0;
+            rot[14] = 0.0;
+            rot[15] = 1.0;
         }
 
     }

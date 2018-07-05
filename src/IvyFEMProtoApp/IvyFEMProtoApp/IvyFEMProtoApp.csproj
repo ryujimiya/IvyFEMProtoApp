@@ -68,8 +68,10 @@
     <Compile Include="AlertWindow.xaml.cs">
       <DependentUpon>AlertWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Bar.cs" />
-    <Compile Include="BarArray.cs" />
+    <Compile Include="Camera2D.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="MeshBar.cs" />
+    <Compile Include="MeshBarArray.cs" />
     <Compile Include="BoundingBox2D.cs" />
     <Compile Include="BoundingBox3D.cs" />
     <Compile Include="BRep.cs" />
@@ -86,23 +88,21 @@
     <Compile Include="Loop2D.cs" />
     <Compile Include="Mesher2DDrawer.cs" />
     <Compile Include="Mesher2DDrawPart.cs" />
-    <Compile Include="Mesher2DVertexDrawPart.cs" />
     <Compile Include="MeshUtils.cs" />
     <Compile Include="PickedObject.cs" />
-    <Compile Include="Point2D.cs" />
+    <Compile Include="MeshPoint2D.cs" />
     <Compile Include="Problem.cs" />
-    <Compile Include="Quad2D.cs" />
-    <Compile Include="QuadArray2D.cs" />
+    <Compile Include="MeshQuad2D.cs" />
+    <Compile Include="MeshQuadArray2D.cs" />
     <Compile Include="SelectedObject.cs" />
-    <Compile Include="Tri2D.cs" />
-    <Compile Include="TriArray2D.cs" />
+    <Compile Include="MeshTri2D.cs" />
+    <Compile Include="MeshTriArray2D.cs" />
     <Compile Include="UseLoop.cs" />
     <Compile Include="UseVertex.cs" />
     <Compile Include="CadUtils.cs" />
-    <Compile Include="Vertex.cs" />
+    <Compile Include="MeshVertex.cs" />
     <Compile Include="Vertex2D.cs" />
     <Compile Include="VertexArray.cs" />
-    <Compile Include="VertexDrawPart.cs" />
     <Page Include="AlertWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

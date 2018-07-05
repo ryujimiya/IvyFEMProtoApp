@@ -25,7 +25,7 @@ namespace IvyFEM
         public int[] EdgeIndexs { get; set; } = null;
         public double Height { get; set; } = 0;
 
-        private uint ElemType; // bar:1，tri:2，quad:3, tet:4, hex:5
+        private ElemType ElemType;
 
         public Mesher2DDrawPart()
         {
@@ -54,7 +54,7 @@ namespace IvyFEM
             ElemType = src.ElemType;
         }
 
-        public Mesher2DDrawPart(QuadArray2D quadArray)
+        public Mesher2DDrawPart(MeshQuadArray2D quadArray)
         {
             IsSelected = false;
             IsShown = true;
@@ -66,7 +66,7 @@ namespace IvyFEM
             CadId = quadArray.LCadId;
             MshId = quadArray.Id;
             System.Diagnostics.Debug.Assert(MshId != 0);
-            ElemType = 3;
+            ElemType = ElemType.QUAD;
             ElemIndexs = null;
             EdgeIndexs = null;
 
@@ -103,7 +103,7 @@ namespace IvyFEM
             }
         }
 
-        public Mesher2DDrawPart(TriArray2D triArray)
+        public Mesher2DDrawPart(MeshTriArray2D triArray)
         {
             IsSelected = false;
             IsShown = true;
@@ -119,7 +119,7 @@ namespace IvyFEM
 
             MshId = triArray.Id;
             System.Diagnostics.Debug.Assert(MshId != 0);
-            ElemType = 2;
+            ElemType = ElemType.TRI;
 
             NElem = (uint)triArray.Tris.Count;
 
@@ -152,7 +152,7 @@ namespace IvyFEM
             }
         }
 
-        public Mesher2DDrawPart(BarArray barArray)
+        public Mesher2DDrawPart(MeshBarArray barArray)
         {
             IsSelected = false;
             IsShown = true;
@@ -168,7 +168,7 @@ namespace IvyFEM
 
             MshId = barArray.Id;
             System.Diagnostics.Debug.Assert(MshId != 0);
-            ElemType = 1;
+            ElemType = ElemType.LINE;
 
             NElem = (uint)barArray.Bars.Count;
             ElemIndexs = new int[NElem * 2];
@@ -179,25 +179,52 @@ namespace IvyFEM
             }
         }
 
+        public Mesher2DDrawPart(MeshVertex vtx)
+        {
+            IsSelected = false;
+            IsShown = true;
+            Color[0] = 0.8;
+            Color[1] = 0.8;
+            Color[2] = 0.8;
+            LineWidth = 1;
+            Height = 0;
+            ElemIndexs = null;
+            EdgeIndexs = null;
+
+            CadId = vtx.VCadId;
+
+            MshId = vtx.Id;
+            System.Diagnostics.Debug.Assert(MshId != 0);
+            ElemType = ElemType.POINT;
+
+            NElem = 1;
+            ElemIndexs = new int[NElem];
+            ElemIndexs[0] = (int)vtx.V;
+        }
+
         public void DrawElements()
         {
-            if (ElemType == 1)
+            if (ElemType == ElemType.POINT)
+            {
+                DrawElementsVertex();
+            }
+            else if (ElemType == ElemType.LINE)
             {
                 DrawElementsBar();
             }
-            else if (ElemType == 2)
+            else if (ElemType == ElemType.TRI)
             {
                 DrawElementsTri();
             }
-            else if (ElemType == 3)
+            else if (ElemType == ElemType.QUAD)
             {
                 DrawElementsQuad();
             }
-            else if (ElemType == 4)
+            else if (ElemType == ElemType.TET)
             {
                 new NotImplementedException();
             }
-            else if (ElemType == 5)
+            else if (ElemType == ElemType.HEX)
             {
                 new NotImplementedException();
             }
@@ -205,23 +232,27 @@ namespace IvyFEM
 
         public void DrawElementsSelection()
         {
-            if (ElemType == 1)
+            if (ElemType == ElemType.POINT)
+            {
+                DrawElementsSelectionVertex();
+            }
+            else if (ElemType == ElemType.LINE)
             {
                 DrawElementsSelectionBar();
             }
-            else if (ElemType == 2)
+            else if (ElemType == ElemType.TRI)
             {
                 DrawElementsSelectionTri();
             }
-            else if (ElemType == 3)
+            else if (ElemType == ElemType.QUAD)
             {
                 DrawElementsSelectionQuad();
             }
-            else if (ElemType == 4)
+            else if (ElemType == ElemType.TET)
             {
                 new NotImplementedException();
             }
-            else if (ElemType == 5)
+            else if (ElemType == ElemType.HEX)
             {
                 new NotImplementedException();
             }
@@ -229,23 +260,27 @@ namespace IvyFEM
 
         public uint GetElemDim()
         {
-            if (ElemType == 1)
+            if (ElemType == ElemType.POINT)
             {
                 return 1;
             }
-            else if (ElemType == 2)
+            else if (ElemType == ElemType.LINE)
+            {
+                return 1;
+            }
+            else if (ElemType == ElemType.TRI)
             {
                 return 2;
             }
-            else if (ElemType == 3)
+            else if (ElemType == ElemType.QUAD)
             {
                 return 2;
             }
-            else if (ElemType == 4)
+            else if (ElemType == ElemType.TET)
             {
                 return 3;
             }
-            else if (ElemType == 5)
+            else if (ElemType == ElemType.HEX)
             {
                 return 3;
             }
@@ -416,7 +451,6 @@ namespace IvyFEM
 
         private void DrawElementsSelectionBar()
         {
-
             if (!IsShown)
             {
                 return;
@@ -433,6 +467,54 @@ namespace IvyFEM
                 GL.End();
                 GL.PopName();
             }
+        }
+
+        private void DrawElementsVertex()
+        {
+            if (!IsShown)
+            {
+                return;
+            }
+
+            GL.PointSize(5);
+            GL.Color3(1.0, 0.0, 0.0);
+            GL.Begin(BeginMode.Points);
+            for (int iielem = 0; iielem < SelectedElems.Count; iielem++)
+            {
+                uint ielem0 = SelectedElems[iielem];
+
+                GL.ArrayElement(ElemIndexs[ielem0]);
+            }
+
+            GL.End();
+
+            /*
+            if (IsSelected)
+            {
+                GL.Color3(1.0, 1.0, 0.0);
+            }
+            else
+            {
+                GL.Color3(0.0, 0.0, 0.0);
+            }
+            */
+            GL.Color3(0.0, 0.0, 0.0);
+            GL.DrawElements(BeginMode.Points, (int)NElem, DrawElementsType.UnsignedInt, ElemIndexs);
+        }
+
+        private void DrawElementsSelectionVertex()
+        {
+            if (!IsShown)
+            {
+                return;
+            }
+
+            GL.PushName(0);
+            GL.Begin(BeginMode.Points);
+
+            GL.ArrayElement(ElemIndexs[0]);
+            GL.End();
+            GL.PopName();
         }
 
     }

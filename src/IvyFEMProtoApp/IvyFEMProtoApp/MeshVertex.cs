@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace IvyFEM
 {
-    class QuadArray2D
+    class MeshVertex
     {
         public uint Id { get; set; } = 0;
-        public uint LCadId { get; set; } = 0;
+        public uint VCadId { get; set; } = 0;
         public int Layer { get; set; } = 0;
-        public IList<Quad2D> Quads { get; } = new List<Quad2D>();
+        public uint V { get; set; } = 0;
     }
 }

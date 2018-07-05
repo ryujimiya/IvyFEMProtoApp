@@ -4,7 +4,7 @@
 IvyFEM (FEM Cadライブラリ)を開発するための作業用アプリです。  
 IvyFEMはDelFEM4NetをベースにC#オンリーでリニューアル実装したライブラリになります。 
 　  
-　2018-7-3更新  
+　2018-7-5更新  
 　[IvyFEMProtoAppアプリ](https://github.com/ryujimiya/IvyFEMProtoApp/blob/master/publish/)  
 　  
 ![IvyFEMProtoAppアプリ](https://pbs.twimg.com/media/DhLeSq-U8AA6y6i.jpg)

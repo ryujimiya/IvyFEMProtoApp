@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace IvyFEM
 {
-    class BarArray
+    class MeshBarArray
     {
         public uint Id { get; set; }
         public uint ECadId { get; set; }
         public uint[] SEId { get; } = new uint[2];
         public uint[] LRId { get; } = new uint[2];
         public int Layer { get; set; }
-        public IList<Bar> Bars { get; } = new List<Bar>();
+        public IList<MeshBar> Bars { get; } = new List<MeshBar>();
     }
 }

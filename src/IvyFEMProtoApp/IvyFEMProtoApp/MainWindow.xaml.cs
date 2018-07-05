@@ -34,7 +34,7 @@ namespace IvyFEMProtoApp
         /// <summary>
         /// カメラ
         /// </summary>
-        private Camera Camera = new Camera();
+        private Camera2D Camera = new Camera2D();
 
         /// <summary>
         /// マウス移動量X方向
@@ -167,6 +167,33 @@ namespace IvyFEMProtoApp
         }
 
         /// <summary>
+        /// glControl マウスが移動した
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void glControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            int[] viewport = new int[4];
+            GL.GetInteger(GetPName.Viewport, viewport);
+
+            int winW = viewport[2];
+            int winH = viewport[3];
+            double movEndX = (2.0 * e.X - winW) / winW;
+            double movEndY = (winH - 2.0 * e.Y) / winH;
+            if (Modifiers.HasFlag(System.Windows.Forms.Keys.Control))
+            {
+                Camera.MouseRotation(MovBeginX, MovBeginY, movEndX, movEndY);
+            }
+            else if (Modifiers.HasFlag(System.Windows.Forms.Keys.Shift))
+            {
+                Camera.MousePan(MovBeginX, MovBeginY, movEndX, movEndY);
+            }
+            MovBeginX = movEndX;
+            MovBeginY = movEndY;
+            glControl.Invalidate();
+        }
+
+        /// <summary>
         /// glControlの描画時に実行される。
         /// </summary>
         /// <param name="sender"></param>
@@ -193,7 +220,7 @@ namespace IvyFEMProtoApp
             var drawer = Problem.Drawer;
             DrawerArray.Clear();
             DrawerArray.Add(drawer);
-            DrawerArray.InitTransform(Camera);
+            Camera.Fit(DrawerArray.GetBoundingBox(Camera.RotMatrix33()));
             glControl_ResizeProc();
             glControl.Invalidate();
         }
@@ -204,7 +231,7 @@ namespace IvyFEMProtoApp
             var drawer = Problem.Drawer;
             DrawerArray.Clear();
             DrawerArray.Add(drawer);
-            DrawerArray.InitTransform(Camera);
+            Camera.Fit(DrawerArray.GetBoundingBox(Camera.RotMatrix33()));
             glControl_ResizeProc();
             glControl.Invalidate();
         }
@@ -215,9 +242,10 @@ namespace IvyFEMProtoApp
             var drawer = Problem.Drawer;
             DrawerArray.Clear();
             DrawerArray.Add(drawer);
-            DrawerArray.InitTransform(Camera);
+            Camera.Fit(DrawerArray.GetBoundingBox(Camera.RotMatrix33()));
             glControl_ResizeProc();
             glControl.Invalidate();
         }
+
     }
 }

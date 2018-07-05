@@ -172,7 +172,7 @@ namespace IvyFEM
             return 0;
         }
 
-        public static bool CheckTri(IList<Point2D> pts, IList<Tri2D> tris)
+        public static bool CheckTri(IList<MeshPoint2D> pts, IList<MeshTri2D> tris)
         {
             uint nPt = (uint)pts.Count;
             uint nTri = (uint)tris.Count;
@@ -182,7 +182,7 @@ namespace IvyFEM
 
             for (uint itri = 0; itri < nTri; itri++)
             {
-               Tri2D tri = tris[(int)itri];
+               MeshTri2D tri = tris[(int)itri];
                 for (uint inotri = 0; inotri < NoTri; inotri++)
                 {
                     System.Diagnostics.Debug.Assert(tri.V[inotri] < nPt);
@@ -250,7 +250,7 @@ namespace IvyFEM
 
             for (uint itri = 0; itri < nTri; itri++)
             {
-                Tri2D tri = tris[(int)itri];
+                MeshTri2D tri = tris[(int)itri];
                 {
                     double area = CadUtils.TriArea(
                         pts[(int)tri.V[0]].Point,
@@ -321,7 +321,7 @@ namespace IvyFEM
         }
 
         public static bool InsertPointElem(uint iInsPt, uint iInsTri,
-                              IList<Point2D> points, IList<Tri2D> tris)
+                              IList<MeshPoint2D> points, IList<MeshTri2D> tris)
         {
             System.Diagnostics.Debug.Assert(iInsTri < tris.Count);
             System.Diagnostics.Debug.Assert(iInsPt < points.Count);
@@ -333,10 +333,10 @@ namespace IvyFEM
             int trisCnt = tris.Count;
             for (int i = trisCnt; i < trisCnt + 2; i++)
             {
-                tris.Add(new Tri2D());
+                tris.Add(new MeshTri2D());
             }
 
-            Tri2D oldTri = new Tri2D(tris[(int)iInsTri]);
+            MeshTri2D oldTri = new MeshTri2D(tris[(int)iInsTri]);
 
             points[(int)iInsPt].Elem = itri0;
             points[(int)iInsPt].Dir = 0;
@@ -348,7 +348,7 @@ namespace IvyFEM
             points[(int)oldTri.V[2]].Dir = 2;
 
             {
-                Tri2D tri = tris[itri0];
+                MeshTri2D tri = tris[itri0];
 
                 tri.V[0] = iInsPt;
                 tri.V[1] = oldTri.V[1];
@@ -374,7 +374,7 @@ namespace IvyFEM
                 tri.R2[2] = 0;
             }
             {
-                Tri2D tri = tris[itri1];
+                MeshTri2D tri = tris[itri1];
 
                 tri.V[0] = iInsPt;
                 tri.V[1] = oldTri.V[2];
@@ -400,7 +400,7 @@ namespace IvyFEM
                 tri.R2[2] = 0;
             }
             {
-                Tri2D tri = tris[itri2];
+                MeshTri2D tri = tris[itri2];
 
                 tri.V[0] = iInsPt;
                 tri.V[1] = oldTri.V[0];
@@ -430,7 +430,7 @@ namespace IvyFEM
         }
 
         public static bool InsertPointElemEdge(uint iInsPt, uint iInsTri, uint iInsEd,
-            IList<Point2D> points, IList<Tri2D> tris)
+            IList<MeshPoint2D> points, IList<MeshTri2D> tris)
         {
             System.Diagnostics.Debug.Assert(iInsTri < tris.Count);
             System.Diagnostics.Debug.Assert(iInsPt < points.Count);
@@ -455,11 +455,11 @@ namespace IvyFEM
             int trisCnt = tris.Count; 
             for (int i = trisCnt; i < trisCnt + 2; i++)
             {
-                tris.Add(new Tri2D());
+                tris.Add(new MeshTri2D());
             }
 
-            Tri2D old0 = new Tri2D(tris[(int)iInsTri]);
-            Tri2D old1 = new Tri2D(tris[(int)iAdjTri]);
+            MeshTri2D old0 = new MeshTri2D(tris[(int)iInsTri]);
+            MeshTri2D old1 = new MeshTri2D(tris[(int)iAdjTri]);
 
             uint ino00 = iInsEd;
             uint ino10 = NoELTriEdge[iInsEd][0];
@@ -486,7 +486,7 @@ namespace IvyFEM
             points[(int)old1.V[ino01]].Dir = 1;
 
             {
-                Tri2D  tri = tris[(int)itri0];
+                MeshTri2D  tri = tris[(int)itri0];
                 tri.V[0] = iInsPt;
                 tri.V[1] = old0.V[ino20];
                 tri.V[2] = old0.V[ino00];
@@ -510,7 +510,7 @@ namespace IvyFEM
                 tri.R2[2] = 0;
             }
             {
-                Tri2D tri = tris[(int)itri1];
+                MeshTri2D tri = tris[(int)itri1];
                 tri.V[0] = iInsPt;
                 tri.V[1] = old0.V[ino00];
                 tri.V[2] = old0.V[ino10];
@@ -534,7 +534,7 @@ namespace IvyFEM
                 tri.R2[2] = 0;
             }
             {
-                Tri2D tri = tris[(int)itri2];
+                MeshTri2D tri = tris[(int)itri2];
                 tri.V[0] = iInsPt;
                 tri.V[1] = old1.V[ino21];
                 tri.V[2] = old1.V[ino01];
@@ -558,7 +558,7 @@ namespace IvyFEM
                 tri.R2[2] = 0;
             }
             {
-                Tri2D tri = tris[(int)itri3];
+                MeshTri2D tri = tris[(int)itri3];
                 tri.V[0] = iInsPt;
                 tri.V[1] = old1.V[ino01];
                 tri.V[2] = old1.V[ino11];
@@ -584,7 +584,7 @@ namespace IvyFEM
             return true;
         }
 
-        public static bool DelaunayAroundPoint(uint ipo0, IList<Point2D> points, IList<Tri2D> tris)
+        public static bool DelaunayAroundPoint(uint ipo0, IList<MeshPoint2D> points, IList<MeshTri2D> tris)
         {
             System.Diagnostics.Debug.Assert(ipo0 < points.Count);
             if (points[(int)ipo0].Elem == -1)
@@ -718,7 +718,7 @@ namespace IvyFEM
             return true;
         }
 
-        public static bool FlipEdge(uint itri0, uint ied0, IList<Point2D> points, IList<Tri2D> tris)
+        public static bool FlipEdge(uint itri0, uint ied0, IList<MeshPoint2D> points, IList<MeshTri2D> tris)
         {
             System.Diagnostics.Debug.Assert(itri0 < tris.Count);
             System.Diagnostics.Debug.Assert(ied0 < 3);
@@ -732,8 +732,8 @@ namespace IvyFEM
 
             //	std::cout << itri0 << "-" << ied0 << "    " << itri1 << "-" << ied1 << std::endl;
 
-            Tri2D old0 = new Tri2D(tris[(int)itri0]);
-            Tri2D old1 = new Tri2D(tris[(int)itri1]);
+            MeshTri2D old0 = new MeshTri2D(tris[(int)itri0]);
+            MeshTri2D old1 = new MeshTri2D(tris[(int)itri1]);
 
             uint no00 = ied0;
             uint no10 = NoELTriEdge[ied0][0];
@@ -756,7 +756,7 @@ namespace IvyFEM
             points[(int)old1.V[no01]].Dir = 2;
 
             {
-                Tri2D tri = tris[(int)itri0];
+                MeshTri2D tri = tris[(int)itri0];
                 tri.V[0] = old0.V[no10];
                 tri.V[1] = old1.V[no01];
                 tri.V[2] = old0.V[no00];
@@ -793,7 +793,7 @@ namespace IvyFEM
             }
 
             {
-                Tri2D tri = tris[(int)itri1];
+                MeshTri2D tri = tris[(int)itri1];
                 tri.V[0] = old1.V[no11];
                 tri.V[1] = old0.V[no00];
                 tri.V[2] = old1.V[no01];
@@ -836,7 +836,7 @@ namespace IvyFEM
         // tri[itri0].v[inotri1]==ipo1
         // を満たす
         public static bool FindEdge(uint ipo0, uint ipo1, out uint itri0, out uint inotri0, out uint inotri1,
-            IList<Point2D> points, IList<Tri2D> tris)
+            IList<MeshPoint2D> points, IList<MeshTri2D> tris)
         {
             itri0 = 0;
             inotri0 = 0;
@@ -927,7 +927,7 @@ namespace IvyFEM
 
         public static bool FindEdgePointAcrossEdge(uint ipo0, uint ipo1, 
             out uint itri0, out uint inotri0, out uint inotri1, out double ratio,
-            IList<Point2D> points, IList<Tri2D> tris)
+            IList<MeshPoint2D> points, IList<MeshTri2D> tris)
         {
             uint iIniTri = (uint)points[(int)ipo0].Elem;
             uint iIniNoTri = points[(int)ipo0].Dir;
@@ -1044,7 +1044,7 @@ namespace IvyFEM
             return false;
         }
 
-        public static void LaplacianSmoothing(IList<Point2D> points, IList<Tri2D> tris, IList<uint> isntMoves)
+        public static void LaplacianSmoothing(IList<MeshPoint2D> points, IList<MeshTri2D> tris, IList<uint> isntMoves)
         {
             for (uint ipt = 0; ipt < points.Count; ipt++)
             {   // 点周りの点を探索して調べる。
@@ -1110,7 +1110,7 @@ namespace IvyFEM
             }
         }
 
-        public static void LaplaceDelaunaySmoothing(IList<Point2D> points, IList<Tri2D> tris, IList<uint> isntMoves)
+        public static void LaplaceDelaunaySmoothing(IList<MeshPoint2D> points, IList<MeshTri2D> tris, IList<uint> isntMoves)
         {
             for (uint ipt = 0; ipt < points.Count; ipt++)
             {

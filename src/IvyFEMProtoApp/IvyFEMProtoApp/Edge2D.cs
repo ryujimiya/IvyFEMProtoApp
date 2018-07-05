@@ -9,18 +9,18 @@ namespace IvyFEM
 {
     class Edge2D
     {
-        public CurveType Type { get; private set; } = CurveType.CURVE_LINE;
+        public CurveType CurveType { get; private set; } = CurveType.CURVE_LINE;
         private double[] Color = new double[3];
 
         private bool IsLeftSide;
         private double Dist;
-        private IList<double> RelCoMeshs = new List<double>();
-        private double[] RelCoBeziers = new double[4];
+        private IList<double> RelCos = new List<double>();
         private uint SVId = 0;
         private uint EVId = 0;
         private Vector2 SPt;
         private Vector2 EPt;
         private BoundingBox2D BB = new BoundingBox2D();
+        private IList<Vector2> Cos = new List<Vector2>();
 
         public Edge2D()
         {
@@ -42,17 +42,13 @@ namespace IvyFEM
 
         public void Copy(Edge2D src)
         {
-            Type = src.Type;
+            CurveType = src.CurveType;
             IsLeftSide = src.IsLeftSide;
             Dist = src.Dist;
-            RelCoMeshs.Clear();
-            foreach (var relcoMesh in src.RelCoMeshs)
+            RelCos.Clear();
+            foreach (var relco in src.RelCos)
             {
-                RelCoMeshs.Add(relcoMesh);
-            }
-            for (int i = 0; i < 4; i++)
-            {
-                RelCoBeziers[i] = src.RelCoBeziers[i];
+                RelCos.Add(relco);
             }
             SVId = src.SVId;
             EVId = src.EVId;
@@ -63,6 +59,11 @@ namespace IvyFEM
             SPt = new Vector2(src.SPt.X, src.SPt.Y);
             EPt = new Vector2(src.EPt.X, src.EPt.Y);
             BB.Copy(src.BB);
+            Cos.Clear();
+            foreach (var co in src.Cos)
+            {
+                Cos.Add(co);
+            }
         }
 
         public string Dump()
@@ -71,19 +72,14 @@ namespace IvyFEM
             string CRLF = System.Environment.NewLine;
 
             ret += "■Edge2D" + CRLF;
-            ret += "Type = " + Type + CRLF;
+            ret += "Type = " + CurveType + CRLF;
             ret += "IsLeftSide = " + IsLeftSide + CRLF;
             ret += "Dist = " + Dist + CRLF;
-            ret += "RelCoMeshs" + CRLF;
-            for (int i = 0; i < RelCoMeshs.Count; i++)
+            ret += "RelCos" + CRLF;
+            for (int i = 0; i < RelCos.Count; i++)
             {
-                var relcoMesh = RelCoMeshs[i];
-                ret += "RelCoMeshs[" + i + "] = " + relcoMesh + CRLF;
-            }
-            ret += "RelCoBeziers" + CRLF;
-            for (int i = 0; i < 4; i++)
-            {
-                ret += "RelCoBeziers[" + i + "] = " + RelCoBeziers[i] + CRLF;
+                var relco = RelCos[i];
+                ret += "RelCo[" + i + "] = " + relco + CRLF;
             }
             ret += "SVId = " + SVId + CRLF;
             ret += "EVId = " + EVId + CRLF;
@@ -95,9 +91,90 @@ namespace IvyFEM
             ret += "SPt = (" + SPt.X + ", " + SPt.Y + ")" + CRLF;
             ret += "EPt = (" + EPt.X + ", " + EPt.Y + ")" + CRLF;
             ret += "BB" + CRLF;
+            ret += "Cos" + CRLF;
+            for (int i = 0; i < Cos.Count; i++)
+            {
+                var co = Cos[i];
+                ret += "Cos[" + i + "] = " + co + CRLF;
+            }
             ret += BB.Dump();
 
             return ret;
+        }
+
+        public void SetCurveLine()
+        {
+            CurveType = CurveType.CURVE_LINE;
+        }
+
+        public void SetCurveArc(bool isLeftSide, double dist)
+        {
+            CurveType = CurveType.CURVE_ARC;
+            Dist = dist;
+            IsLeftSide = isLeftSide;
+        }
+
+        public void SetCurvePolyline(IList<double> relCos)
+        {
+            CurveType = CurveType.CURVE_POLYLINE;
+            SetCurveRelPoint(relCos);
+        }
+
+        public void SetCurveBezier(double cx0, double cy0, double cx1, double cy1)
+        {
+            CurveType = CurveType.CURVE_BEZIER;
+            RelCos.Clear();
+            for (int i = 0; i < 4; i++)
+            {
+                RelCos.Add(0);
+            }
+            RelCos[0] = cx0;
+            RelCos[1] = cy0;
+            RelCos[2] = cx1;
+            RelCos[3] = cy1;
+            Vector2 v0 = EPt - SPt;
+            Vector2 v1 = new Vector2(-v0.Y, v0.X);
+            for (uint i = 0; i < 2; i++)
+            {
+                Vector2 pt0 = SPt + v0 * (float)RelCos[(int)(i * 2 + 0)] +
+                    v1 * (float)RelCos[(int)(i * 2 + 1)];
+                Cos.Add(pt0);
+            }
+        }
+
+        public void GetCurveArc(out bool isLeftSide, out double dist)
+        {
+            isLeftSide = IsLeftSide;
+            dist = Dist;
+        }
+
+        public IList<double> GetCurveRelPoint()
+        {
+            return RelCos;
+        }
+
+        public void SetCurveRelPoint(IList<double> relCo0)
+        {
+            RelCos = relCo0;
+            Vector2 h = EPt - SPt;
+            Vector2 v = new Vector2(-h.Y, h.X);
+            uint n = (uint)(RelCos.Count / 2);
+            int nCos = Cos.Count;
+            for (int i = nCos; i < n; i++)
+            {
+                Cos.Add(new Vector2());
+            }
+            for (uint i = 0; i < n; i++)
+            {
+                Vector2 p = SPt + h * (float)RelCos[(int)(i * 2 + 0)] +
+                    v * (float)RelCos[(int)(i * 2 + 1)];
+                Cos[(int)i] = p;
+            }
+        }
+
+        public IList<Vector2> GetCurvePoint()
+        {
+            return Cos;
         }
 
         public void SetVertexs(Vector2 sPt, Vector2 ePt)
@@ -105,6 +182,24 @@ namespace IvyFEM
             SPt = sPt;
             EPt = ePt;
             BB.IsntEmpty = false;
+
+            uint n = (uint)(RelCos.Count / 2);
+            int nCos = Cos.Count;
+            for (int i = nCos; i < n; i++)
+            {
+                Cos.Add(new Vector2());
+            }
+            if (n > 0)
+            {
+                Vector2 gh = EPt - SPt;
+                Vector2 gv = new Vector2(-gh.Y, gh.X);
+                for (uint i = 0; i < n; i++)
+                {
+                    Vector2 scPt = SPt + gh * (float)RelCos[(int)(i * 2 + 0)] +
+                        gv * (float)RelCos[(int)(i * 2 + 1)];
+                    Cos[(int)i] = scPt;
+                }
+            }
         }
 
         public Vector2 GetVertex(bool isRoot)
@@ -143,22 +238,22 @@ namespace IvyFEM
         {
             Vector2 sPt1 = e1.SPt;
             Vector2 ePt1 = e1.EPt;
-            if (Type == CurveType.CURVE_LINE && e1.Type == CurveType.CURVE_LINE)
+            if (CurveType == CurveType.CURVE_LINE && e1.CurveType == CurveType.CURVE_LINE)
             {
                 return CadUtils.GetDistanceLineSegLineSeg(SPt, EPt, sPt1, ePt1);
             }
-            else if (Type == CurveType.CURVE_LINE && e1.Type == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CURVE_LINE && e1.CurveType == CurveType.CURVE_ARC)
             {
                 Vector2 cPt1;
                 double radius1 = 0;
                 e1.GetCenterRadius(out cPt1, out radius1);
                 return CadUtils.GetDistanceLineSegArc(SPt, EPt, e1.SPt, e1.EPt, cPt1, radius1, e1.IsLeftSide);
             }
-            else if (Type == CurveType.CURVE_ARC && e1.Type == CurveType.CURVE_LINE)
+            else if (CurveType == CurveType.CURVE_ARC && e1.CurveType == CurveType.CURVE_LINE)
             {
                 return e1.Distance(this);
             }
-            else if (Type == CurveType.CURVE_ARC && e1.Type == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CURVE_ARC && e1.CurveType == CurveType.CURVE_ARC)
             {
                 Vector2 cPt0;
                 double radius0 = 0;
@@ -230,37 +325,14 @@ namespace IvyFEM
                 }
                 return minDist;
             }
-            else if (Type == CurveType.CURVE_LINE && e1.Type == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CURVE_LINE && e1.CurveType == CurveType.CURVE_POLYLINE)
             {
-                IList<double> relcomsh1 = e1.RelCoMeshs;
-                uint ndiv1 = ((uint)relcomsh1.Count) / 2 + 1;
-                Vector2 h1 = e1.EPt - e1.SPt;
-                Vector2 v1 = new Vector2(-h1.Y, h1.X);
+                uint ndiv1 = (uint)(e1.Cos.Count + 1);
                 double minDist = -1;
-
-                for (int idiv = 0; idiv < ndiv1; idiv++)
+                for (uint idiv = 0; idiv < ndiv1; idiv++)
                 {
-                    Vector2 pt0;
-                    if (idiv == 0)
-                    {
-                        pt0 = e1.SPt;
-                    }
-                    else
-                    {
-                        pt0 = e1.SPt + h1 * (float)relcomsh1[(idiv - 1) * 2 + 0] +
-                            v1 * (float)relcomsh1[(idiv - 1) * 2 + 1];
-                    }
-                    Vector2 pt1;
-                    if (idiv == ndiv1 - 1)
-                    {
-                        pt1 = e1.EPt;
-                    }
-                    else
-                    {
-                        pt1 = e1.SPt + h1 * (float)relcomsh1[idiv * 2 + 0] +
-                            v1 * (float)relcomsh1[idiv * 2 + 1];
-                    }
-
+                    Vector2 pt0 = (idiv == 0) ? e1.SPt : e1.Cos[(int)(idiv - 1)];
+                    Vector2 pt1 = (idiv == ndiv1 - 1) ? e1.EPt : e1.Cos[(int)(idiv + 0)];
                     double dist = CadUtils.GetDistanceLineSegLineSeg(SPt, EPt, pt0, pt1);
                     if (dist < -0.5)
                     {
@@ -273,49 +345,26 @@ namespace IvyFEM
                 }
                 return minDist;
             }
-            else if (Type == CurveType.CURVE_POLYLINE && e1.Type == CurveType.CURVE_LINE)
+            else if (CurveType == CurveType.CURVE_POLYLINE && e1.CurveType == CurveType.CURVE_LINE)
             {
                 return e1.Distance(this);
             }
-            else if (Type == CurveType.CURVE_POLYLINE && e1.Type == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CURVE_POLYLINE && e1.CurveType == CurveType.CURVE_ARC)
             {
                 return e1.Distance(this);
             }
-            else if (Type == CurveType.CURVE_ARC && e1.Type == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CURVE_ARC && e1.CurveType == CurveType.CURVE_POLYLINE)
             {
-                Vector2 cPt0 = new Vector2(); // dummy
-                double radius0 = 0;
+                Vector2 cPt0;
+                double radius0;
                 GetCenterRadius(out cPt0, out radius0);
 
-                Vector2 h1 = e1.EPt - e1.SPt;
-                Vector2 v1 = new Vector2(-h1.Y, h1.X);
-
-                IList<double> relcomsh1 = e1.RelCoMeshs;
-                uint ndiv1 = ((uint)relcomsh1.Count) / 2 + 1;
+                uint ndiv1 = (uint)(e1.Cos.Count + 1);
                 double minDist = -1;
-                for (int idiv = 0; idiv < ndiv1; idiv++)
+                for (uint idiv = 0; idiv < ndiv1; idiv++)
                 {
-                    Vector2 pt0;
-                    if (idiv == 0)
-                    {
-                        pt0 = e1.SPt;
-                    }
-                    else
-                    {
-                        pt0 = e1.SPt + h1 * (float)relcomsh1[(idiv - 1) * 2 + 0] +
-                            v1 * (float)relcomsh1[(idiv - 1) * 2 + 1];
-                    }
-                    Vector2 pt1;
-                    if (idiv == ndiv1 - 1)
-                    {
-                        pt1 = e1.EPt;
-                    }
-                    else
-                    {
-                        pt1 = e1.SPt + h1 * (float)relcomsh1[idiv * 2 + 0] +
-                            v1 * (float)relcomsh1[idiv * 2 + 1];
-                    }
-
+                    Vector2 pt0 = (idiv == 0) ? e1.SPt : e1.Cos[(int)(idiv - 1)];
+                    Vector2 pt1 = (idiv == ndiv1 - 1) ? e1.EPt : e1.Cos[(int)(idiv + 0)];
                     double dist = CadUtils.GetDistanceLineSegArc(pt0, pt1, SPt, EPt, cPt0, radius0, IsLeftSide);
                     if (dist < -0.5)
                     {
@@ -328,64 +377,19 @@ namespace IvyFEM
                 }
                 return minDist;
             }
-            else if (Type == CurveType.CURVE_POLYLINE && e1.Type == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CURVE_POLYLINE && e1.CurveType == CurveType.CURVE_POLYLINE)
             {
-                Vector2 h0 = EPt - SPt;
-                Vector2 v0 = new Vector2(-h0.Y, h0.X);
-                Vector2 h1 = e1.EPt - e1.SPt;
-                Vector2 v1 = new Vector2(-h1.Y, h1.X);
-
-                IList<double> relcomsh0 = RelCoMeshs;
-                uint ndiv0 = ((uint)relcomsh0.Count) / 2 + 1;
-                IList<double> relcomsh1 = e1.RelCoMeshs;
-                uint ndiv1 = ((uint)relcomsh1.Count) / 2 + 1;
-
+                uint ndiv0 = (uint)(Cos.Count + 1);
+                uint ndiv1 = (uint)(e1.Cos.Count + 1);
                 double minDist = -1;
-
-                for (int idiv = 0; idiv < ndiv0; idiv++)
+                for (uint idiv = 0; idiv < ndiv0; idiv++)
                 {
-                    Vector2 iPt0;
-                    if (idiv == 0)
+                    Vector2 iPt0 = (idiv == 0) ? SPt : Cos[(int)(idiv - 1)];
+                    Vector2 iPt1 = (idiv == ndiv0 - 1) ? EPt : Cos[(int)(idiv + 0)];
+                    for (uint jdiv = 0; jdiv < ndiv1; jdiv++)
                     {
-                        iPt0 = SPt;
-                    }
-                    else
-                    {
-                        iPt0 = SPt + h0 * (float)RelCoMeshs[(idiv - 1) * 2 + 0] +
-                            v0 * (float)RelCoMeshs[(idiv - 1) * 2 + 1];
-                    }
-                    Vector2 iPt1;
-                    if (idiv == ndiv0 - 1)
-                    {
-                        iPt1 = EPt;
-                    }
-                    else
-                    {
-                        iPt1 = SPt + h0 * (float)RelCoMeshs[idiv * 2 + 0] +
-                            v0 * (float)RelCoMeshs[idiv * 2 + 1];
-                    }
-                    for (int jdiv = 0; jdiv < ndiv1; jdiv++)
-                    {
-                        Vector2 jPt0;
-                        if (jdiv == 0)
-                        {
-                            jPt0 = e1.SPt;
-                        }
-                        else
-                        {
-                            jPt0 = e1.SPt + h1 * (float)relcomsh1[(jdiv - 1) * 2 + 0] +
-                                v1 * (float)relcomsh1[(jdiv - 1) * 2 + 1];
-                        }
-                        Vector2 jPt1;
-                        if (jdiv == ndiv1 - 1)
-                        {
-                            jPt1 = e1.EPt;
-                        }
-                        else
-                        {
-                            jPt1 = e1.SPt + h1 * (float)relcomsh1[jdiv * 2 + 0] +
-                                v1 * (float)relcomsh1[jdiv * 2 + 1];
-                        }
+                        Vector2 jPt0 = (jdiv == 0) ? e1.SPt : e1.Cos[(int)(jdiv - 1)];
+                        Vector2 jPt1 = (jdiv == ndiv1 - 1) ? e1.EPt : e1.Cos[(int)(jdiv + 0)];
                         double dist = CadUtils.GetDistanceLineSegLineSeg(iPt0, iPt1, jPt0, jPt1);
                         if (dist < -0.5)
                         {
@@ -424,11 +428,11 @@ namespace IvyFEM
             minY = (SPt.Y < EPt.Y) ? SPt.Y : EPt.Y;
             maxY = (SPt.Y > EPt.Y) ? SPt.Y : EPt.Y;
 
-            if (Type ==CurveType.CURVE_LINE)
+            if (CurveType ==CurveType.CURVE_LINE)
             {
                 return;
             }
-            else if (Type == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CURVE_ARC)
             {
                 Vector2 cPt;
                 double radius;
@@ -462,29 +466,19 @@ namespace IvyFEM
                     minY = (tmpV.Y < minY) ? tmpV.Y : minY;
                 }
             }
-            else if (Type == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CURVE_POLYLINE || CurveType == CurveType.CURVE_BEZIER)
             {
-                uint n = (uint)(RelCoMeshs.Count / 2);
-                Vector2 v0 = EPt - SPt;
-                Vector2 v1 = new Vector2(-v0.Y, v0.X);
+                uint n = (uint)Cos.Count;
+                if (CurveType == CurveType.CURVE_BEZIER)
+                {
+
+                    System.Diagnostics.Debug.Assert(n == 2);
+                }
+
                 for (int i = 0; i < n; i++)
                 {
-                    Vector2 pt0 = SPt + v0 * (float)RelCoMeshs[i * 2 + 0] +
-                        v1 * (float)RelCoMeshs[i * 2 + 1];
-                    minX = (pt0.X < minX) ? pt0.X : minX;
-                    maxX = (pt0.X > maxX) ? pt0.X : maxX;
-                    minY = (pt0.Y < minY) ? pt0.Y : minY;
-                    maxY = (pt0.Y > maxY) ? pt0.Y : maxY;
-                }
-            }
-            else if (Type == CurveType.CURVE_BEZIER)
-            {
-                Vector2 v0 = EPt - SPt;
-                Vector2 v1 = new Vector2(-v0.Y, v0.X);
-                for (int i = 0; i < 2; i++)
-                {
-                    Vector2 pt0 = SPt + v0 * (float)RelCoBeziers[i * 2 + 0] +
-                        v1 * (float)RelCoBeziers[i * 2 + 1];
+                    Vector2 pt0 = Cos[i];
+
                     minX = (pt0.X < minX) ? pt0.X : minX;
                     maxX = (pt0.X > maxX) ? pt0.X : maxX;
                     minY = (pt0.Y < minY) ? pt0.Y : minY;
@@ -500,60 +494,21 @@ namespace IvyFEM
 
         public bool IsCrossEdgeSelf()
         {
-            if (Type == CurveType.CURVE_LINE || Type == CurveType.CURVE_ARC)
+            if (CurveType == CurveType.CURVE_LINE || CurveType == CurveType.CURVE_ARC)
             {
                 return false;
             }
-            if (Type == CurveType.CURVE_POLYLINE)
+            if (CurveType == CurveType.CURVE_POLYLINE)
             {
-                IList<double> relcomsh = RelCoMeshs;
-                uint ndiv = (uint)(relcomsh.Count / 2 + 1);
-                Vector2 h0 = EPt - SPt;
-                Vector2 v0 = new Vector2(-h0.Y, h0.X);
+                uint ndiv = (uint)(Cos.Count + 1);
                 for (uint idiv = 0; idiv < ndiv; idiv++)
                 {
-                    Vector2 iPt0;
-                    if (idiv == 0)
-                    {
-                        iPt0 = SPt;
-                    }
-                    else
-                    {
-                        iPt0 = SPt + h0 * (float)relcomsh[(int)((idiv - 1) * 2 + 0)] +
-                            v0 * (float)relcomsh[(int)((idiv - 1) * 2 + 1)];
-                    }
-                    Vector2 iPt1;
-                    if (idiv == ndiv - 1)
-                    {
-                        iPt1 = EPt;
-                    }
-                    else
-                    {
-                        iPt1 = SPt + h0 * (float)relcomsh[(int)(idiv * 2 + 0)] +
-                            v0 * (float)relcomsh[(int)(idiv * 2 + 1)];
-                    }
+                    Vector2 iPt0 = (idiv == 0) ? SPt : Cos[(int)(idiv - 1)];
+                    Vector2 iPt1 = (idiv == ndiv - 1) ? EPt : Cos[(int)(idiv + 0)];
                     for (uint jdiv = idiv + 2; jdiv < ndiv; jdiv++)
                     {
-                        Vector2 jPt0;
-                        if (jdiv == 0)
-                        {
-                            jPt0 = SPt;
-                        }
-                        else
-                        {
-                            jPt0 = SPt + h0 * (float)relcomsh[(int)((jdiv - 1) * 2 + 0)] +
-                                v0 * (float)relcomsh[(int)((jdiv - 1) * 2 + 1)];
-                        }
-                        Vector2 jPt1;
-                        if (jdiv == ndiv - 1)
-                        {
-                            jPt1 = EPt;
-                        }
-                        else
-                        {
-                            jPt1 = SPt + h0 * (float)relcomsh[(int)(jdiv * 2 + 0)] +
-                                v0 * (float)relcomsh[(int)(jdiv * 2 + 1)];
-                        }
+                        Vector2 jPt0 = (jdiv == 0) ? SPt : Cos[(int)(jdiv - 1)];
+                        Vector2 jPt1 = (jdiv == ndiv - 1) ? EPt : Cos[(int)(jdiv + 0)];
                         if (CadUtils.IsCrossLineSegLineSeg(iPt0, iPt1, jPt0, jPt1))
                         {
                             return true;
@@ -562,7 +517,7 @@ namespace IvyFEM
                 }
                 return false;
             }
-            else if (Type == CurveType.CURVE_BEZIER)
+            else if (CurveType == CurveType.CURVE_BEZIER)
             { 
                 // TODO
                 return false;
@@ -578,11 +533,11 @@ namespace IvyFEM
         {
             Vector2 sPt1 = e1.SPt;
             Vector2 ePt1 = e1.EPt;
-            if (Type == CurveType.CURVE_LINE && e1.Type == CurveType.CURVE_LINE)
+            if (CurveType == CurveType.CURVE_LINE && e1.CurveType == CurveType.CURVE_LINE)
             {
                 return CadUtils.IsCrossLineSegLineSeg(SPt, EPt, sPt1, ePt1);
             }
-            else if (Type == CurveType.CURVE_LINE && e1.Type == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CURVE_LINE && e1.CurveType == CurveType.CURVE_ARC)
             {
                 Vector2 cPt1;
                 double radius1;
@@ -603,11 +558,11 @@ namespace IvyFEM
                 }
                 return false;
             }
-            else if (Type == CurveType.CURVE_ARC && e1.Type == CurveType.CURVE_LINE)
+            else if (CurveType == CurveType.CURVE_ARC && e1.CurveType == CurveType.CURVE_LINE)
             {
                 return e1.IsCrossEdge(this);
             }
-            else if (Type == CurveType.CURVE_ARC && e1.Type == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CURVE_ARC && e1.CurveType == CurveType.CURVE_ARC)
             {
                 Vector2 cPt0;
                 double radius0;
@@ -632,33 +587,13 @@ namespace IvyFEM
                 }
                 return false;
             }
-            else if (Type == CurveType.CURVE_LINE && e1.Type == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CURVE_LINE && e1.CurveType == CurveType.CURVE_POLYLINE)
             {
-                IList<double> relcomsh1 = e1.RelCoMeshs;
-                uint ndiv1 = (uint)(relcomsh1.Count / 2 + 1);
-                Vector2 h1 = e1.EPt - e1.SPt;
-                Vector2 v1 = new Vector2(-h1.Y, h1.X);
+                uint ndiv1 = (uint)(e1.Cos.Count + 1);
                 for (uint idiv = 0; idiv < ndiv1; idiv++)
                 {
-                    Vector2 pt0;
-                    if (idiv == 0)
-                    {
-                        pt0 = e1.SPt;
-                    }
-                    else
-                    {
-                        pt0 = e1.SPt + h1 * (float)relcomsh1[(int)((idiv - 1) * 2 + 0)] +
-                            v1 * (float)relcomsh1[(int)((idiv - 1) * 2 + 1)]; }
-                    Vector2 pt1;
-                    if (idiv == ndiv1 - 1)
-                    {
-                        pt1 = e1.EPt;
-                    }
-                    else
-                    {
-                        pt1 = e1.SPt + h1 * (float)relcomsh1[(int)(idiv * 2 + 0)] +
-                            v1 * (float)relcomsh1[(int)(idiv * 2 + 1)];
-                    }
+                    Vector2 pt0 = (idiv == 0) ? e1.SPt : e1.Cos[(int)(idiv - 1)];
+                    Vector2 pt1 = (idiv == ndiv1 - 1) ? e1.EPt : e1.Cos[(int)(idiv + 0)];
                     if (CadUtils.IsCrossLineSegLineSeg(SPt, EPt, pt0, pt1))
                     {
                         return true;
@@ -666,46 +601,25 @@ namespace IvyFEM
                 }
                 return false;
             }
-            else if (Type == CurveType.CURVE_POLYLINE && e1.Type == CurveType.CURVE_LINE)
+            else if (CurveType == CurveType.CURVE_POLYLINE && e1.CurveType == CurveType.CURVE_LINE)
             {
                 return e1.IsCrossEdge(this);
             }
-            else if (Type == CurveType.CURVE_POLYLINE && e1.Type == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CURVE_POLYLINE && e1.CurveType == CurveType.CURVE_ARC)
             {
                 return e1.IsCrossEdge(this);
             }
-            else if (Type == CurveType.CURVE_ARC && e1.Type == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CURVE_ARC && e1.CurveType == CurveType.CURVE_POLYLINE)
             {
                 Vector2 cPt0;
                 double radius0;
                 GetCenterRadius(out cPt0, out radius0);
 
-                Vector2 h1 = e1.EPt - e1.SPt;
-                Vector2 v1 = new Vector2(-h1.Y, h1.X);
-                IList<double> relcomsh1 = e1.RelCoMeshs;
-                uint ndiv1 = (uint)(relcomsh1.Count / 2 + 1);
+                uint ndiv1 = (uint)(e1.Cos.Count + 1);
                 for (uint idiv = 0; idiv < ndiv1; idiv++)
                 {
-                    Vector2 pt0;
-                    if (idiv == 0)
-                    {
-                        pt0 = e1.SPt;
-                    }
-                    else
-                    {
-                        pt0 = e1.SPt + h1 * (float)relcomsh1[(int)((idiv - 1) * 2 + 0)] +
-                            v1 * (float)relcomsh1[(int)((idiv - 1) * 2 + 1)];
-                    }
-                    Vector2 pt1;
-                    if (idiv == ndiv1 - 1)
-                    {
-                        pt1 = e1.EPt;
-                    }
-                    else
-                    {
-                        pt1 = e1.SPt + h1 * (float)relcomsh1[(int)(idiv * 2 + 0)] +
-                            v1 * (float)relcomsh1[(int)(idiv * 2 + 1)];
-                    }
+                    Vector2 pt0 = (idiv == 0) ? e1.SPt : e1.Cos[(int)(idiv - 1)];
+                    Vector2 pt1 = (idiv == ndiv1 - 1) ? e1.EPt : e1.Cos[(int)(idiv + 0)];
                     double t0;
                     double t1;
                     if (!CadUtils.IsCrossLineCircle(cPt0, radius0, pt0, pt1, out t0, out t1))
@@ -723,61 +637,19 @@ namespace IvyFEM
                 }
                 return false;
             }
-            else if (Type == CurveType.CURVE_POLYLINE && e1.Type == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CURVE_POLYLINE && e1.CurveType == CurveType.CURVE_POLYLINE)
             {
-                Vector2 h0 = EPt - SPt;
-                Vector2 v0 = new Vector2(-h0.Y, h0.X);
-                Vector2 h1 = e1.EPt - e1.SPt;
-                Vector2 v1 = new Vector2(-h1.Y, h1.X);
+                uint ndiv0 = (uint)(Cos.Count + 1);
+                uint ndiv1 = (uint)(e1.Cos.Count + 1);
 
-                IList<double> relcomsh0 = RelCoMeshs;
-                uint ndiv0 = (uint)(relcomsh0.Count / 2 + 1);
-                IList<double> relcomsh1 = e1.RelCoMeshs;
-                uint ndiv1 = (uint)(relcomsh1.Count / 2 + 1);
                 for (uint idiv = 0; idiv < ndiv0; idiv++)
                 {
-                    Vector2 iPt0;
-                    if (idiv == 0)
-                    {
-                        iPt0 = SPt;
-                    }
-                    else
-                    {
-                        iPt0 = SPt + h0 * (float)relcomsh0[(int)((idiv - 1) * 2 + 0)] +
-                            v0 * (float)relcomsh0[(int)((idiv - 1) * 2 + 1)];
-                    }
-                    Vector2 iPt1;
-                    if (idiv == ndiv0 - 1)
-                    {
-                        iPt1 = EPt;
-                    }
-                    else
-                    {
-                        iPt1 = SPt + h0 * (float)relcomsh0[(int)(idiv * 2 + 0)] +
-                            v0 * (float)relcomsh0[(int)(idiv * 2 + 1)];
-                    }
+                    Vector2 iPt0 = (idiv == 0) ? SPt : Cos[(int)(idiv - 1)];
+                    Vector2 iPt1 = (idiv == ndiv0 - 1) ? EPt : Cos[(int)(idiv + 0)];
                     for (uint jdiv = 0; jdiv < ndiv1; jdiv++)
                     {
-                        Vector2 jPt0;
-                        if (jdiv == 0)
-                        {
-                            jPt0 = e1.SPt;
-                        }
-                        else
-                        {
-                            jPt0 = e1.SPt + h1 * (float)relcomsh1[(int)((jdiv - 1) * 2 + 0)] +
-                                v1 * (float)relcomsh1[(int)((jdiv - 1) * 2 + 1)];
-                        }
-                        Vector2 jPt1;
-                        if (jdiv == ndiv1 - 1)
-                        {
-                            jPt1 = e1.EPt;
-                        }
-                        else
-                        {
-                            jPt1 = e1.SPt + h1 * (float)relcomsh1[(int)(jdiv * 2 + 0)] +
-                                v1 * (float)relcomsh1[(int)(jdiv * 2 + 1)];
-                        }
+                        Vector2 jPt0 = (jdiv == 0) ? e1.SPt : e1.Cos[(int)(idiv - 1)];
+                        Vector2 jPt1 = (jdiv == ndiv1 - 1) ? e1.EPt : e1.Cos[(int)(idiv + 0)];
                         if (CadUtils.IsCrossLineSegLineSeg(iPt0, iPt1, jPt0, jPt1))
                         {
                             return true;
@@ -810,11 +682,11 @@ namespace IvyFEM
             {
                 System.Diagnostics.Debug.Assert(CadUtils.SquareLength(EPt, ePt1) < 1.0e-20);
             }
-            if (Type == CurveType.CURVE_LINE && e1.Type == CurveType.CURVE_LINE)
+            if (CurveType == CurveType.CURVE_LINE && e1.CurveType == CurveType.CURVE_LINE)
             {
                 return false;
             }
-            else if (Type == CurveType.CURVE_LINE && e1.Type == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CURVE_LINE && e1.CurveType == CurveType.CURVE_ARC)
             {
                 Vector2 cPt1;
                 double radius1;
@@ -844,11 +716,11 @@ namespace IvyFEM
                 }
                 return false;
             }
-            else if (Type == CurveType.CURVE_ARC && e1.Type == CurveType.CURVE_LINE)
+            else if (CurveType == CurveType.CURVE_ARC && e1.CurveType == CurveType.CURVE_LINE)
             {
                 return e1.IsCrossEdgeShareOnePoint(this, isShareS1, isShareS0);
             }
-            else if (Type == CurveType.CURVE_ARC && e1.Type == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CURVE_ARC && e1.CurveType == CurveType.CURVE_ARC)
             {
                 Vector2 cPt0;
                 double radius0;
@@ -889,36 +761,15 @@ namespace IvyFEM
                 }
                 return false;
             }
-            else if (Type == CurveType.CURVE_LINE && e1.Type == CurveType.CURVE_POLYLINE)
-            { 
-                IList<double> relcomsh1 = e1.RelCoMeshs;
-                uint ndiv1 = (uint)(relcomsh1.Count / 2 + 1);
-                Vector2 v0 = e1.EPt - e1.SPt;
-                Vector2 v1 = new Vector2(-v0.Y, v0.X);
+            else if (CurveType == CurveType.CURVE_LINE && e1.CurveType == CurveType.CURVE_POLYLINE)
+            {
+                uint ndiv1 = (uint)(e1.Cos.Count + 1);
                 uint iSDiv = (isShareS1) ? 1u : 0;
                 uint iEDiv = (isShareS1) ? ndiv1 : ndiv1 - 1;
                 for (uint idiv = iSDiv; idiv < iEDiv; idiv++)
                 {
-                    Vector2 pt0;
-                    if (idiv == 0)
-                    {
-                        pt0 = e1.SPt;
-                    }
-                    else
-                    {
-                        pt0 = e1.SPt + v0 * (float)relcomsh1[(int)((idiv - 1) * 2 + 0)] +
-                            v1 * (float)relcomsh1[(int)((idiv - 1) * 2 + 1)];
-                    }
-                    Vector2 pt1;
-                    if (idiv == ndiv1 - 1)
-                    {
-                        pt1 = e1.EPt;
-                    }
-                    else
-                    {
-                        pt1 = e1.SPt + v0 * (float)relcomsh1[(int)(idiv * 2 + 0)] + 
-                            v1 * (float)relcomsh1[(int)(idiv * 2 + 1)];
-                    }
+                    Vector2 pt0 = (idiv == 0) ? e1.SPt : e1.Cos[(int)(idiv - 1)];
+                    Vector2 pt1 = (idiv == ndiv1 - 1) ? e1.EPt : e1.Cos[(int)(idiv + 0)];
                     if (CadUtils.IsCrossLineSegLineSeg(SPt, EPt, pt0, pt1))
                     {
                         return true;
@@ -926,45 +777,23 @@ namespace IvyFEM
                 }
                 return false;
             }
-            else if (Type == CurveType.CURVE_POLYLINE && e1.Type == CurveType.CURVE_LINE)
+            else if (CurveType == CurveType.CURVE_POLYLINE && e1.CurveType == CurveType.CURVE_LINE)
             {
                 return e1.IsCrossEdgeShareOnePoint(this, isShareS1, isShareS0);
             }
-            else if (Type == CurveType.CURVE_ARC && e1.Type == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CURVE_ARC && e1.CurveType == CurveType.CURVE_POLYLINE)
             {
                 Vector2 cPt0;
                 double radius0;
                 GetCenterRadius(out cPt0, out radius0);
 
-                Vector2 h1 = e1.EPt - e1.SPt;
-                Vector2 v1 = new Vector2(-h1.Y, h1.X);
-
-                IList<double> relcomsh1 = e1.RelCoMeshs;
-                uint ndiv1 = (uint)(relcomsh1.Count / 2 + 1);
+                uint ndiv1 = (uint)(e1.Cos.Count + 1);
                 uint iSDiv = (isShareS1) ? 1u : 0;
-                uint iEDiv = (isShareS1) ? ndiv1 : ndiv1 - 1;
-                for (uint idiv = iSDiv; idiv < iEDiv; idiv++)
+                uint idiv_e = (isShareS1) ? ndiv1 : ndiv1 - 1;
+                for (uint idiv = iSDiv; idiv < idiv_e; idiv++)
                 {
-                    Vector2 pt0;
-                    if (idiv == 0)
-                    {
-                        pt0 = e1.SPt;
-                    }
-                    else
-                    {
-                        pt0 = e1.SPt + h1 * (float)relcomsh1[(int)((idiv - 1) * 2 + 0)] +
-                            v1 * (float)relcomsh1[(int)((idiv - 1) * 2 + 1)];
-                    }
-                    Vector2 pt1;
-                    if (idiv == ndiv1 - 1)
-                    {
-                        pt1 = e1.EPt;
-                    }
-                    else
-                    {
-                        pt1 = e1.SPt + h1 * (float)relcomsh1[(int)(idiv * 2 + 0)] +
-                            v1 * (float)relcomsh1[(int)(idiv * 2 + 1)];
-                    }
+                    Vector2 pt0 = (idiv == 0) ? e1.SPt : e1.Cos[(int)(idiv - 1)];
+                    Vector2 pt1 = (idiv == ndiv1 - 1) ? e1.EPt : e1.Cos[(int)(idiv + 0)];
                     double t0;
                     double t1;
                     if (!CadUtils.IsCrossLineCircle(cPt0, radius0, pt0, pt1, out t0, out t1))
@@ -986,23 +815,21 @@ namespace IvyFEM
                     if (isShareS1)
                     {
                         pt0 = e1.SPt;
-                        pt1 = e1.SPt + h1 * (float)relcomsh1[0] + v1 * (float)relcomsh1[1];
+                        pt1 = e1.Cos[0]; 
                     }
                     else
                     {
                         pt1 = e1.EPt;
-                        pt0 = e1.SPt + h1 * (float)relcomsh1[(int)(ndiv1 * 2 - 4)] +
-                            v1 * (float)relcomsh1[(int)(ndiv1 * 2 - 3)];
+                        pt0 = e1.Cos[e1.Cos.Count - 1];
                     }
-
-                    double t0;
-                    double t1;
+                    double t0, t1;
                     if (!CadUtils.IsCrossLineCircle(cPt0, radius0, pt0, pt1, out t0, out t1))
                     {
                         return false;
                     }
                     Vector2 r0 = pt0 + (pt1 - pt0) * (float)t0;
                     Vector2 r1 = pt0 + (pt1 - pt0) * (float)t1;
+                    // この後t0,t1は共有点との距離計算に使われる
                     if (!isShareS1)
                     {
                         t0 = 1 - t0;
@@ -1021,70 +848,29 @@ namespace IvyFEM
                 }
                 return false;
             }
-            else if (Type == CurveType.CURVE_POLYLINE && e1.Type == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CURVE_POLYLINE && e1.CurveType == CurveType.CURVE_ARC)
             {
                 return e1.IsCrossEdgeShareOnePoint(this, isShareS1, isShareS0);
             }
-            else if (Type == CurveType.CURVE_POLYLINE && e1.Type == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CURVE_POLYLINE && e1.CurveType == CurveType.CURVE_POLYLINE)
             {
-                Vector2 h0 = EPt - SPt;
-                Vector2 v0 = new Vector2(-h0.Y, h0.X);
-                Vector2 h1 = e1.EPt - e1.SPt;
-                Vector2 v1 = new Vector2(-h1.Y, h1.X);
-
-                IList<double> relcomsh0 = RelCoMeshs;
-                uint ndiv0 = (uint)(relcomsh0.Count / 2 + 1);
-                IList<double> relcomsh1 = e1.RelCoMeshs;
-                uint ndiv1 = (uint)(relcomsh1.Count / 2 + 1);
+                uint ndiv0 = (uint)(Cos.Count + 1);
+                uint ndiv1 = (uint)(e1.Cos.Count + 1);
                 uint iExcDiv0 = (isShareS0) ? 0 : ndiv0 - 1;
                 uint iExcDiv1 = (isShareS1) ? 0 : ndiv1 - 1;
+
                 for (uint idiv = 0; idiv < ndiv0; idiv++)
                 {
-                    Vector2 iPt0;
-                    if (idiv == 0)
-                    {
-                        iPt0 = SPt;
-                    }
-                    else
-                    {
-                        iPt0 = SPt + h0 * (float)relcomsh0[(int)((idiv - 1) * 2 + 0)] +
-                            v0 * (float)relcomsh0[(int)((idiv - 1) * 2 + 1)]; }
-                    Vector2 iPt1;
-                    if (idiv == ndiv0 - 1)
-                    {
-                        iPt1 = EPt;
-                    }
-                    else
-                    {
-                        iPt1 = SPt + h0 * (float)relcomsh0[(int)(idiv * 2 + 0)] +
-                            v0 * (float)relcomsh0[(int)(idiv * 2 + 1)];
-                    }
+                    Vector2 iPt0 = (idiv == 0) ? SPt : Cos[(int)(idiv - 1)];
+                    Vector2 iPt1 = (idiv == ndiv0 - 1) ? EPt : Cos[(int)(idiv + 0)];
                     for (uint jdiv = 0; jdiv < ndiv1; jdiv++)
                     {
                         if (idiv == iExcDiv0 && jdiv == iExcDiv1)
                         {
                             continue;
                         }
-                        Vector2 jPt0;
-                        if (jdiv == 0)
-                        {
-                            jPt0 = e1.SPt;
-                        }
-                        else
-                        {
-                            jPt0 = e1.SPt + h1 * (float)relcomsh1[(int)((jdiv - 1) * 2 + 0)] +
-                                v1 * (float)relcomsh1[(int)((jdiv - 1) * 2 + 1)];
-                        }
-                        Vector2 jPt1;
-                        if (jdiv == ndiv1 - 1)
-                        {
-                            jPt1 = e1.EPt;
-                        }
-                        else
-                        {
-                            jPt1 = e1.SPt + h1 * (float)relcomsh1[(int)(jdiv * 2 + 0)] +
-                                v1 * (float)relcomsh1[(int)(jdiv * 2 + 1)];
-                        }
+                        Vector2 jPt0 = (jdiv == 0) ? e1.SPt : e1.Cos[(int)(jdiv - 1)];
+                        Vector2 jPt1 = (jdiv == ndiv1 - 1) ? e1.EPt : e1.Cos[(int)(jdiv + 0)];
                         if (CadUtils.IsCrossLineSegLineSeg(iPt0, iPt1, jPt0, jPt1))
                         {
                             return true;
@@ -1093,7 +879,7 @@ namespace IvyFEM
                 }
                 return false;
             }
-            else if (Type == CurveType.CURVE_BEZIER || e1.Type == CurveType.CURVE_BEZIER)
+            else if (CurveType == CurveType.CURVE_BEZIER || e1.CurveType == CurveType.CURVE_BEZIER)
             {
                 return false;
             }
@@ -1106,32 +892,30 @@ namespace IvyFEM
 
         public bool IsCrossEdgeShareBothPoints(Edge2D e1, bool isShareS0S1)
         {
-            Vector2 sPt1 = e1.SPt;
-            Vector2 ePt1 = e1.EPt;
             if (isShareS0S1)
             {
-                System.Diagnostics.Debug.Assert(CadUtils.SquareLength(SPt, sPt1) < 1.0e-20 &&
-                    CadUtils.SquareLength(EPt, ePt1) < 1.0e-20);
+                System.Diagnostics.Debug.Assert(CadUtils.SquareLength(SPt, e1.SPt) < 1.0e-20 &&
+                    CadUtils.SquareLength(EPt, e1.EPt) < 1.0e-20);
             }
             else
             {
-                System.Diagnostics.Debug.Assert(CadUtils.SquareLength(SPt, ePt1) < 1.0e-20 &&
-                    CadUtils.SquareLength(EPt, sPt1) < 1.0e-20);
+                System.Diagnostics.Debug.Assert(CadUtils.SquareLength(SPt, e1.EPt) < 1.0e-20 &&
+                    CadUtils.SquareLength(EPt, e1.SPt) < 1.0e-20);
             }
 
-            if (Type == CurveType.CURVE_LINE && e1.Type == CurveType.CURVE_LINE)
+            if (CurveType == CurveType.CURVE_LINE && e1.CurveType == CurveType.CURVE_LINE)
             {
                 return true;
             }
-            else if (Type == CurveType.CURVE_LINE && e1.Type == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CURVE_LINE && e1.CurveType == CurveType.CURVE_ARC)
             {
                 return false;
             }
-            else if (Type == CurveType.CURVE_ARC && e1.Type == CurveType.CURVE_LINE)
+            else if (CurveType == CurveType.CURVE_ARC && e1.CurveType == CurveType.CURVE_LINE)
             {
                 return e1.IsCrossEdgeShareBothPoints(this, isShareS0S1);
             }
-            else if (Type == CurveType.CURVE_ARC && e1.Type == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CURVE_ARC && e1.CurveType == CurveType.CURVE_ARC)
             {
                 Vector2 cPt0;
                 double radius0;
@@ -1147,34 +931,13 @@ namespace IvyFEM
                 }
                 return false;
             }
-            else if (Type == CurveType.CURVE_LINE && e1.Type == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CURVE_LINE && e1.CurveType == CurveType.CURVE_POLYLINE)
             {
-                IList<double> relcomsh1 = e1.RelCoMeshs;
-                uint ndiv1 = (uint)(relcomsh1.Count / 2 + 1);
-                Vector2 v0 = e1.EPt - e1.SPt;
-                Vector2 v1 = new Vector2(-v0.Y, v0.X);
+                uint ndiv1 = (uint)(e1.Cos.Count + 1);
                 for (uint idiv = 1; idiv < ndiv1 - 1; idiv++)
                 {
-                    Vector2 pt0;
-                    if (idiv == 0)
-                    {
-                        pt0 = e1.SPt;
-                    }
-                    else
-                    {
-                        pt0 = e1.SPt + v0 * (float)relcomsh1[(int)((idiv - 1) * 2 + 0)] +
-                            v1 * (float)relcomsh1[(int)((idiv - 1) * 2 + 1)];
-                    }
-                    Vector2 pt1;
-                    if (idiv == ndiv1 - 1)
-                    {
-                        pt1 = e1.EPt;
-                    }
-                    else
-                    {
-                        pt1 = e1.SPt + v0 * (float)relcomsh1[(int)(idiv * 2 + 0)] + 
-                            v1 * (float)relcomsh1[(int)(idiv * 2 + 1)];
-                    }
+                    Vector2 pt0 = (idiv == 0) ? e1.SPt : e1.Cos[(int)(idiv - 1)];
+                    Vector2 pt1 = (idiv == ndiv1 - 1) ? e1.EPt : e1.Cos[(int)(idiv + 0)];
                     if (CadUtils.IsCrossLineSegLineSeg(SPt, EPt, pt0, pt1))
                     {
                         return true;
@@ -1182,45 +945,22 @@ namespace IvyFEM
                 }
                 return false;
             }
-            else if (Type == CurveType.CURVE_POLYLINE && e1.Type == CurveType.CURVE_LINE)
+            else if (CurveType == CurveType.CURVE_POLYLINE && e1.CurveType == CurveType.CURVE_LINE)
             {
                 return e1.IsCrossEdgeShareBothPoints(this, isShareS0S1);
             }
-            else if (Type == CurveType.CURVE_ARC && e1.Type == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CURVE_ARC && e1.CurveType == CurveType.CURVE_POLYLINE)
             {
                 Vector2 cPt0;
                 double radius0;
                 GetCenterRadius(out cPt0, out radius0);
-
-                Vector2 h1 = e1.EPt - e1.SPt;
-                Vector2 v1 = new Vector2(-h1.Y, h1.X);
-
-                IList<double> relcomsh1 = e1.RelCoMeshs;
-                uint ndiv1 = (uint)(relcomsh1.Count / 2 + 1);
+                uint ndiv1 = (uint)(e1.Cos.Count + 1);
                 for (uint idiv = 1; idiv < ndiv1 - 1; idiv++)
                 {
-                    Vector2 pt0;
-                    if (idiv == 0)
-                    {
-                        pt0 = e1.SPt;
-                    }
-                    else
-                    {
-                        pt0 = e1.SPt + h1 * (float)relcomsh1[(int)((idiv - 1) * 2 + 0)] +
-                            v1 * (float)relcomsh1[(int)((idiv - 1) * 2 + 1)];
-                    }
-                    Vector2 pt1;
-                    if (idiv == ndiv1 - 1)
-                    {
-                        pt1 = e1.EPt;
-                    }
-                    else
-                    {
-                        pt1 = e1.SPt + h1 * (float)relcomsh1[(int)(idiv * 2 + 0)] +
-                            v1 * (float)relcomsh1[(int)(idiv * 2 + 1)];
-                    }
-
-                    double t0, t1;
+                    Vector2 pt0 = (idiv == 0) ? e1.SPt : e1.Cos[(int)(idiv - 1)];
+                    Vector2 pt1 = (idiv == ndiv1 - 1) ? e1.EPt : e1.Cos[(int)(idiv + 0)];
+                    double t0;
+                    double t1;
                     if (!CadUtils.IsCrossLineCircle(cPt0, radius0, pt0, pt1, out t0, out t1))
                     {
                         continue;
@@ -1236,65 +976,22 @@ namespace IvyFEM
                 }
                 return false;
             }
-            else if (Type == CurveType.CURVE_POLYLINE && e1.Type == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CURVE_POLYLINE && e1.CurveType == CurveType.CURVE_ARC)
             {
                 return e1.IsCrossEdgeShareBothPoints(this, isShareS0S1);
             }
-            else if (Type == CurveType.CURVE_POLYLINE && e1.Type == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CURVE_POLYLINE && e1.CurveType == CurveType.CURVE_POLYLINE)
             {
-                Vector2 h0 = EPt - SPt;
-                Vector2 v0 = new Vector2(-h0.Y, h0.X);
-                Vector2 h1 = e1.EPt - e1.SPt;
-                Vector2 v1 = new Vector2(-h1.Y, h1.X);
-
-                IList<double> relcomsh0 = RelCoMeshs;
-                uint ndiv0 = (uint)(relcomsh0.Count / 2 + 1);
-                IList<double> relcomsh1 = e1.RelCoMeshs;
-                uint ndiv1 = (uint)(relcomsh1.Count / 2 + 1);
+                uint ndiv0 = (uint)(Cos.Count + 1);
+                uint ndiv1 = (uint)(e1.Cos.Count + 1);
                 for (uint idiv = 1; idiv < ndiv0 - 1; idiv++)
                 {
-                    Vector2 iPt0;
-                    if (idiv == 0)
-                    {
-                        iPt0 = SPt;
-                    }
-                    else
-                    {
-                        iPt0 = SPt + h0 * (float)relcomsh0[(int)((idiv - 1) * 2 + 0)] +
-                            v0 * (float)relcomsh0[(int)((idiv - 1) * 2 + 1)];
-                    }
-                    Vector2 iPt1;
-                    if (idiv == ndiv0 - 1)
-                    {
-                        iPt1 = EPt;
-                    }
-                    else
-                    {
-                        iPt1 = SPt + h0 * (float)relcomsh0[(int)(idiv * 2 + 0)] +
-                            v0 * (float)relcomsh0[(int)(idiv * 2 + 1)];
-                    }
+                    Vector2 iPt0 = (idiv == 0) ? SPt : Cos[(int)(idiv - 1)];
+                    Vector2 iPt1 = (idiv == ndiv0 - 1) ? EPt : Cos[(int)(idiv + 0)];
                     for (uint jdiv = 1; jdiv < ndiv1 - 1; jdiv++)
                     {
-                        Vector2 jPt0;
-                        if (jdiv == 0)
-                        {
-                            jPt0 = e1.SPt;
-                        }
-                        else
-                        {
-                            jPt0 = e1.SPt + h1 * (float)relcomsh1[(int)((jdiv - 1) * 2 + 0)] +
-                                v1 * (float)relcomsh1[(int)((jdiv - 1) * 2 + 1)];
-                        }
-                        Vector2 jPt1;
-                        if (jdiv == ndiv1 - 1)
-                        {
-                            jPt1 = e1.EPt;
-                        }
-                        else
-                        {
-                            jPt1 = e1.SPt + h1 * (float)relcomsh1[(int)(jdiv * 2 + 0)] +
-                                v1 * (float)relcomsh1[(int)(jdiv * 2 + 1)];
-                        }
+                        Vector2 jPt0 = (jdiv == 0) ? e1.SPt : e1.Cos[(int)(idiv - 1)];
+                        Vector2 jPt1 = (jdiv == ndiv1 - 1) ? e1.EPt : e1.Cos[(int)(idiv + 0)];
                         if (CadUtils.IsCrossLineSegLineSeg(iPt0, iPt1, jPt0, jPt1))
                         {
                             return true;
@@ -1312,7 +1009,7 @@ namespace IvyFEM
 
         private int NumCrossArcLineSeg(Vector2 sPt1, Vector2 ePt1)
         {
-            if (Type != CurveType.CURVE_ARC)
+            if (CurveType != CurveType.CURVE_ARC)
             {
                 return -1;
             }
@@ -1408,12 +1105,12 @@ namespace IvyFEM
 
         public double GetCurveLength()
         {
-            if (Type == CurveType.CURVE_LINE)
+            if (CurveType == CurveType.CURVE_LINE)
             {
                 Vector2 h0 = SPt - EPt;
                 return h0.Length();
             }
-            else if (Type == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CURVE_ARC)
             {
                 double radius;
                 double theta;
@@ -1423,69 +1120,42 @@ namespace IvyFEM
                 GetCenterRadiusThetaLXY(out cPt, out radius, out theta, out lx, out ly);
                 return radius * theta;
             }
-            else if (Type == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CURVE_POLYLINE)
             {
-                uint nPt = (uint)(RelCoMeshs.Count / 2);
-                double relTotLen = 0;
-                for (uint idiv = 0; idiv < nPt + 1; idiv++)
+                uint ndiv = (uint)(Cos.Count + 1);
+                double totLen = 0;
+                for (uint idiv = 0; idiv < ndiv; idiv++)
                 {
-                    double x0;
-                    double y0;
-                    if (idiv == 0)
-                    {
-                        x0 = 0;
-                        y0 = 0;
-                    }
-                    else
-                    {
-                        x0 = RelCoMeshs[(int)(idiv * 2 - 2)];
-                        y0 = RelCoMeshs[(int)(idiv * 2 - 1)];
-                    }
-                    double x1;
-                    double y1;
-                    if (idiv == nPt)
-                    {
-                        x1 = 1;
-                        y1 = 0;
-                    }
-                    else
-                    {
-                        x1 = RelCoMeshs[(int)(idiv * 2 + 0)];
-                        y1 = RelCoMeshs[(int)(idiv * 2 + 1)];
-                    }
-                    Vector2 pt0 = new Vector2((float)x0, (float)y0);
-                    Vector2 pt1 = new Vector2((float)x1, (float)y1);
-                    Vector2 tmpH0 = pt0 - pt1;
-                    relTotLen += tmpH0.Length();
+                    Vector2 pt0 = (idiv == 0) ? SPt : Cos[(int)(idiv - 1)];
+                    Vector2 pt1 = (idiv == ndiv - 1) ? EPt : Cos[(int)(idiv + 0)];
+                    totLen += Vector2.Distance(pt0, pt1);
                 }
-                Vector2 h0 = SPt - SPt;
-                double edgeLen = h0.Length();
-                return relTotLen * edgeLen;
+                return totLen;
             }
-            else if (Type == CurveType.CURVE_BEZIER)
+            else if (CurveType == CurveType.CURVE_BEZIER)
             {
-                Vector2 gh = EPt - SPt;
-                Vector2 gv = new Vector2(-gh.Y, gh.X);
-                Vector2 scPt = SPt + gh * (float)RelCoBeziers[0] + gv * (float)RelCoBeziers[1];
-                Vector2 ecPt = SPt + gh * (float)RelCoBeziers[2] + gv * (float)RelCoBeziers[3];
+                // TODO : use the Sympthon's rule integration 
+                Vector2 scPt = Cos[0];
+                Vector2 ecPt = Cos[1];
                 uint ndiv = 16;
-                double tDiv = 1.0 / (ndiv);
-                double edge_len = 0;
-                for (uint i = 0; i < ndiv; i++){
-                    double t0 = (i + 0) * tDiv;
-                    double t1 = (i + 1) * tDiv;
-                    Vector2 vecT0 = (float)(-3 * (1 - t0) * (1 - t0)) * SPt +
+                double divT = 1.0 / (ndiv);
+                double edgeLen = 0;
+                for (uint i = 0; i < ndiv; i++)
+                {
+                    double t0 = (i + 0) * divT;
+                    double t1 = (i + 1) * divT;
+                    Vector2 vect0 = (float)(-3 * (1 - t0) * (1 - t0)) * SPt +
                         (float)(3 * (3 * t0 - 1) * (t0 - 1)) * scPt -
                         (float)(3 * t0 * (3 * t0 - 2)) * ecPt +
                         (float)(3 * t0 * t0) * EPt;
-                    Vector2 vecT1 = (float)(-3 * (1 - t1) * (1 - t1)) * SPt +
+                    Vector2 vect1 = (float)(-3 * (1 - t1) * (1 - t1)) * SPt +
                         (float)(3 * (3 * t1 - 1) * (t1 - 1)) * scPt -
                         (float)(3 * t1 * (3 * t1 - 2)) * ecPt +
                         (float)(3 * t1 * t1) * EPt;
-                    double aveLen = (vecT0.Length() + vecT1.Length()) * 0.5;
-                    edge_len += aveLen * tDiv;
+                    double aveLen = (vect0.Length() + vect1.Length()) * 0.5;
+                    edgeLen += aveLen * divT;
                 }
-                return edge_len;
+                return edgeLen;
             }
             return 0;
         }
@@ -1495,11 +1165,11 @@ namespace IvyFEM
             pts = new List<Vector2>();
             if (ndiv <= 0)
             {
-                if (Type == CurveType.CURVE_LINE)
+                if (CurveType == CurveType.CURVE_LINE)
                 {
                     return true;
                 }
-                else if (Type == CurveType.CURVE_ARC)
+                else if (CurveType == CurveType.CURVE_ARC)
                 {
                     double radius;
                     double theta;
@@ -1510,27 +1180,23 @@ namespace IvyFEM
                     uint ndiv1 = (uint)(theta * 360 / (5.0 * 6.28) + 1);
                     return GetCurveAsPolyline(out pts, (int)ndiv1);
                 }
-                else if (Type == CurveType.CURVE_POLYLINE)
+                else if (CurveType == CurveType.CURVE_POLYLINE)
                 {
-                    Vector2 v0 = EPt - SPt;
-                    Vector2 v1 = new Vector2(-v0.Y, v0.X);
-                    uint nPt = (uint)(RelCoMeshs.Count / 2);
+                    uint nPt = (uint)Cos.Count;
                     for (uint i = 0; i < nPt; i++)
                     {
-                        Vector2 vec0 = SPt + v0 * (float)RelCoMeshs[(int)(i * 2 + 0)] +
-                            v1 * (float)RelCoMeshs[(int)(i * 2 + 1)];
-                        pts.Add(vec0);
+                        pts.Add(Cos[(int)i]);
                     }
                     return true;
                 }
-                else if (Type == CurveType.CURVE_BEZIER)
+                else if (CurveType == CurveType.CURVE_BEZIER)
                 {
                     return GetCurveAsPolyline(out pts, 16);
                 }
             }
             else
             { 
-                if (Type == CurveType.CURVE_LINE)
+                if (CurveType == CurveType.CURVE_LINE)
                 {
                     Vector2 tDiv = (EPt - SPt) * (float)(1.0 / ndiv);
                     for (uint idiv = 1; idiv < ndiv; idiv++){
@@ -1540,7 +1206,7 @@ namespace IvyFEM
                     System.Diagnostics.Debug.Assert(pts.Count <= ndiv);
                     return true;
                 }
-                else if (Type == CurveType.CURVE_ARC)
+                else if (CurveType == CurveType.CURVE_ARC)
                 {
                     double radius;
                     double theta;
@@ -1559,115 +1225,55 @@ namespace IvyFEM
                     System.Diagnostics.Debug.Assert(pts.Count <= ndiv);
                     return true;
                 }
-                else if (Type == CurveType.CURVE_POLYLINE)
+                else if (CurveType == CurveType.CURVE_POLYLINE)
                 {
-                    uint nPt = (uint)(RelCoMeshs.Count / 2);
-                    double relTotLen = 0;
-                    for (uint idiv = 0; idiv < nPt + 1; idiv++)
-                    {
-                        double x0;
-                        double y0;
-                        if (idiv == 0)
-                        {
-                            x0 = 0;
-                            y0 = 0;
-                        }
-                        else
-                        {
-                            x0 = RelCoMeshs[(int)(idiv * 2 - 2)];
-                            y0 = RelCoMeshs[(int)(idiv * 2 - 1)];
-                        }
-                        double x1;
-                        double y1;
-                        if (idiv == nPt)
-                        {
-                            x1 = 1;
-                            y1 = 0;
-                        }
-                        else
-                        {
-                            x1 = RelCoMeshs[(int)(idiv * 2 + 0)];
-                            y1 = RelCoMeshs[(int)(idiv * 2 + 1)];
-                        }
-                        Vector2 pt0 = new Vector2((float)x0, (float)y0);
-                        Vector2 pt1 = new Vector2((float)x1, (float)y1);
-                        Vector2 h = pt0 - pt1;
-                        relTotLen += h.Length();
-                    }
+                    // mesh
+                    double totLen = GetCurveLength();
+                    uint ndiv0 = (uint)(Cos.Count + 1);
                     uint ndiv1 = (uint)ndiv;
-                    uint nPt1 = (uint)(ndiv - 1);
-                    double relDiv = relTotLen / ndiv1;
-                    Vector2 gh = EPt - SPt;
-                    Vector2 gv = new Vector2(-gh.Y, gh.X);
-                    uint curIDiv0 = 0;
+                    uint npo1 = (uint)(ndiv - 1);
+                    double lDiv = totLen / ndiv1;
+                    uint iCurDiv0 = 0;
                     double curRatio0 = 0;
-                    for (uint iPt1 = 0; iPt1 < nPt1; iPt1++)
+                    for (uint ipo1 = 0; ipo1 < npo1; ipo1++)
                     {
-                        double curRestLen0 = relDiv;
+                        double curRestLen0 = lDiv;
                         for (;;)
                         {
-                            System.Diagnostics.Debug.Assert(curIDiv0 < nPt + 1);
+                            System.Diagnostics.Debug.Assert(iCurDiv0 < Cos.Count + 1);
                             System.Diagnostics.Debug.Assert(curRatio0 >= 0 && curRatio0 <= 1);
-                            double x0, y0;
-                            if (curIDiv0 == 0)
-                            {
-                                x0 = 0;
-                                y0 = 0;
-                            }
-                            else
-                            {
-                                x0 = RelCoMeshs[(int)(curIDiv0 * 2 - 2)];
-                                y0 = RelCoMeshs[(int)(curIDiv0 * 2 - 1)];
-                            }
-                            double x1;
-                            double y1;
-                            if (curIDiv0 == nPt)
-                            {
-                                x1 = 1;
-                                y1 = 0;
-                            }
-                            else
-                            {
-                                x1 = RelCoMeshs[(int)(curIDiv0 * 2 + 0)];
-                                y1 = RelCoMeshs[(int)(curIDiv0 * 2 + 1)];
-                            }
-                            Vector2 pt0 = new Vector2((float)x0, (float)y0);
-                            Vector2 pt1 = new Vector2((float)x1, (float)y1);
-                            Vector2 h = pt0 - pt1;
-                            double iDivLen0 = h.Length();
+                            Vector2 pt0 = (iCurDiv0 == 0) ? SPt :Cos[(int)(iCurDiv0 - 1)];
+                            Vector2 pt1 = (iCurDiv0 == ndiv0 - 1) ? EPt : Cos[(int)(iCurDiv0 + 0)];
+                            double iDivLen0 = Vector2.Distance(pt0, pt1);
                             if (iDivLen0 * (1 - curRatio0) > curRestLen0)
                             {
                                 curRatio0 += curRestLen0 / iDivLen0;
-                                double xintp = x0 * (1.0 - curRatio0) + x1 * curRatio0;
-                                double yintp = y0 * (1.0 - curRatio0) + y1 * curRatio0;
-                                pts.Add(SPt + gh * (float)xintp + gv * (float)yintp);
+                                Vector2 p = pt0 * (float)(1.0 - curRatio0) + pt1 * (float)curRatio0;
+                                pts.Add(p);
                                 break;
                             }
                             curRestLen0 -= iDivLen0 * (1 - curRatio0);
-                            curIDiv0 += 1;
+                            iCurDiv0 += 1;
                             curRatio0 = 0;
                         }
                     }
-                    System.Diagnostics.Debug.Assert(pts.Count <= nPt1);
                     return true;
                 }
-                else if (Type == CurveType.CURVE_BEZIER)
+                else if (CurveType == CurveType.CURVE_BEZIER)
                 {
-                    Vector2 gh = EPt - SPt;
-                    Vector2 gv = new Vector2(-gh.Y, gh.X);
-                    Vector2 scPt = SPt + gh * (float)RelCoBeziers[0] + gv * (float)RelCoBeziers[1];
-                    Vector2 ecPt = SPt + gh * (float)RelCoBeziers[2] + gv * (float)RelCoBeziers[3];
-                    double tDiv = 1.0 / (ndiv);
+                    System.Diagnostics.Debug.Assert(Cos.Count == 2);
+                    Vector2 scPt = Cos[0];
+                    Vector2 ecPt = Cos[1];
+                    double divT = 1.0 / (ndiv);
                     for (uint i = 1; i < ndiv; i++)
                     {
-                        double t = i * tDiv;
+                        double t = i * divT;
                         Vector2 vec0 = (float)((1 - t) * (1 - t) * (1 - t)) * SPt +
                             (float)(3 * (1 - t) * (1 - t) * t) * scPt +
                             (float)(3 * (1 - t) * t * t) * ecPt +
                             (float)(t * t * t) * EPt;
                         pts.Add(vec0);
                     }
-                    System.Diagnostics.Debug.Assert(pts.Count == ndiv);
                     return true;
                 }
             }
@@ -1676,7 +1282,7 @@ namespace IvyFEM
 
         public bool GetCenterRadius(out Vector2 cPt, out double radius)
         {
-            if (Type != CurveType.CURVE_ARC)
+            if (CurveType != CurveType.CURVE_ARC)
             {
                 cPt = new Vector2();
                 radius = 0;
@@ -1698,7 +1304,7 @@ namespace IvyFEM
 
         private int IsDirectionArc(Vector2 pt)
         {
-            if (Type != CurveType.CURVE_ARC)
+            if (CurveType != CurveType.CURVE_ARC)
             {
                 return -1;
             }
@@ -1768,7 +1374,7 @@ namespace IvyFEM
             lx = new Vector2(0, 0);
             ly = new Vector2(0, 0);
 
-            if (Type != CurveType.CURVE_ARC)
+            if (CurveType != CurveType.CURVE_ARC)
             {
                 return false;
             }
@@ -1802,7 +1408,7 @@ namespace IvyFEM
 
         public Vector2 GetNearestPoint(Vector2 pt)
         {
-            if (Type == CurveType.CURVE_LINE)
+            if (CurveType == CurveType.CURVE_LINE)
             {
                 double t = CadUtils.FindNearestPointParameterLinePoint(pt, SPt, EPt);
                 if (t < 0)
@@ -1818,7 +1424,7 @@ namespace IvyFEM
                     return SPt + (EPt - SPt) * (float)t;
                 }
             }
-            else if (Type == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CURVE_ARC)
             {
                 double radius;
                 Vector2 cPt;
@@ -1847,36 +1453,15 @@ namespace IvyFEM
                     return EPt;
                 }
             }
-            else if (Type == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CURVE_POLYLINE)
             {
-                IList<double> relcomsh = RelCoMeshs;
-                uint ndiv = (uint)(relcomsh.Count / 2 + 1);
-                Vector2 h0 = EPt - SPt;
-                Vector2 v0 = new Vector2(-h0.Y, h0.X);
+                uint ndiv = (uint)(Cos.Count + 1);
                 double minDist = Vector2.Distance(SPt, pt);
-                Vector2 cand = SPt;
+                Vector2 cand = new Vector2(SPt.X, SPt.Y);
                 for (uint idiv = 0; idiv < ndiv; idiv++)
                 {
-                    Vector2 iPt0;
-                    if (idiv == 0)
-                    {
-                        iPt0 = SPt;
-                    }
-                    else
-                    {
-                        iPt0 = SPt + h0 * (float)relcomsh[(int)(idiv - 1) * 2 + 0] +
-                            v0 * (float)relcomsh[(int)(idiv - 1) * 2 + 1];
-                    }
-                    Vector2 iPt1;
-                    if (idiv == ndiv - 1)
-                    {
-                        iPt1 = EPt;
-                    }
-                    else
-                    {
-                        iPt1 = SPt + h0 * (float)relcomsh[(int)idiv * 2 + 0] +
-                            v0 * (float)relcomsh[(int)idiv * 2 + 1];
-                    }
+                    Vector2 iPt0 = (idiv == 0) ? SPt : Cos[(int)(idiv - 1)];
+                    Vector2 iPt1 = (idiv == ndiv - 1) ? EPt : Cos[(int)(idiv + 0)];
                     if (Vector2.Distance(pt, iPt1) < minDist)
                     {
                         minDist = Vector2.Distance(pt, iPt1);
@@ -1904,13 +1489,13 @@ namespace IvyFEM
 
         public Vector2 GetTangentEdge(bool isS)
         {
-            if (Type == CurveType.CURVE_LINE)
+            if (CurveType == CurveType.CURVE_LINE)
             {
                 Vector2 d = (isS) ? EPt - SPt : SPt - EPt;
                 d = CadUtils.Normalize(d);
                 return d;
             }
-            else if (Type == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CURVE_ARC)
             {
                 double radius;
                 Vector2 cPt;
@@ -1930,40 +1515,33 @@ namespace IvyFEM
                 v = CadUtils.Normalize(v);
                 return v;
             }
-            else if (Type == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CURVE_POLYLINE)
             {
-                IList<double> relcomsh = RelCoMeshs;
-                uint ndiv = (uint)(relcomsh.Count / 2 + 1);
-                Vector2 h0 = EPt - SPt;
-                Vector2 v0 = new Vector2(-h0.Y, h0.X);
                 if (isS)
                 {
-                    if (ndiv == 1)
+                    if (Cos.Count == 0)
                     {
-                        return h0;
+                        return EPt - SPt;
                     }
-                    Vector2 d = h0 * (float)relcomsh[0] + v0 * (float)relcomsh[1];
+                    Vector2 d = Cos[1] - SPt;
                     d = CadUtils.Normalize(d);
                     return d;
                 }
                 else
                 {
-                    if (ndiv == 1)
+                    if (Cos.Count == 0)
                     {
-                        return h0 * -1;
+                        return SPt - EPt;
                     }
-                    Vector2 d = SPt + h0 * (float)relcomsh[(int)((ndiv - 2) * 2 + 0)] +
-                        v0 * (float)relcomsh[(int)((ndiv - 2) * 2 + 1)] - EPt;
+                    Vector2 d = Cos[Cos.Count - 1] - EPt;
                     d = CadUtils.Normalize(d);
                     return d;
                 }
             }
-            else if (Type == CurveType.CURVE_BEZIER)
+            else if (CurveType == CurveType.CURVE_BEZIER)
             {
-                Vector2 gh = EPt - SPt;
-                Vector2 gv = new Vector2(-gh.Y, gh.X);
-                Vector2 scPt = SPt + gh * (float)RelCoBeziers[0] + gv * (float)RelCoBeziers[1];
-                Vector2 ecPt = SPt + gh * (float)RelCoBeziers[2] + gv * (float)RelCoBeziers[3];
+                Vector2 scPt = Cos[0];
+                Vector2 ecPt = Cos[1];
                 Vector2 d = (isS) ? scPt - SPt : ecPt - EPt;
                 d = CadUtils.Normalize(d);
                 return d;
@@ -1976,11 +1554,11 @@ namespace IvyFEM
 
         public bool Split(Edge2D addEdge, Vector2 addPt)
         {
-            if (Type == CurveType.CURVE_LINE)
+            if (CurveType == CurveType.CURVE_LINE)
             {
 
             }
-            else if (Type == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CURVE_ARC)
             {
                 Vector2 sPt = SPt;
                 Vector2 ePt = EPt;
@@ -1988,50 +1566,37 @@ namespace IvyFEM
                 double r;
                 GetCenterRadius(out cPt, out r);
                 Dist = CadUtils.TriHeight(cPt, sPt, addPt) / Vector2.Distance(sPt, addPt);
-                addEdge.Type = CurveType.CURVE_ARC;
+                addEdge.CurveType = CurveType.CURVE_ARC;
                 addEdge.IsLeftSide = IsLeftSide;
                 addEdge.Dist = CadUtils.TriHeight(cPt, addPt, ePt) / Vector2.Distance(addPt, ePt);
             }
-            else if (Type == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CURVE_POLYLINE)
             {
                 Vector2 sPt = SPt;
                 Vector2 ePt = EPt;
-                IList<Vector2> addPts = new List<Vector2>();
-                {
-                    Vector2 h0 = ePt - sPt;
-                    Vector2 v0 = new Vector2(-h0.Y, h0.X);
-                    IList<double> relcomsh = RelCoMeshs;
-                    uint nPt = (uint)(relcomsh.Count / 2);
-                    addPts.Clear();
-                    for (uint i = 0; i < nPt; i++)
-                    {
-                        Vector2 tmpPt = sPt + h0 * (float)relcomsh[(int)(i * 2 + 0)] +
-                            v0 * (float)relcomsh[(int)(i * 2 + 1)];
-                        addPts.Add(tmpPt);
-                    }
-                }
-                int ePtIndex0;
-                int sPtIndex1;
+                IList<Vector2> cos = new List<Vector2>(Cos);
+                int iEPt0;
+                int iSPt1;
                 {
                     bool isSegment = false;
                     int ind = -1;
                     double minDist = Vector2.Distance(sPt, addPt);
-                    for (uint idiv = 0; idiv < addPts.Count + 1; idiv++)
+                    for (uint idiv = 0; idiv < cos.Count + 1; idiv++)
                     {
-                        Vector2 pt0 = (idiv == 0) ? sPt : addPts[(int)(idiv - 1)];
-                        Vector2 pt1 = (idiv == addPts.Count) ? ePt : addPts[(int)idiv];
-                        if (Vector2.Distance(addPt, pt1) < minDist)
+                        Vector2 iPt0 = (idiv == 0) ? sPt : cos[(int)(idiv - 1)];
+                        Vector2 iPt1 = (idiv == cos.Count) ? ePt : cos[(int)idiv];
+                        if (Vector2.Distance(addPt, iPt1) < minDist)
                         {
                             isSegment = false;
                             ind = (int)idiv;
-                            minDist = Vector2.Distance(addPt, pt1);
+                            minDist = Vector2.Distance(addPt, iPt1);
                         }
-                        double t = CadUtils.FindNearestPointParameterLinePoint(addPt, pt0, pt1);
+                        double t = CadUtils.FindNearestPointParameterLinePoint(addPt, iPt0, iPt1);
                         if (t < 0.01 || t > 0.99)
                         {
                             continue;
                         }
-                        Vector2 midPt = pt0 + (pt1 - pt0) * (float)t;
+                        Vector2 midPt = iPt0 + (iPt1 - iPt0) * (float)t;
                         if (Vector2.Distance(addPt, midPt) < minDist)
                         {
                             isSegment = true;
@@ -2042,59 +1607,52 @@ namespace IvyFEM
 
                     if (isSegment)
                     {
-                        ePtIndex0 = ind - 2;
-                        sPtIndex1 = ind + 1;
+                        iEPt0 = ind - 2;
+                        iSPt1 = ind + 1;
                     }
                     else
                     {
-                        ePtIndex0 = ind - 1;
-                        sPtIndex1 = ind + 1;
+                        iEPt0 = ind - 1;
+                        iSPt1 = ind + 1;
                     }
                 }
 
-                if (ePtIndex0 > 0)
+                if (iEPt0 > 0)
                 {
-                    Type = CurveType.CURVE_POLYLINE;
-                    uint nPt = (uint)(ePtIndex0 + 1);
-                    double sqLen = CadUtils.SquareLength(addPt - sPt);
-                    Vector2 eh = (addPt - sPt) * (float)(1 / sqLen);
-                    Vector2 ev = new Vector2(-eh.Y, eh.X);
-                    RelCoMeshs.Clear();
-                    for (int i = 0; i < nPt; i++)
+                    CurveType = CurveType.CURVE_POLYLINE;
+                    uint nPt = (uint)(iEPt0 + 1);
+                    int nCos = Cos.Count;
+                    for (int i = nCos; i < nPt; i++)
                     {
-                        double x1 = Vector2.Dot(addPts[i] - sPt, eh);
-                        double y1 = Vector2.Dot(addPts[i] - sPt, ev);
-                        RelCoMeshs.Add(x1);
-                        System.Diagnostics.Debug.Assert(RelCoMeshs.Count == i * 2 + 0 + 1);
-                        RelCoMeshs.Add(y1);
-                        System.Diagnostics.Debug.Assert(RelCoMeshs.Count == i * 2 + 1 + 1);
+                        Cos.Add(new Vector2());
+                    }
+                    for (uint ipt = 0; ipt < nPt; ipt++)
+                    {
+                        Cos[(int)ipt] = cos[(int)ipt];
                     }
                 }
                 else
                 {
-                    Type = CurveType.CURVE_LINE;
+                    CurveType = CurveType.CURVE_LINE;
                 }
-                if (sPtIndex1 < (int)addPts.Count)
+
+                if (iSPt1 < (int)cos.Count)
                 {
-                    addEdge.Type = CurveType.CURVE_POLYLINE;
-                    uint nPt = (uint)(addPts.Count - sPtIndex1);
-                    double sqLen = CadUtils.SquareLength(ePt - addPt);
-                    Vector2 eh = (ePt - addPt) * (float)(1 / sqLen);
-                    Vector2 ev = new Vector2(-eh.Y, eh.X);
-                    addEdge.RelCoMeshs.Clear();
-                    for (int i = 0; i < nPt; i++)
+                    addEdge.CurveType = CurveType.CURVE_POLYLINE;
+                    uint nPt = (uint)(cos.Count - iSPt1);
+                    int nCos = addEdge.Cos.Count;
+                    for (int i = nCos; i < nPt; i++)
                     {
-                        double x1 = Vector2.Dot(addPts[i + sPtIndex1] - addPt, eh);
-                        double y1 = Vector2.Dot(addPts[i + sPtIndex1] - addPt, ev);
-                        RelCoMeshs.Add(x1);
-                        System.Diagnostics.Debug.Assert(RelCoMeshs.Count == i * 2 + 0 + 1);
-                        RelCoMeshs.Add(y1);
-                        System.Diagnostics.Debug.Assert(RelCoMeshs.Count == i * 2 + 1 + 1);
+                        addEdge.Cos.Add(new Vector2());
+                    }
+                    for (uint ipt = 0; ipt < nPt; ipt++)
+                    {
+                        addEdge.Cos[(int)ipt] = cos[(int)ipt + iSPt1];
                     }
                 }
                 else
                 {
-                    addEdge.Type = CurveType.CURVE_LINE;
+                    addEdge.CurveType = CurveType.CURVE_LINE;
                 }
             }
             return true;
@@ -2102,11 +1660,11 @@ namespace IvyFEM
 
         public double EdgeArea()
         {
-            if (Type == CurveType.CURVE_LINE)
+            if (CurveType == CurveType.CURVE_LINE)
             {
                 return 0;
             }
-            else if (Type == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CURVE_ARC)
             {
                 Vector2 cPt;
                 double radius;
@@ -2141,49 +1699,29 @@ namespace IvyFEM
                 }
                 return segmentArea;
             }
-            else if (Type == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CURVE_POLYLINE)
             {
-                uint n = (uint)(RelCoMeshs.Count / 2);
-                if (n == 0)
+                uint ndiv = (uint)(Cos.Count + 1);
+                if (ndiv == 1) { return 0; }
+                Vector2 eh = EPt - SPt;
+                eh = CadUtils.Normalize(eh);
+                Vector2 ev = new Vector2(eh.Y, -eh.X);
+                double area = 0;
+                for (uint idiv = 0; idiv < ndiv; idiv++)
                 {
-                    return 0;
+                    Vector2 pt0 = (idiv == 0) ? SPt : Cos[(int)(idiv - 1)];
+                    Vector2 pt1 = (idiv == ndiv - 1) ? EPt : Cos[(int)(idiv + 0)];
+                    double h0 = Vector2.Dot(pt0 - SPt, ev);
+                    double h1 = Vector2.Dot(pt1 - SPt, ev);
+                    double divx = Vector2.Dot(pt1 - pt0, eh);
+                    area += 0.5 * divx * (h0 + h1);
                 }
-                double areaRatio = 0;
-                for (uint i = 0; i < n + 1; i++)
-                {
-                    double xDiv;
-                    double h0;
-                    double h1;
-                    if (i == 0)
-                    {
-                        xDiv = RelCoMeshs[0];
-                        h0 = 0;
-                        h1 = RelCoMeshs[1];
-                    }
-                    else if (i == n)
-                    {
-                        xDiv = 1 - RelCoMeshs[(int)(n * 2 - 2)];
-                        h0 = RelCoMeshs[(int)(n * 2 - 1)];
-                        h1 = 0;
-                    }
-                    else
-                    {
-                        xDiv = RelCoMeshs[(int)(i * 2)] - RelCoMeshs[(int)(i * 2 - 2)];
-                        h0 = RelCoMeshs[(int)(i * 2 - 1)];
-                        h1 = RelCoMeshs[(int)(i * 2 + 1)];
-                    }
-                    areaRatio += 0.5 * xDiv * (h0 + h1);
-                }
-                double sqLen = CadUtils.SquareLength(EPt - SPt);
-                double segmentArea = -sqLen * areaRatio;
-                return segmentArea;
+                return area;
             }
-            else if (Type == CurveType.CURVE_BEZIER)
+            else if (CurveType == CurveType.CURVE_BEZIER)
             {
-                Vector2 gh = EPt - SPt;
-                Vector2 gv = new Vector2(-gh.Y, gh.X);
-                Vector2 scPt = SPt + gh * (float)RelCoBeziers[0] + gv * (float)RelCoBeziers[1];
-                Vector2 ecPt = SPt + gh * (float)RelCoBeziers[2] + gv * (float)RelCoBeziers[3];
+                Vector2 scPt = Cos[0];
+                Vector2 ecPt = Cos[1];
                 uint ndiv = 32;
                 double tdiv = 1.0 / (ndiv);
                 double area = 0;
@@ -2250,54 +1788,32 @@ namespace IvyFEM
                 longLen = 2 * (len0 + len1 + len2);
             }
             Vector2 dPt = bPt + dir1 * (float)longLen;
-            if (Type == CurveType.CURVE_LINE)
+            if (CurveType == CurveType.CURVE_LINE)
             {
                 bool ret = CadUtils.IsCrossLineSegLineSeg(SPt, EPt, bPt, dPt);
                 return ret ? 1 : 0;
             }
-            else if (Type == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CURVE_ARC)
             {
                 return NumCrossArcLineSeg(bPt, dPt);
 
             }
-            else if (Type == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CURVE_POLYLINE)
             {
-                IList<double> relcomsh = RelCoMeshs;
-                uint ndiv = (uint)(relcomsh.Count / 2 + 1);
-                Vector2 h0 = EPt - SPt;
-                Vector2 v0 = new Vector2(-h0.Y, h0.X);
-                uint icnt = 0;
+                uint ndiv = (uint)(Cos.Count + 1);
+                int icnt = 0;
                 for (uint idiv = 0; idiv < ndiv; idiv++)
                 {
-                    Vector2 iPt0;
-                    if (idiv == 0)
+                    Vector2 iPt0 = (idiv == 0) ? SPt : Cos[(int)(idiv - 1)];
+                    Vector2 iPt1 = (idiv == ndiv - 1) ? EPt : Cos[(int)(idiv + 0)];
+                    int res = 0;
+                    if (CadUtils.IsCrossLineSegLineSeg(bPt, dPt, iPt0, iPt1))
                     {
-                        iPt0 = SPt;
+                        res = 1;
                     }
-                    else
-                    {
-                        iPt0 = SPt + h0 * (float)relcomsh[(int)((idiv - 1) * 2 + 0)] +
-                            v0 * (float)relcomsh[(int)((idiv - 1) * 2 + 1)];
-                    }
-                    Vector2 iPt1;
-                    if (idiv == ndiv - 1)
-                    {
-                        iPt1 = EPt;
-                    }
-                    else
-                    {
-                        iPt1 = SPt + h0 * (float)relcomsh[(int)(idiv * 2 + 0)] +
-                            v0 * (float)relcomsh[(int)(idiv * 2 + 1)];
-                    }
-                    bool ret = CadUtils.IsCrossLineSegLineSeg(bPt, dPt, iPt0, iPt1);
-                    uint res = ret? 1u: 0;
-                    //if (res == 0)
-                    //{
-                    //    return -1;
-                    //}
                     icnt += res;
                 }
-                return (int)icnt;
+                return icnt;
             }
             System.Diagnostics.Debug.Assert(false);
             return 0;
@@ -2321,23 +1837,10 @@ namespace IvyFEM
             {
                 System.Diagnostics.Debug.Assert(SVId == e1.SVId);
             }
-            if (Type == CurveType.CURVE_POLYLINE)
+            if (CurveType == CurveType.CURVE_POLYLINE)
             {
-                IList<Vector2> pts0 = new List<Vector2>();
-                {
-                    Vector2 sPt = SPt;
-                    Vector2 ePt = EPt;
-                    Vector2 h0 = ePt - sPt;
-                    Vector2 v0 = new Vector2(-h0.Y, h0.X);
-                    IList<double> relcomsh = RelCoMeshs;
-                    uint nPt = (uint)(relcomsh.Count / 2);
-                    pts0.Clear();
-                    for (uint i = 0; i < nPt; i++)
-                    {
-                        pts0[(int)i] = sPt + h0 * (float)relcomsh[(int)(i * 2 + 0)] +
-                            v0 * (float)relcomsh[(int)(i * 2 + 1)];
-                    }
-                }
+                IList<Vector2> pts0 = Cos;
+
                 double aveELen = GetCurveLength() / (pts0.Count + 1.0);
                 IList<Vector2> pts1;
                 {
@@ -2397,22 +1900,8 @@ namespace IvyFEM
                         SPt = e1.EPt;
                     }
                 }
-                {
-                    Vector2 sPt = SPt;
-                    Vector2 ePt = EPt;
-                    uint nPt = (uint)pts2.Count;
-                    double sqLen = CadUtils.SquareLength(ePt - sPt);
-                    Vector2 eh = (ePt - sPt) * (float)(1 / sqLen);
-                    Vector2 ev = new Vector2(-eh.Y, eh.X);
-                    for (uint ipo = 0; ipo < nPt; ipo++)
-                    {
-                        double x1 = Vector2.Dot(pts2[(int)ipo] - sPt, eh);
-                        double y1 = Vector2.Dot(pts2[(int)ipo] - sPt, ev);
-                        RelCoMeshs.Add(x1); // ipo * 2 + 0
-                        RelCoMeshs.Add(y1); // ipo * 2 + 1
-                    }
-                    System.Diagnostics.Debug.Assert(RelCoMeshs.Count == nPt * 2);
-                }
+
+                Cos = new List<Vector2>(pts2);
             }
             return true;
         }

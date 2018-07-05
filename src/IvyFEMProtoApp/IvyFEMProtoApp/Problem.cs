@@ -33,8 +33,8 @@ namespace IvyFEMProtoApp
                 pts.Add(new Vector2((float)(InputWGLength + WaveguideWidth), (float)(-InputWGLength))); // 頂点5
                 pts.Add(new Vector2((float)(InputWGLength + WaveguideWidth), (float)WaveguideWidth)); // 頂点6
                 var res = cad2D.AddPolygon(pts);
-                System.Diagnostics.Debug.WriteLine(res.Dump());
-                System.Diagnostics.Debug.WriteLine(cad2D.Dump());
+                //System.Diagnostics.Debug.WriteLine(res.Dump());
+                //System.Diagnostics.Debug.WriteLine(cad2D.Dump());
                 //AlertWindow.ShowText(res.Dump());
                 //AlertWindow.ShowText(cad2D.Dump());
                 Drawer = new CadObject2DDrawer(cad2D);
@@ -54,8 +54,6 @@ namespace IvyFEMProtoApp
                 pts.Add(new Vector2((float)(InputWGLength + WaveguideWidth), (float)(-InputWGLength))); // 頂点5
                 pts.Add(new Vector2((float)(InputWGLength + WaveguideWidth), (float)WaveguideWidth)); // 頂点6
                 var res = cad2D.AddPolygon(pts);
-                System.Diagnostics.Debug.WriteLine(res.Dump());
-                System.Diagnostics.Debug.WriteLine(cad2D.Dump());
 
                 Mesher2D mesher2D = new Mesher2D(cad2D);
 
@@ -76,8 +74,6 @@ namespace IvyFEMProtoApp
                 pts.Add(new Vector2((float)(InputWGLength + WaveguideWidth), (float)(-InputWGLength))); // 頂点5
                 pts.Add(new Vector2((float)(InputWGLength + WaveguideWidth), (float)WaveguideWidth)); // 頂点6
                 var res = cad2D.AddPolygon(pts);
-                System.Diagnostics.Debug.WriteLine(res.Dump());
-                System.Diagnostics.Debug.WriteLine(cad2D.Dump());
 
                 double eLen = 0.1;
                 Mesher2D mesher2D = new Mesher2D(cad2D, eLen);

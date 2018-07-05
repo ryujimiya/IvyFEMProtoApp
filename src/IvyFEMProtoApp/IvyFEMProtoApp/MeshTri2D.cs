@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 
 namespace IvyFEM
 {
-    class Tri2D
+    class MeshTri2D
     {
         public uint[] V { get; } = new uint[3];
         public int[] G2 { get; } = new int[3];
         public uint[] S2 { get; } = new uint[3];
         public uint[] R2 { get; } = new uint[3];
 
-        public Tri2D()
+        public MeshTri2D()
         {
 
         }
 
-        public Tri2D(Tri2D src)
+        public MeshTri2D(MeshTri2D src)
         {
             for  (int i = 0; i < 3; i++)
             {

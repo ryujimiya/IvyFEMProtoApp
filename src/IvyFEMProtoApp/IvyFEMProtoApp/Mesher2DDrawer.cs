@@ -12,13 +12,11 @@ namespace IvyFEM
 {
     class Mesher2DDrawer : IDrawer
     {
-        private double[] SelectedColor = { 1.0, 0.5, 1.0 }; //{ 1.0, 1.0, 0.0 };
         public uint SutableRotMode { get; private set; } = 1;
         public bool IsAntiAliasing { get; set; } = false;
 
         private bool IsFrontAndBack;
         private IList<Mesher2DDrawPart> DrawParts = new List<Mesher2DDrawPart>();
-        private IList<Mesher2DVertexDrawPart> VertexDrawParts = new List<Mesher2DVertexDrawPart>();
         private VertexArray VertexArray = new VertexArray();
         private bool IsDrawFace;
         private uint LineWidth = 1;
@@ -42,7 +40,7 @@ namespace IvyFEM
             int layerMax = 0;
             {
                 bool isInited = false;
-                IList<TriArray2D> triArrays = mesher.GetTriArrays();
+                IList<MeshTriArray2D> triArrays = mesher.GetTriArrays();
                 for (int itri = 0; itri < triArrays.Count; itri++)
                 {
                     int layer = triArrays[itri].Layer;
@@ -58,7 +56,7 @@ namespace IvyFEM
                         isInited = true;
                     }
                 }
-                IList<QuadArray2D> quadArrays = mesher.GetQuadArrays();
+                IList<MeshQuadArray2D> quadArrays = mesher.GetQuadArrays();
                 for (int iquad = 0; iquad < quadArrays.Count; iquad++)
                 {
                     int layer = quadArrays[iquad].Layer;
@@ -75,16 +73,16 @@ namespace IvyFEM
                     }
                 }
             }
-            double layer_height = 1.0 / (layerMax - layerMin + 1);
+            double layerHeight = 1.0 / (layerMax - layerMin + 1);
 
             {
                 // 三角形要素をセット
-                IList<TriArray2D> triArrays = mesher.GetTriArrays();
+                IList<MeshTriArray2D> triArrays = mesher.GetTriArrays();
                 for (int itri = 0; itri < triArrays.Count; itri++)
                 {
                     Mesher2DDrawPart dp = new Mesher2DDrawPart(triArrays[itri]);
                     int layer = triArrays[itri].Layer;
-                    dp.Height = (layer - layerMin) * layer_height;
+                    dp.Height = (layer - layerMin) * layerHeight;
 
                     DrawParts.Add(dp);
                 }
@@ -92,56 +90,51 @@ namespace IvyFEM
 
             {
                 // 四角形要素をセット
-                IList<QuadArray2D> quadArrays = mesher.GetQuadArrays();
+                IList<MeshQuadArray2D> quadArrays = mesher.GetQuadArrays();
                 for (int iquad = 0; iquad < quadArrays.Count; iquad++)
                 {
                     Mesher2DDrawPart dp = new Mesher2DDrawPart(quadArrays[iquad]);
-                    int ilayer = quadArrays[iquad].Layer;
-                    dp.Height = (ilayer - layerMin) * layer_height;
+                    int layer = quadArrays[iquad].Layer;
+                    dp.Height = (layer - layerMin) * layerHeight;
 
                     DrawParts.Add(dp);
-
                 }
             }
 
             {
                 // 線要素をセット
-                IList<BarArray> barArrays = mesher.GetBarArrays();
+                IList<MeshBarArray> barArrays = mesher.GetBarArrays();
                 for (int ibar = 0; ibar < barArrays.Count; ibar++)
                 {
                     double height = 0;
                     {
                         int layer = barArrays[ibar].Layer;
-                        height += (layer - layerMin) * layer_height;
-                        height += 0.01 * layer_height;
+                        height += (layer - layerMin + 0.01) * layerHeight;
                     }
                     Mesher2DDrawPart dp = new Mesher2DDrawPart(barArrays[ibar]);
                     dp.Height = height;
 
                     DrawParts.Add(dp);
-
                 }
             }
 
-            { 
+            {
                 // 頂点をセット
-                IList<Vertex> vertexs = mesher.GetVertexs();
+                IList<MeshVertex> vertexs = mesher.GetVertexs();
                 for (int iver = 0; iver < vertexs.Count; iver++)
                 {
                     double height = 0;
+                    /*
                     {
                         int layer = vertexs[iver].Layer;
-                        height += (layer - layerMin) * layer_height;
-                        height += 0.01 * layer_height;
+                        height += (layer - layerMin + 0.1) * layerHeight;
                     }
-                    Mesher2DVertexDrawPart dpv = new Mesher2DVertexDrawPart();
-                    dpv.CadId = vertexs[iver].VCadId;
-                    dpv.MshId = vertexs[iver].Id;
-                    dpv.VId = vertexs[iver].V;
-                    dpv.Height = height;
-                    dpv.IsSelected = false;
+                    */
+                    height = 0.2;
+                    Mesher2DDrawPart dp = new Mesher2DDrawPart(vertexs[iver]);
+                    dp.Height = height;
 
-                    VertexDrawParts.Add(dpv);
+                    DrawParts.Add(dp);
                 }
             }
 
@@ -209,37 +202,19 @@ namespace IvyFEM
             GL.EnableClientState(ArrayCap.VertexArray);
             GL.VertexPointer((int)nDim, VertexPointerType.Double, 0, VertexArray.VertexCoordArray);
             
-            // 面と辺の描画
             for (int idp = 0; idp < DrawParts.Count; idp++)
             {
                 Mesher2DDrawPart dp = DrawParts[idp];
-                if (!IsDrawFace && (dp.GetElemDim() == 2)) { continue; }
+                if (!IsDrawFace && (dp.GetElemDim() == 2))
+                {
+                    continue;
+                }
                 double height = dp.Height;
 
                 GL.Translate(0, 0, +height);
                 dp.DrawElements();
                 GL.Translate(0, 0, -height);
             }
-            // 点の描画
-            GL.Translate(0.0, 0.0, 0.2);
-            GL.PointSize(5);
-            GL.Begin(BeginMode.Points);
-            for (int iver = 0; iver < VertexDrawParts.Count; iver++)
-            {
-                Mesher2DVertexDrawPart vdp = VertexDrawParts[iver];
-                if (vdp.IsSelected)
-                {
-                    GL.Color3(SelectedColor);
-                }
-                else
-                {
-                    GL.Color3(0.0, 0.0, 0.0);
-                }
-                uint ipo0 = vdp.VId;
-                GL.ArrayElement((int)ipo0);
-            }
-            GL.End();
-            GL.Translate(0.0, 0.0, -0.2);
 
             GL.DisableClientState(ArrayCap.VertexArray);
         }
@@ -253,31 +228,18 @@ namespace IvyFEM
 
             GL.VertexPointer((int)nDim, VertexPointerType.Double, 0, VertexArray.VertexCoordArray);
 
-
             GL.PushName(idraw);
             for (int idp = 0; idp < DrawParts.Count; idp++)
             {
+                Mesher2DDrawPart dp = DrawParts[idp];
+                double height = dp.Height;
+
                 GL.PushName(idp);
-                DrawParts[idp].DrawElementsSelection();
+                GL.Translate(0, 0, +height);
+                dp.DrawElementsSelection();
+                GL.Translate(0, 0, -height);
                 GL.PopName();
             }
-            for (int iver = 0; iver < VertexDrawParts.Count; iver++)
-            {
-                uint ipo0 = VertexDrawParts[iver].VId;
-
-                GL.PushName(DrawParts.Count + iver);
-
-                GL.Translate(0.0, 0.0, 0.2);
-                GL.Begin(BeginMode.Points);
-
-                GL.ArrayElement((int)ipo0);
-
-                GL.End();
-                GL.Translate(0.0, 0.0, -0.2);
-
-                GL.PopName();
-            }
-
             GL.PopName();
 
             GL.DisableClientState(ArrayCap.VertexArray);
@@ -287,6 +249,8 @@ namespace IvyFEM
         {
             int idp0 = selectFlag[1];
             int ielem0 = selectFlag[2];
+            System.Diagnostics.Debug.WriteLine("Mesher2DDrawer.AddSelected idp0 = " +
+                idp0 + " ielem0 = " + ielem0);
             if (idp0 < DrawParts.Count)
             {
                 DrawParts[idp0].IsSelected = true;
@@ -302,11 +266,6 @@ namespace IvyFEM
                 }
                 selectedElems.Add((uint)ielem0);
             }
-            else
-            {
-                uint iver = (uint)(idp0 - DrawParts.Count);
-                VertexDrawParts[(int)iver].IsSelected = true;
-            }
         }
 
         public void ClearSelected()
@@ -316,11 +275,6 @@ namespace IvyFEM
                 Mesher2DDrawPart dp = DrawParts[idp];
                 dp.IsSelected = false;
                 dp.SelectedElems.Clear();
-            }
-            for (int iver = 0; iver < VertexDrawParts.Count; iver++)
-            {
-                Mesher2DVertexDrawPart vdp = VertexDrawParts[iver];
-                vdp.IsSelected = false;
             }
         }
     }

@@ -72,34 +72,5 @@ namespace IvyFEM
             return bb;
         }
 
-        public void InitTransform(Camera camera)
-        {
-            {
-                uint rotMode = 0;
-                for (int idraw = 0; idraw < Drawers.Count; idraw++)
-                {
-                    uint rotMode0 = Drawers[idraw].SutableRotMode;
-                    rotMode = (rotMode0 > rotMode) ? rotMode0 : rotMode;
-                }
-                if (rotMode == 1)
-                {
-                    camera.RotationMode = RotationMode.ROT_2D;
-                }
-                else if (rotMode == 2)
-                {
-                    camera.RotationMode = RotationMode.ROT_2DH;
-                }
-                else if (rotMode == 3)
-                {
-                    camera.RotationMode = RotationMode.ROT_3D;
-                }
-            }
-
-            double[] rot = new double[9];
-            camera.RotMatrix33(rot);
-            BoundingBox3D bb = GetBoundingBox(rot);
-            camera.Fit(bb);
-        }
-
     }
 }

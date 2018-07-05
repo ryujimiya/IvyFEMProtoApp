@@ -18,7 +18,6 @@ namespace IvyFEM
         private double[] SelectedColor = { 1.0, 0.5, 1.0 }; //{ 1.0, 1.0, 0.0 };
         private byte[] Mask = new byte[128];
         private IList<DrawPart> DrawParts = new List<DrawPart>();
-        private IList<VertexDrawPart> VertexDrawParts = new List<VertexDrawPart>();
         private VertexArray VertexArray = new VertexArray();
         private uint LineWidth = 3;
         private uint PointSize = 5;
@@ -72,24 +71,21 @@ namespace IvyFEM
             for (int idp = 0; idp < oldDrawParts.Count; idp++)
             {
                 oldDrawParts[idp].MshId = 0;
-                oldDrawParts[idp].IsSelected = false;
+                oldDrawParts[idp].ShowMode = 0;
             }
             DrawParts.Clear();
-            VertexDrawParts.Clear();
-
-            Mesher2D mesh = new Mesher2D(cad2D);
 
             int minLayer;
             int maxLayer;
             cad2D.GetLayerMinMax(out minLayer, out maxLayer);
-
             double layerHeight = 1.0 / (maxLayer - minLayer + 1);
 
             {
-                IList<TriArray2D> triArrays = mesh.GetTriArrays();
-                for (int ita = 0; ita < triArrays.Count; ita++)
+                // 面をセット
+                IList<uint> lIds = cad2D.GetElemIds(CadElemType.LOOP);
+                for (int iLId = 0; iLId < lIds.Count; iLId++)
                 {
-                    uint lId = triArrays[ita].LCadId;
+                    uint lId = lIds[iLId];
                     double height = 0;
                     {
                         int layer = cad2D.GetLayer(CadElemType.LOOP, lId);
@@ -98,16 +94,16 @@ namespace IvyFEM
                     int idp0 = 0;
                     for (; idp0 < oldDrawParts.Count; idp0++)
                     {
-                        if (oldDrawParts[idp0].Type == CadElemType.LOOP &&
-                            oldDrawParts[idp0].CadId == lId)
+                        DrawPart olddp = oldDrawParts[idp0];
+                        if (olddp.Type == CadElemType.LOOP && olddp.CadId == lId)
                         {
-                            oldDrawParts[idp0].Set(triArrays[ita]);
-                            oldDrawParts[idp0].SetHeight(height);
+                            olddp.MshId = 1;
+                            olddp.Height = height;
                             double[] color = new double[3];
                             cad2D.GetLoopColor(lId, color);
-                            for (int i = 0; i < 3; i++)
+                            for (int iTmp = 0; iTmp < 3; iTmp++)
                             {
-                                oldDrawParts[idp0].Color[i] = (float)color[i];
+                                olddp.Color[iTmp] = (float)color[iTmp];
                             }
                             DrawParts.Add(oldDrawParts[idp0]);
                             break;
@@ -116,13 +112,14 @@ namespace IvyFEM
                     if (idp0 == oldDrawParts.Count)
                     {
                         DrawPart dp = new DrawPart();
-                        dp.Set(triArrays[ita]);
-                        dp.SetHeight(height);
+                        dp.CadId = lId;
+                        dp.Type = CadElemType.LOOP;
+                        dp.Height = height;
                         double[] color = new double[3];
                         cad2D.GetLoopColor(lId, color);
-                        for (int i = 0; i < 3; i++)
+                        for (int iTmp = 0; iTmp < 3; iTmp++)
                         {
-                            dp.Color[i] = (float)color[i];
+                            dp.Color[iTmp] = (float)color[iTmp];
                         }
                         DrawParts.Add(dp);
                     }
@@ -130,10 +127,11 @@ namespace IvyFEM
             }
 
             {
-                IList<BarArray> barArrays = mesh.GetBarArrays();
-                for (int ibar = 0; ibar < barArrays.Count; ibar++)
+                // set edge
+                IList<uint> eIds = cad2D.GetElemIds(CadElemType.EDGE);
+                for (int iEId = 0; iEId < eIds.Count; iEId++)
                 {
-                    uint eId = barArrays[ibar].ECadId;
+                    uint eId = eIds[iEId];
                     double height = 0;
                     {
                         int layer = cad2D.GetLayer(CadElemType.EDGE, eId);
@@ -142,32 +140,71 @@ namespace IvyFEM
                     int idp0 = 0;
                     for (; idp0 < oldDrawParts.Count; idp0++)
                     {
-                        if (oldDrawParts[idp0].Type == CadElemType.EDGE
-                           && oldDrawParts[idp0].CadId == eId)
+                        DrawPart olddp = oldDrawParts[idp0];
+                        if (olddp.Type == CadElemType.EDGE && olddp.CadId == eId)
                         {
-                            oldDrawParts[idp0].Set(barArrays[ibar]);
-                            oldDrawParts[idp0].SetHeight(height);
-                            double[] color = new double[3];
-                            cad2D.GetEdgeColor(eId, color);
-                            for (int i = 0; i < 3; i++)
-                            {
-                                oldDrawParts[idp0].Color[i] = (float)color[i];
-                            }
-                            DrawParts.Add(oldDrawParts[idp0]);
+                            olddp.MshId = 1;
+                            olddp.Height = height;
+                            DrawParts.Add(olddp);
                             break;
                         }
                     }
                     if (idp0 == oldDrawParts.Count)
                     {
                         DrawPart dp = new DrawPart();
-                        dp.Set(barArrays[ibar]);
-                        dp.SetHeight(height);
-                        double[] color = new double[3];
-                        cad2D.GetEdgeColor(eId, color);
-                        for (int i = 0; i < 3; i++)
+                        dp.CadId = eId;
+                        dp.Type = CadElemType.EDGE;
+                        dp.Height = height;
+                        DrawParts.Add(dp);
+                    }
+                    {
+                        DrawPart dp = DrawParts[DrawParts.Count - 1];
+                        Edge2D edge = cad2D.GetEdge(eId);
+                        dp.CtrlPoints.Clear();
+                        dp.CurveType = edge.CurveType;
+                        if (edge.CurveType == CurveType.CURVE_ARC)
                         {
-                            dp.Color[i] = (float)color[i];
+                            System.Numerics.Vector2 cPt;
+                            double radius;
+                            edge.GetCenterRadius(out cPt, out radius);
+                            dp.CtrlPoints.Add(cPt);
                         }
+                        else if (edge.CurveType == CurveType.CURVE_BEZIER)
+                        {
+                            IList<System.Numerics.Vector2> cos = edge.GetCurvePoint();
+                            dp.CtrlPoints.Add(cos[0]);
+                            dp.CtrlPoints.Add(cos[1]);
+                        }
+                    }
+                }
+            }
+
+            { 
+                // set vertex
+                IList<uint> vIds = cad2D.GetElemIds(CadElemType.VERTEX);
+                for (int iVId = 0; iVId < vIds.Count; iVId++)
+                {
+                    uint vCadId = vIds[iVId];
+                    int layer = cad2D.GetLayer(CadElemType.VERTEX, vCadId);
+                    double height = (layer - minLayer + 0.1) * layerHeight;
+                    int idp0 = 0;
+                    for (; idp0 < oldDrawParts.Count; idp0++)
+                    {
+                        DrawPart olddp = oldDrawParts[idp0];
+                        if (olddp.Type == CadElemType.VERTEX && olddp.CadId == vCadId)
+                        {
+                            olddp.MshId = 1;
+                            olddp.Height = height;
+                            DrawParts.Add(olddp);
+                            break;
+                        }
+                    }
+                    if (idp0 == oldDrawParts.Count)
+                    {
+                        DrawPart dp = new DrawPart();
+                        dp.CadId = vCadId;
+                        dp.Type = CadElemType.VERTEX;
+                        dp.Height = height;
                         DrawParts.Add(dp);
                     }
                 }
@@ -175,54 +212,91 @@ namespace IvyFEM
 
             oldDrawParts.Clear();
 
-            {
-                IList<Vertex> vertexs = mesh.GetVertexs();
-                for (int iver = 0; iver < vertexs.Count; iver++)
-                {
-                    uint vCadId = vertexs[iver].VCadId;
-                    int layer = cad2D.GetLayer(CadElemType.VERTEX, vCadId);
-                    double height = (layer - minLayer + 0.1) * layerHeight;
-                    VertexDrawPart vdp = new VertexDrawPart();
-                    vdp.CadId = vCadId;
-                    vdp.MshId = vertexs[iver].Id;
-                    vdp.VId = vertexs[iver].V;
-                    vdp.IsSelected = false;
-                    vdp.IsShow = true;
-                    vdp.Height = height;
-                    double[] color = new double[3];
-                    cad2D.GetVertexColor(vCadId, color);
-                    for (int i = 0; i < 3; i++)
-                    {
-                        vdp.Color[i] = (float)color[i];
-                    }
-                    VertexDrawParts.Add(vdp);
-                }
-            }
-
-            {
-                IList<System.Numerics.Vector2> vecs = mesh.GetVectors();
-                uint nVec = (uint)vecs.Count;
-                uint nDim = 2;
-                VertexArray.SetSize(nVec, nDim);
-                //System.Diagnostics.Debug.WriteLine("VertexCoordArray");
-                for (int ivec = 0; ivec < nVec; ivec++)
-                {
-                    VertexArray.VertexCoordArray[ivec * nDim] = vecs[ivec].X;
-                    VertexArray.VertexCoordArray[ivec * nDim + 1] = vecs[ivec].Y;
-                    //System.Diagnostics.Debug.WriteLine(VertexArray.VertexCoordArray[ivec * nDim] + ", " +
-                    //    VertexArray.VertexCoordArray[ivec * nDim + 1]);
-                }
-                //System.Diagnostics.Debug.WriteLine("UVCoordArray");
-                for (int ivec = 0; ivec < nVec; ivec++)
-                {
-                    VertexArray.UVCoordArray[ivec * nDim] = vecs[ivec].X * TexScale;
-                    VertexArray.UVCoordArray[ivec * nDim + 1] = vecs[ivec].Y * TexScale;
-                    //System.Diagnostics.Debug.WriteLine(VertexArray.UVCoordArray[ivec * nDim] + ", " +
-                    //    VertexArray.UVCoordArray[ivec * nDim + 1]);
-                }
-            }
-
+            UpdateCadGeometry(cad2D);
             return true;
+        }
+
+        public void UpdateCadGeometry(CadObject2D cad2D)
+        {
+            Mesher2D mesh = new Mesher2D(cad2D);
+            for (int idp = 0; idp < DrawParts.Count; idp++)
+            {
+                DrawPart dp = DrawParts[idp];
+                dp.Clear();
+                uint cadId = dp.CadId;
+                CadElemType cadType = dp.Type;
+                if (!cad2D.IsElemId(cadType, cadId))
+                {
+                    continue;
+                }
+                uint mshId = mesh.GetElemIdFromCadId(cadId, cadType);
+                if (mshId == 0)
+                {
+                    continue;
+                }
+                MeshType meshType;
+                uint nElem;
+                int loc;
+                uint cadId0;
+                mesh.GetMeshInfo(mshId, out nElem, out meshType, out loc, out cadId0);
+                System.Diagnostics.Debug.Assert(cadId0 == cadId);
+                if (meshType == MeshType.TRI)
+                {
+                    dp.SetTriAry(mesh.GetTriArrays()[loc]);
+                    double[] color = new double[3];
+                    cad2D.GetLoopColor(cadId0, color);
+                    for (int iTmp = 0; iTmp < 3; iTmp++)
+                    {
+                        dp.Color[iTmp] = (float)color[iTmp];
+                    }
+                }
+                else if (meshType == MeshType.BAR)
+                {
+                    dp.SetBarAry(mesh.GetBarArrays()[loc]);
+                    System.Diagnostics.Debug.Assert(cadType == CadElemType.EDGE);
+                    Edge2D edge = cad2D.GetEdge(cadId);
+                    dp.CurveType = edge.CurveType;
+                    dp.CtrlPoints.Clear();
+                    if (edge.CurveType == CurveType.CURVE_ARC)
+                    {
+                        System.Numerics.Vector2 cPt;
+                        double radius;
+                        edge.GetCenterRadius(out cPt, out radius);
+                        dp.CtrlPoints.Add(cPt);
+                    }
+                    else if (edge.CurveType == CurveType.CURVE_BEZIER)
+                    {
+                        IList<System.Numerics.Vector2> cos = edge.GetCurvePoint();
+                        dp.CtrlPoints.Add(cos[0]);
+                        dp.CtrlPoints.Add(cos[1]);
+                    }
+                }
+                else if (meshType == MeshType.VERTEX)
+                {
+                    dp.SetVertex(mesh.GetVertexs()[loc]);
+                }
+            }
+
+            {
+                // 座標をセット
+                IList<System.Numerics.Vector2> vec2Ds = mesh.GetVectors();
+                uint nPt = (uint)vec2Ds.Count;
+                uint ndim = 2;
+                VertexArray.SetSize(nPt, ndim);
+                for (int iPt = 0; iPt < nPt; iPt++)
+                {
+                    VertexArray.VertexCoordArray[iPt * ndim] = vec2Ds[iPt].X;
+                    VertexArray.VertexCoordArray[iPt * ndim + 1] = vec2Ds[iPt].Y;
+                }
+                if (VertexArray.UVCoordArray != null)
+                {
+                    for (int iPt = 0; iPt < nPt; iPt++)
+                    {
+                        VertexArray.UVCoordArray[iPt * ndim] = vec2Ds[iPt].X * TexScale;
+                        VertexArray.UVCoordArray[iPt * ndim + 1] = vec2Ds[iPt].Y * TexScale;
+                    }
+                }
+            }
         }
 
         public BoundingBox3D GetBoundingBox(double[] rot)
@@ -243,44 +317,7 @@ namespace IvyFEM
 
             ////////////////////////////////////////////////////////////////
             // モデルの描画
-            {
-                // draw vertecies
-                GL.Disable(EnableCap.Texture2D);
-                ////////////////
-                GL.PointSize(PointSize);
-                GL.Begin(BeginMode.Points);
-                //System.Diagnostics.Debug.WriteLine("Points");
-                for (uint iver = 0; iver < VertexDrawParts.Count; iver++)
-                {
-                    if (!VertexDrawParts[(int)iver].IsShow)
-                    {
-                        continue;
-                    }
-                    double height = VertexDrawParts[(int)iver].Height;
-                    if (VertexDrawParts[(int)iver].IsSelected)
-                    {
-                        GL.Color3(SelectedColor[0], SelectedColor[1], SelectedColor[2]);
-                    }
-                    else
-                    {
-                        GL.Color3(VertexDrawParts[(int)iver].Color);
-                    }
-                    uint ipo0 = VertexDrawParts[(int)iver].VId;
-                    GL.Vertex3(
-                        VertexArray.VertexCoordArray[ipo0 * ndim + 0],
-                        VertexArray.VertexCoordArray[ipo0 * ndim + 1],
-                        height);
-                    //System.Diagnostics.Debug.WriteLine(iver + " ip0 = " + ipo0 +
-                    //    " [" + (ipo0 * ndim + 0) + "] = " + VertexArray.VertexCoordArray[ipo0 * ndim + 0] +
-                    //    " [" + (ipo0 * ndim + 1) + "] = " + VertexArray.VertexCoordArray[ipo0 * ndim + 1] +
-                    //    " height = " + height);
-                }
-                GL.End();
-                if (isTexture)
-                {
-                    GL.Enable(EnableCap.Texture2D);
-                }
-            }
+
             /////////////
             // vertex arrayを登録する
             GL.EnableClientState(ArrayCap.VertexArray);
@@ -293,43 +330,109 @@ namespace IvyFEM
                 GL.LoadIdentity();
                 GL.Translate(-TexCentX, -TexCentY, 0.0);
             }
-            //System.Diagnostics.Debug.WriteLine("DrawParts");
-            for (uint idp = 0; idp < DrawParts.Count; idp++)
+            GL.PointSize(PointSize);
+            GL.LineWidth(LineWidth);
+            for (int idp = 0; idp < DrawParts.Count; idp++)
             {
-                DrawPart part = DrawParts[(int)idp];
-                double height = part.Height;
-                double dispX = part.DispX;
-                double dispY = part.DispY;
-                //System.Diagnostics.Debug.WriteLine(idp + " Type = " + part.Type +
-                //    " CadId = " + part.CadId + " MshId = " + part.MshId +
-                //    " height = " + height + " dispX = " + dispX + " dispY = " + dispY);
-                if (part.Type == CadElemType.EDGE)
+                DrawPart dp = DrawParts[idp];
+                if (dp.ShowMode == -1)
                 {
-                    // draw edge
+                    continue;
+                }
+                double height = dp.Height;
+                double dispX = dp.DispX;
+                double dispY = dp.DispY;
+                if (dp.Type == CadElemType.VERTEX)
+                {
                     GL.Disable(EnableCap.Texture2D);
-                    if (!part.IsShow)
+                    if (dp.ShowMode == 1)
                     {
-                        continue;
+                        GL.Color3(1.0, 1.0, 0.0);
                     }
+                    else if (dp.ShowMode == 2)
+                    {
+                        GL.Color3(SelectedColor);
+                    }
+                    else
+                    {
+                        GL.Color3(0.0, 0.0, 0.0);
+                    }
+
+                    GL.Translate(0.0, 0.0, height);
+                    dp.DrawElements();
+
+                    GL.Translate(0.0, 0.0, -height);
+                    if (isTexture)
+                    {
+                        GL.Enable(EnableCap.Texture2D);
+                    }
+                }
+                if (dp.Type == CadElemType.EDGE)
+                {
+                    GL.Disable(EnableCap.Texture2D);
                     GL.LineWidth(LineWidth);
                     if (IsAntiAliasing)
-                    { 
-                        // anti aliasing
+                    {
                         GL.Enable(EnableCap.LineSmooth);
                         GL.Enable(EnableCap.Blend);
                         GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
                         GL.Hint(HintTarget.LineSmoothHint, HintMode.DontCare);
                     }
-                    if (part.IsSelected)
+                    if (dp.ShowMode == 1)
                     {
-                        GL.Color3(SelectedColor[0], SelectedColor[1], SelectedColor[2]);
+                        GL.Color3(1.0, 1.0, 0.0);
+                    }
+                    else if (dp.ShowMode == 2)
+                    {
+                        GL.Color3(SelectedColor);
                     }
                     else
                     {
-                        GL.Color3(part.Color);
+                        GL.Color3(0, 0, 0);
                     }
+
                     GL.Translate(0.0, 0.0, height);
-                    part.DrawElements();
+                    dp.DrawElements();
+                    if (dp.ShowMode > 0)
+                    {
+                        // draw ctrl point        
+                        GL.Begin(BeginMode.Points);
+                        for (int icp = 0; icp < dp.CtrlPoints.Count; icp++)
+                        {
+                            System.Numerics.Vector2 cp = dp.CtrlPoints[icp];
+                            GL.Vertex3(cp.X, cp.Y, 0.0);
+                        }
+                        GL.End();
+                        // draw line between ctrl point and point
+                        GL.Enable(EnableCap.LineStipple);
+                        GL.LineStipple(1, 0xF0F0);
+                        GL.PolygonStipple(Mask);
+                        GL.LineWidth(1);
+                        GL.Begin(BeginMode.Lines);
+                        uint sVI = dp.Indexs[0];
+                        uint eVI = dp.Indexs[dp.NElem * dp.NPtElem - 1];
+                        double[] va = VertexArray.VertexCoordArray;
+                        System.Numerics.Vector2 sPt = new System.Numerics.Vector2(
+                            (float)va[sVI * 2 + 0], (float)va[sVI * 2 + 1]);
+                        System.Numerics.Vector2 ePt = new System.Numerics.Vector2(
+                            (float)va[eVI * 2 + 0], (float)va[eVI * 2 + 1]);
+                        if (dp.CurveType == CurveType.CURVE_ARC)
+                        {
+                            DrawerGLUtils.GLVertex2(sPt);
+                            DrawerGLUtils.GLVertex2(dp.CtrlPoints[0]);
+                            DrawerGLUtils.GLVertex2(ePt);
+                            DrawerGLUtils.GLVertex2(dp.CtrlPoints[0]);
+                        }
+                        if (dp.CurveType == CurveType.CURVE_BEZIER)
+                        {
+                            DrawerGLUtils.GLVertex2(sPt);
+                            DrawerGLUtils.GLVertex2(dp.CtrlPoints[0]);
+                            DrawerGLUtils.GLVertex2(ePt);
+                            DrawerGLUtils.GLVertex2(dp.CtrlPoints[1]);
+                        }
+                        GL.End();
+                        GL.Disable(EnableCap.LineStipple);
+                    }
                     GL.Translate(0.0, 0.0, -height);
                     GL.Disable(EnableCap.LineSmooth);
                     GL.Disable(EnableCap.Blend);
@@ -338,32 +441,40 @@ namespace IvyFEM
                         GL.Enable(EnableCap.Texture2D);
                     }
                 }
-                else if (part.Type == CadElemType.LOOP)
+                else if (dp.Type == CadElemType.LOOP)
                 {
                     GL.Disable(EnableCap.Blend);
-                    if (part.IsSelected)
+                    if (dp.ShowMode > 0)
                     {
                         GL.Enable(EnableCap.PolygonStipple);
                         GL.PolygonStipple(Mask);
-                        GL.Color3(SelectedColor[0], SelectedColor[1], SelectedColor[2]);
+                        if (dp.ShowMode == 1)
+                        {
+                            GL.Color3(1.0, 1.0, 0.0);
+                        }
+                        else if (dp.ShowMode == 2)
+                        {
+                            GL.Color3(SelectedColor);
+                        }
                         GL.Translate(0.0, 0.0, +height + 0.001);
-                        part.DrawElements();
+                        dp.DrawElements();
                         GL.Translate(0.0, 0.0, -height - 0.001);
                         GL.Disable(EnableCap.PolygonStipple);
                     }
-                    if (!part.IsShow)
+                    if (dp.ShowMode != 0)
                     {
                         continue;
                     }
-                    GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Diffuse, part.Color);
-                    GL.Color3(part.Color);
+                    GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Diffuse, dp.Color);
+                    GL.Color3(dp.Color);
                     GL.Translate(+dispX, +dispY, +height);
-                    part.DrawElements();
+                    dp.DrawElements();
                     GL.Translate(-dispX, -dispY, -height);
                 }
             }
             GL.DisableClientState(ArrayCap.VertexArray);
             GL.DisableClientState(ArrayCap.TextureCoordArray);
+
             if (isLighting)
             {
                 GL.Enable(EnableCap.Lighting);
@@ -398,104 +509,150 @@ namespace IvyFEM
             GL.Disable(EnableCap.Blend);
             GL.Disable(EnableCap.LineSmooth);
             GL.Disable(EnableCap.Texture2D);
-            uint ndim = VertexArray.NDim;
 
+            uint ndim = VertexArray.NDim;
             GL.PushName(idraw);
             // モデルの描画
             GL.EnableClientState(ArrayCap.VertexArray);
-
             GL.VertexPointer((int)ndim, VertexPointerType.Double, 0, VertexArray.VertexCoordArray);
-            for (uint idp = 0; idp < DrawParts.Count; idp++)
+            for (int idp = 0; idp < DrawParts.Count; idp++)
             {
-                DrawPart part = DrawParts[(int)idp];
-                double height = part.Height;
-
-                GL.PushName(part.MshId);
-                if (part.Type == CadElemType.EDGE)
+                DrawPart dp = DrawParts[idp];
+                double height = dp.Height;
+                GL.PushName(idp);
+                GL.Translate(0.0, 0.0, +height);
+                dp.DrawElements();
+                if (dp.Type == CadElemType.EDGE && dp.ShowMode == 2)
                 {
-                    GL.Translate(0.0, 0.0, +height);
-                    part.DrawElements();
-                    GL.Translate(0.0, 0.0, -height);
+                    for (int icp = 0; icp < dp.CtrlPoints.Count; icp++)
+                    {
+                        System.Numerics.Vector2 cp = dp.CtrlPoints[icp];
+                        GL.PushName(icp);
+                        GL.Begin(BeginMode.Points);
+                        DrawerGLUtils.GLVertex2(cp);
+                        GL.End();
+                        GL.PopName();
+                    }
                 }
-                else if (part.Type == CadElemType.LOOP)
-                {
-                    GL.Translate(0.0, 0.0, +height);
-                    part.DrawElements();
-                    GL.Translate(0.0, 0.0, -height);
-                }
+                GL.Translate(0.0, 0.0, -height);
                 GL.PopName();
             }
             GL.DisableClientState(ArrayCap.VertexArray);
-
-            GL.PointSize(5);
-            for (uint iver = 0; iver < VertexDrawParts.Count; iver++)
-            {
-                VertexDrawPart vdp = VertexDrawParts[(int)iver];
-                uint ipo0 = vdp.VId;
-                double height = vdp.Height;
-                uint mshId = vdp.MshId;
-
-                GL.PushName(mshId);
-
-                GL.Begin(BeginMode.Points);
-
-                GL.Vertex3(
-                    VertexArray.VertexCoordArray[ipo0 * ndim + 0],
-                    VertexArray.VertexCoordArray[ipo0 * ndim + 1],
-                    height);
-
-                GL.End();
-
-                GL.PopName();
-            }
             GL.PopName();
 
             if (isBlend)
             {
                 GL.Enable(EnableCap.Blend);
             }
-            if (isLineSmooth)
+            else
             {
-                GL.Enable(EnableCap.LineSmooth);
+                GL.Disable(EnableCap.Blend);
             }
             if (isTexture)
             {
                 GL.Enable(EnableCap.Texture2D);
             }
+            else
+            {
+                GL.Disable(EnableCap.Texture2D);
+            }
+        }
 
-            return;
+        public void GetCadPartId(int[] selectFlag, 
+            out CadElemType partType, out uint partId, out int ctrlIndex)
+        {
+            uint idp = (uint)selectFlag[1];
+            if (idp < DrawParts.Count)
+            {
+                DrawPart dp = DrawParts[(int)idp];
+                partType = dp.Type;
+                partId = dp.CadId;
+                ctrlIndex = selectFlag[2];
+                return;
+            }
+            partType = CadElemType.NOT_SET;
+            partId = 0;
+            ctrlIndex = 0;
+        }
+
+        public void SetShowMode(CadElemType type, uint id, int showMode)
+        {
+            bool flag = false;
+            for (int idp = 0; idp < DrawParts.Count; idp++)
+            {
+                if (DrawParts[idp].Type == type && DrawParts[idp].CadId == id)
+                {
+                    DrawParts[idp].ShowMode = showMode;
+                    System.Diagnostics.Debug.Assert(flag == false);
+                    flag = true;
+                }
+            }
+        }
+
+        public int GetShowMode(CadElemType type, uint id)
+        {
+            for (int idp = 0; idp < DrawParts.Count; idp++)
+            {
+                if (DrawParts[idp].Type == type && DrawParts[idp].CadId == id)
+                {
+                    return DrawParts[idp].ShowMode;
+                }
+            }
+            return 0;
+        }
+
+        public void ClearShowMode(int curShowMode)
+        {
+            for (int idp = 0; idp < DrawParts.Count; idp++)
+            {
+                if (DrawParts[idp].ShowMode == curShowMode)
+                {
+                    DrawParts[idp].ShowMode = 0;
+                }
+            }
+        }
+
+        public void SetIsShow(bool isShow, CadElemType cadPartType, uint cadPartId)
+        {
+            int mode = (isShow) ? 0 : -1;
+            for (int idp = 0; idp < DrawParts.Count; idp++)
+            {
+                if (DrawParts[idp].CadId == cadPartId &&
+                    DrawParts[idp].Type == cadPartType)
+                {
+                    DrawParts[idp].ShowMode = mode;
+                }
+            }
+        }
+
+        public void SetIsShow(bool isShow, CadElemType cadPartType, IList<uint> partIds)
+        {
+            for (int i = 0; i < partIds.Count; i++)
+            {
+                uint id = partIds[i];
+                SetIsShow(isShow, cadPartType, id);
+            }
         }
 
         public void AddSelected(int[] selectFlag)
         {
-            for (uint idp = 0; idp < DrawParts.Count; idp++)
+            CadElemType partType;
+            uint partId;
+            int ctrlIndex;
+            GetCadPartId(selectFlag, out partType, out partId, out ctrlIndex);
+            if (partType == CadElemType.NOT_SET)
             {
-                if ((int)DrawParts[(int)idp].MshId == selectFlag[1])
-                {
-                    DrawParts[(int)idp].IsSelected = true;
-                }
+                return;
             }
-            for (uint iv = 0; iv < VertexDrawParts.Count; iv++)
-            {
-                if ((int)VertexDrawParts[(int)iv].MshId == selectFlag[1])
-                {
-                    VertexDrawParts[(int)iv].IsSelected = true;
-                }
-            }
+            int showMode = 2;
+            SetShowMode(partType, partId, showMode);
         }
 
         public void ClearSelected()
         {
-            for (uint idp = 0; idp < DrawParts.Count; idp++)
-            {
-                DrawParts[(int)idp].IsSelected = false;
-            }
-            for (uint iv = 0; iv < VertexDrawParts.Count; iv++)
-            {
-                VertexDrawParts[(int)iv].IsSelected = false;
-            }
+            int curShowMode = 2;
+            ClearShowMode(curShowMode);
         }
-
     }
 
 }

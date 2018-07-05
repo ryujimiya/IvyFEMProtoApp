@@ -12,6 +12,14 @@ namespace IvyFEM
         public int[] Name { get; set; } = new int[4];
         public double MinDepth { get; set; }
         public double MaxDepth { get; set; }
+
+        public PickedObject()
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                Name[i] = -1;
+            }
+        }
     }
 
 }
