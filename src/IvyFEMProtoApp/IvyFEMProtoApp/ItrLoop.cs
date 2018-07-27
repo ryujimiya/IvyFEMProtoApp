@@ -71,7 +71,7 @@ namespace IvyFEM
             HEId = uL.HEId;
         }
 
-        public static ItrLoop operator++ (ItrLoop src)
+        public static ItrLoop operator ++(ItrLoop src)
         {
             ItrLoop dest = new ItrLoop(src);
             if (!src.IsValid)
@@ -132,7 +132,7 @@ namespace IvyFEM
             System.Diagnostics.Debug.Assert(BRep2D.BRep.IsUseVertexId(hE.UVId));
             UseVertex uV = BRep2D.BRep.GetUseVertex(hE.UVId);
             uint vId = uV.VId;
-            System.Diagnostics.Debug.Assert(BRep2D.IsElemId(CadElemType.VERTEX, vId));
+            System.Diagnostics.Debug.Assert(BRep2D.IsElemId(CadElementType.VERTEX, vId));
             return vId;
         }
 
@@ -150,7 +150,7 @@ namespace IvyFEM
             uint fUVId = fHE.UVId;
             UseVertex fUV = BRep2D.BRep.GetUseVertex(fUVId);
             uint vId = fUV.VId;
-            System.Diagnostics.Debug.Assert(BRep2D.IsElemId(CadElemType.VERTEX, vId));
+            System.Diagnostics.Debug.Assert(BRep2D.IsElemId(CadElementType.VERTEX, vId));
             return vId;
         }
 
@@ -168,7 +168,7 @@ namespace IvyFEM
             uint bUVId = bHE.UVId;
             UseVertex bUV = BRep2D.BRep.GetUseVertex(bUVId);
             uint vId = bUV.VId;
-            System.Diagnostics.Debug.Assert(BRep2D.IsElemId(CadElemType.VERTEX, vId));
+            System.Diagnostics.Debug.Assert(BRep2D.IsElemId(CadElementType.VERTEX, vId));
             return vId;
         }
 
@@ -263,10 +263,10 @@ namespace IvyFEM
                 hEId0 = uL.HEId;
             }
             uint hEId = hEId0;
-            uint icnt = 0;
+            uint iCnt = 0;
             for (;;)
             {
-                icnt++;
+                iCnt++;
                 HalfEdge hE = BRep2D.BRep.GetHalfEdge(hEId);
                 uint fHEId = hE.FHEId;
                 if (fHEId == hEId0)
@@ -280,7 +280,7 @@ namespace IvyFEM
                 }
                 hEId = fHEId;
             }
-            return icnt;
+            return iCnt;
         }
 
 

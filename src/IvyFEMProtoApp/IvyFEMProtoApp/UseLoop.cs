@@ -29,14 +29,10 @@ namespace IvyFEM
 
         public UseLoop(UseLoop src)
         {
-            Id = src.Id;
-            LId = src.LId;
-            HEId = src.HEId;
-            ChildULId = src.ChildULId;
-            ParentULId = src.ParentULId;
+            Copy(src);
         }
 
-        void ICadObject.Copy(ICadObject src)
+        public void Copy(ICadObject src)
         {
             UseLoop srcUL = src as UseLoop;
             Id = srcUL.Id;

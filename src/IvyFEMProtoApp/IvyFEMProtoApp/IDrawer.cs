@@ -8,7 +8,7 @@ namespace IvyFEM
 {
     interface IDrawer
     {
-        uint SutableRotMode { get; }
+        RotMode SutableRotMode { get; }
         bool IsAntiAliasing { get; set; }
 
         BoundingBox3D GetBoundingBox(double[] rot);

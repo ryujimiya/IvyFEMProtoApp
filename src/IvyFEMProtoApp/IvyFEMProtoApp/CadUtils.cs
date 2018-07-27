@@ -67,6 +67,19 @@ namespace IvyFEM
             return TriArea(points[iv1], points[iv2], points[iv3]);
         }
 
+        public static void UnitNormalAreaTri3D(out double[] n, out double a, Vector3 v1, Vector3 v2, Vector3 v3)
+        {
+            n = new double[3];
+            n[0] = (v2.Y - v1.Y) * (v3.Z - v1.Z) - (v3.Y - v1.Y) * (v2.Z - v1.Z);
+            n[1] = (v2.Z - v1.Z) * (v3.X - v1.X) - (v3.Z - v1.Z) * (v2.X - v1.X);
+            n[2] = (v2.X - v1.X) * (v3.Y - v1.Y) - (v3.X - v1.X) * (v2.Y - v1.Y);
+            a = Math.Sqrt(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]) * 0.5;
+            double invA = 0.5 / a;
+            n[0] *= invA;
+            n[1] *= invA;
+            n[2] *= invA;
+        }
+
         public static bool IsCrossLineSegLineSeg(Vector2 sPt0, Vector2 ePt0, Vector2 sPt1, Vector2 ePt1)
         {
             double minX0 = (sPt0.X < ePt0.X) ? sPt0.X : ePt0.X;
@@ -340,8 +353,8 @@ namespace IvyFEM
 
         public static int CheckEdgeIntersection(IList<Edge2D> edges)
         {
-            uint nedge = (uint)edges.Count;
-            for (int iedge = 0; iedge < nedge; iedge++)
+            uint edgeCnt = (uint)edges.Count;
+            for (int iedge = 0; iedge < edgeCnt; iedge++)
             {
                 Edge2D iE = edges[iedge];
                 if (iE.IsCrossEdgeSelf())
@@ -351,7 +364,7 @@ namespace IvyFEM
                 uint iPt0 = iE.GetVertexId(true);
                 uint iPt1 = iE.GetVertexId(false);
                 BoundingBox2D iBB = iE.GetBoundingBox();
-                for (int jedge = iedge + 1; jedge < nedge; jedge++)
+                for (int jedge = iedge + 1; jedge < edgeCnt; jedge++)
                 {
                     Edge2D jE = edges[jedge];
                     uint jPt0 = jE.GetVertexId(true);

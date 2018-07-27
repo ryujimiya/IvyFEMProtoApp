@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IvyFEM
 {
-    class Loop2D
+    class Loop2D : IObject
     {
         public double[] Color { get; } = new double[3];
         public uint Layer { get; set; } = 0;
@@ -26,10 +26,16 @@ namespace IvyFEM
 
         public Loop2D(Loop2D src)
         {
-            Color[0] = src.Color[0];
-            Color[1] = src.Color[1];
-            Color[2] = src.Color[2];
-            Layer = src.Layer;
+            Copy(src);
+        }
+
+        public void Copy(IObject src)
+        {
+            Loop2D srcLoop = src as Loop2D;
+            Color[0] = srcLoop.Color[0];
+            Color[1] = srcLoop.Color[1];
+            Color[2] = srcLoop.Color[2];
+            Layer = srcLoop.Layer;
         }
 
         public string Dump()

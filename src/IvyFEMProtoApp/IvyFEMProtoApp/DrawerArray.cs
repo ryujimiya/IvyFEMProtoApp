@@ -28,33 +28,33 @@ namespace IvyFEM
 
         public void Draw()
         {
-            for (int idraw = 0; idraw < Drawers.Count; idraw++)
+            for (int iDraw = 0; iDraw < Drawers.Count; iDraw++)
             {
-                Drawers[idraw].Draw();
+                Drawers[iDraw].Draw();
             }
         }
 
         public void DrawSelection()
         {
-            for (uint idraw = 0; idraw < Drawers.Count; idraw++)
+            for (uint iDraw = 0; iDraw < Drawers.Count; iDraw++)
             {
-                Drawers[(int)idraw].DrawSelection(idraw);
+                Drawers[(int)iDraw].DrawSelection(iDraw);
             }
         }
 
         public void AddSelected(int[] selectFlg)
         {
-            for (uint idraw = 0; idraw < Drawers.Count; idraw++)
+            for (uint iDraw = 0; iDraw < Drawers.Count; iDraw++)
             {
-                Drawers[(int)idraw].AddSelected(selectFlg);
+                Drawers[(int)iDraw].AddSelected(selectFlg);
             }
         }
 
         public void ClearSelected()
         {
-            for (uint idraw = 0; idraw < Drawers.Count; idraw++)
+            for (uint iDraw = 0; iDraw < Drawers.Count; iDraw++)
             {
-                Drawers[(int)idraw].ClearSelected();
+                Drawers[(int)iDraw].ClearSelected();
             }
         }
 
@@ -65,9 +65,9 @@ namespace IvyFEM
                 return new BoundingBox3D(-0.5, 0.5, -0.5, 0.5, -0.5, 0.5);
             }
             BoundingBox3D bb = Drawers[0].GetBoundingBox(rot);
-            for (int idraw = 1; idraw < Drawers.Count; idraw++)
+            for (int iDraw = 1; iDraw < Drawers.Count; iDraw++)
             {
-                bb += Drawers[idraw].GetBoundingBox(rot);
+                bb += Drawers[iDraw].GetBoundingBox(rot);
             }
             return bb;
         }

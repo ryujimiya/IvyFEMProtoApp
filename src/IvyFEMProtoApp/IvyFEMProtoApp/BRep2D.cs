@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Numerics;
 
 namespace IvyFEM
 {
@@ -76,17 +75,17 @@ namespace IvyFEM
             return ret;
         }
 
-        public bool IsElemId(CadElemType type, uint id)
+        public bool IsElemId(CadElementType type, uint id)
         {
-            if (type == CadElemType.VERTEX)
+            if (type == CadElementType.VERTEX)
             {
                 return BRep.IsUseVertexId(id);
             }
-            else if (type == CadElemType.EDGE)
+            else if (type == CadElementType.EDGE)
             {
                 return Edge2HalfEdge.ContainsKey(id);
             }
-            else if (type == CadElemType.LOOP)
+            else if (type == CadElementType.LOOP)
             {
                 return Loop2UseLoop.ContainsKey(id);
             }
@@ -103,21 +102,21 @@ namespace IvyFEM
             return new ItrVertex(this, vId);
         }
 
-        public IList<uint> GetElemIds(CadElemType type)
+        public IList<uint> GetElemIds(CadElementType type)
         {
-            if (type == CadElemType.VERTEX)
+            if (type == CadElementType.VERTEX)
             {
                 return BRep.GetUseVertexIds();
             }
             IList<uint> res = new List<uint>();
-            if (type == CadElemType.EDGE)
+            if (type == CadElementType.EDGE)
             {
                 foreach (var key in Edge2HalfEdge.Keys)
                 {
                     res.Add(key);
                 }
             }
-            else if (type == CadElemType.LOOP)
+            else if (type == CadElementType.LOOP)
             {
                 foreach (var key in Loop2UseLoop.Keys)
                 {
@@ -255,7 +254,7 @@ namespace IvyFEM
                 System.Diagnostics.Debug.Assert(BRep.IsHalfEdgeId(hEId));
             }
 
-            IList<uint> uLIds = BRep.UseLoopSet.GetObjectIds();
+            IList<uint> uLIds = BRep.UseLoopArray.GetObjectIds();
             for (int i = 0; i < uLIds.Count; i++)
             {
                 uint uLId = uLIds[i];
@@ -272,7 +271,7 @@ namespace IvyFEM
                 System.Diagnostics.Debug.Assert(Loop2UseLoop.ContainsKey(lId));
             }
 
-            IList<uint> hEIds = BRep.HalfEdgeSet.GetObjectIds();
+            IList<uint> hEIds = BRep.HalfEdgeArray.GetObjectIds();
             for (int i = 0; i < hEIds.Count; i++)
             {
                 uint hEId = hEIds[i];
@@ -332,7 +331,7 @@ namespace IvyFEM
                 }
             }
 
-            IList<uint> uVIds = BRep.UseVertexSet.GetObjectIds();
+            IList<uint> uVIds = BRep.UseVertexArray.GetObjectIds();
             for (int i = 0; i < uVIds.Count; i++)
             {
                 uint uVId = uVIds[i];

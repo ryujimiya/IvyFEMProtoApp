@@ -26,12 +26,10 @@ namespace IvyFEM
 
         public UseVertex(UseVertex src)
         {
-            Id = src.Id;
-            HEId = src.HEId;
-            VId = src.VId;
+            Copy(src);
         }
 
-        void ICadObject.Copy(ICadObject src)
+        public void Copy(ICadObject src)
         {
             UseVertex srcUV = src as UseVertex;
             Id = srcUV.Id;

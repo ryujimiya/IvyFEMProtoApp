@@ -5,6 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:IvyFEMProtoApp"
         mc:Ignorable="d"
-        Title="AlertWindow" Height="300" Width="300">
+        Title="AlertWindow" Height="300" Width="300" FontFamily="MS Gothic">
     <TextBox x:Name="textBox1" Margin="0,0,2,-2" TextWrapping="Wrap" IsReadOnly="True" IsReadOnlyCaretVisible="True" VerticalScrollBarVisibility="Auto"/>
 </Window>

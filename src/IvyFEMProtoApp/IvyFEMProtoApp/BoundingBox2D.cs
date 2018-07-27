@@ -63,7 +63,7 @@ namespace IvyFEM
             return ret;
         }
 
-        public static BoundingBox2D operator+ (BoundingBox2D bb1, BoundingBox2D bb2)
+        public static BoundingBox2D operator +(BoundingBox2D bb1, BoundingBox2D bb2)
         {
             BoundingBox2D result;
 

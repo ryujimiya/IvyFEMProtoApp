@@ -36,17 +36,10 @@ namespace IvyFEM
 
         public HalfEdge(HalfEdge src)
         {
-            Id = src.Id;
-            UVId = src.UVId;
-            FHEId = src.FHEId;
-            BHEId = src.BHEId;
-            OHEId = src.OHEId;
-            ULId = src.ULId;
-            EId = src.EId;
-            IsSameDir = src.IsSameDir;
+            Copy(src);
         }
 
-        void ICadObject.Copy(ICadObject src)
+        public void Copy(ICadObject src)
         {
             HalfEdge srcHE = src as HalfEdge;
             Id = srcHE.Id;

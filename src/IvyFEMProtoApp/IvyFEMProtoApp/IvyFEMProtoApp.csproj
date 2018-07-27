@@ -13,6 +13,21 @@
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -23,6 +38,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -33,17 +49,45 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OpenTK, Version=3.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenTK.3.0.0\lib\net20\OpenTK.dll</HintPath>
+    <Reference Include="OpenTK, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.3.0.1\lib\net20\OpenTK.dll</HintPath>
     </Reference>
-    <Reference Include="OpenTK.GLControl, Version=3.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenTK.GLControl.3.0.0\lib\net20\OpenTK.GLControl.dll</HintPath>
+    <Reference Include="OpenTK.GLControl, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.GLControl.3.0.1\lib\net20\OpenTK.GLControl.dll</HintPath>
+    </Reference>
+    <Reference Include="OxyPlot, Version=2.0.0.0, Culture=neutral, PublicKeyToken=638079a8f0bd61e9, processorArchitecture=MSIL">
+      <HintPath>..\packages\OxyPlot.Core.2.0.0-unstable1035\lib\net45\OxyPlot.dll</HintPath>
+    </Reference>
+    <Reference Include="OxyPlot.Wpf, Version=2.0.0.0, Culture=neutral, PublicKeyToken=75e952ba404cdbb0, processorArchitecture=MSIL">
+      <HintPath>..\packages\OxyPlot.Wpf.2.0.0-unstable1035\lib\net452\OxyPlot.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -69,17 +113,42 @@
       <DependentUpon>AlertWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Camera2D.cs" />
-    <Compile Include="Enums.cs" />
+    <Compile Include="ChartWindow.xaml.cs">
+      <DependentUpon>ChartWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ColorLegend.cs" />
+    <Compile Include="EdgeFieldDrawer.cs" />
+    <Compile Include="FieldDrawPart.cs" />
+    <Compile Include="FieldValue.cs" />
+    <Compile Include="IColorMap.cs" />
+    <Compile Include="EMWaveguide2DHPlane.cs" />
+    <Compile Include="FaceFieldDrawer.cs" />
+    <Compile Include="FieldDrawerArray.cs" />
+    <Compile Include="IFieldDrawer.cs" />
+    <Compile Include="Lapack.ComplexMatrix.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="DielectricMaterial.cs" />
+    <Compile Include="Lapack.DoubleMatrix.cs" />
+    <Compile Include="ElectricWallMaterial.cs" />
+    <Compile Include="EMWaveguide1DEigenFEM.cs" />
+    <Compile Include="FEWorld.cs" />
+    <Compile Include="FE.cs" />
+    <Compile Include="Lapack.Complex.cs" />
+    <Compile Include="Lapack.Constants.cs" />
+    <Compile Include="Lapack.Functions.cs" />
+    <Compile Include="Lapack.ImportedFunctions.cs" />
+    <Compile Include="LineFE.cs" />
+    <Compile Include="Material.cs" />
     <Compile Include="MeshBar.cs" />
     <Compile Include="MeshBarArray.cs" />
     <Compile Include="BoundingBox2D.cs" />
     <Compile Include="BoundingBox3D.cs" />
     <Compile Include="BRep.cs" />
-    <Compile Include="CadObjectSet.cs" />
+    <Compile Include="CadObjectArray.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="DrawerArray.cs" />
-    <Compile Include="DrawerGLUtils.cs" />
-    <Compile Include="DrawPart.cs" />
+    <Compile Include="OpenGLUtils.cs" />
+    <Compile Include="CadObject2DDrawPart.cs" />
     <Compile Include="Edge2D.cs" />
     <Compile Include="HalfEdge.cs" />
     <Compile Include="IDrawer.cs" />
@@ -89,6 +158,7 @@
     <Compile Include="Mesher2DDrawer.cs" />
     <Compile Include="Mesher2DDrawPart.cs" />
     <Compile Include="MeshUtils.cs" />
+    <Compile Include="ColorMap.cs" />
     <Compile Include="PickedObject.cs" />
     <Compile Include="MeshPoint2D.cs" />
     <Compile Include="Problem.cs" />
@@ -97,6 +167,8 @@
     <Compile Include="SelectedObject.cs" />
     <Compile Include="MeshTri2D.cs" />
     <Compile Include="MeshTriArray2D.cs" />
+    <Compile Include="TriangleFE.cs" />
+    <Compile Include="WPFUtils.cs" />
     <Compile Include="UseLoop.cs" />
     <Compile Include="UseVertex.cs" />
     <Compile Include="CadUtils.cs" />
@@ -104,6 +176,10 @@
     <Compile Include="Vertex2D.cs" />
     <Compile Include="VertexArray.cs" />
     <Page Include="AlertWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ChartWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -125,7 +201,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Mesher2D.cs" />
-    <Compile Include="ObjectSet.cs" />
+    <Compile Include="ObjectArray.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -152,6 +228,41 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 および x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="libblas.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libgcc_s_seh-1.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libgfortran-4.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="liblapack.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="liblapacke.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libquadmath-0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libwinpthread-1.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

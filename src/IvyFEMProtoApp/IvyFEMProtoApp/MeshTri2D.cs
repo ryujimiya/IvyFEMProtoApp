@@ -13,6 +13,8 @@ namespace IvyFEM
         public uint[] S2 { get; } = new uint[3];
         public uint[] R2 { get; } = new uint[3];
 
+        public int FEId { get; set; } = -1;
+
         public MeshTri2D()
         {
 
@@ -36,6 +38,7 @@ namespace IvyFEM
             {
                 R2[i] = src.R2[i];
             }
+            FEId = src.FEId;
         }
 
         public string Dump()

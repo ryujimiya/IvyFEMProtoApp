@@ -7,7 +7,7 @@ using System.Numerics;
 
 namespace IvyFEM
 {
-    class Vertex2D
+    class Vertex2D : IObject
     {
         public Vector2 Point { get; set; }
         public double[] Color { get; } = new double[3];
@@ -28,11 +28,18 @@ namespace IvyFEM
 
         public Vertex2D(Vertex2D src)
         {
-            Point = new Vector2(src.Point.X, src.Point.Y);
+            Copy(src);
+        }
+
+        public void Copy(IObject src)
+        {
+            Vertex2D srcVertex = src as Vertex2D;
+            Point = new Vector2(srcVertex.Point.X, srcVertex.Point.Y);
             for (int i = 0; i < 3; i++)
             {
-                Color[i] = src.Color[i];
+                Color[i] = srcVertex.Color[i];
             }
+
         }
 
         public string Dump()

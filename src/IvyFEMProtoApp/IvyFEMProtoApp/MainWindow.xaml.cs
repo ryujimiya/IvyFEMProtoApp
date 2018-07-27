@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using OpenTK;
+//using OpenTK; // System.Numericsと衝突するので注意
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using IvyFEM;
@@ -34,7 +34,7 @@ namespace IvyFEMProtoApp
         /// <summary>
         /// カメラ
         /// </summary>
-        private Camera2D Camera = new Camera2D();
+        internal Camera2D Camera { get; private set; } = new Camera2D();
 
         /// <summary>
         /// マウス移動量X方向
@@ -52,12 +52,15 @@ namespace IvyFEMProtoApp
         private System.Windows.Forms.Keys Modifiers = new System.Windows.Forms.Keys();
 
         /// <summary>
+        /// 場を描画する?
+        /// </summary>
+        internal bool IsFieldDraw { get; set; } = false;
+
+        /// <summary>
         /// 描画アレイ
         /// </summary>
-        private DrawerArray DrawerArray = new DrawerArray();
-
-        //private BitmapData TextureBitmapData;
-        //private int Texture;
+        internal DrawerArray DrawerArray { get; private set; } = new DrawerArray();
+        internal FieldDrawerArray FieldDrawerArray { get; private set; } = new FieldDrawerArray();
 
         /// <summary>
         /// コンストラクタ
@@ -97,7 +100,7 @@ namespace IvyFEMProtoApp
             glControl_ResizeProc();
         }
 
-        private void glControl_ResizeProc()
+        internal void glControl_ResizeProc()
         {
             int width = glControl.Size.Width;
             int height = glControl.Size.Height;
@@ -105,7 +108,7 @@ namespace IvyFEMProtoApp
             GL.Viewport(0, 0, width, height);
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
-            DrawerGLUtils.SetProjectionTransform(Camera);
+            OpenGLUtils.SetProjectionTransform(Camera);
         }
 
         /// <summary>
@@ -135,6 +138,11 @@ namespace IvyFEMProtoApp
         /// <param name="e"></param>
         private void glControl_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
+            if (IsFieldDraw)
+            {
+                return;
+            }
+
             if (e.Button == System.Windows.Forms.MouseButtons.Left &&
                 !Modifiers.HasFlag(System.Windows.Forms.Keys.Control) &&
                 !Modifiers.HasFlag(System.Windows.Forms.Keys.Shift))
@@ -142,12 +150,12 @@ namespace IvyFEMProtoApp
                 int sizeBuffer = 2048;
                 int[] pickSelectBuffer = new int[sizeBuffer];
 
-                DrawerGLUtils.PickPre(
+                OpenGLUtils.PickPre(
                     sizeBuffer, pickSelectBuffer,
                     (uint)e.X, (uint)e.Y, 5, 5, Camera);
                 DrawerArray.DrawSelection();
 
-                IList<SelectedObject> selectedObjs = DrawerGLUtils.PickPost(pickSelectBuffer,
+                IList<SelectedObject> selectedObjs = OpenGLUtils.PickPost(pickSelectBuffer,
                     (uint)e.X, (uint)e.Y, Camera);
 
                 DrawerArray.ClearSelected();
@@ -220,16 +228,7 @@ namespace IvyFEMProtoApp
             double delta = e.Delta;
             double scale = Camera.Scale;
 
-            scale += delta / 720.0;
-
-            if (scale > 5.0f)
-            {
-                scale = 5.0f;
-            }
-            if (scale < 0.1f)
-            {
-                scale = 0.1f;
-            }
+            scale *= Math.Pow(1.1, delta / 120.0);
             Camera.Scale = scale;
 
             glControl_ResizeProc();
@@ -250,45 +249,44 @@ namespace IvyFEMProtoApp
             GL.PolygonOffset(1.1f, 4.0f);
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadIdentity();
-            DrawerGLUtils.SetModelViewTransform(Camera);
+            OpenGLUtils.SetModelViewTransform(Camera);
 
-            DrawerArray.Draw();
+            if (IsFieldDraw)
+            {
+                FieldDrawerArray.Draw();
+            }
+            else
+            {
+                DrawerArray.Draw();
+            }
 
             glControl.SwapBuffers();
         }
 
         private void cad2DBtn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.MakeBluePrint();
-            var drawer = Problem.Drawer;
-            DrawerArray.Clear();
-            DrawerArray.Add(drawer);
-            Camera.Fit(DrawerArray.GetBoundingBox(Camera.RotMatrix33()));
-            glControl_ResizeProc();
-            glControl.Invalidate();
+            Problem.MakeBluePrint(this);
         }
 
         private void coarseMesh2DBtn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.MakeCoarseMesh();
-            var drawer = Problem.Drawer;
-            DrawerArray.Clear();
-            DrawerArray.Add(drawer);
-            Camera.Fit(DrawerArray.GetBoundingBox(Camera.RotMatrix33()));
-            glControl_ResizeProc();
-            glControl.Invalidate();
+            Problem.MakeCoarseMesh(this);
         }
 
         private void mesh2DBtn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.MakeMesh();
-            var drawer = Problem.Drawer;
-            DrawerArray.Clear();
-            DrawerArray.Add(drawer);
-            Camera.Fit(DrawerArray.GetBoundingBox(Camera.RotMatrix33()));
-            glControl_ResizeProc();
-            glControl.Invalidate();
+            Problem.MakeMesh(this);
         }
 
+        private void MatrixOperation_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.InterseMatrixSample();
+            Problem.EigenValueSample();
+        }
+
+        private void waveguideBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.WaveguideProblem(this);
+        }
     }
 }

@@ -12,24 +12,24 @@ namespace IvyFEM
         /// <summary>
         /// 線分にいくら点があるか
         /// </summary>
-        public const uint NoEd = 2;
+        public const uint EdNo = 2;
 
         /// <summary>
         /// 三角形にいくら頂点があるか
         /// </summary>
-        public const uint NoTri = 3;
+        public const uint TriNo = 3;
         /// <summary>
         /// 三角形にいくら辺があるか
         /// </summary>
-        public const uint NoEdTri = 3;
+        public const uint TriEdNo = 3;
         /// <summary>
         /// 三角形の各辺の頂点番号
         /// </summary>
-        public static uint[][] NoELTriEdge = new uint[(int)NoEdTri][]
+        public static uint[][] TriElEdgeNo = new uint[(int)TriEdNo][]
         {
-            new uint[(int)NoEd]{ 1, 2 },
-            new uint[(int)NoEd]{ 2, 0 },
-            new uint[(int)NoEd]{ 0, 1 }
+            new uint[(int)EdNo]{ 1, 2 },
+            new uint[(int)EdNo]{ 2, 0 },
+            new uint[(int)EdNo]{ 0, 1 }
         };
         /// <summary>
         /// 三角形の隣接関係
@@ -44,30 +44,30 @@ namespace IvyFEM
         /// <summary>
         /// 四角形にいくら頂点があるか
         /// </summary>
-        public const uint NoQuad = 4;
+        public const uint QuadNo = 4;
         /// <summary>
         /// 四角形にいくら辺があるか
         /// </summary>
-        public const uint NoEdQuad = 4;
+        public const uint QuadEdNo = 4;
         /// <summary>
         /// 四角形の各辺の頂点番号
         /// </summary>
-        public static uint[][] NoELQuadEdge = new uint[(int)NoEdQuad][]
+        public static uint[][] QuadElEdgeNo = new uint[(int)QuadEdNo][]
         {
-            new uint[(int)NoEd]{ 0, 1 },
-            new uint[(int)NoEd]{ 1, 2 },
-            new uint[(int)NoEd]{ 2, 3 },
-            new uint[(int)NoEd]{ 3, 0 }
+            new uint[(int)EdNo]{ 0, 1 },
+            new uint[(int)EdNo]{ 1, 2 },
+            new uint[(int)EdNo]{ 2, 3 },
+            new uint[(int)EdNo]{ 3, 0 }
         };
         /// <summary>
         /// 四角形の隣接関係
         /// </summary>
-        public static uint[][] RelQuadQuad = new uint[(int)NoQuad][]
+        public static uint[][] RelQuadQuad = new uint[(int)QuadNo][]
         {
-            new uint[(int)NoQuad]{ 0, 3, 2, 1 }, //  
-            new uint[(int)NoQuad]{ 1, 0, 3, 2 }, //  1
-            new uint[(int)NoQuad]{ 2, 1, 0, 3 }, //  2
-            new uint[(int)NoQuad]{ 3, 2, 1, 0 } //  3
+            new uint[(int)QuadNo]{ 0, 3, 2, 1 }, //  
+            new uint[(int)QuadNo]{ 1, 0, 3, 2 }, //  1
+            new uint[(int)QuadNo]{ 2, 1, 0, 3 }, //  2
+            new uint[(int)QuadNo]{ 3, 2, 1, 0 } //  3
         };
 
 
@@ -77,9 +77,9 @@ namespace IvyFEM
         };
 
         /// <summary>
-        /// (0に相当するノード番号)*3+(1に相当するノード番号)  →→　関係番号
+        /// (0に相当するノード番号)*3+(1に相当するノード番号)  →　関係番号 変換
         /// </summary>
-        private static int[] NoEL2RelTriTri = new int[9]
+        private static int[] El2RelTriTri = new int[9]
         {
             -1, // 0 00
             -1, // 1 01
@@ -93,7 +93,7 @@ namespace IvyFEM
         };
 
         /// <summary>
-        /// (こちら側の辺番号)*3+(相手側の辺番号)　→→　関係番号
+        /// (こちら側の辺番号)*3+(相手側の辺番号)　→　関係番号 変換
         /// </summary>
         private static uint[] Ed2RelTriTri = new uint[9]
         {
@@ -174,47 +174,47 @@ namespace IvyFEM
 
         public static bool CheckTri(IList<MeshPoint2D> pts, IList<MeshTri2D> tris)
         {
-            uint nPt = (uint)pts.Count;
-            uint nTri = (uint)tris.Count;
+            uint ptCnt = (uint)pts.Count;
+            uint triCnt = (uint)tris.Count;
 
             ////////////////////////////////
             // 要素Indexのチェック
 
-            for (uint itri = 0; itri < nTri; itri++)
+            for (uint itri = 0; itri < triCnt; itri++)
             {
                MeshTri2D tri = tris[(int)itri];
-                for (uint inotri = 0; inotri < NoTri; inotri++)
+                for (uint iTriNo = 0; iTriNo < TriNo; iTriNo++)
                 {
-                    System.Diagnostics.Debug.Assert(tri.V[inotri] < nPt);
+                    System.Diagnostics.Debug.Assert(tri.V[iTriNo] < ptCnt);
                 }
-                for (uint iedtri = 0; iedtri < NoEdTri; iedtri++)
+                for (uint iTriEd = 0; iTriEd < TriEdNo; iTriEd++)
                 {
-                    if (tri.G2[iedtri] == -2 || tri.G2[iedtri] == -3)
+                    if (tri.G2[iTriEd] == -2 || tri.G2[iTriEd] == -3)
                     {
-                        uint iSTri = tri.S2[iedtri];
-                        uint iRel = tri.R2[iedtri];
-                        System.Diagnostics.Debug.Assert(iSTri < nTri);
+                        uint iSTri = tri.S2[iTriEd];
+                        uint iRel = tri.R2[iTriEd];
+                        System.Diagnostics.Debug.Assert(iSTri < triCnt);
                         System.Diagnostics.Debug.Assert(iRel < 3);
                         // check sorounding
                         {
-                            uint noELDia = RelTriTri[iRel][iedtri];
-                            System.Diagnostics.Debug.Assert(noELDia < 3);
-                            if (tris[(int)iSTri].S2[noELDia] != itri)
+                            uint elDiaNo = RelTriTri[iRel][iTriEd];
+                            System.Diagnostics.Debug.Assert(elDiaNo < 3);
+                            if (tris[(int)iSTri].S2[elDiaNo] != itri)
                             {
-                                System.Diagnostics.Debug.WriteLine(itri + " " + iedtri);
+                                System.Diagnostics.Debug.WriteLine(itri + " " + iTriEd);
                             }
-                            System.Diagnostics.Debug.Assert(tris[(int)iSTri].S2[noELDia] == itri);
+                            System.Diagnostics.Debug.Assert(tris[(int)iSTri].S2[elDiaNo] == itri);
                         }
                         // check relation
-                        for (uint inoed = 0; inoed < NoEd; inoed++)
+                        for (uint iEdNo = 0; iEdNo < EdNo; iEdNo++)
                         {
-                            uint inoel = NoELTriEdge[iedtri][inoed];
-                            if (tri.V[inoel] != tris[(int)iSTri].V[(int)RelTriTri[iRel][inoel]])
+                            uint iElNo = TriElEdgeNo[iTriEd][iEdNo];
+                            if (tri.V[iElNo] != tris[(int)iSTri].V[(int)RelTriTri[iRel][iElNo]])
                             {
-                                System.Diagnostics.Debug.WriteLine(itri + " " + iedtri);
+                                System.Diagnostics.Debug.WriteLine(itri + " " + iTriEd);
                             }
-                            System.Diagnostics.Debug.Assert(tri.V[inoel] ==
-                                tris[(int)iSTri].V[(int)RelTriTri[iRel][inoel]]);
+                            System.Diagnostics.Debug.Assert(tri.V[iElNo] ==
+                                tris[(int)iSTri].V[(int)RelTriTri[iRel][iElNo]]);
                         }
                     }
                 }
@@ -229,28 +229,28 @@ namespace IvyFEM
             ////////////////////////////////
             // 頂点-要素間の一貫性のチェック
 
-            for (uint ipt = 0; ipt < nPt; ipt++)
+            for (uint iPt = 0; iPt < ptCnt; iPt++)
             {
-                if (pts[(int)ipt].Elem >= 0)
+                if (pts[(int)iPt].Elem >= 0)
                 {
-                    System.Diagnostics.Debug.Assert(pts[(int)ipt].Dir >= 0 && pts[(int)ipt].Dir < 3);
-                    int itri0 = pts[(int)ipt].Elem;
-                    uint inoel0 = pts[(int)ipt].Dir;
-                    if (tris[itri0].V[inoel0] != ipt)
+                    System.Diagnostics.Debug.Assert(pts[(int)iPt].Dir >= 0 && pts[(int)iPt].Dir < 3);
+                    int itri0 = pts[(int)iPt].Elem;
+                    uint inoel0 = pts[(int)iPt].Dir;
+                    if (tris[itri0].V[inoel0] != iPt)
                     {
                         System.Diagnostics.Debug.WriteLine(itri0 + " " + inoel0 + "   " +
-                            tris[itri0].V[inoel0] + " " + ipt);
+                            tris[itri0].V[inoel0] + " " + iPt);
                     }
-                    System.Diagnostics.Debug.Assert(tris[itri0].V[inoel0] == ipt);
+                    System.Diagnostics.Debug.Assert(tris[itri0].V[inoel0] == iPt);
                 }
             }
 
             ////////////////////////////////
             // Geometryのチェック
 
-            for (uint itri = 0; itri < nTri; itri++)
+            for (uint iTri = 0; iTri < triCnt; iTri++)
             {
-                MeshTri2D tri = tris[(int)itri];
+                MeshTri2D tri = tris[(int)iTri];
                 {
                     double area = CadUtils.TriArea(
                         pts[(int)tri.V[0]].Point,
@@ -258,7 +258,7 @@ namespace IvyFEM
                         pts[(int)tri.V[2]].Point);
                     if (area < 1.0e-10)
                     {
-                        System.Diagnostics.Debug.WriteLine("Negative Volume : " + itri + " " + area);
+                        System.Diagnostics.Debug.WriteLine("Negative Volume : " + iTri + " " + area);
                     }
                 }
 
@@ -326,29 +326,29 @@ namespace IvyFEM
             System.Diagnostics.Debug.Assert(iInsTri < tris.Count);
             System.Diagnostics.Debug.Assert(iInsPt < points.Count);
 
-            int itri0 = (int)iInsTri;
-            int itri1 = tris.Count;
-            int itri2 = tris.Count + 1;
+            int iTri0 = (int)iInsTri;
+            int iTri1 = tris.Count;
+            int iTri2 = tris.Count + 1;
 
-            int trisCnt = tris.Count;
-            for (int i = trisCnt; i < trisCnt + 2; i++)
+            int triCnt = tris.Count;
+            for (int i = triCnt; i < triCnt + 2; i++)
             {
                 tris.Add(new MeshTri2D());
             }
 
             MeshTri2D oldTri = new MeshTri2D(tris[(int)iInsTri]);
 
-            points[(int)iInsPt].Elem = itri0;
+            points[(int)iInsPt].Elem = iTri0;
             points[(int)iInsPt].Dir = 0;
-            points[(int)oldTri.V[0]].Elem = itri1;
+            points[(int)oldTri.V[0]].Elem = iTri1;
             points[(int)oldTri.V[0]].Dir = 2;
-            points[(int)oldTri.V[1]].Elem = itri2;
+            points[(int)oldTri.V[1]].Elem = iTri2;
             points[(int)oldTri.V[1]].Dir = 2;
-            points[(int)oldTri.V[2]].Elem = itri0;
+            points[(int)oldTri.V[2]].Elem = iTri0;
             points[(int)oldTri.V[2]].Dir = 2;
 
             {
-                MeshTri2D tri = tris[itri0];
+                MeshTri2D tri = tris[iTri0];
 
                 tri.V[0] = iInsPt;
                 tri.V[1] = oldTri.V[1];
@@ -357,24 +357,24 @@ namespace IvyFEM
                 tri.G2[1] = -2;
                 tri.G2[2] = -2;
                 tri.S2[0] = oldTri.S2[0];
-                tri.S2[1] = (uint)itri1;
-                tri.S2[2] = (uint)itri2;
+                tri.S2[1] = (uint)iTri1;
+                tri.S2[2] = (uint)iTri2;
 
                 if (oldTri.G2[0] == -2 || oldTri.G2[0] == -3)
                 {
                     System.Diagnostics.Debug.Assert(oldTri.R2[0] < 3);
                     uint[] rel = RelTriTri[oldTri.R2[0]];
-                    tri.R2[0] = (uint)NoEL2RelTriTri[rel[0] * 3 + rel[1]];
+                    tri.R2[0] = (uint)El2RelTriTri[rel[0] * 3 + rel[1]];
                     System.Diagnostics.Debug.Assert(tri.R2[0] >= 0 && tri.R2[0] < 3);
                     System.Diagnostics.Debug.Assert(oldTri.S2[0] < tris.Count);
-                    tris[(int)oldTri.S2[0]].S2[rel[0]] = (uint)itri0;
+                    tris[(int)oldTri.S2[0]].S2[rel[0]] = (uint)iTri0;
                     tris[(int)oldTri.S2[0]].R2[rel[0]] = InvRelTriTri[tri.R2[0]];
                 }
                 tri.R2[1] = 0;
                 tri.R2[2] = 0;
             }
             {
-                MeshTri2D tri = tris[itri1];
+                MeshTri2D tri = tris[iTri1];
 
                 tri.V[0] = iInsPt;
                 tri.V[1] = oldTri.V[2];
@@ -383,24 +383,24 @@ namespace IvyFEM
                 tri.G2[1] = -2;
                 tri.G2[2] = -2;
                 tri.S2[0] = oldTri.S2[1];
-                tri.S2[1] = (uint)itri2;
-                tri.S2[2] = (uint)itri0;
+                tri.S2[1] = (uint)iTri2;
+                tri.S2[2] = (uint)iTri0;
 
                 if (oldTri.G2[1] == -2 || oldTri.G2[1] == -3)
                 {
                     System.Diagnostics.Debug.Assert(oldTri.R2[1] < 3);
                     uint[] rel = RelTriTri[oldTri.R2[1]];
-                    tri.R2[0] = (uint)NoEL2RelTriTri[rel[1] * 3 + rel[2]];
+                    tri.R2[0] = (uint)El2RelTriTri[rel[1] * 3 + rel[2]];
                     System.Diagnostics.Debug.Assert(tri.R2[0] >= 0 && tri.R2[0] < 3);
                     System.Diagnostics.Debug.Assert(oldTri.S2[1] < tris.Count);
-                    tris[(int)oldTri.S2[1]].S2[rel[1]] = (uint)itri1;
+                    tris[(int)oldTri.S2[1]].S2[rel[1]] = (uint)iTri1;
                     tris[(int)oldTri.S2[1]].R2[rel[1]] = InvRelTriTri[tri.R2[0]];
                 }
                 tri.R2[1] = 0;
                 tri.R2[2] = 0;
             }
             {
-                MeshTri2D tri = tris[itri2];
+                MeshTri2D tri = tris[iTri2];
 
                 tri.V[0] = iInsPt;
                 tri.V[1] = oldTri.V[0];
@@ -409,17 +409,17 @@ namespace IvyFEM
                 tri.G2[1] = -2;
                 tri.G2[2] = -2;
                 tri.S2[0] = oldTri.S2[2];
-                tri.S2[1] = (uint)itri0;
-                tri.S2[2] = (uint)itri1;
+                tri.S2[1] = (uint)iTri0;
+                tri.S2[2] = (uint)iTri1;
 
                 if (oldTri.G2[2] == -2 || oldTri.G2[2] == -3)
                 {
                     System.Diagnostics.Debug.Assert(oldTri.R2[2] < 3);
                     uint[] rel = RelTriTri[oldTri.R2[2]];
-                    tri.R2[0] = (uint)NoEL2RelTriTri[rel[2] * 3 + rel[0]];
+                    tri.R2[0] = (uint)El2RelTriTri[rel[2] * 3 + rel[0]];
                     System.Diagnostics.Debug.Assert(tri.R2[0] >= 0 && tri.R2[0] < 3);
                     System.Diagnostics.Debug.Assert(oldTri.S2[2] < tris.Count);
-                    tris[(int)oldTri.S2[2]].S2[rel[2]] = (uint)itri2;
+                    tris[(int)oldTri.S2[2]].S2[rel[2]] = (uint)iTri2;
                     tris[(int)oldTri.S2[2]].R2[rel[2]] = InvRelTriTri[tri.R2[0]];
                 }
                 tri.R2[1] = 0;
@@ -452,8 +452,8 @@ namespace IvyFEM
             uint itri2 = (uint)tris.Count;
             uint itri3 = (uint)(tris.Count + 1);
 
-            int trisCnt = tris.Count; 
-            for (int i = trisCnt; i < trisCnt + 2; i++)
+            int triCnt = tris.Count; 
+            for (int i = triCnt; i < triCnt + 2; i++)
             {
                 tris.Add(new MeshTri2D());
             }
@@ -462,12 +462,12 @@ namespace IvyFEM
             MeshTri2D old1 = new MeshTri2D(tris[(int)iAdjTri]);
 
             uint ino00 = iInsEd;
-            uint ino10 = NoELTriEdge[iInsEd][0];
-            uint ino20 = NoELTriEdge[iInsEd][1];
+            uint ino10 = TriElEdgeNo[iInsEd][0];
+            uint ino20 = TriElEdgeNo[iInsEd][1];
 
             uint ino01 = iAdjEd;
-            uint ino11 = NoELTriEdge[iAdjEd][0];
-            uint ino21 = NoELTriEdge[iAdjEd][1];
+            uint ino11 = TriElEdgeNo[iAdjEd][0];
+            uint ino21 = TriElEdgeNo[iAdjEd][1];
 
             System.Diagnostics.Debug.Assert(old0.V[ino10] == old1.V[ino21]);
             System.Diagnostics.Debug.Assert(old0.V[ino20] == old1.V[ino11]);
@@ -500,7 +500,7 @@ namespace IvyFEM
                 {
                     System.Diagnostics.Debug.Assert(old0.R2[ino10] < 3);
                     uint[] rel = RelTriTri[old0.R2[ino10]];
-                    tri.R2[0] = (uint)NoEL2RelTriTri[rel[ino10] * 3 + rel[ino20]];
+                    tri.R2[0] = (uint)El2RelTriTri[rel[ino10] * 3 + rel[ino20]];
                     System.Diagnostics.Debug.Assert(tri.R2[0] >= 0 && tri.R2[0] < 3);
                     System.Diagnostics.Debug.Assert(old0.S2[ino10] < tris.Count);
                     tris[(int)old0.S2[ino10]].S2[rel[ino10]] = itri0;
@@ -524,7 +524,7 @@ namespace IvyFEM
                 {
                     System.Diagnostics.Debug.Assert(old0.R2[ino20] < 3);
                     uint[] rel = RelTriTri[old0.R2[ino20]];
-                    tri.R2[0] = (uint)NoEL2RelTriTri[rel[ino20] * 3 + rel[ino00]];
+                    tri.R2[0] = (uint)El2RelTriTri[rel[ino20] * 3 + rel[ino00]];
                     System.Diagnostics.Debug.Assert(tri.R2[0] >= 0 && tri.R2[0] < 3);
                     System.Diagnostics.Debug.Assert(old0.S2[ino20] < tris.Count);
                     tris[(int)old0.S2[ino20]].S2[rel[ino20]] = itri1;
@@ -548,7 +548,7 @@ namespace IvyFEM
                 {
                     System.Diagnostics.Debug.Assert(old1.R2[ino11] < 3);
                     uint[] rel = RelTriTri[old1.R2[ino11]];
-                    tri.R2[0] = (uint)NoEL2RelTriTri[rel[ino11] * 3 + rel[ino21]];
+                    tri.R2[0] = (uint)El2RelTriTri[rel[ino11] * 3 + rel[ino21]];
                     System.Diagnostics.Debug.Assert(tri.R2[0] >= 0 && tri.R2[0] < 3);
                     System.Diagnostics.Debug.Assert(old1.S2[ino11] < tris.Count);
                     tris[(int)old1.S2[ino11]].S2[rel[ino11]] = itri2;
@@ -572,7 +572,7 @@ namespace IvyFEM
                 {
                     System.Diagnostics.Debug.Assert(old1.R2[ino21] < 3);
                     uint[] rel = RelTriTri[old1.R2[ino21]];
-                    tri.R2[0] = (uint)NoEL2RelTriTri[rel[ino21] * 3 + rel[ino01]];
+                    tri.R2[0] = (uint)El2RelTriTri[rel[ino21] * 3 + rel[ino01]];
                     System.Diagnostics.Debug.Assert(tri.R2[0] >= 0 && tri.R2[0] < 3);
                     System.Diagnostics.Debug.Assert(old1.S2[ino21] < tris.Count);
                     tris[(int)old1.S2[ino21]].S2[rel[ino21]] = itri3;
@@ -584,37 +584,37 @@ namespace IvyFEM
             return true;
         }
 
-        public static bool DelaunayAroundPoint(uint ipo0, IList<MeshPoint2D> points, IList<MeshTri2D> tris)
+        public static bool DelaunayAroundPoint(uint iPt0, IList<MeshPoint2D> points, IList<MeshTri2D> tris)
         {
-            System.Diagnostics.Debug.Assert(ipo0 < points.Count);
-            if (points[(int)ipo0].Elem == -1)
+            System.Diagnostics.Debug.Assert(iPt0 < points.Count);
+            if (points[(int)iPt0].Elem == -1)
             {
                 return true;
             }
 
-            System.Diagnostics.Debug.Assert(points[(int)ipo0].Elem >= 0 &&
-                points[(int)ipo0].Elem < tris.Count );
-            System.Diagnostics.Debug.Assert(tris[points[(int)ipo0].Elem].V[points[(int)ipo0].Dir] == ipo0);
+            System.Diagnostics.Debug.Assert(points[(int)iPt0].Elem >= 0 &&
+                points[(int)iPt0].Elem < tris.Count );
+            System.Diagnostics.Debug.Assert(tris[points[(int)iPt0].Elem].V[points[(int)iPt0].Dir] == iPt0);
 
-            uint itri0 = (uint)points[(int)ipo0].Elem;
-            uint inotri0 = points[(int)ipo0].Dir;
+            uint iTri0 = (uint)points[(int)iPt0].Elem;
+            uint iTriNo0 = points[(int)iPt0].Dir;
 
-            uint iCurTri = itri0;
-            uint iNoCurTri = points[(int)ipo0].Dir;
+            uint iCurTri = iTri0;
+            uint iCurTriNo = points[(int)iPt0].Dir;
             bool isWall = false;
             for (;;)
             {
-                System.Diagnostics.Debug.Assert(tris[(int)iCurTri].V[iNoCurTri] == ipo0);
+                System.Diagnostics.Debug.Assert(tris[(int)iCurTri].V[iCurTriNo] == iPt0);
 
-                if (tris[(int)iCurTri].G2[iNoCurTri] == -2)
+                if (tris[(int)iCurTri].G2[iCurTriNo] == -2)
                 {
                     // 向かいの要素を調べる
-                    uint iDiaTri = tris[(int)iCurTri].S2[iNoCurTri];
-                    uint[] diaRel = RelTriTri[tris[(int)iCurTri].R2[iNoCurTri]];
-                    uint iDiaNoTri = diaRel[iNoCurTri];
-                    System.Diagnostics.Debug.Assert(tris[(int)iDiaTri].G2[iDiaNoTri] == -2);
-                    System.Diagnostics.Debug.Assert(tris[(int)iDiaTri].S2[iDiaNoTri] == iCurTri);
-                    uint iDiaPt = tris[(int)iDiaTri].V[iDiaNoTri];
+                    uint iTriDia = tris[(int)iCurTri].S2[iCurTriNo];
+                    uint[] diaRel = RelTriTri[tris[(int)iCurTri].R2[iCurTriNo]];
+                    uint iTriDiaNo = diaRel[iCurTriNo];
+                    System.Diagnostics.Debug.Assert(tris[(int)iTriDia].G2[iTriDiaNo] == -2);
+                    System.Diagnostics.Debug.Assert(tris[(int)iTriDia].S2[iTriDiaNo] == iCurTri);
+                    uint iDiaPt = tris[(int)iTriDia].V[iTriDiaNo];
                     if (DetDelaunay(
                         points[(int)tris[(int)iCurTri].V[0]].Point,
                         points[(int)tris[(int)iCurTri].V[1]].Point,
@@ -625,14 +625,14 @@ namespace IvyFEM
 
                         // 辺を切り替える
                         // FlipEdgeによってiCurTriは時計回り側の３角形に切り替わる
-                        FlipEdge(iCurTri, iNoCurTri, points, tris);
+                        FlipEdge(iCurTri, iCurTriNo, points, tris);
 
-                        iNoCurTri = 2;
-                        System.Diagnostics.Debug.Assert(tris[(int)iCurTri].V[iNoCurTri] == ipo0);
+                        iCurTriNo = 2;
+                        System.Diagnostics.Debug.Assert(tris[(int)iCurTri].V[iCurTriNo] == iPt0);
                         // Flipによってtris[itri0].V[inotri0] != ipo0 でなくなってしまうのを防ぐため
-                        if (iCurTri == itri0)
+                        if (iCurTri == iTri0)
                         {
-                            inotri0 = iNoCurTri;
+                            iTriNo0 = iCurTriNo;
                         }
                         continue; // ループの始めに戻る
                     }
@@ -640,22 +640,22 @@ namespace IvyFEM
 
                 {
                     // 次の要素へ進める
-                    uint inotri1 = IndexRot3[1][iNoCurTri];
-                    if (tris[(int)iCurTri].G2[inotri1] != -2 && tris[(int)iCurTri].G2[inotri1] != -3)
+                    uint iTriNo1 = IndexRot3[1][iCurTriNo];
+                    if (tris[(int)iCurTri].G2[iTriNo1] != -2 && tris[(int)iCurTri].G2[iTriNo1] != -3)
                     {
                         isWall = true;
                         break;
                     }
-                    uint iNexTri = tris[(int)iCurTri].S2[inotri1];
-                    uint[] nexRel = RelTriTri[tris[(int)iCurTri].R2[inotri1]];
-                    uint iNexNoTri = nexRel[iNoCurTri];
-                    System.Diagnostics.Debug.Assert(tris[(int)iNexTri].V[iNexNoTri] == ipo0);
-                    if (iNexTri == itri0)
+                    uint iNexTri = tris[(int)iCurTri].S2[iTriNo1];
+                    uint[] nexRel = RelTriTri[tris[(int)iCurTri].R2[iTriNo1]];
+                    uint iNexTriNo = nexRel[iCurTriNo];
+                    System.Diagnostics.Debug.Assert(tris[(int)iNexTri].V[iNexTriNo] == iPt0);
+                    if (iNexTri == iTri0)
                     {
                         break;   // 一周したら終わり
                     }
                     iCurTri = iNexTri;
-                    iNoCurTri = iNexNoTri;
+                    iCurTriNo = iNexTriNo;
                 }
             }
             if (!isWall)
@@ -666,18 +666,18 @@ namespace IvyFEM
             ////////////////////////////////
             // 逆向きへの回転
 
-            iCurTri = itri0;
-            iNoCurTri = inotri0;
+            iCurTri = iTri0;
+            iCurTriNo = iTriNo0;
             for (;;)
             {
-                System.Diagnostics.Debug.Assert(tris[(int)iCurTri].V[iNoCurTri] == ipo0);
+                System.Diagnostics.Debug.Assert(tris[(int)iCurTri].V[iCurTriNo] == iPt0);
 
-                if (tris[(int)iCurTri].G2[iNoCurTri] == -2)
+                if (tris[(int)iCurTri].G2[iCurTriNo] == -2)
                 {
                     // 向かいの要素を調べる
-                    uint iDiaTri = tris[(int)iCurTri].S2[iNoCurTri];
-                    uint[] diaRel = RelTriTri[tris[(int)iCurTri].R2[iNoCurTri]];
-                    uint iDiaNoTri = diaRel[iNoCurTri];
+                    uint iDiaTri = tris[(int)iCurTri].S2[iCurTriNo];
+                    uint[] diaRel = RelTriTri[tris[(int)iCurTri].R2[iCurTriNo]];
+                    uint iDiaNoTri = diaRel[iCurTriNo];
                     System.Diagnostics.Debug.Assert(tris[(int)iDiaTri].G2[iDiaNoTri] == -2);
                     System.Diagnostics.Debug.Assert(tris[(int)iDiaTri].S2[iDiaNoTri] == iCurTri);
                     uint iDiaPt = tris[(int)iDiaTri].V[iDiaNoTri];
@@ -690,80 +690,80 @@ namespace IvyFEM
                         // Delaunay条件が満たされない場合
 
                         // 辺を切り替える
-                        FlipEdge(iCurTri, iNoCurTri, points, tris);
+                        FlipEdge(iCurTri, iCurTriNo, points, tris);
 
                         iCurTri = iDiaTri;
-                        iNoCurTri = 1;
-                        System.Diagnostics.Debug.Assert(tris[(int)iCurTri].V[iNoCurTri] == ipo0);
+                        iCurTriNo = 1;
+                        System.Diagnostics.Debug.Assert(tris[(int)iCurTri].V[iCurTriNo] == iPt0);
                         continue;   // ループの始めに戻る
                     }
                 }
 
                 { 
                     // 次の要素へ進める
-                    uint inotri2 = IndexRot3[2][iNoCurTri];
-                    if (tris[(int)iCurTri].G2[inotri2] != -2 && tris[(int)iCurTri].G2[inotri2] != -3)
+                    uint iTriNo2 = IndexRot3[2][iCurTriNo];
+                    if (tris[(int)iCurTri].G2[iTriNo2] != -2 && tris[(int)iCurTri].G2[iTriNo2] != -3)
                     {
                         return true;
                     }
-                    uint iNexTri = tris[(int)iCurTri].S2[inotri2];
-                    uint[] nexRel = RelTriTri[tris[(int)iCurTri].R2[inotri2]];
-                    uint iNexNoTri = nexRel[iNoCurTri];
-                    System.Diagnostics.Debug.Assert(tris[(int)iNexTri].V[iNexNoTri] == ipo0);
-                    System.Diagnostics.Debug.Assert(iNexTri != itri0);  // 一周したら終わり
+                    uint iNexTri = tris[(int)iCurTri].S2[iTriNo2];
+                    uint[] nexRel = RelTriTri[tris[(int)iCurTri].R2[iTriNo2]];
+                    uint iNexTriNo = nexRel[iCurTriNo];
+                    System.Diagnostics.Debug.Assert(tris[(int)iNexTri].V[iNexTriNo] == iPt0);
+                    System.Diagnostics.Debug.Assert(iNexTri != iTri0);  // 一周したら終わり
                     iCurTri = iNexTri;
-                    iNoCurTri = iNexNoTri;
+                    iCurTriNo = iNexTriNo;
                 }
             }
             return true;
         }
 
-        public static bool FlipEdge(uint itri0, uint ied0, IList<MeshPoint2D> points, IList<MeshTri2D> tris)
+        public static bool FlipEdge(uint iTri0, uint iEd0, IList<MeshPoint2D> points, IList<MeshTri2D> tris)
         {
-            System.Diagnostics.Debug.Assert(itri0 < tris.Count);
-            System.Diagnostics.Debug.Assert(ied0 < 3);
-            System.Diagnostics.Debug.Assert(tris[(int)itri0].G2[ied0] == -2);
+            System.Diagnostics.Debug.Assert(iTri0 < tris.Count);
+            System.Diagnostics.Debug.Assert(iEd0 < 3);
+            System.Diagnostics.Debug.Assert(tris[(int)iTri0].G2[iEd0] == -2);
 
-            uint itri1 = tris[(int)itri0].S2[ied0];
-            uint ied1 = RelTriTri[tris[(int)itri0].R2[ied0]][ied0];
-            System.Diagnostics.Debug.Assert(itri1 < tris.Count);
-            System.Diagnostics.Debug.Assert(ied1 < 3);
-            System.Diagnostics.Debug.Assert(tris[(int)itri1].G2[ied1] == -2);
+            uint iTri1 = tris[(int)iTri0].S2[iEd0];
+            uint iEd1 = RelTriTri[tris[(int)iTri0].R2[iEd0]][iEd0];
+            System.Diagnostics.Debug.Assert(iTri1 < tris.Count);
+            System.Diagnostics.Debug.Assert(iEd1 < 3);
+            System.Diagnostics.Debug.Assert(tris[(int)iTri1].G2[iEd1] == -2);
 
             //	std::cout << itri0 << "-" << ied0 << "    " << itri1 << "-" << ied1 << std::endl;
 
-            MeshTri2D old0 = new MeshTri2D(tris[(int)itri0]);
-            MeshTri2D old1 = new MeshTri2D(tris[(int)itri1]);
+            MeshTri2D old0 = new MeshTri2D(tris[(int)iTri0]);
+            MeshTri2D old1 = new MeshTri2D(tris[(int)iTri1]);
 
-            uint no00 = ied0;
-            uint no10 = NoELTriEdge[ied0][0];
-            uint no20 = NoELTriEdge[ied0][1];
+            uint no00 = iEd0;
+            uint no10 = TriElEdgeNo[iEd0][0];
+            uint no20 = TriElEdgeNo[iEd0][1];
 
-            uint no01 = ied1;
-            uint no11 = NoELTriEdge[ied1][0];
-            uint no21 = NoELTriEdge[ied1][1];
+            uint no01 = iEd1;
+            uint no11 = TriElEdgeNo[iEd1][0];
+            uint no21 = TriElEdgeNo[iEd1][1];
 
             System.Diagnostics.Debug.Assert(old0.V[no10] == old1.V[no21]);
             System.Diagnostics.Debug.Assert(old0.V[no20] == old1.V[no11]);
 
-            points[(int)old0.V[no10]].Elem = (int)itri0;
+            points[(int)old0.V[no10]].Elem = (int)iTri0;
             points[(int)old0.V[no10]].Dir = 0;
-            points[(int)old0.V[no00]].Elem = (int)itri0;
+            points[(int)old0.V[no00]].Elem = (int)iTri0;
             points[(int)old0.V[no00]].Dir = 2;
-            points[(int)old1.V[no11]].Elem = (int)itri1;
+            points[(int)old1.V[no11]].Elem = (int)iTri1;
             points[(int)old1.V[no11]].Dir = 0;
-            points[(int)old1.V[no01]].Elem = (int)itri1;
+            points[(int)old1.V[no01]].Elem = (int)iTri1;
             points[(int)old1.V[no01]].Dir = 2;
 
             {
-                MeshTri2D tri = tris[(int)itri0];
+                MeshTri2D tri = tris[(int)iTri0];
                 tri.V[0] = old0.V[no10];
                 tri.V[1] = old1.V[no01];
                 tri.V[2] = old0.V[no00];
                 tri.G2[0] = -2;
                 tri.G2[1] = old0.G2[no20];
                 tri.G2[2] = old1.G2[no11];
-                tri.S2[0] = itri1;
+                tri.S2[0] = iTri1;
                 tri.S2[1] = old0.S2[no20];
                 tri.S2[2] = old1.S2[no11];
 
@@ -773,11 +773,11 @@ namespace IvyFEM
                     System.Diagnostics.Debug.Assert(old0.R2[no20] < 3);
                     uint[] rel = RelTriTri[old0.R2[no20]];
                     System.Diagnostics.Debug.Assert(old0.S2[no20] < tris.Count);
-                    System.Diagnostics.Debug.Assert(old0.S2[no20] != itri0);
-                    System.Diagnostics.Debug.Assert(old0.S2[no20] != itri1);
-                    tri.R2[1] = (uint)NoEL2RelTriTri[rel[no10] * 3 + rel[no20]];
+                    System.Diagnostics.Debug.Assert(old0.S2[no20] != iTri0);
+                    System.Diagnostics.Debug.Assert(old0.S2[no20] != iTri1);
+                    tri.R2[1] = (uint)El2RelTriTri[rel[no10] * 3 + rel[no20]];
                     System.Diagnostics.Debug.Assert(tri.R2[1] >= 0 && tri.R2[1] < 3);
-                    tris[(int)old0.S2[no20]].S2[rel[no20]] = itri0;
+                    tris[(int)old0.S2[no20]].S2[rel[no20]] = iTri0;
                     tris[(int)old0.S2[no20]].R2[rel[no20]] = InvRelTriTri[tri.R2[1]];
                 }
                 if (old1.G2[no11] == -2 || old1.G2[no11] == -3)
@@ -785,22 +785,22 @@ namespace IvyFEM
                     System.Diagnostics.Debug.Assert(old1.R2[no11] < 3);
                     uint[] rel = RelTriTri[old1.R2[no11]];
                     System.Diagnostics.Debug.Assert(old1.S2[no11] < tris.Count);
-                    tri.R2[2] = (uint)NoEL2RelTriTri[rel[no21] * 3 + rel[no01]];
+                    tri.R2[2] = (uint)El2RelTriTri[rel[no21] * 3 + rel[no01]];
                     System.Diagnostics.Debug.Assert(tri.R2[2] >= 0 && tri.R2[2] < 3);
-                    tris[(int)old1.S2[no11]].S2[rel[no11]] = itri0;
+                    tris[(int)old1.S2[no11]].S2[rel[no11]] = iTri0;
                     tris[(int)old1.S2[no11]].R2[rel[no11]] = InvRelTriTri[tri.R2[2]];
                 }
             }
 
             {
-                MeshTri2D tri = tris[(int)itri1];
+                MeshTri2D tri = tris[(int)iTri1];
                 tri.V[0] = old1.V[no11];
                 tri.V[1] = old0.V[no00];
                 tri.V[2] = old1.V[no01];
                 tri.G2[0] = -2;
                 tri.G2[1] = old1.G2[no21];
                 tri.G2[2] = old0.G2[no10];
-                tri.S2[0] = itri0; tri.S2[1] = old1.S2[no21];
+                tri.S2[0] = iTri0; tri.S2[1] = old1.S2[no21];
                 tri.S2[2] = old0.S2[no10];
 
                 tri.R2[0] = 0;
@@ -809,9 +809,9 @@ namespace IvyFEM
                     System.Diagnostics.Debug.Assert(old1.R2[no21] < 3);
                     uint[] rel = RelTriTri[old1.R2[no21]];
                     System.Diagnostics.Debug.Assert(old1.S2[no21] < tris.Count);
-                    tri.R2[1] = (uint)NoEL2RelTriTri[rel[no11] * 3 + rel[no21]];
+                    tri.R2[1] = (uint)El2RelTriTri[rel[no11] * 3 + rel[no21]];
                     System.Diagnostics.Debug.Assert(tri.R2[1] >= 0 && tri.R2[1] < 3);
-                    tris[(int)old1.S2[no21]].S2[rel[no21]] = itri1;
+                    tris[(int)old1.S2[no21]].S2[rel[no21]] = iTri1;
                     tris[(int)old1.S2[no21]].R2[rel[no21]] = InvRelTriTri[tri.R2[1]];
                 }
                 if (old0.G2[no10] == -2 || old0.G2[no10] == -3)
@@ -819,104 +819,107 @@ namespace IvyFEM
                     System.Diagnostics.Debug.Assert(old0.R2[no10] < 3);
                     uint[] rel = RelTriTri[old0.R2[no10]];
                     System.Diagnostics.Debug.Assert(old0.S2[no10] < tris.Count);
-                    tri.R2[2] = (uint)NoEL2RelTriTri[rel[no20] * 3 + rel[no00]];
+                    tri.R2[2] = (uint)El2RelTriTri[rel[no20] * 3 + rel[no00]];
                     System.Diagnostics.Debug.Assert(tri.R2[2] >= 0 && tri.R2[2] < 3);
-                    tris[(int)old0.S2[no10]].S2[rel[no10]] = itri1;
+                    tris[(int)old0.S2[no10]].S2[rel[no10]] = iTri1;
                     tris[(int)old0.S2[no10]].R2[rel[no10]] = InvRelTriTri[tri.R2[2]];
                 }
             }
             return true;
         }
 
-        // 辺[ipo0-ipo1]の左側の３角形itri0を探索する
+        // 辺[iPt0-iPt1]の左側の３角形itri0を探索する
         // 三角形がなければ->falseを返す。
         // 三角形があれば  ->true を返す。
         // 但し、その場合
-        // tri[itri0].v[inotri0]==ipo0
-        // tri[itri0].v[inotri1]==ipo1
+        // tri[iTri0].v[iTriNo0]==iPt0
+        // tri[iTri0].v[iTriNo1]==iPt1
         // を満たす
-        public static bool FindEdge(uint ipo0, uint ipo1, out uint itri0, out uint inotri0, out uint inotri1,
+        public static bool FindEdge(uint iPt0, uint iPt1, out uint iTri0, out uint iTriNo0, out uint iTriNo1,
             IList<MeshPoint2D> points, IList<MeshTri2D> tris)
         {
-            itri0 = 0;
-            inotri0 = 0;
-            inotri1 = 0;
+            iTri0 = 0;
+            iTriNo0 = 0;
+            iTriNo1 = 0;
 
-            uint iIniTri = (uint)points[(int)ipo0].Elem;
-            uint iIniNoTri = points[(int)ipo0].Dir;
+            uint iIniTri = (uint)points[(int)iPt0].Elem;
+            uint iIniTriNo = points[(int)iPt0].Dir;
             uint iCurTri = iIniTri;
-            uint iCurNoTri = iIniNoTri;
+            uint iCurTriNo = iIniTriNo;
             for (;;)
             {
                 //　時計周りに検索する。
-                System.Diagnostics.Debug.Assert(tris[(int)iCurTri].V[iCurNoTri] == ipo0);
+                System.Diagnostics.Debug.Assert(tris[(int)iCurTri].V[iCurTriNo] == iPt0);
                 { 
                     // この要素がOKか調べる
-                    uint inotri2 = IndexRot3[1][iCurNoTri];
-                    if (tris[(int)iCurTri].V[inotri2] == ipo1)
+                    uint iTriNo2 = IndexRot3[1][iCurTriNo];
+                    if (tris[(int)iCurTri].V[iTriNo2] == iPt1)
                     {
-                        itri0 = iCurTri;
-                        inotri0 = iCurNoTri;
-                        inotri1 = inotri2;
-                        System.Diagnostics.Debug.Assert(tris[(int)itri0].V[inotri0] == ipo0);
-                        System.Diagnostics.Debug.Assert(tris[(int)itri0].V[inotri1] == ipo1);
+                        iTri0 = iCurTri;
+                        iTriNo0 = iCurTriNo;
+                        iTriNo1 = iTriNo2;
+                        System.Diagnostics.Debug.Assert(tris[(int)iTri0].V[iTriNo0] == iPt0);
+                        System.Diagnostics.Debug.Assert(tris[(int)iTri0].V[iTriNo1] == iPt1);
                         return true;
                     }
                 }
-                {   // 次の要素へ進める
-                    uint inotri2 = IndexRot3[2][iCurNoTri];
-                    if (tris[(int)iCurTri].G2[inotri2] != -2 && tris[(int)iCurTri].G2[inotri2] != -3)
+                {  
+                    // 次の要素へ進める
+                    uint iTriNo2 = IndexRot3[2][iCurTriNo];
+                    if (tris[(int)iCurTri].G2[iTriNo2] != -2 && tris[(int)iCurTri].G2[iTriNo2] != -3)
                     {
                         break;
                     }
-                    uint iNexTri = tris[(int)iCurTri].S2[inotri2];
-                    uint[] rel = RelTriTri[tris[(int)iCurTri].R2[inotri2]];
-                    uint inotri3 = rel[iCurNoTri];
-                    System.Diagnostics.Debug.Assert(tris[(int)iNexTri].V[inotri3] == ipo0);
+                    uint iNexTri = tris[(int)iCurTri].S2[iTriNo2];
+                    uint[] rel = RelTriTri[tris[(int)iCurTri].R2[iTriNo2]];
+                    uint iTriNo3 = rel[iCurTriNo];
+                    System.Diagnostics.Debug.Assert(tris[(int)iNexTri].V[iTriNo3] == iPt0);
                     if (iNexTri == iIniTri)
                     {
                         return false;
                     }
                     iCurTri = iNexTri;
-                    iCurNoTri = inotri3;
+                    iCurTriNo = iTriNo3;
                 }
             }
 
-            iCurNoTri = iIniNoTri;
+            iCurTriNo = iIniTriNo;
             iCurTri = iIniTri;
             for (;;)
-            {   //　反時計周りの検索
-                System.Diagnostics.Debug.Assert(tris[(int)iCurTri].V[iCurNoTri] == ipo0);
+            {   
+                //　反時計周りの検索
+                System.Diagnostics.Debug.Assert(tris[(int)iCurTri].V[iCurTriNo] == iPt0);
                 {  
                     // 次の要素へ進める
-                    uint inotri2 = IndexRot3[1][iCurNoTri];
-                    if (tris[(int)iCurTri].G2[inotri2] != -2 || tris[(int)iCurTri].G2[inotri2] != -3)
+                    uint iTriNo2 = IndexRot3[1][iCurTriNo];
+                    if (tris[(int)iCurTri].G2[iTriNo2] != -2 || tris[(int)iCurTri].G2[iTriNo2] != -3)
                     {
                         break;
                     }
-                    uint iNexTri = tris[(int)iCurTri].S2[inotri2];
-                    uint[] rel = RelTriTri[tris[(int)iCurTri].R2[inotri2]];
-                    uint inotri3 = rel[iCurNoTri];
-                    System.Diagnostics.Debug.Assert(tris[(int)iNexTri].V[inotri3] == ipo0);
+                    uint iNexTri = tris[(int)iCurTri].S2[iTriNo2];
+                    uint[] rel = RelTriTri[tris[(int)iCurTri].R2[iTriNo2]];
+                    uint iTriNo3 = rel[iCurTriNo];
+                    System.Diagnostics.Debug.Assert(tris[(int)iNexTri].V[iTriNo3] == iPt0);
                     if (iNexTri == iIniTri)
-                    {   // 一周したら終わり
-                        itri0 = 0;
-                        inotri0 = 0; inotri1 = 0;
+                    {   
+                        // 一周したら終わり
+                        iTri0 = 0;
+                        iTriNo0 = 0; iTriNo1 = 0;
                         return false;
                     }
                     iCurTri = iNexTri;
-                    iCurNoTri = inotri3;
+                    iCurTriNo = iTriNo3;
                 }
                 {
                     // 要素の向きを調べる
-                    uint inotri2 = IndexRot3[1][iCurNoTri];
-                    if (tris[(int)iCurTri].V[inotri2] == ipo1)
+                    uint iTriNo2 = IndexRot3[1][iCurTriNo];
+                    if (tris[(int)iCurTri].V[iTriNo2] == iPt1)
                     {
-                        itri0 = iCurTri;
-                        inotri0 = iCurNoTri;
-                        inotri1 = inotri2;
-                        System.Diagnostics.Debug.Assert(tris[(int)itri0].V[inotri0] == ipo0);
-                        System.Diagnostics.Debug.Assert(tris[(int)itri0].V[inotri1] == ipo1);
+                        iTri0 = iCurTri;
+                        iTriNo0 = iCurTriNo;
+                        iTriNo1 = iTriNo2;
+                        System.Diagnostics.Debug.Assert(tris[(int)iTri0].V[iTriNo0] == iPt0);
+                        System.Diagnostics.Debug.Assert(tris[(int)iTri0].V[iTriNo1] == iPt1);
                         return true;
                     }
                 }
@@ -925,120 +928,120 @@ namespace IvyFEM
             return false;
         }
 
-        public static bool FindEdgePointAcrossEdge(uint ipo0, uint ipo1, 
-            out uint itri0, out uint inotri0, out uint inotri1, out double ratio,
+        public static bool FindEdgePointAcrossEdge(uint iPt0, uint iPt1, 
+            out uint iTri0, out uint iTriNo0, out uint iTriNo1, out double ratio,
             IList<MeshPoint2D> points, IList<MeshTri2D> tris)
         {
-            uint iIniTri = (uint)points[(int)ipo0].Elem;
-            uint iIniNoTri = points[(int)ipo0].Dir;
+            uint iIniTri = (uint)points[(int)iPt0].Elem;
+            uint iIniTriNo = points[(int)iPt0].Dir;
             uint iCurTri = iIniTri;
-            uint iCurNoTri = iIniNoTri;
+            uint iCurTriNo = iIniTriNo;
             for (;;)
             {
                 //　反時計周りの検索
-                System.Diagnostics.Debug.Assert(tris[(int)iCurTri].V[iCurNoTri] == ipo0);
+                System.Diagnostics.Debug.Assert(tris[(int)iCurTri].V[iCurTriNo] == iPt0);
                 {
-                    uint inotri2 = IndexRot3[1][iCurNoTri];
-                    uint inotri3 = IndexRot3[2][iCurNoTri];
+                    uint iTriNo2 = IndexRot3[1][iCurTriNo];
+                    uint iTriNo3 = IndexRot3[2][iCurTriNo];
                     double area0 = CadUtils.TriArea(
-                        points[(int)ipo0].Point,
-                        points[(int)tris[(int)iCurTri].V[inotri2]].Point,
-                        points[(int)ipo1].Point);
+                        points[(int)iPt0].Point,
+                        points[(int)tris[(int)iCurTri].V[iTriNo2]].Point,
+                        points[(int)iPt1].Point);
                     if (area0 > -1.0e-20)
                     {
                         double area1 = CadUtils.TriArea(
-                            points[(int)ipo0].Point,
-                            points[(int)ipo1].Point,
-                            points[(int)tris[(int)iCurTri].V[inotri3]].Point);
+                            points[(int)iPt0].Point,
+                            points[(int)iPt1].Point,
+                            points[(int)tris[(int)iCurTri].V[iTriNo3]].Point);
                         if (area1 > -1.0e-20)
                         {
                             System.Diagnostics.Debug.Assert(area0 + area1 > 1.0e-20);
                             ratio = area0 / (area0 + area1);
-                            itri0 = iCurTri;
-                            inotri0 = inotri2;
-                            inotri1 = inotri3;
+                            iTri0 = iCurTri;
+                            iTriNo0 = iTriNo2;
+                            iTriNo1 = iTriNo3;
                             return true;
                         }
                     }
                 }
                 { 
                     // 次の要素へ進める
-                    uint inotri2 = IndexRot3[1][iCurNoTri];
-                    if (tris[(int)iCurTri].G2[inotri2] != -2 && tris[(int)iCurTri].G2[inotri2] != -3)
+                    uint iTriNo2 = IndexRot3[1][iCurTriNo];
+                    if (tris[(int)iCurTri].G2[iTriNo2] != -2 && tris[(int)iCurTri].G2[iTriNo2] != -3)
                     {
                         break;
                     }
-                    uint iNexTri = tris[(int)iCurTri].S2[inotri2];
-                    uint[] rel = RelTriTri[tris[(int)iCurTri].R2[inotri2]];
-                    uint inotri3 = rel[iCurNoTri];
-                    System.Diagnostics.Debug.Assert(tris[(int)iNexTri].V[inotri3] == ipo0);
+                    uint iNexTri = tris[(int)iCurTri].S2[iTriNo2];
+                    uint[] rel = RelTriTri[tris[(int)iCurTri].R2[iTriNo2]];
+                    uint iTriNo3 = rel[iCurTriNo];
+                    System.Diagnostics.Debug.Assert(tris[(int)iNexTri].V[iTriNo3] == iPt0);
                     if (iNexTri == iIniTri)
                     { 
                         // 一周したら終わり
-                        itri0 = 0;
-                        inotri0 = 0; inotri1 = 0;
+                        iTri0 = 0;
+                        iTriNo0 = 0; iTriNo1 = 0;
                         ratio = 0.0;
                         return false;
                     }
                     iCurTri = iNexTri;
-                    iCurNoTri = inotri3;
+                    iCurTriNo = iTriNo3;
                 }
             }
 
-            iCurNoTri = iIniNoTri;
+            iCurTriNo = iIniTriNo;
             iCurTri = iIniTri;
             for (;;)
             {  
                 //　時計周りに検索する。
-                System.Diagnostics.Debug.Assert(tris[(int)iCurTri].V[iCurNoTri] == ipo0);
+                System.Diagnostics.Debug.Assert(tris[(int)iCurTri].V[iCurTriNo] == iPt0);
                 {
-                    uint inotri2 = IndexRot3[1][iCurNoTri];
-                    uint inotri3 = IndexRot3[2][iCurNoTri];
+                    uint iTriNo2 = IndexRot3[1][iCurTriNo];
+                    uint iTriNo3 = IndexRot3[2][iCurTriNo];
                     double area0 = CadUtils.TriArea(
-                        points[(int)ipo0].Point,
-                        points[(int)tris[(int)iCurTri].V[inotri2]].Point,
-                        points[(int)ipo1].Point);
+                        points[(int)iPt0].Point,
+                        points[(int)tris[(int)iCurTri].V[iTriNo2]].Point,
+                        points[(int)iPt1].Point);
                     if (area0 > -1.0e-20)
                     {
                         double area1 = CadUtils.TriArea(
-                            points[(int)ipo0].Point,
-                            points[(int)ipo1].Point,
-                            points[(int)tris[(int)iCurTri].V[inotri3]].Point);
+                            points[(int)iPt0].Point,
+                            points[(int)iPt1].Point,
+                            points[(int)tris[(int)iCurTri].V[iTriNo3]].Point);
                         if (area1 > -1.0e-20)
                         {
                             System.Diagnostics.Debug.Assert(area0 + area1 > 1.0e-20);
                             ratio = area0 / (area0 + area1);
-                            itri0 = iCurTri;
-                            inotri0 = inotri2;
-                            inotri1 = inotri3;
+                            iTri0 = iCurTri;
+                            iTriNo0 = iTriNo2;
+                            iTriNo1 = iTriNo3;
                             return true;
                         }
                     }
                 }
                 {
                     // 次の要素へ進める
-                    uint inotri2 = IndexRot3[2][iCurNoTri];
-                    if (tris[(int)iCurTri].G2[inotri2] != -2 && tris[(int)iCurTri].G2[inotri2] != -3)
+                    uint iTriNo2 = IndexRot3[2][iCurTriNo];
+                    if (tris[(int)iCurTri].G2[iTriNo2] != -2 && tris[(int)iCurTri].G2[iTriNo2] != -3)
                     {
                         break;
                     }
-                    uint iNexTri = tris[(int)iCurTri].S2[inotri2];
-                    uint[] rel = RelTriTri[tris[(int)iCurTri].R2[inotri2]];
-                    uint inotri3 = rel[iCurNoTri];
-                    System.Diagnostics.Debug.Assert(tris[(int)iNexTri].V[inotri3] == ipo0);
+                    uint iNexTri = tris[(int)iCurTri].S2[iTriNo2];
+                    uint[] rel = RelTriTri[tris[(int)iCurTri].R2[iTriNo2]];
+                    uint iTriNo3 = rel[iCurTriNo];
+                    System.Diagnostics.Debug.Assert(tris[(int)iNexTri].V[iTriNo3] == iPt0);
                     if (iNexTri == iIniTri)
                     {
                         System.Diagnostics.Debug.Assert(false);  // 一周しないはず
                     }
                     iCurTri = iNexTri;
-                    iCurNoTri = inotri3;
+                    iCurTriNo = iTriNo3;
                 }
             }
 
             // 失敗したときの値を入れる
-            itri0 = 0;
-            inotri0 = 0;
-            inotri1 = 0;
+            iTri0 = 0;
+            iTriNo0 = 0;
+            iTriNo1 = 0;
             ratio = 0.0;
 
             return false;
@@ -1046,56 +1049,58 @@ namespace IvyFEM
 
         public static void LaplacianSmoothing(IList<MeshPoint2D> points, IList<MeshTri2D> tris, IList<uint> isntMoves)
         {
-            for (uint ipt = 0; ipt < points.Count; ipt++)
-            {   // 点周りの点を探索して調べる。
-                if (ipt < isntMoves.Count)
+            for (uint iPt = 0; iPt < points.Count; iPt++)
+            {  
+                // 点周りの点を探索して調べる。
+                if (iPt < isntMoves.Count)
                 {
-                    if (isntMoves[(int)ipt] == 1)
+                    if (isntMoves[(int)iPt] == 1)
                     {
                         continue;
                     }
                 }
-                uint itriIni = (uint)points[(int)ipt].Elem;
-                uint inoELCIni = points[(int)ipt].Dir;
-                System.Diagnostics.Debug.Assert(itriIni < tris.Count);
-                System.Diagnostics.Debug.Assert(inoELCIni < 3);
-                System.Diagnostics.Debug.Assert(tris[(int)itriIni].V[inoELCIni] == ipt);
-                uint itri0 = itriIni;
-                uint iNoELC0 = inoELCIni;
-                uint iNoELB0 = NoELTriEdge[iNoELC0][0];
+                uint iTriIni = (uint)points[(int)iPt].Elem;
+                uint iNoElCIni = points[(int)iPt].Dir;
+                System.Diagnostics.Debug.Assert(iTriIni < tris.Count);
+                System.Diagnostics.Debug.Assert(iNoElCIni < 3);
+                System.Diagnostics.Debug.Assert(tris[(int)iTriIni].V[iNoElCIni] == iPt);
+                uint iTri0 = iTriIni;
+                uint iNoElC0 = iNoElCIni;
+                uint iNoElB0 = TriElEdgeNo[iNoElC0][0];
                 bool isBound = false;
-                Vector2 vecDelta = points[(int)ipt].Point;
+                Vector2 vecDelta = points[(int)iPt].Point;
                 uint ntriAround = 1;
                 for (;;)
                 {
-                    System.Diagnostics.Debug.Assert(itri0 < tris.Count);
-                    System.Diagnostics.Debug.Assert(iNoELC0 < 3);
-                    System.Diagnostics.Debug.Assert(tris[(int)itri0].V[iNoELC0] == ipt);
+                    System.Diagnostics.Debug.Assert(iTri0 < tris.Count);
+                    System.Diagnostics.Debug.Assert(iNoElC0 < 3);
+                    System.Diagnostics.Debug.Assert(tris[(int)iTri0].V[iNoElC0] == iPt);
                     {
-                        vecDelta.X += points[(int)tris[(int)itri0].V[iNoELB0]].Point.X;
-                        vecDelta.Y += points[(int)tris[(int)itri0].V[iNoELB0]].Point.Y;
+                        vecDelta.X += points[(int)tris[(int)iTri0].V[iNoElB0]].Point.X;
+                        vecDelta.Y += points[(int)tris[(int)iTri0].V[iNoElB0]].Point.Y;
                         ntriAround++;
                     }
-                    if (tris[(int)itri0].G2[iNoELB0] == -2)
+                    if (tris[(int)iTri0].G2[iNoElB0] == -2)
                     {
-                        uint itri1 = tris[(int)itri0].S2[iNoELB0];
-                        uint rel01 = tris[(int)itri0].R2[iNoELB0];
-                        uint inoel_c1 = RelTriTri[rel01][iNoELC0];
-                        uint inoel_b1 = RelTriTri[rel01][NoELTriEdge[iNoELC0][1]];
-                        System.Diagnostics.Debug.Assert(itri1 < tris.Count);
+                        uint iTri1 = tris[(int)iTri0].S2[iNoElB0];
+                        uint rel01 = tris[(int)iTri0].R2[iNoElB0];
+                        uint iNoElC1 = RelTriTri[rel01][iNoElC0];
+                        uint iNoElB1 = RelTriTri[rel01][TriElEdgeNo[iNoElC0][1]];
+                        System.Diagnostics.Debug.Assert(iTri1 < tris.Count);
                         System.Diagnostics.Debug.Assert(
-                            tris[(int)itri1].S2[RelTriTri[rel01][iNoELB0]] == itri0);
-                        System.Diagnostics.Debug.Assert(tris[(int)itri1].V[inoel_c1] == ipt);
-                        if (itri1 == itriIni)
+                            tris[(int)iTri1].S2[RelTriTri[rel01][iNoElB0]] == iTri0);
+                        System.Diagnostics.Debug.Assert(tris[(int)iTri1].V[iNoElC1] == iPt);
+                        if (iTri1 == iTriIni)
                         {
                             break;
                         }
-                        itri0 = itri1;
-                        iNoELC0 = inoel_c1;
-                        iNoELB0 = inoel_b1;
+                        iTri0 = iTri1;
+                        iNoElC0 = iNoElC1;
+                        iNoElB0 = iNoElB1;
                     }
                     else
-                    {   // この点は境界上の点だから動かしてはならない。
+                    {   
+                        // この点は境界上の点だから動かしてはならない。
                         isBound = true;
                         break;
                     }
@@ -1104,7 +1109,7 @@ namespace IvyFEM
                 {
                     continue;
                 }
-                points[(int)ipt].Point = new Vector2(
+                points[(int)iPt].Point = new Vector2(
                     vecDelta.X / ntriAround,
                     vecDelta.Y / ntriAround);
             }
@@ -1112,55 +1117,55 @@ namespace IvyFEM
 
         public static void LaplaceDelaunaySmoothing(IList<MeshPoint2D> points, IList<MeshTri2D> tris, IList<uint> isntMoves)
         {
-            for (uint ipt = 0; ipt < points.Count; ipt++)
+            for (uint iPt = 0; iPt < points.Count; iPt++)
             {
                 // 点周りの点を探索して調べる。
-                if (ipt < isntMoves.Count)
+                if (iPt < isntMoves.Count)
                 {
-                    if (isntMoves[(int)ipt] == 1)
+                    if (isntMoves[(int)iPt] == 1)
                     {
                         continue;
                     }
                 }
-                uint itriIni = (uint)points[(int)ipt].Elem;
-                uint iNoELCIni = points[(int)ipt].Dir;
-                System.Diagnostics.Debug.Assert(itriIni < tris.Count);
-                System.Diagnostics.Debug.Assert(iNoELCIni < 3);
-                System.Diagnostics.Debug.Assert(tris[(int)itriIni].V[iNoELCIni] == ipt);
-                uint itri0 = itriIni;
-                uint iNoELC0 = iNoELCIni;
-                uint iNoELB0 = NoELTriEdge[iNoELC0][0];
+                uint iTriIni = (uint)points[(int)iPt].Elem;
+                uint iNoElCIni = points[(int)iPt].Dir;
+                System.Diagnostics.Debug.Assert(iTriIni < tris.Count);
+                System.Diagnostics.Debug.Assert(iNoElCIni < 3);
+                System.Diagnostics.Debug.Assert(tris[(int)iTriIni].V[iNoElCIni] == iPt);
+                uint iTri0 = iTriIni;
+                uint iNoElC0 = iNoElCIni;
+                uint iNoElB0 = TriElEdgeNo[iNoElC0][0];
                 bool isBound = false;
-                Vector2 vecDelta = points[(int)ipt].Point;
+                Vector2 vecDelta = points[(int)iPt].Point;
                 uint ntriAround = 1;
                 for (;;)
                 { 
                     // 点の周りの要素を一回りする
-                    System.Diagnostics.Debug.Assert(itri0 < tris.Count);
-                    System.Diagnostics.Debug.Assert(iNoELC0 < 3);
-                    System.Diagnostics.Debug.Assert(tris[(int)itri0].V[iNoELC0] == ipt);
+                    System.Diagnostics.Debug.Assert(iTri0 < tris.Count);
+                    System.Diagnostics.Debug.Assert(iNoElC0 < 3);
+                    System.Diagnostics.Debug.Assert(tris[(int)iTri0].V[iNoElC0] == iPt);
                     {
-                        vecDelta.X += points[(int)tris[(int)itri0].V[iNoELB0]].Point.X;
-                        vecDelta.Y += points[(int)tris[(int)itri0].V[iNoELB0]].Point.Y;
+                        vecDelta.X += points[(int)tris[(int)iTri0].V[iNoElB0]].Point.X;
+                        vecDelta.Y += points[(int)tris[(int)iTri0].V[iNoElB0]].Point.Y;
                         ntriAround++;
                     }
-                    if (tris[(int)itri0].G2[iNoELB0] == -2)
+                    if (tris[(int)iTri0].G2[iNoElB0] == -2)
                     {
-                        uint itri1 = tris[(int)itri0].S2[iNoELB0];
-                        uint rel01 = tris[(int)itri0].R2[iNoELB0];
-                        uint iNoELC1 = RelTriTri[rel01][iNoELC0];
-                        uint iNoELB1 = RelTriTri[rel01][NoELTriEdge[iNoELC0][1]];
-                        System.Diagnostics.Debug.Assert(itri1 < tris.Count);
+                        uint iTri1 = tris[(int)iTri0].S2[iNoElB0];
+                        uint rel01 = tris[(int)iTri0].R2[iNoElB0];
+                        uint iNoElC1 = RelTriTri[rel01][iNoElC0];
+                        uint iNoElB1 = RelTriTri[rel01][TriElEdgeNo[iNoElC0][1]];
+                        System.Diagnostics.Debug.Assert(iTri1 < tris.Count);
                         System.Diagnostics.Debug.Assert(
-                            tris[(int)itri1].S2[RelTriTri[rel01][iNoELB0]] == itri0);
-                        System.Diagnostics.Debug.Assert(tris[(int)itri1].V[iNoELC1] == ipt);
-                        if (itri1 == itriIni)
+                            tris[(int)iTri1].S2[RelTriTri[rel01][iNoElB0]] == iTri0);
+                        System.Diagnostics.Debug.Assert(tris[(int)iTri1].V[iNoElC1] == iPt);
+                        if (iTri1 == iTriIni)
                         {
                             break;
                         }
-                        itri0 = itri1;
-                        iNoELC0 = iNoELC1;
-                        iNoELB0 = iNoELB1;
+                        iTri0 = iTri1;
+                        iNoElC0 = iNoElC1;
+                        iNoElB0 = iNoElB1;
                     }
                     else
                     {
@@ -1173,10 +1178,10 @@ namespace IvyFEM
                 {
                     continue;
                 }
-                points[(int)ipt].Point = new Vector2(
+                points[(int)iPt].Point = new Vector2(
                     vecDelta.X / ntriAround,
                     vecDelta.Y / ntriAround);
-                DelaunayAroundPoint(ipt, points, tris);
+                DelaunayAroundPoint(iPt, points, tris);
             }
         }
 

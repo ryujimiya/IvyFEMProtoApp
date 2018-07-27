@@ -35,7 +35,7 @@ namespace IvyFEM
             BRep2D.Copy(src.BRep2D);
         }
 
-        public static ItrVertex operator++ (ItrVertex src)
+        public static ItrVertex operator ++(ItrVertex src)
         {
             ItrVertex dest = new ItrVertex(src);
             if (!src.IsValid)
@@ -148,7 +148,7 @@ namespace IvyFEM
             UseVertex uV = BRep2D.BRep.GetUseVertex(UVId);
             uint hEId0 = uV.HEId;
             uint hEId = hEId0;
-            uint icnt = 0;
+            uint iCnt = 0;
             for (;;)
             {
                 System.Diagnostics.Debug.Assert(BRep2D.BRep.IsHalfEdgeId(hEId));
@@ -157,7 +157,7 @@ namespace IvyFEM
                 {
                     return 0;
                 }
-                icnt++;
+                iCnt++;
                 uint bHEId = hE.BHEId;
                 System.Diagnostics.Debug.Assert(BRep2D.BRep.IsHalfEdgeId(bHEId));
                 HalfEdge bHE = BRep2D.BRep.GetHalfEdge(bHEId);
@@ -167,7 +167,7 @@ namespace IvyFEM
                     break;
                 }
             }
-            return icnt;
+            return iCnt;
         }
 
         public bool IsParent()

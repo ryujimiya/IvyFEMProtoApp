@@ -50,7 +50,7 @@ namespace IvyFEM
             IsntEmpty = src.IsntEmpty;
         }
 
-        public static BoundingBox3D operator+ (BoundingBox3D bb1,BoundingBox3D bb2)
+        public static BoundingBox3D operator +(BoundingBox3D bb1,BoundingBox3D bb2)
         {
             BoundingBox3D result = new BoundingBox3D(bb1);
             if (!bb2.IsntEmpty)

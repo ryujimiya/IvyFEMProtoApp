@@ -24,9 +24,10 @@ namespace IvyFEMProtoApp
             InitializeComponent();
         }
 
-        public static void ShowText(string text)
+        public static void ShowDialog(string text, string title = "")
         {
             var win = new AlertWindow();
+            win.Title = title;
             win.textBox1.Text = text;
             win.ShowDialog();
         }

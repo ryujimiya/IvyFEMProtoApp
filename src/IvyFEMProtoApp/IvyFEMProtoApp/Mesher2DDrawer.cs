@@ -3,23 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Numerics;
-using OpenTK;
-using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 
 namespace IvyFEM
 {
     class Mesher2DDrawer : IDrawer
     {
-        public uint SutableRotMode { get; private set; } = 1;
+        public RotMode SutableRotMode { get; private set; } = RotMode.ROTMODE_2D;
         public bool IsAntiAliasing { get; set; } = false;
 
-        private bool IsFrontAndBack;
         private IList<Mesher2DDrawPart> DrawParts = new List<Mesher2DDrawPart>();
         private VertexArray VertexArray = new VertexArray();
         private bool IsDrawFace;
-        private uint LineWidth = 1;
 
         public Mesher2DDrawer()
         {
@@ -34,7 +29,7 @@ namespace IvyFEM
 
         private bool Set(Mesher2D mesher)
         {
-            SutableRotMode = 1; // DrawMode 1 : 2D
+            SutableRotMode = RotMode.ROTMODE_2D; // DrawMode 1 : 2D
 
             int layerMin = 0;
             int layerMax = 0;
@@ -160,11 +155,11 @@ namespace IvyFEM
                 IList<System.Numerics.Vector2> vecs = mesher.GetVectors();
                 uint nDim = 2;
                 uint nVec = (uint)vecs.Count;
-                if (VertexArray.NDim != nDim)
+                if (VertexArray.Dimension != nDim)
                 {
                     return;
                 }
-                if (VertexArray.NPoint != nVec)
+                if (VertexArray.PointCount != nVec)
                 {
                     return;
                 }
@@ -196,7 +191,7 @@ namespace IvyFEM
             GL.Enable(EnableCap.DepthTest);
             //GL.Disable(EnableCap.DepthTest);
 
-            uint nDim = VertexArray.NDim;
+            uint nDim = VertexArray.Dimension;
 
             // 頂点配列の設定
             GL.EnableClientState(ArrayCap.VertexArray);
@@ -219,16 +214,16 @@ namespace IvyFEM
             GL.DisableClientState(ArrayCap.VertexArray);
         }
 
-        public void DrawSelection(uint idraw)
+        public void DrawSelection(uint iDraw)
         {
-            uint nDim = VertexArray.NDim;
+            uint nDim = VertexArray.Dimension;
 
             // モデルの描画
             GL.EnableClientState(ArrayCap.VertexArray);
 
             GL.VertexPointer((int)nDim, VertexPointerType.Double, 0, VertexArray.VertexCoordArray);
 
-            GL.PushName(idraw);
+            GL.PushName(iDraw);
             for (int idp = 0; idp < DrawParts.Count; idp++)
             {
                 Mesher2DDrawPart dp = DrawParts[idp];
@@ -251,20 +246,14 @@ namespace IvyFEM
             int ielem0 = selectFlag[2];
             System.Diagnostics.Debug.WriteLine("Mesher2DDrawer.AddSelected idp0 = " +
                 idp0 + " ielem0 = " + ielem0);
-            if (idp0 < DrawParts.Count)
+            if (idp0 >= 0 && idp0 < DrawParts.Count)
             {
                 DrawParts[idp0].IsSelected = true;
                 IList<uint> selectedElems = DrawParts[idp0].SelectedElems;
-                for (int i = 0; i < selectedElems.Count; i++)
+                if (selectedElems.IndexOf((uint)ielem0) < 0)
                 {
-                    uint selectedElem = selectedElems[i];
-                    if (selectedElem == ielem0)
-                    {
-                        selectedElems.RemoveAt(i);
-                        return;
-                    }
+                    selectedElems.Add((uint)ielem0);
                 }
-                selectedElems.Add((uint)ielem0);
             }
         }
 
