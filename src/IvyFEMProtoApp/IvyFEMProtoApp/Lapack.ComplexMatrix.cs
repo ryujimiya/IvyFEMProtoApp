@@ -8,7 +8,7 @@ namespace IvyFEM.Lapack
 {
     class ComplexMatrix
     {
-        public Complex[] Buffer { get; protected set; } = null;
+        public System.Numerics.Complex[] Buffer { get; protected set; } = null;
         public int RowSize { get; protected set; } = 0;
         public int ColumnSize = 0;
 
@@ -22,7 +22,7 @@ namespace IvyFEM.Lapack
             Resize(rowSize, columnSize);
         }
 
-        public ComplexMatrix(Complex[] buffer, int rowSize, int columnSize, bool alloc = true)
+        public ComplexMatrix(System.Numerics.Complex[] buffer, int rowSize, int columnSize, bool alloc = true)
         {
             if (alloc)
             {
@@ -47,14 +47,14 @@ namespace IvyFEM.Lapack
             ComplexMatrix m = new ComplexMatrix(doubleM.RowSize, doubleM.ColumnSize);
             for (int i = 0; i < m.Buffer.Length; i++)
             {
-                m.Buffer[i] = (Complex)doubleM.Buffer[i];
+                m.Buffer[i] = (System.Numerics.Complex)doubleM.Buffer[i];
             }
             return m;
         }
 
         public void Resize(int rowSize, int columnSize)
         {
-            Buffer = new Complex[rowSize * columnSize];
+            Buffer = new System.Numerics.Complex[rowSize * columnSize];
             RowSize = rowSize;
             ColumnSize = columnSize;
         }
@@ -78,7 +78,7 @@ namespace IvyFEM.Lapack
             {
                 for (int row = 0; row < RowSize; row++)
                 {
-                    ret += "[" + row + ", " + col + "] = " + this[row, col].Dump();
+                    ret += "[" + row + ", " + col + "] = " + this[row, col].ToString() + CRLF;
                 }
             }
             return ret;
@@ -90,7 +90,7 @@ namespace IvyFEM.Lapack
             return (row + col * RowSize);
         }
 
-        public Complex this[int row, int col]
+        public System.Numerics.Complex this[int row, int col]
         {
             get
             {
@@ -115,7 +115,7 @@ namespace IvyFEM.Lapack
             Copy(src.Buffer, src.RowSize, src.ColumnSize);
         }
 
-        public void Copy(Complex[] buffer, int rowSize, int columnSize)
+        public void Copy(System.Numerics.Complex[] buffer, int rowSize, int columnSize)
         {
             System.Diagnostics.Debug.Assert(buffer.Length == rowSize * columnSize);
             if (buffer.Length != rowSize * columnSize)
@@ -147,7 +147,7 @@ namespace IvyFEM.Lapack
             int size = Buffer.Length;
             for (int i = 0; i < size; ++i)
             {
-                Buffer[i] = (Complex)0;
+                Buffer[i] = (System.Numerics.Complex)0;
             }
         }
 
@@ -156,7 +156,7 @@ namespace IvyFEM.Lapack
             Zero();
             for (int i = 0; i < RowSize; ++i)
             {
-                this[i, i] = (Complex)1;
+                this[i, i] = (System.Numerics.Complex)1;
             }
         }
 
@@ -200,8 +200,8 @@ namespace IvyFEM.Lapack
             ComplexMatrix workA = new ComplexMatrix(A);
             ComplexMatrix workB = new ComplexMatrix(n, n);
             workB.Identity(); // 単位行列
-            Complex[] a = workA.Buffer;
-            Complex[] b = workB.Buffer;
+            System.Numerics.Complex[] a = workA.Buffer;
+            System.Numerics.Complex[] b = workB.Buffer;
             // [A][X] = [B]
             //  [B]の内容が書き換えられるので、matXを新たに生成せず、Bを出力に指定している
             int xRow = 0;
@@ -223,7 +223,7 @@ namespace IvyFEM.Lapack
 
         public static ComplexMatrix operator *(ComplexMatrix A, ComplexMatrix B)
         {
-            IvyFEM.Lapack.Complex[] c;
+            System.Numerics.Complex[] c;
             int cRow;
             int cCol;
             Lapack.Functions.zgemmAB(out c, out cRow, out cCol,

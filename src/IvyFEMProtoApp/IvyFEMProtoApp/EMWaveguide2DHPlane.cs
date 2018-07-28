@@ -21,8 +21,8 @@ namespace IvyFEM
         }
 
         public void Solve(double waveLength,
-            out IvyFEM.Lapack.Complex[] Ez,
-            out IvyFEM.Lapack.Complex[][] S)
+            out System.Numerics.Complex[] Ez,
+            out System.Numerics.Complex[][] S)
         {
             Ez = null;
             S = null;
@@ -36,7 +36,7 @@ namespace IvyFEM
             IList<uint> feIds = World.GetTriangleFEIds();
 
             var A = new Lapack.ComplexMatrix(nodeCnt, nodeCnt);
-            var B = new Lapack.Complex[nodeCnt];
+            var B = new System.Numerics.Complex[nodeCnt];
 
             foreach (uint feId in feIds)
             {
@@ -75,15 +75,15 @@ namespace IvyFEM
                             (1.0 / ma.Muyy) * sNxNx[col * elemNodeCnt + row] -
                             (k0 * k0 * ma.Epzz) * sNN[col * elemNodeCnt + row];
 
-                        A[rowNodeId, colNodeId] += (IvyFEM.Lapack.Complex)a;
+                        A[rowNodeId, colNodeId] += (System.Numerics.Complex)a;
                     }
                 }
             }
 
             uint portCnt = World.GetPortCount();
             var eigenFEMs = new EMWaveguide1DEigenFEM[portCnt];
-            var betass = new IvyFEM.Lapack.Complex[2][];
-            var ezEVecss = new IvyFEM.Lapack.Complex[2][][];
+            var betass = new System.Numerics.Complex[2][];
+            var ezEVecss = new System.Numerics.Complex[2][][];
             for (uint portId = 0; portId < portCnt; portId++)
             {
                 uint portNodeCnt = World.GetPortNodeCount(portId);
@@ -91,8 +91,8 @@ namespace IvyFEM
                 var eigenFEM = new EMWaveguide1DEigenFEM(World, portId);
                 eigenFEMs[portId] = eigenFEM;
 
-                IvyFEM.Lapack.Complex[] betas;
-                IvyFEM.Lapack.Complex[][] ezEVecs;
+                System.Numerics.Complex[] betas;
+                System.Numerics.Complex[][] ezEVecs;
                 eigenFEM.Solve(waveLength, out betas, out ezEVecs);
                 betass[portId] = betas;
                 ezEVecss[portId] = ezEVecs;
@@ -115,9 +115,9 @@ namespace IvyFEM
                 if (isIncidentPort)
                 {
                     uint incidentModeId = World.IncidentModeId;
-                    IvyFEM.Lapack.Complex beta0 = betas[incidentModeId];
-                    IvyFEM.Lapack.Complex[] ezEVec0 = ezEVecs[incidentModeId];
-                    IvyFEM.Lapack.Complex[] I = eigenFEM.CalcIncidentResidualVec(beta0, ezEVec0);
+                    System.Numerics.Complex beta0 = betas[incidentModeId];
+                    System.Numerics.Complex[] ezEVec0 = ezEVecs[incidentModeId];
+                    System.Numerics.Complex[] I = eigenFEM.CalcIncidentResidualVec(beta0, ezEVec0);
                     for (int row = 0; row < portNodeCnt; row++)
                     {
                         int rowCoId = World.PortNode2Coord(portId, row);
@@ -128,7 +128,7 @@ namespace IvyFEM
                 }
             }
 
-            IvyFEM.Lapack.Complex[] X;
+            System.Numerics.Complex[] X;
             int xRow;
             int xCol;
             int ret = IvyFEM.Lapack.Functions.zgesv(out X, out xRow, out xCol,
@@ -136,10 +136,10 @@ namespace IvyFEM
                 B, B.Length, 1);
             Ez = X;
 
-            S = new IvyFEM.Lapack.Complex[portCnt][];
+            S = new System.Numerics.Complex[portCnt][];
             for (uint portId = 0; portId < portCnt; portId++)
             {
-                IvyFEM.Lapack.Complex[] portEz = GetPortEz(portId, Ez);
+                System.Numerics.Complex[] portEz = GetPortEz(portId, Ez);
                 var eigenFEM = eigenFEMs[portId];
                 var betas = betass[portId];
                 var ezEVecs = ezEVecss[portId];
@@ -148,15 +148,15 @@ namespace IvyFEM
                 {
                     incidentModeId = (int)World.IncidentModeId;
                 }
-                IvyFEM.Lapack.Complex[] S1 = eigenFEM.CalcSMatrix(omega, incidentModeId, betas, ezEVecs, portEz);
+                System.Numerics.Complex[] S1 = eigenFEM.CalcSMatrix(omega, incidentModeId, betas, ezEVecs, portEz);
                 S[portId] = S1;
             }
         }
 
-        private IvyFEM.Lapack.Complex[] GetPortEz(uint portId, IvyFEM.Lapack.Complex[] Ez)
+        private System.Numerics.Complex[] GetPortEz(uint portId, System.Numerics.Complex[] Ez)
         {
             int nodeCnt = (int)World.GetPortNodeCount(portId);
-            IvyFEM.Lapack.Complex[] portEz= new IvyFEM.Lapack.Complex[nodeCnt];
+            System.Numerics.Complex[] portEz= new System.Numerics.Complex[nodeCnt];
             for (int row = 0; row < nodeCnt; row++)
             {
                 int coId = World.PortNode2Coord(portId, row);

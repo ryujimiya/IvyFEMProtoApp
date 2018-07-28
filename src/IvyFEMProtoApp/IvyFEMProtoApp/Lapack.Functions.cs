@@ -94,7 +94,7 @@ namespace IvyFEM.Lapack
             }
         }
 
-        public static Complex zdotc(Complex[] X, Complex[] Y)
+        public static System.Numerics.Complex zdotc(System.Numerics.Complex[] X, System.Numerics.Complex[] Y)
         {
             if (X.Length != Y.Length)
             {
@@ -105,11 +105,11 @@ namespace IvyFEM.Lapack
             int incX = 1;
             int incY = 1;
 
-            Complex ret = (Complex)0;
+            System.Numerics.Complex ret = (System.Numerics.Complex)0;
             unsafe
             {
-                fixed (Complex* XP = &X[0])
-                fixed (Complex* YP = &Y[0])
+                fixed (System.Numerics.Complex* XP = &X[0])
+                fixed (System.Numerics.Complex* YP = &Y[0])
                 {
                     ret = IvyFEM.Lapack.ImportedFunctions.zdotc_(&n, XP, &incX, YP, &incY);
                 }
@@ -117,7 +117,7 @@ namespace IvyFEM.Lapack
             return ret;
         }
 
-        public static Complex zdotu(Complex[] X, Complex[] Y)
+        public static System.Numerics.Complex zdotu(System.Numerics.Complex[] X, System.Numerics.Complex[] Y)
         {
             if (X.Length != Y.Length)
             {
@@ -128,11 +128,11 @@ namespace IvyFEM.Lapack
             int incX = 1;
             int incY = 1;
 
-            Complex ret = (Complex)0;
+            System.Numerics.Complex ret = (System.Numerics.Complex)0;
             unsafe
             {
-                fixed (Complex* XP = &X[0])
-                fixed (Complex* YP = &Y[0])
+                fixed (System.Numerics.Complex* XP = &X[0])
+                fixed (System.Numerics.Complex* YP = &Y[0])
                 {
                     ret = IvyFEM.Lapack.ImportedFunctions.zdotu_(&n, XP, &incX, YP, &incY);
                 }
@@ -140,9 +140,9 @@ namespace IvyFEM.Lapack
             return ret;
         }
 
-        public static int zgemmAB(out Complex[] C, out int cRow, out int cCol,
-            Complex[] A, int aRow, int aCol,
-            Complex[] B, int bRow, int bCol)
+        public static int zgemmAB(out System.Numerics.Complex[] C, out int cRow, out int cCol,
+            System.Numerics.Complex[] A, int aRow, int aCol,
+            System.Numerics.Complex[] B, int bRow, int bCol)
         {
             if (aCol != bRow)
             {
@@ -152,7 +152,7 @@ namespace IvyFEM.Lapack
             cRow = aRow;
             cCol = bCol;
 
-            C = new Complex[cRow * cCol];
+            C = new System.Numerics.Complex[cRow * cCol];
 
             byte transa = Trans.Nop;
             byte transb = Trans.Nop;
@@ -160,19 +160,19 @@ namespace IvyFEM.Lapack
             int n = bCol;
             int k = aCol;
 
-            Complex alpha = (Complex)1.0;
+            System.Numerics.Complex alpha = (System.Numerics.Complex)1.0;
 
             int lda = aRow;
             int ldb = bRow;
 
-            Complex beta = (Complex)0.0;
+            System.Numerics.Complex beta = (System.Numerics.Complex)0.0;
             int ldc = aRow;
 
             unsafe
             {
-                fixed (Complex* AP = &A[0])
-                fixed (Complex* BP = &B[0])
-                fixed (Complex* CP = &C[0])
+                fixed (System.Numerics.Complex* AP = &A[0])
+                fixed (System.Numerics.Complex* BP = &B[0])
+                fixed (System.Numerics.Complex* CP = &C[0])
                 {
                     IvyFEM.Lapack.ImportedFunctions.zgemm_(
                         &transa, &transb,
@@ -185,14 +185,14 @@ namespace IvyFEM.Lapack
             return 0;
         }
 
-        public static void zscal(Complex[] X, Complex a)
+        public static void zscal(System.Numerics.Complex[] X, System.Numerics.Complex a)
         {
             int n = X.Length;
             int incX = 1;
 
             unsafe
             {
-                fixed (Complex* XP = &X[0])
+                fixed (System.Numerics.Complex* XP = &X[0])
                 {
                     IvyFEM.Lapack.ImportedFunctions.zscal_(&n, &a, XP, &incX);
                 }
@@ -208,7 +208,7 @@ namespace IvyFEM.Lapack
         // LAPACKE
         ////////////////////////////////////////////////////////////////
         public static int dgeev(double[] A, int xRow, int xCol,
-            out Complex[] eVals, out Complex[][] eVecs)
+            out System.Numerics.Complex[] eVals, out System.Numerics.Complex[][] eVecs)
         {
             byte jobvl = Job.DontCompute;
             byte jobvr = Job.Compute;
@@ -239,39 +239,35 @@ namespace IvyFEM.Lapack
             }
 
             // 固有値を格納
-            eVals = new Complex[n];
+            eVals = new System.Numerics.Complex[n];
             for (int i = 0; i < n; i++)
             {
-                eVals[i].Real = wr[i];
-                eVals[i].Imaginary = wi[i];
+                eVals[i] = new System.Numerics.Complex(wr[i], wi[i]);
             }
 
             // 固有ベクトルを格納
-            eVecs = new Complex[n][];
+            eVecs = new System.Numerics.Complex[n][];
             for (int i = 0; i < n; i++)
             {
                 if (Math.Abs(wi[i]) < Constants.PrecisionLowerLimit)
                 {
                     // 実数の固有ベクトル
-                    eVecs[i] = new Complex[ldvr];
+                    eVecs[i] = new System.Numerics.Complex[ldvr];
                     for (int j = 0; j < ldvr; j++)
                     {
-                        eVecs[i][j].Real = vr[i * ldvr + j];
-                        eVecs[i][j].Imaginary = 0.0;
+                        eVecs[i][j] = new System.Numerics.Complex(vr[i * ldvr + j], 0.0);
                     }
                 }
                 else
                 {
                     // 複素数（複素共役）の固有ベクトル
-                    var vec1 = new Complex[ldvr];
-                    var vec2 = new Complex[ldvr];
+                    var vec1 = new System.Numerics.Complex[ldvr];
+                    var vec2 = new System.Numerics.Complex[ldvr];
 
                     for (int j = 0; j < ldvr; j++)
                     {
-                        vec1[j].Real = vr[i * ldvr + j];
-                        vec2[j].Real = vr[i * ldvr + j];
-                        vec1[j].Imaginary = vr[(i + 1) * ldvr + j];
-                        vec2[j].Imaginary = -vr[(i + 1) * ldvr + j];
+                        vec1[j] = new System.Numerics.Complex(vr[i * ldvr + j], vr[(i + 1) * ldvr + j]);
+                        vec2[j] = new System.Numerics.Complex(vr[i * ldvr + j], vr[(i + 1) * ldvr + j]);
                     }
                     eVecs[i] = vec1;
                     eVecs[i + 1] = vec2;
@@ -330,7 +326,7 @@ namespace IvyFEM.Lapack
 
         public static int dggev(double[] A, int aRow, int aCol,
             double[] B, int bRow, int bCol,
-            out Complex[] eVals, out Complex[][] eVecs)
+            out System.Numerics.Complex[] eVals, out System.Numerics.Complex[][] eVecs)
         {
             byte jobvl = Job.DontCompute;
             byte jobvr = Job.Compute;
@@ -363,53 +359,52 @@ namespace IvyFEM.Lapack
                 return ret;
             }
 
-            eVals = new Complex[n];
+            eVals = new System.Numerics.Complex[n];
             for (int i = 0; i < n; i++)
             {
                 if (Math.Abs(beta[i]) < Constants.PrecisionLowerLimit)
                 {
-                    eVals[i].Real = ((Math.Abs(alphar[i]) < Constants.PrecisionLowerLimit) ?
+                    double real = ((Math.Abs(alphar[i]) < Constants.PrecisionLowerLimit) ?
                         (double.NaN)
                         : ((Math.Abs(alphar[i]) > 0) ? (double.PositiveInfinity) : (double.NegativeInfinity)));
-                    eVals[i].Imaginary = ((Math.Abs(alphai[i]) < Constants.PrecisionLowerLimit) ?
+                    double imag = ((Math.Abs(alphai[i]) < Constants.PrecisionLowerLimit) ?
                         (double.NaN)
                         : ((Math.Abs(alphai[i]) > 0) ? (double.PositiveInfinity) : (double.NegativeInfinity)));
+                    eVals[i] = new System.Numerics.Complex(real, imag);
                 }
                 else
                 {
-                    eVals[i].Real = ((Math.Abs(alphar[i]) < Constants.PrecisionLowerLimit) ?
+                    double real = ((Math.Abs(alphar[i]) < Constants.PrecisionLowerLimit) ?
                         (0.0) : (alphar[i] / beta[i]));
-                    eVals[i].Imaginary = ((Math.Abs(alphai[i]) < Constants.PrecisionLowerLimit) ?
+                    double imag = ((Math.Abs(alphai[i]) < Constants.PrecisionLowerLimit) ?
                         (0.0) : (alphai[i] / beta[i]));
+                    eVals[i] = new System.Numerics.Complex(real, imag);
                 }
             }
 
-            eVecs = new Complex[n][];
+            eVecs = new System.Numerics.Complex[n][];
             for (int i = 0; i < n; i++)
             {
                 if (Math.Abs(alphai[i]) < Constants.PrecisionLowerLimit)
                 {
                     // 実数の固有ベクトル
-                    eVecs[i] = new Complex[ldvr];
+                    eVecs[i] = new System.Numerics.Complex[ldvr];
 
                     for (int j = 0; j < ldvr; ++j)
                     {
-                        eVecs[i][j].Real = vr[i * ldvr + j];
-                        eVecs[i][j].Imaginary = 0.0;
+                        eVecs[i][j] = new System.Numerics.Complex(vr[i * ldvr + j], 0.0);
                     }
                 }
                 else
                 {
                     // 複素数（複素共役）の固有ベクトル
-                    var vec1 = new Complex[ldvr];
-                    var vec2 = new Complex[ldvr];
+                    var vec1 = new System.Numerics.Complex[ldvr];
+                    var vec2 = new System.Numerics.Complex[ldvr];
 
                     for (int j = 0; j < ldvr; j++)
                     {
-                        vec1[j].Real = vr[i * ldvr + j];
-                        vec2[j].Real = vr[i * ldvr + j];
-                        vec1[j].Imaginary = vr[(i + 1) * ldvr + j];
-                        vec2[j].Imaginary = -vr[(i + 1) * ldvr + j];
+                        vec1[j] = new System.Numerics.Complex(vr[i * ldvr + j], vr[(i + 1) * ldvr + j]);
+                        vec2[j] = new System.Numerics.Complex(vr[i * ldvr + j], -vr[(i + 1) * ldvr + j]);
                     }
                     eVecs[i] = vec1;
                     eVecs[i + 1] = vec2;
@@ -421,9 +416,9 @@ namespace IvyFEM.Lapack
             return ret;
         }
 
-        public static int zgesv(out Complex[] X, out int xRow, out int xCol,
-                         Complex[] A, int aRow, int aCol,
-                         Complex[] B, int bRow, int bCol)
+        public static int zgesv(out System.Numerics.Complex[] X, out int xRow, out int xCol,
+                         System.Numerics.Complex[] A, int aRow, int aCol,
+                         System.Numerics.Complex[] B, int bRow, int bCol)
         {
             int n = aRow;
             int nrhs = bCol;
@@ -434,8 +429,8 @@ namespace IvyFEM.Lapack
             int ret = 0;
             unsafe
             {
-                fixed (Complex* AP = &A[0])
-                fixed (Complex* BP = &B[0])
+                fixed (System.Numerics.Complex* AP = &A[0])
+                fixed (System.Numerics.Complex* BP = &B[0])
                 {
                     ret = IvyFEM.Lapack.ImportedFunctions.LAPACKE_zgesv(
                         MatrixLayout.ColMajor,
@@ -459,14 +454,14 @@ namespace IvyFEM.Lapack
             return ret;
         }
 
-        public static void zlacgv(Complex[] X)
+        public static void zlacgv(System.Numerics.Complex[] X)
         {
             int n = X.Length;
             int incX = 1;
 
             unsafe
             {
-                fixed (Complex* XP = &X[0])
+                fixed (System.Numerics.Complex* XP = &X[0])
                 {
                     // LAPACK
                     //IvyFEM.Lapack.ImportedFunctions.zlacgv_(&n, XP, &incX);

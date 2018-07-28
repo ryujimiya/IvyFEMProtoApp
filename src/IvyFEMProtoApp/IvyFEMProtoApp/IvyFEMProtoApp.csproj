@@ -133,7 +133,6 @@
     <Compile Include="EMWaveguide1DEigenFEM.cs" />
     <Compile Include="FEWorld.cs" />
     <Compile Include="FE.cs" />
-    <Compile Include="Lapack.Complex.cs" />
     <Compile Include="Lapack.Constants.cs" />
     <Compile Include="Lapack.Functions.cs" />
     <Compile Include="Lapack.ImportedFunctions.cs" />

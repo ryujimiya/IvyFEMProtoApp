@@ -96,7 +96,7 @@ namespace IvyFEM
                     value = values[coId * Dof + 1];
                     break;
                 case FieldShowType.ZABS:
-                    IvyFEM.Lapack.Complex cValue = new IvyFEM.Lapack.Complex(
+                    System.Numerics.Complex cValue = new System.Numerics.Complex(
                         values[coId * Dof], Values[coId * Dof + 1]);
                     value = cValue.Magnitude;
                     break;

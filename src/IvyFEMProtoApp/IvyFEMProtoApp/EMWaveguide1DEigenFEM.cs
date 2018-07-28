@@ -79,7 +79,7 @@ namespace IvyFEM
         }
 
         public void Solve(double waveLength, 
-            out IvyFEM.Lapack.Complex[] betas, out IvyFEM.Lapack.Complex[][] ezEVecs)
+            out System.Numerics.Complex[] betas, out System.Numerics.Complex[][] ezEVecs)
         {
             betas = null;
             ezEVecs = null;
@@ -101,8 +101,8 @@ namespace IvyFEM
                 }
             }
 
-            IvyFEM.Lapack.Complex[] eVals;
-            IvyFEM.Lapack.Complex[][] eVecs;
+            System.Numerics.Complex[] eVals;
+            System.Numerics.Complex[][] eVecs;
             int ret = IvyFEM.Lapack.Functions.dggev(A.Buffer, A.RowSize, A.ColumnSize,
                 B.Buffer, B.RowSize, B.ColumnSize,
                 out eVals, out eVecs);
@@ -114,13 +114,13 @@ namespace IvyFEM
             ezEVecs = eVecs;
         }
 
-        private void SortEVals(IvyFEM.Lapack.Complex[] eVals, IvyFEM.Lapack.Complex[][] eVecs)
+        private void SortEVals(System.Numerics.Complex[] eVals, System.Numerics.Complex[][] eVecs)
         {
             int modeCnt = eVals.Length;
-            var eValEVecs = new List<KeyValuePair<IvyFEM.Lapack.Complex, IvyFEM.Lapack.Complex[]>>();
+            var eValEVecs = new List<KeyValuePair<System.Numerics.Complex, System.Numerics.Complex[]>>();
             for (int i = 0; i < modeCnt;  i++)
             {
-                eValEVecs.Add(new KeyValuePair<Lapack.Complex, Lapack.Complex[]>(eVals[i], eVecs[i]));
+                eValEVecs.Add(new KeyValuePair<System.Numerics.Complex, System.Numerics.Complex[]>(eVals[i], eVecs[i]));
             }
             eValEVecs.Sort((a, b) => 
             {
@@ -145,18 +145,18 @@ namespace IvyFEM
             }
         }
 
-        private void AdjustPhaseEVecs(IvyFEM.Lapack.Complex[][] eVecs)
+        private void AdjustPhaseEVecs(System.Numerics.Complex[][] eVecs)
         {
             int modeCnt = eVecs.Length;
             for (int iMode = 0; iMode < modeCnt; iMode++)
             {
                 var eVec = eVecs[iMode];
                 int nodeCnt = eVec.Length;
-                IvyFEM.Lapack.Complex maxValue = new Lapack.Complex(0, 0);
+                System.Numerics.Complex maxValue = new System.Numerics.Complex(0, 0);
                 double maxAbs = 0;
                 for (int iNode = 0; iNode < nodeCnt; iNode++)
                 {
-                    IvyFEM.Lapack.Complex value = eVec[iNode];
+                    System.Numerics.Complex value = eVec[iNode];
                     double abs = value.Magnitude;
                     if (abs > maxAbs)
                     {
@@ -164,7 +164,7 @@ namespace IvyFEM
                         maxValue = value;
                     }
                 }
-                IvyFEM.Lapack.Complex phase = maxValue / (IvyFEM.Lapack.Complex)maxAbs;
+                System.Numerics.Complex phase = maxValue / maxAbs;
 
                 for (int iNode = 0; iNode < nodeCnt; iNode++)
                 {
@@ -174,16 +174,16 @@ namespace IvyFEM
         }
 
         private void GetBetasEzVecs(
-            double omega, IvyFEM.Lapack.Complex[] eVals, IvyFEM.Lapack.Complex[][] eVecs)
+            double omega, System.Numerics.Complex[] eVals, System.Numerics.Complex[][] eVecs)
         {
             int modeCnt = eVals.Length;
             for (int iMode = 0; iMode < modeCnt; iMode++)
             {
                 var eVal = eVals[iMode];
-                var beta = IvyFEM.Lapack.Complex.Sqrt(eVal);
+                var beta = System.Numerics.Complex.Sqrt(eVal);
                 if (beta.Imaginary > 0)
                 {
-                    beta.Imaginary = -beta.Imaginary;
+                    beta = System.Numerics.Complex.Conjugate(beta);
                 }
                 eVals[iMode] = beta;
 
@@ -192,15 +192,15 @@ namespace IvyFEM
                 var RyyZ = (IvyFEM.Lapack.ComplexMatrix)Ryy;
                 var work = RyyZ * e;
                 var work2 = IvyFEM.Lapack.Functions.zdotc(eVec, work.Buffer);
-                var d = IvyFEM.Lapack.Complex.Sqrt(
-                    (IvyFEM.Lapack.Complex)(omega * Constants.Mu0) /
-                    (((IvyFEM.Lapack.Complex)beta.Magnitude) * work2));
+                var d = System.Numerics.Complex.Sqrt(
+                    (System.Numerics.Complex)(omega * Constants.Mu0) /
+                    (((System.Numerics.Complex)beta.Magnitude) * work2));
                 IvyFEM.Lapack.Functions.zscal(eVec, d);
             }
         }
 
         public IvyFEM.Lapack.ComplexMatrix CalcBoundaryMatrix(
-            double omega, IvyFEM.Lapack.Complex[] betas, IvyFEM.Lapack.Complex[][] ezEVecs)
+            double omega, System.Numerics.Complex[] betas, System.Numerics.Complex[][] ezEVecs)
         {
             int nodeCnt = ezEVecs[0].Length;
             IvyFEM.Lapack.ComplexMatrix X = new Lapack.ComplexMatrix(nodeCnt, nodeCnt);
@@ -221,9 +221,9 @@ namespace IvyFEM
                 {
                     for (int row = 0; row < nodeCnt; row++)
                     {
-                        IvyFEM.Lapack.Complex value = (IvyFEM.Lapack.Complex.ImaginaryOne /
-                            (IvyFEM.Lapack.Complex)(omega * Constants.Mu0)) *
-                            beta * ((IvyFEM.Lapack.Complex)beta.Magnitude) *
+                        System.Numerics.Complex value = (System.Numerics.Complex.ImaginaryOne /
+                            (omega * Constants.Mu0)) *
+                            beta * beta.Magnitude *
                             vec1.Buffer[col] * vec2.Buffer[row];
                         X[row, col] += value;
                     }
@@ -232,28 +232,28 @@ namespace IvyFEM
             return X;
         }
 
-        public IvyFEM.Lapack.Complex[] CalcIncidentResidualVec(
-            IvyFEM.Lapack.Complex beta0, IvyFEM.Lapack.Complex[] ezEVec0)
+        public System.Numerics.Complex[] CalcIncidentResidualVec(
+            System.Numerics.Complex beta0, System.Numerics.Complex[] ezEVec0)
         {
-            IvyFEM.Lapack.Complex[] I = null;
+            System.Numerics.Complex[] I = null;
 
             int nodeCnt = ezEVec0.Length;
             var ez = new IvyFEM.Lapack.ComplexMatrix(ezEVec0, nodeCnt, 1);
             var RyyZ = (IvyFEM.Lapack.ComplexMatrix)Ryy;
             var vec1 = RyyZ * ez;
-            var a1 = IvyFEM.Lapack.Complex.ImaginaryOne * ((IvyFEM.Lapack.Complex)2.0) * beta0;
+            var a1 = System.Numerics.Complex.ImaginaryOne * 2.0 * beta0;
             IvyFEM.Lapack.Functions.zscal(vec1.Buffer, a1);
             I = vec1.Buffer;
             return I;
         }
 
-        public IvyFEM.Lapack.Complex[] CalcSMatrix(double omega, int incidentModeId,
-            IvyFEM.Lapack.Complex[] betas, IvyFEM.Lapack.Complex[][] ezEVecs,
-            IvyFEM.Lapack.Complex[] Ez)
+        public System.Numerics.Complex[] CalcSMatrix(double omega, int incidentModeId,
+            System.Numerics.Complex[] betas, System.Numerics.Complex[][] ezEVecs,
+            System.Numerics.Complex[] Ez)
         {
             int modeCnt = betas.Length;
             int nodeCnt = ezEVecs[0].Length;
-            IvyFEM.Lapack.Complex[] S = new IvyFEM.Lapack.Complex[modeCnt];
+            System.Numerics.Complex[] S = new System.Numerics.Complex[modeCnt];
 
             for (int iMode = 0; iMode < modeCnt; iMode++)
             {
@@ -262,11 +262,11 @@ namespace IvyFEM
                 var ez = new IvyFEM.Lapack.ComplexMatrix(ezEVec, (int)nodeCnt, 1);
                 var RyyZ = (IvyFEM.Lapack.ComplexMatrix)Ryy;
                 var vec1 = RyyZ * IvyFEM.Lapack.ComplexMatrix.Conjugate(ez);
-                IvyFEM.Lapack.Complex work1 = IvyFEM.Lapack.Functions.zdotu(vec1.Buffer, Ez);
-                var b = (IvyFEM.Lapack.Complex)(beta.Magnitude / (omega * Constants.Mu0)) * work1;
+                System.Numerics.Complex work1 = IvyFEM.Lapack.Functions.zdotu(vec1.Buffer, Ez);
+                var b = (System.Numerics.Complex)(beta.Magnitude / (omega * Constants.Mu0)) * work1;
                 if (incidentModeId != -1 && incidentModeId == iMode)
                 {
-                    b = (IvyFEM.Lapack.Complex)(-1.0) + b;
+                    b = (System.Numerics.Complex)(-1.0) + b;
                 }
                 S[iMode] = b;
             }

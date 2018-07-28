@@ -150,8 +150,8 @@ namespace IvyFEMProtoApp
                 3, 0, -1, 1
             };
             var X = new IvyFEM.Lapack.DoubleMatrix(x, 4, 4, false);
-            IvyFEM.Lapack.Complex[] eVals;
-            IvyFEM.Lapack.Complex[][] eVecs;
+            System.Numerics.Complex[] eVals;
+            System.Numerics.Complex[][] eVecs;
             IvyFEM.Lapack.Functions.dgeev(X.Buffer, X.RowSize, X.ColumnSize,
                 out eVals, out eVecs);
 
@@ -167,7 +167,7 @@ namespace IvyFEMProtoApp
             ret += CRLF;
             for (int i = 0; i < eVals.Length; i++)
             {
-                ret += "eVal[" + i + "] = " + eVals[i].Dump();
+                ret += "eVal[" + i + "] = " + eVals[i].ToString() + CRLF;
             }
             System.Diagnostics.Debug.WriteLine(ret);
             AlertWindow.ShowDialog(ret);
@@ -321,12 +321,12 @@ namespace IvyFEMProtoApp
                 System.Diagnostics.Debug.WriteLine("2W/λ: " + normalizedFreq);
 
                 var FEM = new EMWaveguide2DHPlane(world);
-                IvyFEM.Lapack.Complex[] Ez;
-                IvyFEM.Lapack.Complex[][] S;
+                System.Numerics.Complex[] Ez;
+                System.Numerics.Complex[][] S;
                 FEM.Solve(waveLength, out Ez, out S);
 
-                IvyFEM.Lapack.Complex S11 = S[0][0];
-                IvyFEM.Lapack.Complex S21 = S[1][0];
+                System.Numerics.Complex S11 = S[0][0];
+                System.Numerics.Complex S21 = S[1][0];
                 double S11Abs = S11.Magnitude;
                 double S21Abs = S21.Magnitude;
                 double total = S11Abs * S11Abs + S21Abs * S21Abs;
