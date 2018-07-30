@@ -288,5 +288,10 @@ namespace IvyFEMProtoApp
         {
             Problem.WaveguideProblem(this);
         }
+
+        private void elasticBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.ElasticProblem(this);
+        }
     }
 }

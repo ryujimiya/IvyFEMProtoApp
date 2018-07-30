@@ -6,15 +6,21 @@ using System.Threading.Tasks;
 
 namespace IvyFEM
 {
-    class EMWaveguide1DEigenFEM
+    class EMWaveguide1DEigenFEM : FEM
     {
-        public FEWorld World { get; private set; } = null;
         public uint PortId { get; private set; } = 0;
         public IvyFEM.Lapack.DoubleMatrix Txx { get; private set; } = null;
         public IvyFEM.Lapack.DoubleMatrix Ryy { get; private set; } = null;
         public IvyFEM.Lapack.DoubleMatrix Uzz { get; private set; } = null;
 
-        public EMWaveguide1DEigenFEM()
+        // Solve
+        // Input
+        public double WaveLength { get; set; }
+        // Output
+        public System.Numerics.Complex[] Betas { get; private set; }
+        public System.Numerics.Complex[][] EzEVecs { get; private set; }
+
+        public EMWaveguide1DEigenFEM() : base()
         {
 
         }
@@ -46,23 +52,24 @@ namespace IvyFEM
                     int nodeId = World.PortCoord2Node(PortId, coId);
                     nodes[iNode] = nodeId;
                 }
+
                 Material ma0 = World.GetMaterial(lineFE.MaterialId);
                 System.Diagnostics.Debug.Assert(ma0.MaterialType == MaterialType.DIELECTRIC);
                 var ma = ma0 as DielectricMaterial;
 
                 double[] sNN = lineFE.CalcSNN();
                 double[] sNyNy = lineFE.CalcSNxNx();
-                for (int col = 0; col < elemNodeCnt; col++)
+                for (int row = 0; row < elemNodeCnt; row++)
                 {
-                    int colNodeId = nodes[col];
-                    if (colNodeId == -1)
+                    int rowNodeId = nodes[row];
+                    if (rowNodeId == -1)
                     {
                         continue;
                     }
-                    for (int row = 0; row < elemNodeCnt; row++)
+                    for (int col = 0; col < elemNodeCnt; col++)
                     {
-                        int rowNodeId = nodes[row];
-                        if (rowNodeId == -1)
+                        int colNodeId = nodes[col];
+                        if (colNodeId == -1)
                         {
                             continue;
                         }
@@ -78,14 +85,13 @@ namespace IvyFEM
             }
         }
 
-        public void Solve(double waveLength, 
-            out System.Numerics.Complex[] betas, out System.Numerics.Complex[][] ezEVecs)
+        public override void Solve()
         {
-            betas = null;
-            ezEVecs = null;
+            Betas = null;
+            EzEVecs = null;
 
             // 波数
-            double k0 = 2.0 * Math.PI / waveLength;
+            double k0 = 2.0 * Math.PI / WaveLength;
             // 角周波数
             double omega = k0 * Constants.C0;
 
@@ -110,8 +116,8 @@ namespace IvyFEM
             SortEVals(eVals, eVecs);
             AdjustPhaseEVecs(eVecs);
             GetBetasEzVecs(omega, eVals, eVecs);
-            betas = eVals;
-            ezEVecs = eVecs;
+            Betas = eVals;
+            EzEVecs = eVecs;
         }
 
         private void SortEVals(System.Numerics.Complex[] eVals, System.Numerics.Complex[][] eVecs)

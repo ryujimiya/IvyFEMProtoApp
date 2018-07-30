@@ -118,10 +118,14 @@
     </Compile>
     <Compile Include="ColorLegend.cs" />
     <Compile Include="EdgeFieldDrawer.cs" />
+    <Compile Include="Elastic2DFEM.cs" />
+    <Compile Include="ElasticMaterial.cs" />
+    <Compile Include="FEM.cs" />
     <Compile Include="FieldDrawPart.cs" />
+    <Compile Include="FieldFixedCad.cs" />
     <Compile Include="FieldValue.cs" />
     <Compile Include="IColorMap.cs" />
-    <Compile Include="EMWaveguide2DHPlane.cs" />
+    <Compile Include="EMWaveguide2DHPlaneFEM.cs" />
     <Compile Include="FaceFieldDrawer.cs" />
     <Compile Include="FieldDrawerArray.cs" />
     <Compile Include="IFieldDrawer.cs" />
@@ -129,7 +133,6 @@
     <Compile Include="Constants.cs" />
     <Compile Include="DielectricMaterial.cs" />
     <Compile Include="Lapack.DoubleMatrix.cs" />
-    <Compile Include="ElectricWallMaterial.cs" />
     <Compile Include="EMWaveguide1DEigenFEM.cs" />
     <Compile Include="FEWorld.cs" />
     <Compile Include="FE.cs" />

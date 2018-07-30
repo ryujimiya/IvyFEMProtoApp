@@ -15,6 +15,7 @@ namespace IvyFEM
         private IList<LineFE> lineFEs = new List<LineFE>();
         private uint LineCount => (uint)lineFEs.Count;
         private uint ValueId = 0;
+        private FieldDerivationType ValueDt = FieldDerivationType.VALUE;
         private bool IsntDisplacementValue = false;
         public RotMode SutableRotMode { get; private set; } = RotMode.ROTMODE_NOT_SET;
         public bool IsAntiAliasing { get; set; } = false;
@@ -24,12 +25,13 @@ namespace IvyFEM
 
         }
 
-        public EdgeFieldDrawer(uint valueId, bool isntDisplacementValue, FEWorld world)
+        public EdgeFieldDrawer(uint valueId, FieldDerivationType valueDt, bool isntDisplacementValue,
+            FEWorld world)
         {
-            Set(valueId, isntDisplacementValue, world);
+            Set(valueId, valueDt, isntDisplacementValue, world);
         }
 
-        private void Set(uint valueId, bool isntDisplacementValue, FEWorld world)
+        private void Set(uint valueId, FieldDerivationType valueDt, bool isntDisplacementValue, FEWorld world)
         {
             var mesh = world.Mesh;
 
@@ -40,6 +42,7 @@ namespace IvyFEM
             }
 
             ValueId = valueId;
+            ValueDt = valueDt;
             IsntDisplacementValue = isntDisplacementValue;
 
             // 線要素を生成
@@ -52,7 +55,7 @@ namespace IvyFEM
             uint drawDim;
             if (!IsntDisplacementValue
                 && dim == 2
-                && (fv.Type == FieldType.SCALAR || fv.Type == FieldType.ZSCALAR))
+                && (fv.Type == FieldValueType.SCALAR || fv.Type == FieldValueType.ZSCALAR))
             {
                 drawDim = 3;
             }
@@ -108,9 +111,7 @@ namespace IvyFEM
                         {
                             int coId = lineFE.CoordIds[iPt];
                             double[] coord = world.GetCoord(coId);
-                            FieldDerivationType dt = FieldDerivationType.VALUE |
-                                FieldDerivationType.VELOCITY |
-                                FieldDerivationType.ACCELERATION;
+                            FieldDerivationType dt = ValueDt;
                             double value = fv.GetShowValue(coId, 0, dt);
                             VertexArray.VertexCoordArray[(iEdge * 2 + iPt) * drawDim + 0] = coord[0];
                             VertexArray.VertexCoordArray[(iEdge * 2 + iPt) * drawDim + 1] = coord[1];
@@ -128,9 +129,7 @@ namespace IvyFEM
                         {
                             int coId = lineFE.CoordIds[iPt];
                             double[] coord = world.GetCoord(coId);
-                            FieldDerivationType dt = FieldDerivationType.VALUE |
-                                FieldDerivationType.VELOCITY |
-                                FieldDerivationType.ACCELERATION;
+                            FieldDerivationType dt = ValueDt;
                             for (int iDim = 0; iDim < drawDim; iDim++)
                             {
                                 double value = fv.GetShowValue(coId, iDim, dt);

@@ -9,7 +9,7 @@ namespace IvyFEM
 {
     class TriangleFE : FE
     {
-        public TriangleFE()
+        public TriangleFE() : base()
         {
             Type = ElementType.TRI;
             NodeCount = 3;
@@ -84,10 +84,10 @@ namespace IvyFEM
         }
 
         /// <summary>
-        /// S{Nx}{Nx}Tdx, S{Ny}{Ny}Tdy
+        /// S{Nu}{Nv}Tdx, u,v = x, y
         /// </summary>
         /// <returns></returns>
-        public double[][] CalcSNxNxs()
+        public double[][] CalcSNuNvs()
         {
             double A = GetArea();
             double[] a;
@@ -96,30 +96,54 @@ namespace IvyFEM
             CalcTransMatrix(out a, out b, out c);
 
             /// Note: Columnから先に格納: col * NodeCount + row
-            double[][] sNxNx = new double[2][];
+            double[][] sNuNv = new double[4][];
 
-            int index = 0;
-            sNxNx[index] = new double[9];
+            int index;
+            // sNxNx
+            index = 0;
+            sNuNv[index] = new double[9];
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    sNxNx[index][i * 3 + j] = A * b[i] * b[j];
+                    sNuNv[index][i * 3 + j] = A * b[i] * b[j];
                 }
             }
-            index++;
 
-            sNxNx[index] = new double[9];
+            // sNyNx
+            index = 1;
+            sNuNv[index] = new double[9];
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    sNxNx[index][i * 3 + j] = A * c[i] * c[j];
+                    sNuNv[index][i * 3 + j] = A * b[i] * c[j];
                 }
             }
-            return sNxNx;
+
+            // sNyNx
+            index = 2;
+            sNuNv[index] = new double[9];
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    sNuNv[index][i * 3 + j] = A * c[i] * b[j];
+                }
+            }
+
+            // sNyNy
+            index = 3;
+            sNuNv[index] = new double[9];
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    sNuNv[index][i * 3 + j] = A * c[i] * c[j];
+                }
+            }
+            return sNuNv;
         }
-
 
     }
 }

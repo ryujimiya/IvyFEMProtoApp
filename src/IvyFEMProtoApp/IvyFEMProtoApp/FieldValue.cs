@@ -8,7 +8,7 @@ namespace IvyFEM
 {
     class FieldValue : IObject
     {
-        public FieldType Type { get; set; } = FieldType.NO_VALUE;
+        public FieldValueType Type { get; set; } = FieldValueType.NO_VALUE;
         public FieldDerivationType DerivationType { get; set; } = 0;
         public FieldShowType ShowType { get; set; } = FieldShowType.SCALAR;
         public uint Dof { get; set; } = 1;
@@ -32,7 +32,24 @@ namespace IvyFEM
             Type = srcFV.Type;
             DerivationType = srcFV.DerivationType;
             ShowType = srcFV.ShowType;
-            Values = srcFV.Values; // shallow copy
+            Values = null;
+            if (srcFV.Values != null)
+            {
+                Values = new double[srcFV.Values.Length];
+                srcFV.Values.CopyTo(Values, 0);
+            }
+            VelocityValues = null;
+            if (srcFV.VelocityValues != null)
+            {
+                VelocityValues = new double[srcFV.VelocityValues.Length];
+                srcFV.VelocityValues.CopyTo(VelocityValues, 0);
+            }
+            AccelerationValues = null;
+            if (srcFV.AccelerationValues != null)
+            {
+                AccelerationValues = new double[srcFV.AccelerationValues.Length];
+                srcFV.AccelerationValues.CopyTo(AccelerationValues, 0);
+            }
         }
 
         public uint GetCoordCount()

@@ -9,7 +9,6 @@ namespace IvyFEM
     class Material : IObject
     {
         public MaterialType MaterialType { get; protected set; } = MaterialType.NOT_SET; 
-        public uint Length { get; protected set; } = 0;
         public double[] Values { get; protected set; } = null;
 
         public Material()
@@ -26,16 +25,11 @@ namespace IvyFEM
         {
             Material srcMa = src as Material;
             MaterialType = srcMa.MaterialType;
-            Length = srcMa.Length;
             Values = null;
-            if (srcMa.Length > 0)
+            if (srcMa.Values != null)
             {
-                Values = new double[srcMa.Length];
-                for (int i = 0; i < srcMa.Length; i++)
-                {
-                    Values[i] = srcMa.Values[i];
-                }
-
+                Values = new double[srcMa.Values.Length];
+                srcMa.Values.CopyTo(Values, 0);
             }
         }
 

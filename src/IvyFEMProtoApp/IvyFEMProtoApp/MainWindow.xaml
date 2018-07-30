@@ -14,6 +14,7 @@
             <Button x:Name="mesh2DBtn" Content="Mesh2D" Width="75" Click="mesh2DBtn_Click"/>
             <Button x:Name="MatrixOperation" Content="Matrix Operation" Width="97" Click="MatrixOperation_Click"/>
             <Button x:Name="waveguideBtn" Content="Waveguide" Width="75" Click="waveguideBtn_Click"/>
+            <Button x:Name="elasticBtn" Content="Elastic" Width="75" Click="elasticBtn_Click"/>
         </WrapPanel>
         <WindowsFormsHost Margin="0,56,0,0">
             <OpenTK:GLControl x:Name="glControl" Load="glControl_Load" Resize="glControl_Resize" Paint="glControl_Paint" MouseClick="glControl_MouseClick" KeyDown="glControl_KeyDown" KeyUp="glControl_KeyUp" MouseMove="glControl_MouseMove" MouseDown="glControl_MouseDown" MouseWheel="glControl_MouseWheel"/>

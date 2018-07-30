@@ -9,7 +9,7 @@ namespace IvyFEM
 {
     class LineFE : FE
     {
-        public LineFE()
+        public LineFE() : base()
         {
             Type = ElementType.LINE;
             NodeCount = 2;

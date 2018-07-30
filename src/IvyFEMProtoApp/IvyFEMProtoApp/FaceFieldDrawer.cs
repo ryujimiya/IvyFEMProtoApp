@@ -13,7 +13,9 @@ namespace IvyFEM
         private IList<FieldDrawPart> DrawParts = new List<FieldDrawPart>();
         private VertexArray VertexArray = new VertexArray();
         private uint ValueId = 0;
+        private FieldDerivationType ValueDt = FieldDerivationType.VALUE;
         private uint ColorValueId = 0;
+        private FieldDerivationType ColorValueDt = FieldDerivationType.VALUE;
         private bool IsntDisplacementValue = false;
         private bool IsNsvDraw = false;
         private float[] ColorArray = null;
@@ -32,19 +34,25 @@ namespace IvyFEM
 
         }
 
-        public FaceFieldDrawer(uint valueId, bool isntDisplacementValue, FEWorld world, uint colorValueId = 0)
+        public FaceFieldDrawer(uint valueId, FieldDerivationType valueDt, bool isntDisplacementValue,
+            FEWorld world, 
+            uint colorValueId = 0, FieldDerivationType colorValueDt = FieldDerivationType.VALUE)
         {
-            Set(valueId, isntDisplacementValue, world, colorValueId);
+            Set(valueId, valueDt, isntDisplacementValue, world, colorValueId, colorValueDt);
         }
 
-        public FaceFieldDrawer(uint valueId, bool isntDisplacementValue, FEWorld world, uint colorValueId,
+        public FaceFieldDrawer(uint valueId, FieldDerivationType valueDt, bool isntDisplacementValue,
+            FEWorld world,
+            uint colorValueId, FieldDerivationType colorValueDt,
             double min, double max)
         {
             ColorMap = new ColorMap(min, max);
-            Set(valueId, isntDisplacementValue, world, colorValueId);
+            Set(valueId, valueDt, isntDisplacementValue, world, colorValueId, colorValueDt);
         }
 
-        private void Set(uint valueId, bool isntDisplacementValue, FEWorld world, uint colorValueId)
+        private void Set(uint valueId, FieldDerivationType valueDt, bool isntDisplacementValue,
+            FEWorld world,
+            uint colorValueId, FieldDerivationType colorValueDt)
         {
             var mesh = world.Mesh;
 
@@ -63,7 +71,9 @@ namespace IvyFEM
             }
 
             ValueId = valueId;
+            ValueDt = valueDt;
             ColorValueId = colorValueId;
+            ColorValueDt = colorValueDt;
             IsntDisplacementValue = isntDisplacementValue;
 
             var fv = world.GetFieldValue(valueId);
@@ -83,7 +93,7 @@ namespace IvyFEM
             uint drawDim;
             if (!IsntDisplacementValue 
                 && dim == 2 
-                && (fv.Type == FieldType.SCALAR ||fv.Type== FieldType.ZSCALAR))
+                && (fv.Type == FieldValueType.SCALAR ||fv.Type== FieldValueType.ZSCALAR))
             {
                 drawDim = 3;
             }
@@ -166,7 +176,7 @@ namespace IvyFEM
                 // 変位を伴う場合
 
                 if (dim == 2 &&
-                    (fv.Type == FieldType.SCALAR || fv.Type == FieldType.ZSCALAR))
+                    (fv.Type == FieldValueType.SCALAR || fv.Type == FieldValueType.ZSCALAR))
                 {
                     // 垂直方向の変位として捉える
 
@@ -174,9 +184,7 @@ namespace IvyFEM
                     for (int coId = 0; coId < ptCnt; coId++)
                     {
                         double[] coord = world.GetCoord(coId);
-                        FieldDerivationType dt = FieldDerivationType.VALUE |
-                            FieldDerivationType.VELOCITY |
-                            FieldDerivationType.ACCELERATION;
+                        FieldDerivationType dt = ValueDt;
                         double value = fv.GetShowValue(coId, 0, dt);
                         VertexArray.VertexCoordArray[coId * 3 + 0] = coord[0];
                         VertexArray.VertexCoordArray[coId * 3 + 1] = coord[1];
@@ -189,9 +197,7 @@ namespace IvyFEM
                     for (int coId = 0; coId < ptCnt; coId++)
                     {
                         double[] coord = world.GetCoord(coId);
-                        FieldDerivationType dt = FieldDerivationType.VALUE |
-                            FieldDerivationType.VELOCITY |
-                            FieldDerivationType.ACCELERATION;
+                        FieldDerivationType dt = ValueDt;
                         for (int iDim = 0; iDim < dim; iDim++)
                         {
                             double value = fv.GetShowValue(coId, iDim, dt);
@@ -216,26 +222,7 @@ namespace IvyFEM
             if (world.IsFieldValueId(ColorValueId))
             {
                 FieldValue colorfv = world.GetFieldValue(ColorValueId);
-                FieldDerivationType dt = 0;
-                { 
-                    FieldDerivationType dt0 = colorfv.DerivationType;
-                    if (dt0.HasFlag(FieldDerivationType.VALUE))
-                    {
-                        dt = FieldDerivationType.VALUE;
-                    }
-                    else if (dt0.HasFlag(FieldDerivationType.VELOCITY))
-                    {
-                        dt = FieldDerivationType.VELOCITY;
-                    }
-                    else if (dt0.HasFlag(FieldDerivationType.ACCELERATION))
-                    {
-                        dt = FieldDerivationType.ACCELERATION;
-                    }
-                    else
-                    {
-                        System.Diagnostics.Debug.Assert(false);
-                    }
-                }
+                FieldDerivationType dt = ColorValueDt;
                 if (!ColorMap.IsFixedMinMax)
                 {
                     double min;

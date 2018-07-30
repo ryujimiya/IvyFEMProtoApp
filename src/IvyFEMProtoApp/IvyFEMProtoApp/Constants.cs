@@ -66,11 +66,11 @@ namespace IvyFEM
     enum MaterialType
     {
         NOT_SET,
-        DIELECTRIC,
-        ELECTRIC_WALL
+        ELASTIC,
+        DIELECTRIC
     }
 
-    enum FieldType
+    enum FieldValueType
     {
         NO_VALUE,
         SCALAR,

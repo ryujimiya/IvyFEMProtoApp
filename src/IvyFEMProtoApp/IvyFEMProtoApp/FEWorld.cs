@@ -15,15 +15,18 @@ namespace IvyFEM
         private ObjectArray<Material> MaterialArray = new ObjectArray<Material>();
         private Dictionary<uint, uint> CadEdge2Material = new Dictionary<uint, uint>();
         private Dictionary<uint, uint> CadLoop2Material = new Dictionary<uint, uint>();
-        public IList<uint> ForceECadIds { get; } = new List<uint>();
-        public uint IncidentPotId { get; set; } = 0;
-        public uint IncidentModeId { get; set; } = 0;
+
+        public IList<uint> ZeroECadIds { get; private set; } = new List<uint>();
+        public IList<FieldFixedCad> FieldFixedCads { get; private set; } = new List<FieldFixedCad>();
+        public int IncidentPotId { get; set; } = -1;
+        public int IncidentModeId { get; set; } = -1;
         public IList<IList<uint>> PortEIdss { get; } = new List<IList<uint>>();
         private IList<Dictionary<int, int>> PortCo2Nodes = new List<Dictionary<int, int>>();
+
         private Dictionary<int, int> Co2Node = new Dictionary<int, int>();
         private IList<ObjectArray<LineFE>> PortLineFEArrays = new List<ObjectArray<LineFE>>();
         private ObjectArray<TriangleFE> TriangleFEArray = new ObjectArray<TriangleFE>();
-        private ObjectArray<FieldValue> FieldValuesArray = new ObjectArray<FieldValue>();
+        private ObjectArray<FieldValue> FieldValueArray = new ObjectArray<FieldValue>();
 
         public FEWorld()
         {
@@ -37,15 +40,15 @@ namespace IvyFEM
             MaterialArray.Clear();
             CadEdge2Material.Clear();
             CadLoop2Material.Clear();
-            ForceECadIds.Clear();
-            IncidentPotId = 0;
-            IncidentModeId = 0;
+            ZeroECadIds.Clear();
+            IncidentPotId = -1;
+            IncidentModeId = -1;
             foreach (var portEIds in PortEIdss)
             {
                 portEIds.Clear();
             }
             PortEIdss.Clear();
-            FieldValuesArray.Clear();
+            FieldValueArray.Clear();
 
             ClearElements();
         }
@@ -194,6 +197,50 @@ namespace IvyFEM
             CadLoop2Material.Clear();
         }
 
+        public IList<int> GetCoordIdFromCadId(uint cadId, CadElementType cadElemType)
+        {
+            // TODO: 要素の節点数を変えた場合(高次要素)に対応していない
+            uint meshId = Mesh.GetIdFromCadId(cadId, cadElemType);
+            uint elemCnt;
+            MeshType meshType;
+            int loc;
+            uint cadIdTmp;
+            Mesh.GetMeshInfo(meshId, out elemCnt, out meshType, out loc, out cadIdTmp);
+            MeshType dummyMeshType;
+            int[] vertexs;
+            Mesh.GetConnectivity(meshId, out dummyMeshType, out vertexs);
+            System.Diagnostics.Debug.Assert(meshType == dummyMeshType);
+
+            return vertexs.ToList();
+        }
+
+        public Dictionary<int, IList<FieldFixedCad>> GetFixedCoordIdFixedCad()
+        {
+            var fixedCoIdFixedCad = new Dictionary<int, IList<FieldFixedCad>>();
+            foreach (var fixedCad in FieldFixedCads)
+            {
+                IList<int> coIds = fixedCad.GetCoordIds(this);
+                foreach (int coId in coIds)
+                {
+                    IList<FieldFixedCad> fixedCads = null;
+                    if (!fixedCoIdFixedCad.ContainsKey(coId))
+                    {
+                        fixedCads = new List<FieldFixedCad>();
+                        fixedCoIdFixedCad[coId] = fixedCads;
+                    }
+                    else
+                    {
+                        fixedCads = fixedCoIdFixedCad[coId];
+                    }
+                    if (fixedCads.IndexOf(fixedCad) == -1)
+                    {
+                        fixedCads.Add(fixedCad);
+                    }
+                }
+            }
+            return fixedCoIdFixedCad;
+        }
+
         public IList<uint> GetPortLineFEIds(uint portId)
         {
             System.Diagnostics.Debug.Assert(portId < PortLineFEArrays.Count);
@@ -228,8 +275,7 @@ namespace IvyFEM
             Mesh.GetCoords(out Coords);
 
             IList<uint> meshIds = Mesh.GetIds();
-
-            IList<int> forceCoordIds = GetForceCoordIds(meshIds);
+            IList<int> zeroCoordIds = GetZeroCoordIds(meshIds);
 
             int nodeId = 0;
 
@@ -279,7 +325,7 @@ namespace IvyFEM
                                 int coId = vertexs[iElem * elemPtCnt + iPt];
                                 coIds[iPt] = coId;
                                 if (!Co2Node.ContainsKey(coId) &&
-                                    forceCoordIds.IndexOf(coId) == -1)
+                                    zeroCoordIds.IndexOf(coId) == -1)
                                 {
                                     Co2Node[coId] = nodeId;
                                     portCo2Node[coId] = portNodeId;
@@ -336,7 +382,7 @@ namespace IvyFEM
                         int coId = vertexs[iElem * elemPtCnt + iPt];
                         coIds[iPt] = coId;
                         if (!Co2Node.ContainsKey(coId) &&
-                            forceCoordIds.IndexOf(coId) == -1)
+                            zeroCoordIds.IndexOf(coId) == -1)
                         {
                             Co2Node[coId] = nodeId;
                             nodeId++;
@@ -360,19 +406,19 @@ namespace IvyFEM
             }
         }
 
-        private IList<int> GetForceCoordIds(IList<uint> meshIds)
+        private IList<int> GetZeroCoordIds(IList<uint> meshIds)
         {
-            IList<int> forceCoIds = new List<int>();
+            IList<int> zeroCoIds = new List<int>();
 
-            foreach (uint eCadId in ForceECadIds)
+            foreach (uint eCadId in ZeroECadIds)
             {
                 IList<int> coIds = GetCoordIdsFromECadId(meshIds, eCadId);
                 foreach (int coId in coIds)
                 {
-                    forceCoIds.Add(coId);
+                    zeroCoIds.Add(coId);
                 }
             }
-            return forceCoIds;
+            return zeroCoIds;
         }
 
         private IList<int> GetCoordIdsFromECadId(IList<uint> meshIds, uint eCadId)
@@ -413,27 +459,28 @@ namespace IvyFEM
 
         public bool IsFieldValueId(uint valueId)
         {
-            return FieldValuesArray.IsObjectId(valueId);
+            return FieldValueArray.IsObjectId(valueId);
         }
 
         public IList<uint> GetFieldValueIds()
         {
-            return FieldValuesArray.GetObjectIds();
+            return FieldValueArray.GetObjectIds();
         }
 
         public FieldValue GetFieldValue(uint valueId)
         {
-            System.Diagnostics.Debug.Assert(FieldValuesArray.IsObjectId(valueId));
-            return FieldValuesArray.GetObject(valueId);
+            System.Diagnostics.Debug.Assert(FieldValueArray.IsObjectId(valueId));
+            return FieldValueArray.GetObject(valueId);
         }
 
         public void ClearFieldValue()
         {
-            FieldValuesArray.Clear();
+            FieldValueArray.Clear();
         }
 
-        public uint AddFieldValue(FieldType fieldType, FieldDerivationType derivationType,
-            FieldShowType showType, uint dof, double[] values)
+        public uint AddFieldValue(FieldValueType fieldType, FieldDerivationType derivationType,
+            FieldShowType showType, uint dof, 
+            double[] values, double[] velocityValues, double[] accelerationValues)
         {
             FieldValue fv = new FieldValue();
             fv.Type = fieldType;
@@ -441,9 +488,11 @@ namespace IvyFEM
             fv.ShowType = showType;
             fv.Dof = dof;
             fv.Values = values;
+            fv.VelocityValues = velocityValues;
+            fv.AccelerationValues = accelerationValues;
 
-            uint freeId = FieldValuesArray.GetFreeObjectId();
-            uint valueId = FieldValuesArray.AddObject(new KeyValuePair<uint, FieldValue>(freeId, fv));
+            uint freeId = FieldValueArray.GetFreeObjectId();
+            uint valueId = FieldValueArray.AddObject(new KeyValuePair<uint, FieldValue>(freeId, fv));
             System.Diagnostics.Debug.Assert(valueId == freeId);
             return valueId;
         }
