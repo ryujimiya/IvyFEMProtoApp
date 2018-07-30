@@ -15,7 +15,7 @@ C#オンリーでリニューアル実装したライブラリになります。
 　  
 　  *1 いま用意しているのは  
 　　　　　 電磁気学：H面導波管の伝達問題  
-　　　　　 弾性体力学： 線形弾性体の簡単な問題
+　　　　　 弾性体力学： 線形弾性体の簡単な問題  
 　　　 これからいろんな問題を解けるようにしていきます。  
 　  
 　[IvyFEMProtoAppアプリ](https://github.com/ryujimiya/IvyFEMProtoApp/blob/master/publish/)  
