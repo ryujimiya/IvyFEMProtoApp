@@ -10,8 +10,9 @@ namespace IvyFEM
     {
         public FieldValueType Type { get; set; } = FieldValueType.NO_VALUE;
         public FieldDerivationType DerivationType { get; set; } = 0;
-        public FieldShowType ShowType { get; set; } = FieldShowType.SCALAR;
         public uint Dof { get; set; } = 1;
+        public bool IsBubble { get; set; } = false;
+        public FieldShowType ShowType { get; set; } = FieldShowType.SCALAR;
         public double[] Values { get; set; } = null;
         public double[] VelocityValues { get; set; } = null;
         public double[] AccelerationValues { get; set; } = null;
@@ -31,28 +32,52 @@ namespace IvyFEM
             FieldValue srcFV = src as FieldValue;
             Type = srcFV.Type;
             DerivationType = srcFV.DerivationType;
+            Dof = srcFV.Dof;
+            IsBubble = srcFV.IsBubble;
             ShowType = srcFV.ShowType;
+            CopyValues(srcFV);
+        }
+
+        public void CopyValues(FieldValue src)
+        {
             Values = null;
-            if (srcFV.Values != null)
+            if (src.Values != null)
             {
-                Values = new double[srcFV.Values.Length];
-                srcFV.Values.CopyTo(Values, 0);
+                Values = new double[src.Values.Length];
+                src.Values.CopyTo(Values, 0);
             }
             VelocityValues = null;
-            if (srcFV.VelocityValues != null)
+            if (src.VelocityValues != null)
             {
-                VelocityValues = new double[srcFV.VelocityValues.Length];
-                srcFV.VelocityValues.CopyTo(VelocityValues, 0);
+                VelocityValues = new double[src.VelocityValues.Length];
+                src.VelocityValues.CopyTo(VelocityValues, 0);
             }
             AccelerationValues = null;
-            if (srcFV.AccelerationValues != null)
+            if (src.AccelerationValues != null)
             {
-                AccelerationValues = new double[srcFV.AccelerationValues.Length];
-                srcFV.AccelerationValues.CopyTo(AccelerationValues, 0);
+                AccelerationValues = new double[src.AccelerationValues.Length];
+                src.AccelerationValues.CopyTo(AccelerationValues, 0);
             }
         }
 
-        public uint GetCoordCount()
+        public void AllocValues(uint dof, uint pointCnt)
+        {
+            Dof = dof;
+            if (DerivationType.HasFlag(FieldDerivationType.VALUE))
+            {
+                Values = new double[pointCnt * Dof];
+            }
+            if (DerivationType.HasFlag(FieldDerivationType.VELOCITY))
+            {
+                VelocityValues = new double[pointCnt * Dof];
+            }
+            if (DerivationType.HasFlag(FieldDerivationType.ACCELERATION))
+            {
+                AccelerationValues = new double[pointCnt * Dof];
+            }
+        }
+
+        public uint GetPointCount()
         {
             if (Values == null)
             {
@@ -61,7 +86,7 @@ namespace IvyFEM
             return (uint)(Values.Length / Dof);
         }
 
-        private double[] GetValues(FieldDerivationType dt)
+        public double[] GetValues(FieldDerivationType dt)
         {
             double[] values = null;
             if (dt.HasFlag(FieldDerivationType.VALUE) && Values != null)
@@ -72,7 +97,7 @@ namespace IvyFEM
             {
                 values = VelocityValues;
             }
-            else if (dt.HasFlag(FieldDerivationType.ACCELERATION))
+            else if (dt.HasFlag(FieldDerivationType.ACCELERATION) && AccelerationValues != null)
             {
                 values = AccelerationValues;
             }
@@ -126,7 +151,7 @@ namespace IvyFEM
             min = Double.MaxValue;
             max = Double.MinValue;
 
-            uint ptCnt = GetCoordCount();
+            uint ptCnt = GetPointCount();
             for (int coId = 0; coId < ptCnt; coId++)
             {
                 double value = GetShowValue(coId, iDof, dt);

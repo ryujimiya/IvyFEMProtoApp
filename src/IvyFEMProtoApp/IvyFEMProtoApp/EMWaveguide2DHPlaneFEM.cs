@@ -119,7 +119,7 @@ namespace IvyFEM
                     }
                 }
 
-                bool isIncidentPort = (portId == World.IncidentPotId);
+                bool isIncidentPort = (portId == World.IncidentPortId);
                 if (isIncidentPort)
                 {
                     int incidentModeId = World.IncidentModeId;
@@ -153,7 +153,7 @@ namespace IvyFEM
                 var betas = betass[portId];
                 var ezEVecs = ezEVecss[portId];
                 int incidentModeId = -1;
-                if (World.IncidentPotId == portId)
+                if (World.IncidentPortId == portId)
                 {
                     incidentModeId = (int)World.IncidentModeId;
                 }

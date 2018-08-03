@@ -76,8 +76,7 @@ namespace IvyFEM
         SCALAR,
         VECTOR2,
         VECTOR3,
-        // 2D symmetrical tensor
-        STSR2,
+        SYMMETRICAL_TENSOR2,
         ZSCALAR
     }
 
@@ -96,6 +95,13 @@ namespace IvyFEM
         ZREAL,
         ZIMAGINARIY,
         ZABS
+    }
+
+    enum VectorFieldDrawerType
+    {
+        NOT_SET,
+        VECTOR,
+        SYMMETRIC_TENSOR2
     }
 
 }

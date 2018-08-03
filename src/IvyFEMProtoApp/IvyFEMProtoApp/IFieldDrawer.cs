@@ -8,6 +8,6 @@ namespace IvyFEM
 {
     interface IFieldDrawer : IDrawer 
     {
-        bool Update(FEWorld world);
+        void Update(FEWorld world);
     }
 }

@@ -18,12 +18,13 @@ namespace IvyFEM
 
         public IList<uint> ZeroECadIds { get; private set; } = new List<uint>();
         public IList<FieldFixedCad> FieldFixedCads { get; private set; } = new List<FieldFixedCad>();
-        public int IncidentPotId { get; set; } = -1;
+        public int IncidentPortId { get; set; } = -1;
         public int IncidentModeId { get; set; } = -1;
         public IList<IList<uint>> PortEIdss { get; } = new List<IList<uint>>();
-        private IList<Dictionary<int, int>> PortCo2Nodes = new List<Dictionary<int, int>>();
 
+        private IList<Dictionary<int, int>> PortCo2Nodes = new List<Dictionary<int, int>>();
         private Dictionary<int, int> Co2Node = new Dictionary<int, int>();
+        private Dictionary<string, uint> Mesh2TriangleFE = new Dictionary<string, uint>();
         private IList<ObjectArray<LineFE>> PortLineFEArrays = new List<ObjectArray<LineFE>>();
         private ObjectArray<TriangleFE> TriangleFEArray = new ObjectArray<TriangleFE>();
         private ObjectArray<FieldValue> FieldValueArray = new ObjectArray<FieldValue>();
@@ -41,7 +42,7 @@ namespace IvyFEM
             CadEdge2Material.Clear();
             CadLoop2Material.Clear();
             ZeroECadIds.Clear();
-            IncidentPotId = -1;
+            IncidentPortId = -1;
             IncidentModeId = -1;
             foreach (var portEIds in PortEIdss)
             {
@@ -61,6 +62,7 @@ namespace IvyFEM
             }
             PortCo2Nodes.Clear();
             Co2Node.Clear();
+            Mesh2TriangleFE.Clear();
             foreach (var lineFEArray in PortLineFEArrays)
             {
                 lineFEArray.Clear();
@@ -241,6 +243,17 @@ namespace IvyFEM
             return fixedCoIdFixedCad;
         }
 
+        public uint GetTriangleFEIdFromMesh(uint meshId, uint iElem)
+        {
+            string key = meshId + "_" + iElem;
+            if (Mesh2TriangleFE.ContainsKey(key))
+            {
+                uint feId = Mesh2TriangleFE[key];
+                return feId;
+            }
+            return 0;
+        }
+
         public IList<uint> GetPortLineFEIds(uint portId)
         {
             System.Diagnostics.Debug.Assert(portId < PortLineFEArrays.Count);
@@ -402,6 +415,9 @@ namespace IvyFEM
                     var triArray = Mesh.GetTriArrays();
                     var tri = triArray[loc].Tris[iElem];
                     tri.FEId = (int)feId;
+
+                    string key = string.Format(meshId + "_" + iElem);
+                    Mesh2TriangleFE.Add(key, feId);
                 }
             }
         }
@@ -479,22 +495,82 @@ namespace IvyFEM
         }
 
         public uint AddFieldValue(FieldValueType fieldType, FieldDerivationType derivationType,
-            FieldShowType showType, uint dof, 
-            double[] values, double[] velocityValues, double[] accelerationValues)
+            uint dof, bool isBubble, FieldShowType showType)
         {
+            uint pointCnt = 0;
+            if (isBubble)
+            {
+                pointCnt = (uint)GetTriangleFEIds().Count;
+            }
+            else
+            {
+                pointCnt = GetCoordCount();
+            }
             FieldValue fv = new FieldValue();
             fv.Type = fieldType;
             fv.DerivationType = derivationType;
+            fv.IsBubble = isBubble;
             fv.ShowType = showType;
-            fv.Dof = dof;
-            fv.Values = values;
-            fv.VelocityValues = velocityValues;
-            fv.AccelerationValues = accelerationValues;
+            fv.AllocValues(dof, pointCnt);
 
             uint freeId = FieldValueArray.GetFreeObjectId();
             uint valueId = FieldValueArray.AddObject(new KeyValuePair<uint, FieldValue>(freeId, fv));
             System.Diagnostics.Debug.Assert(valueId == freeId);
             return valueId;
+        }
+
+        public void UpdateFieldValueValuesFromNodeValue(uint valueId, FieldDerivationType dt, double[] nodeValues)
+        {
+            System.Diagnostics.Debug.Assert(FieldValueArray.IsObjectId(valueId));
+            FieldValue fv = FieldValueArray.GetObject(valueId);
+            uint dof = fv.Dof;
+            double[] values = fv.GetValues(dt);
+            uint coCnt = GetCoordCount();
+            for (int coId = 0; coId < coCnt; coId++)
+            {
+                int nodeId = Coord2Node(coId);
+                if (nodeId == -1)
+                {
+                    for (int iDof = 0; iDof < dof; iDof++)
+                    {
+                        values[coId * dof + iDof] = 0;
+                    }
+                }
+                else
+                {
+                    for (int iDof = 0; iDof < dof; iDof++)
+                    {
+                        values[coId * dof + iDof] = nodeValues[nodeId * dof + iDof];
+                    }
+                }
+            }
+        }
+
+        public void UpdateFieldValueValuesFromNodeValues(uint valueId, FieldDerivationType dt, System.Numerics.Complex[] nodeValues)
+        {
+            System.Diagnostics.Debug.Assert(FieldValueArray.IsObjectId(valueId));
+            FieldValue fv = FieldValueArray.GetObject(valueId);
+            uint dof = fv.Dof;
+            System.Diagnostics.Debug.Assert(dof == 2);
+            double[] values = fv.GetValues(dt);
+            uint coCnt = GetCoordCount();
+            for (int coId = 0; coId < coCnt; coId++)
+            {
+                int nodeId = Coord2Node(coId);
+                if (nodeId == -1)
+                {
+                    for (int iDof = 0; iDof < dof; iDof++)
+                    {
+                        values[coId * dof + iDof] = 0;
+                    }
+                }
+                else
+                {
+                    System.Numerics.Complex cValue = nodeValues[nodeId];
+                    values[coId * dof + 0] = cValue.Real;
+                    values[coId * dof + 1] = cValue.Imaginary;
+                }
+            }
         }
 
         public IList<LineFE> MakeBoundOfElements()

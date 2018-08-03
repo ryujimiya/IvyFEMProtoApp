@@ -10,7 +10,7 @@ namespace IvyFEM
 {
     class FaceFieldDrawer : IFieldDrawer
     {
-        private IList<FieldDrawPart> DrawParts = new List<FieldDrawPart>();
+        private IList<FaceFieldDrawPart> DrawParts = new List<FaceFieldDrawPart>();
         private VertexArray VertexArray = new VertexArray();
         private uint ValueId = 0;
         private FieldDerivationType ValueDt = FieldDerivationType.VALUE;
@@ -81,7 +81,7 @@ namespace IvyFEM
             uint ptCnt = 0;
             if (IsNsvDraw)
             {
-                ptCnt = fv.GetCoordCount();
+                ptCnt = fv.GetPointCount();
                 // あとで実装する
                 throw new NotImplementedException();
             }
@@ -145,7 +145,7 @@ namespace IvyFEM
                     {
 
                     }
-                    FieldDrawPart dp = new FieldDrawPart(meshId, world);
+                    FaceFieldDrawPart dp = new FaceFieldDrawPart(meshId, world);
                     DrawParts.Add(dp);
                 }
             }
@@ -153,7 +153,7 @@ namespace IvyFEM
             Update(world);
         }
 
-        public bool Update(FEWorld world)
+        public void Update(FEWorld world)
         {
             FieldValue fv = world.GetFieldValue(ValueId);
             uint dim = world.Dimension;
@@ -161,7 +161,7 @@ namespace IvyFEM
             uint ptCnt = 0;
             if (IsNsvDraw)
             {
-                ptCnt = fv.GetCoordCount();
+                ptCnt = fv.GetPointCount();
                 // あとで実装する
                 throw new NotImplementedException();
             }
@@ -223,6 +223,7 @@ namespace IvyFEM
             {
                 FieldValue colorfv = world.GetFieldValue(ColorValueId);
                 FieldDerivationType dt = ColorValueDt;
+                bool isBubble = colorfv.IsBubble;
                 if (!ColorMap.IsFixedMinMax)
                 {
                     double min;
@@ -233,6 +234,7 @@ namespace IvyFEM
                     ColorMap.MaxValue = max;
                 }
 
+                if (!isBubble)
                 {
                     // color is assigned to vertex
                     if (ColorArray == null)
@@ -249,17 +251,15 @@ namespace IvyFEM
                         ColorArray[coId * 4 + 3] = 0.0f;
                     }
                 }
-
-                /*
+                else
                 {
                     // color is assigned to face
                     for (int idp = 0; idp < DrawParts.Count; idp++)
                     {
-                        FieldDrawPart dp = DrawParts[idp];
-                        dp.SetColors(ColorValueId, world, ColorMap);
+                        FaceFieldDrawPart dp = DrawParts[idp];
+                        dp.SetColors(ColorValueId, dt, world, ColorMap);
                     }
                 }
-                */
             }
 
             if (NormalArray != null)
@@ -277,7 +277,6 @@ namespace IvyFEM
                     UVArray[coId * 2 + 1] = coord[1] * TexScale;
                 }
             }
-            return true;
         }
 
         private void MakeNormal()
@@ -293,7 +292,7 @@ namespace IvyFEM
             }
             for (int idp = 0; idp < DrawParts.Count; idp++)
             {
-                FieldDrawPart dp = DrawParts[idp];
+                FaceFieldDrawPart dp = DrawParts[idp];
                 uint elemCnt = dp.ElemCount;
                 for (int iElem = 0; iElem < elemCnt; iElem++)
                 {
@@ -479,7 +478,7 @@ namespace IvyFEM
                 }
                 for (int idp = 0; idp < DrawParts.Count; idp++)
                 {
-                    FieldDrawPart dp = DrawParts[idp];
+                    FaceFieldDrawPart dp = DrawParts[idp];
                     if (dp.Dimension == 1)
                     {
                         // draw line
@@ -528,7 +527,7 @@ namespace IvyFEM
 
                 for (int idp = 0; idp < DrawParts.Count; idp++)
                 {
-                    FieldDrawPart dp = DrawParts[idp];
+                    FaceFieldDrawPart dp = DrawParts[idp];
                     int layer = dp.Layer;
                     double height = (layer - minLayer) * layerHeight;
                     GL.Translate(0, 0, +height);

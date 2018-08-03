@@ -119,9 +119,10 @@
     <Compile Include="ColorLegend.cs" />
     <Compile Include="EdgeFieldDrawer.cs" />
     <Compile Include="Elastic2DFEM.cs" />
+    <Compile Include="Elastic2DTDFEM.cs" />
     <Compile Include="ElasticMaterial.cs" />
     <Compile Include="FEM.cs" />
-    <Compile Include="FieldDrawPart.cs" />
+    <Compile Include="FaceFieldDrawPart.cs" />
     <Compile Include="FieldFixedCad.cs" />
     <Compile Include="FieldValue.cs" />
     <Compile Include="IColorMap.cs" />
@@ -170,6 +171,8 @@
     <Compile Include="MeshTri2D.cs" />
     <Compile Include="MeshTriArray2D.cs" />
     <Compile Include="TriangleFE.cs" />
+    <Compile Include="VectorFieldDrawer.cs" />
+    <Compile Include="VectorFieldDrawPart.cs" />
     <Compile Include="WPFUtils.cs" />
     <Compile Include="UseLoop.cs" />
     <Compile Include="UseVertex.cs" />

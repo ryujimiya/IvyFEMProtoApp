@@ -73,7 +73,7 @@ namespace IvyFEM
             Update(world);
         }
 
-        public bool Update(FEWorld world)
+        public void Update(FEWorld world)
         {
             FieldValue fv = world.GetFieldValue(ValueId);
             uint dim = world.Dimension;
@@ -140,7 +140,6 @@ namespace IvyFEM
                     }
                 }
             }
-            return true;
         }
 
         public void Draw()

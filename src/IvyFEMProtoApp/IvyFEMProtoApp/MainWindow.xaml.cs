@@ -291,7 +291,13 @@ namespace IvyFEMProtoApp
 
         private void elasticBtn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.ElasticProblem(this);
+            Problem.ElasticProblem(this, false);
+            Problem.ElasticProblem(this, true);
+        }
+
+        private void elasticTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.ElasticTDProblem(this);
         }
     }
 }

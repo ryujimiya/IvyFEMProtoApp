@@ -145,5 +145,11 @@ namespace IvyFEM
             return sNuNv;
         }
 
+        public double CalcLumpedSNN()
+        {
+            double A = GetArea();
+            return A / 3.0;
+        }
+
     }
 }
