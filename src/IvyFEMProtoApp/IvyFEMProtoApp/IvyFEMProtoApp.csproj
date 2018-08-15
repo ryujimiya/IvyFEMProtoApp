@@ -117,9 +117,15 @@
       <DependentUpon>ChartWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ColorLegend.cs" />
+    <Compile Include="Linear.LapackBandEquationSolver.cs" />
+    <Compile Include="Linear.LapackDenseEquationSolver.cs" />
+    <Compile Include="Linear.ComplexSparseMatrix.cs" />
+    <Compile Include="Linear.DoubleSparseMatrix.cs" />
     <Compile Include="EdgeFieldDrawer.cs" />
+    <Compile Include="Elastic2DBaseFEM.cs" />
     <Compile Include="Elastic2DFEM.cs" />
     <Compile Include="Elastic2DTDFEM.cs" />
+    <Compile Include="ElasticBaseMaterial.cs" />
     <Compile Include="ElasticMaterial.cs" />
     <Compile Include="FEM.cs" />
     <Compile Include="FaceFieldDrawPart.cs" />
@@ -129,10 +135,14 @@
     <Compile Include="EMWaveguide2DHPlaneFEM.cs" />
     <Compile Include="FaceFieldDrawer.cs" />
     <Compile Include="FieldDrawerArray.cs" />
+    <Compile Include="Linear.IEquationSolver.cs" />
     <Compile Include="IFieldDrawer.cs" />
+    <Compile Include="IntegrationPoints.cs" />
+    <Compile Include="Lapack.ComplexBandMatrix.cs" />
     <Compile Include="Lapack.ComplexMatrix.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DielectricMaterial.cs" />
+    <Compile Include="Lapack.DoubleBandMatrix.cs" />
     <Compile Include="Lapack.DoubleMatrix.cs" />
     <Compile Include="EMWaveguide1DEigenFEM.cs" />
     <Compile Include="FEWorld.cs" />
@@ -140,7 +150,17 @@
     <Compile Include="Lapack.Constants.cs" />
     <Compile Include="Lapack.Functions.cs" />
     <Compile Include="Lapack.ImportedFunctions.cs" />
+    <Compile Include="Lapack.Utils.cs" />
     <Compile Include="LineFE.cs" />
+    <Compile Include="Lis.Constants.cs" />
+    <Compile Include="Lis.Functions.cs" />
+    <Compile Include="Lis.ImportedFunctions.cs" />
+    <Compile Include="Lis.LisInitializer.cs" />
+    <Compile Include="Lis.LisMatrix.cs" />
+    <Compile Include="Lis.LisSolver.cs" />
+    <Compile Include="Lis.LisVector.cs" />
+    <Compile Include="Lis.NativeClasses.cs" />
+    <Compile Include="Linear.LisEquationSolver.cs" />
     <Compile Include="Material.cs" />
     <Compile Include="MeshBar.cs" />
     <Compile Include="MeshBarArray.cs" />
@@ -170,6 +190,7 @@
     <Compile Include="SelectedObject.cs" />
     <Compile Include="MeshTri2D.cs" />
     <Compile Include="MeshTriArray2D.cs" />
+    <Compile Include="SaintVenantKirchhoffHyperelasticMaterial.cs" />
     <Compile Include="TriangleFE.cs" />
     <Compile Include="VectorFieldDrawer.cs" />
     <Compile Include="VectorFieldDrawPart.cs" />
@@ -260,6 +281,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="liblapacke.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="liblis.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="libquadmath-0.dll">

@@ -6,17 +6,13 @@ using System.Threading.Tasks;
 
 namespace IvyFEM
 {
-    class Elastic2DTDFEM : FEM
+    class Elastic2DTDFEM : Elastic2DBaseFEM
     {
         public double TimeStep { get; private set; } = 0;
         public double NewmarkBeta { get; private set; } = 1.0 / 4.0;
         public double NewmarkGamma { get; private set; } = 1.0 / 2.0;
         uint ValueId { get; set; } = 0;
         uint PrevValueId { get; set; } = 0;
-
-        //Solve
-        // Output
-        public double[] U { get; private set; }
 
         public Elastic2DTDFEM() : base()
         {
@@ -35,9 +31,9 @@ namespace IvyFEM
             PrevValueId = prevValueId;
         }
 
-        public override void Solve()
+        protected override void CalcLinearElasticAB(IvyFEM.Linear.DoubleSparseMatrix A, double[] B,
+            int nodeCnt, int dof)
         {
-            int nodeCnt = (int)World.GetNodeCount();
             IList<uint> feIds = World.GetTriangleFEIds();
 
             double dt = TimeStep;
@@ -46,10 +42,6 @@ namespace IvyFEM
             var FV = World.GetFieldValue(ValueId);
             var prevFV = World.GetFieldValue(PrevValueId);
             prevFV.CopyValues(FV);
-
-            int dof = 2;
-            var A = new Lapack.DoubleMatrix(nodeCnt * dof, nodeCnt * dof);
-            var B = new double[nodeCnt * dof];
 
             foreach (uint feId in feIds)
             {
@@ -73,13 +65,13 @@ namespace IvyFEM
                 double gx = ma.GravityX;
                 double gy = ma.GravityY;
 
+                double sN = triFE.CalcSN();
                 double[] sNN = triFE.CalcSNN();
                 double[][] sNuNvs = triFE.CalcSNuNvs();
                 double[] sNxNx = sNuNvs[0];
                 double[] sNyNx = sNuNvs[1];
                 double[] sNxNy = sNuNvs[2];
                 double[] sNyNy = sNuNvs[3];
-                double lumpedSNN = triFE.CalcLumpedSNN();
 
                 for (int row = 0; row < elemNodeCnt; row++)
                 {
@@ -106,32 +98,30 @@ namespace IvyFEM
                         System.Diagnostics.Debug.Assert(k.Length == 4);
                         System.Diagnostics.Debug.Assert(m.Length == 4);
                         int index = (int)(col * elemNodeCnt + row);
-
-                        double kroneckerDelta = mu * (sNyNy[index] + sNxNx[index]);
-                        k[0] = (lambda + mu) * sNxNx[index] + kroneckerDelta;
+                        k[0] = (lambda + mu) * sNxNx[index] + mu * (sNxNx[index] + sNyNy[index]);
                         k[1] = lambda * sNyNx[index] + mu * sNxNy[index];
                         k[2] = lambda * sNxNy[index] + mu * sNyNx[index];
-                        k[3] = (lambda + mu) * sNyNy[index] + kroneckerDelta;
+                        k[3] = (lambda + mu) * sNyNy[index] + mu * (sNxNx[index] + sNyNy[index]);
 
                         m[0] = rho * sNN[index];
                         m[1] = 0.0;
                         m[2] = 0.0;
                         m[3] = rho * sNN[index];
 
-                        for (int dofRow = 0; dofRow < dof; dofRow++)
+                        for (int rowDof = 0; rowDof < dof; rowDof++)
                         {
-                            for (int dofCol = 0; dofCol < dof; dofCol++)
+                            for (int colDof = 0; colDof < dof; colDof++)
                             {
-                                int dofIndex = dofCol * dof + dofRow;
-                                A[rowNodeId * dof + dofRow, colNodeId * dof + dofCol] +=
+                                int dofIndex = colDof * dof + rowDof;
+                                A[rowNodeId * dof + rowDof, colNodeId * dof + colDof] +=
                                     (1.0 / (beta * dt * dt)) * m[dofIndex] +
                                     k[dofIndex];
 
-                                B[rowNodeId * dof + dofRow] +=
+                                B[rowNodeId * dof + rowDof] +=
                                     m[dofIndex] * (
-                                    (1.0 / (beta * dt * dt)) * prevU[dofRow] +
-                                    (1.0 / (beta * dt)) * prevVel[dofRow] +
-                                    ((1.0 / (2.0 * beta)) - 1.0) * prevAcc[dofRow]);
+                                    (1.0 / (beta * dt * dt)) * prevU[rowDof] +
+                                    (1.0 / (beta * dt)) * prevVel[rowDof] +
+                                    ((1.0 / (2.0 * beta)) - 1.0) * prevAcc[rowDof]);
                             }
                         }
                     }
@@ -144,20 +134,10 @@ namespace IvyFEM
                     {
                         continue;
                     }
-                    B[rowNodeId * dof + 0] += rho * gx * lumpedSNN;
-                    B[rowNodeId * dof + 1] += rho * gy * lumpedSNN;
+                    B[rowNodeId * dof + 0] += rho * gx * sN;
+                    B[rowNodeId * dof + 1] += rho * gy * sN;
                 }
             }
-
-            SetFixedCadsCondtion(World, A, B, nodeCnt, dof);
-
-            double[] X;
-            int xRow;
-            int xCol;
-            int ret = IvyFEM.Lapack.Functions.dgesv(out X, out xRow, out xCol,
-                A.Buffer, A.RowSize, A.ColumnSize,
-                B, B.Length, 1);
-            U = X;
         }
 
         public void UpdateFieldValues()
@@ -195,7 +175,12 @@ namespace IvyFEM
                         (1.0 / (2.0 * beta) - 1.0) * prevAcc[index];
                 }
             }
+        }
 
+        protected override void CalcSaintVenantKirchhoffHyperelasticAB(IvyFEM.Linear.DoubleSparseMatrix A, double[] B, 
+            int nodeCnt, int dof)
+        {
+            throw new NotImplementedException();
         }
     }
 }

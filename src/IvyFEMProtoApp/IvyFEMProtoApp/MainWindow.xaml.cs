@@ -243,7 +243,6 @@ namespace IvyFEMProtoApp
         private void glControl_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
         {
             GL.ClearColor(Color4.White);
-            //GL.ClearColor(0.2f, 0.7f, 0.7f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.Enable(EnableCap.PolygonOffsetFill);
             GL.PolygonOffset(1.1f, 4.0f);
@@ -278,10 +277,16 @@ namespace IvyFEMProtoApp
             Problem.MakeMesh(this);
         }
 
-        private void MatrixOperation_Click(object sender, RoutedEventArgs e)
+        private void lapackBtn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.InterseMatrixSample();
-            Problem.EigenValueSample();
+            Problem.InterseMatrixExample();
+            Problem.LinearEquationExample();
+            Problem.EigenValueExample();
+        }
+
+        private void lisBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.LisExample();
         }
 
         private void waveguideBtn_Click(object sender, RoutedEventArgs e)
@@ -298,6 +303,11 @@ namespace IvyFEMProtoApp
         private void elasticTDBtn_Click(object sender, RoutedEventArgs e)
         {
             Problem.ElasticTDProblem(this);
+        }
+
+        private void SaintVenantKirchhoffHyperelasticBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.SaintVenantKirchhoffHyperelasticProblem(this, false);
         }
     }
 }

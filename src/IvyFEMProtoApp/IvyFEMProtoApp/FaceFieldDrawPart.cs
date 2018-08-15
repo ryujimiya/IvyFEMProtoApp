@@ -195,7 +195,7 @@ namespace IvyFEM
             int[] vertexs;
             mesh.GetConnectivity(MeshId, out meshType, out vertexs);
 
-            if (Type == ElementType.TRI || Type == ElementType.QUAD)
+            if (Type == ElementType.TRI)
             {
                 Colors = new float[ElemCount * 3];
                 for (int iTri = 0; iTri < ElemCount; iTri++)
@@ -210,6 +210,11 @@ namespace IvyFEM
                         Colors[iTri * 3 + iColor] = (float)color[iColor];
                     }
                 }
+            }
+            else if (Type == ElementType.QUAD)
+            {
+                // TRIと同じでよいが要素IDを取得するメソッドが現状ない
+                throw new NotImplementedException();
             }
         }
 

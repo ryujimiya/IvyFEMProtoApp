@@ -38,7 +38,7 @@ namespace IvyFEM
             int nodeCnt = (int)World.GetNodeCount();
             IList<uint> feIds = World.GetTriangleFEIds();
 
-            var A = new Lapack.ComplexMatrix(nodeCnt, nodeCnt);
+            var A = new IvyFEM.Linear.ComplexSparseMatrix(nodeCnt, nodeCnt);
             var B = new System.Numerics.Complex[nodeCnt];
 
             foreach (uint feId in feIds)
@@ -126,7 +126,7 @@ namespace IvyFEM
                     System.Diagnostics.Debug.Assert(incidentModeId != -1);
                     System.Numerics.Complex beta0 = betas[incidentModeId];
                     System.Numerics.Complex[] ezEVec0 = ezEVecs[incidentModeId];
-                    System.Numerics.Complex[] I = eigenFEM.CalcIncidentResidualVec(beta0, ezEVec0);
+                    System.Numerics.Complex[] I = eigenFEM.CalcIncidentVec(beta0, ezEVec0);
                     for (int row = 0; row < portNodeCnt; row++)
                     {
                         int rowCoId = World.PortNode2Coord(portId, row);
@@ -137,13 +137,11 @@ namespace IvyFEM
                 }
             }
 
+            //----------------------------------
             System.Numerics.Complex[] X;
-            int xRow;
-            int xCol;
-            int ret = IvyFEM.Lapack.Functions.zgesv(out X, out xRow, out xCol,
-                A.Buffer, A.RowSize, A.ColumnSize,
-                B, B.Length, 1);
+            Solver.ComplexSolve(out X, A, B);
             Ez = X;
+            //----------------------------------
 
             S = new System.Numerics.Complex[portCnt][];
             for (uint portId = 0; portId < portCnt; portId++)

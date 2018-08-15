@@ -9,10 +9,11 @@ namespace IvyFEM
     abstract class FEM
     {
         public FEWorld World { get; set; } = null;
+        public IvyFEM.Linear.IEquationSolver Solver { get; set; } = null;
 
         public abstract void Solve();
 
-        protected static void SetFixedCadsCondtion(FEWorld world, IvyFEM.Lapack.DoubleMatrix A, double[]B, int nodeCnt, int dof)
+        protected static void SetFixedCadsCondtion(FEWorld world, IvyFEM.Linear.DoubleSparseMatrix A, double[]B, int nodeCnt, int dof)
         {
             var fixedCoIdFixedCad = world.GetFixedCoordIdFixedCad();
 
@@ -37,19 +38,19 @@ namespace IvyFEM
                         System.Diagnostics.Debug.Assert(fixedCad.ValueType == FieldValueType.VECTOR2);
                         int iDof = fixedCad.DofIndex;
                         double value = fixedCad.Value;
-                        for (int dofRow = 0; dofRow < dof; dofRow++)
+                        for (int rowDof = 0; rowDof < dof; rowDof++)
                         {
                             var hits = (
                                 from rowfixedCad in rowfixedCads
-                                where rowfixedCad.DofIndex == dofRow
+                                where rowfixedCad.DofIndex == rowDof
                                 select rowfixedCad).ToList();
                             if (hits.Count > 0)
                             {
                                 continue;
                             }
-                            double a = A[rowNodeId * dof + dofRow, colNodeId * dof + iDof];
-                            B[rowNodeId * dof + dofRow] -= a * value;
-                            A[rowNodeId * dof + dofRow, colNodeId * dof + iDof] = 0;
+                            double a = A[rowNodeId * dof + rowDof, colNodeId * dof + iDof];
+                            B[rowNodeId * dof + rowDof] -= a * value;
+                            A[rowNodeId * dof + rowDof, colNodeId * dof + iDof] = 0;
                         }
                     }
                 }

@@ -15,7 +15,7 @@ namespace IvyFEM
         public double Muyy { get => Values[4]; set => Values[4] = value; }
         public double Muzz { get => Values[5]; set => Values[5] = value; }
 
-        public DielectricMaterial()
+        public DielectricMaterial() : base()
         {
             MaterialType = MaterialType.DIELECTRIC;
             int len = 6;

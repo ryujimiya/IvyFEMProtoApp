@@ -11,6 +11,29 @@ namespace IvyFEM.Lapack
         ////////////////////////////////////////////////////////////////
         // BLAS
         ////////////////////////////////////////////////////////////////
+        public static double[] daxpy(double a, double[] X, double[] Y)
+        {
+            double[] Z;
+
+            if (X.Length != Y.Length)
+            {
+                throw new ArgumentException("Mismatched size: v1(" + X.Length + "), v2(" + Y.Length + ")");
+            }
+
+            int n = X.Length;
+            int incX = 1;
+            int incY = 1;
+
+            Z = new double[n];
+            Y.CopyTo(Z, 0);
+            unsafe
+            {
+                IvyFEM.Lapack.ImportedFunctions.daxpy_(&n, &a, X, &incX, Z, &incY);
+            }
+
+            return Z;
+        }
+
         public static double ddot(double[] X, double[] Y)
         {
             if (X.Length != Y.Length)
@@ -30,9 +53,41 @@ namespace IvyFEM.Lapack
             return ret;
         }
 
-        public static int dgemmAB(out double[] C, out int cRow, out int cCol,
-            double[]  A, int aRow, int aCol,
-            double[]  B, int bRow, int bCol)
+        public static void dgbmvAX(out double[] Y,
+                         double[] A, int aRow, int aCol, int subdia, int superdia, TransposeType aTransposeType,
+                         double[] X)
+        {
+            if (aCol != X.Length)
+            {
+                throw new ArgumentException("Mismatched size: aCol != X.Length(" + aCol + " != " + X.Length + ")");
+            }
+
+            Y = new double[aRow];
+
+            byte trans = Trans.FromTransposeType(aTransposeType);
+            int m = aRow;
+            int n = aCol;
+            int kl = subdia;
+            int ku = superdia;
+            double alpha = 1.0;
+            int lda = aRow;
+            int incX = 1;
+            double beta = 0.0;
+            int incY = 1;
+
+            unsafe
+            {
+                IvyFEM.Lapack.ImportedFunctions.dgbmv_(
+                    &trans, &m, &n, &kl, &ku,
+                    &alpha, A, &lda,
+                    X, &incX, &beta,
+                    Y, &incY);
+            }
+        }
+
+        public static void dgemmAB(out double[] C, out int cRow, out int cCol,
+            double[]  A, int aRow, int aCol, TransposeType aTransposeType,
+            double[]  B, int bRow, int bCol, TransposeType bTransposeType)
         {
             if (aCol != bRow)
             {
@@ -44,8 +99,9 @@ namespace IvyFEM.Lapack
 
             C = new double[cRow * cCol];
 
-            byte transa = Trans.Nop;
-            byte transb = Trans.Nop;
+            byte transa = Trans.FromTransposeType(aTransposeType);
+            byte transb = Trans.FromTransposeType(bTransposeType);
+
             int m = aRow;
             int n = bCol;
             int k = aCol;
@@ -67,7 +123,33 @@ namespace IvyFEM.Lapack
                     B, &ldb,
                     &beta, C, &ldc);
             }
-            return 0;
+        }
+
+        public static void dgemvAX(out double[] Y,
+                         double[] A, int aRow, int aCol, TransposeType aTransposeType,
+                         double[] X)
+        {
+            if (aCol != X.Length)
+            {
+                throw new ArgumentException("Mismatched size: aCol != X.Length(" + aCol + " != " + X.Length + ")");
+            }
+
+            Y = new double[aRow];
+
+            byte trans = Trans.FromTransposeType(aTransposeType);
+            int m = aRow;
+            int n = aCol;
+            double alpha = 1.0;
+            int lda = aRow;
+            int incX = 1;
+            double beta = 0.0;
+            int incY = 1;
+
+            unsafe
+            {
+                IvyFEM.Lapack.ImportedFunctions.dgemv_(&trans, &m, &n, &alpha, A, &lda,
+                                        X, &incX, &beta, Y, &incY);
+            }
         }
 
         public static double dnrm2(double[] X)
@@ -83,15 +165,45 @@ namespace IvyFEM.Lapack
             return ret;
         }
 
-        public static void dscal(double[] X, double a)
+        public static double[] dscal(double[] X, double a)
         {
             int n = X.Length;
             int incX = 1;
 
+            double[] Y = new double[n];
+            X.CopyTo(Y, 0);
+
             unsafe
             {
-                IvyFEM.Lapack.ImportedFunctions.dscal_(&n, &a, X, &incX);
+                IvyFEM.Lapack.ImportedFunctions.dscal_(&n, &a, Y, &incX);
             }
+            return Y;
+        }
+
+        public static System.Numerics.Complex[] zaxpy(
+            System.Numerics.Complex a, System.Numerics.Complex[] X, System.Numerics.Complex[] Y)
+        {
+            System.Numerics.Complex[] Z;
+            if (X.Length != Y.Length)
+            {
+                throw new ArgumentException("Mismatched size: v1(" + X.Length + "), v2(" + Y.Length + ")");
+            }
+
+            int n = X.Length;
+            int incX = 1;
+            int incY = 1;
+
+            Z = new System.Numerics.Complex[n];
+            Y.CopyTo(Z, 0);
+            unsafe
+            {
+                fixed (System.Numerics.Complex *XP = &X[0])
+                fixed (System.Numerics.Complex* ZP = &Z[0])
+                {
+                    IvyFEM.Lapack.ImportedFunctions.zaxpy_(&n, &a, XP, &incX, ZP, &incY);
+                }
+            }
+            return Z;
         }
 
         public static System.Numerics.Complex zdotc(System.Numerics.Complex[] X, System.Numerics.Complex[] Y)
@@ -105,7 +217,7 @@ namespace IvyFEM.Lapack
             int incX = 1;
             int incY = 1;
 
-            System.Numerics.Complex ret = (System.Numerics.Complex)0;
+            System.Numerics.Complex ret = 0;
             unsafe
             {
                 fixed (System.Numerics.Complex* XP = &X[0])
@@ -128,7 +240,7 @@ namespace IvyFEM.Lapack
             int incX = 1;
             int incY = 1;
 
-            System.Numerics.Complex ret = (System.Numerics.Complex)0;
+            System.Numerics.Complex ret = 0;
             unsafe
             {
                 fixed (System.Numerics.Complex* XP = &X[0])
@@ -140,9 +252,47 @@ namespace IvyFEM.Lapack
             return ret;
         }
 
+        public static void zgbmvAX(out System.Numerics.Complex[] Y,
+                         System.Numerics.Complex[] A, int aRow, int aCol,
+                         int subdia, int superdia, TransposeType aTransposeType,
+                         System.Numerics.Complex[] X)
+        {
+            if (aCol != X.Length)
+            {
+                throw new ArgumentException("Mismatched size: aCol != X.Length(" + aCol + " != " + X.Length + ")");
+            }
+
+            Y = new System.Numerics.Complex[aRow];
+
+            byte trans = Trans.FromTransposeType(aTransposeType);
+            int m = aRow;
+            int n = aCol;
+            int kl = subdia;
+            int ku = superdia;
+            System.Numerics.Complex alpha = 1.0;
+            int lda = aRow;
+            int incX = 1;
+            System.Numerics.Complex beta = 0.0;
+            int incY = 1;
+
+            unsafe
+            {
+                fixed (System.Numerics.Complex* AP = &A[0])
+                fixed (System.Numerics.Complex* XP = &X[0])
+                fixed (System.Numerics.Complex* YP = &Y[0])
+                {
+                    IvyFEM.Lapack.ImportedFunctions.zgbmv_(
+                    &trans, &m, &n, &kl, &ku,
+                    &alpha, AP, &lda,
+                    XP, &incX, &beta,
+                    YP, &incY);
+                }
+            }
+        }
+
         public static int zgemmAB(out System.Numerics.Complex[] C, out int cRow, out int cCol,
-            System.Numerics.Complex[] A, int aRow, int aCol,
-            System.Numerics.Complex[] B, int bRow, int bCol)
+            System.Numerics.Complex[] A, int aRow, int aCol, TransposeType aTransposeType,
+            System.Numerics.Complex[] B, int bRow, int bCol, TransposeType bTransposeType)
         {
             if (aCol != bRow)
             {
@@ -154,18 +304,18 @@ namespace IvyFEM.Lapack
 
             C = new System.Numerics.Complex[cRow * cCol];
 
-            byte transa = Trans.Nop;
-            byte transb = Trans.Nop;
+            byte transa = Trans.FromTransposeType(aTransposeType);
+            byte transb = Trans.FromTransposeType(bTransposeType);
             int m = aRow;
             int n = bCol;
             int k = aCol;
 
-            System.Numerics.Complex alpha = (System.Numerics.Complex)1.0;
+            System.Numerics.Complex alpha = 1.0;
 
             int lda = aRow;
             int ldb = bRow;
 
-            System.Numerics.Complex beta = (System.Numerics.Complex)0.0;
+            System.Numerics.Complex beta = 0.0;
             int ldc = aRow;
 
             unsafe
@@ -185,18 +335,54 @@ namespace IvyFEM.Lapack
             return 0;
         }
 
-        public static void zscal(System.Numerics.Complex[] X, System.Numerics.Complex a)
+        public static void zgemvAX(out System.Numerics.Complex[] Y,
+                         System.Numerics.Complex[] A, int aRow, int aCol, TransposeType aTransposeType,
+                         System.Numerics.Complex[] X)
+        {
+            if (aCol != X.Length)
+            {
+                throw new ArgumentException("Mismatched size: aCol != X.Length(" + aCol + " != " + X.Length + ")");
+            }
+
+            Y = new System.Numerics.Complex[aRow];
+
+            byte trans = Trans.FromTransposeType(aTransposeType);
+            int m = aRow;
+            int n = aCol;
+            System.Numerics.Complex alpha = 1.0;
+            int lda = aRow;
+            int incX = 1;
+            System.Numerics.Complex beta = 0.0;
+            int incY = 1;
+
+            unsafe
+            {
+                fixed (System.Numerics.Complex* AP = &A[0])
+                fixed (System.Numerics.Complex* XP = &X[0])
+                fixed (System.Numerics.Complex* YP = &Y[0])
+                {
+                    IvyFEM.Lapack.ImportedFunctions.zgemv_(&trans, &m, &n, &alpha, AP, &lda,
+                                        XP, &incX, &beta, YP, &incY);
+                }
+            }
+        }
+
+        public static System.Numerics.Complex[] zscal(System.Numerics.Complex[] X, System.Numerics.Complex a)
         {
             int n = X.Length;
             int incX = 1;
 
+            System.Numerics.Complex[] Y = new System.Numerics.Complex[n];
+            X.CopyTo(Y, 0);
+
             unsafe
             {
-                fixed (System.Numerics.Complex* XP = &X[0])
+                fixed (System.Numerics.Complex* YP = &Y[0])
                 {
-                    IvyFEM.Lapack.ImportedFunctions.zscal_(&n, &a, XP, &incX);
+                    IvyFEM.Lapack.ImportedFunctions.zscal_(&n, &a, YP, &incX);
                 }
             }
+            return Y;
         }
 
         ////////////////////////////////////////////////////////////////
@@ -207,6 +393,60 @@ namespace IvyFEM.Lapack
         ////////////////////////////////////////////////////////////////
         // LAPACKE
         ////////////////////////////////////////////////////////////////
+        public static int dgbsv(out double[] X, out int xRow, out int xCol,
+                         double[]  A, int aRow, int aCol, int subdia, int superdia,
+                         double[]  B, int bRow, int bCol)
+        {
+            // DOUBLE PRECISION array, dimension (LDAB,N)
+            // On entry, the matrix A in band storage, in rows KL+1 to 2*KL+KU+1; rows 1 to KL of the array need not be set.
+            // The j-th column of A is stored in the j-th column of the array AB as follows:
+            // AB(KL+KU+1+i-j,j) = A(i,j) for max(1,j-KU)<=i<=min(N,j+KL)
+
+            // DOUBLE PRECISION array, dimension (LDB,NRHS)
+            // On entry, the N-by-NRHS right hand side matrix B.
+
+            int n = aRow;
+            // The number of linear equations, i.e., the order of the matrix A.  N >= 0.
+
+            int kl = subdia;
+            // The number of subdiagonals within the band of A.  KL >= 0.
+
+            int ku = superdia;
+            // The number of superdiagonals within the band of A.  KU >= 0.
+
+            int nrhs = bCol;
+            // The number of right hand sides, i.e., the number of columns
+
+            int lda = 2 * subdia + superdia + 1;
+            // The leading dimension of the array AB.  LDAB >= 2*KL+KU+1.
+
+            int[] ipiv = new int[n];
+
+            int ldb = bRow;
+
+            double[] C = new double[B.Length];
+            B.CopyTo(C, 0);
+
+            int ret = IvyFEM.Lapack.ImportedFunctions.LAPACKE_dgbsv(
+                MatrixLayout.ColMajor,
+                n, kl, ku, nrhs,
+                A, lda, ipiv,
+                C, ldb);
+            if (ret != 0)
+            {
+                X = null;
+                xRow = 0;
+                xCol = 0;
+                throw new InvalidOperationException("Error occurred: ret = " + ret);
+                return ret;
+            }
+
+            X = C;
+            xRow = bRow;
+            xCol = bCol;
+            return ret;
+        }
+
         public static int dgeev(double[] A, int xRow, int xCol,
             out System.Numerics.Complex[] eVals, out System.Numerics.Complex[][] eVecs)
         {
@@ -293,10 +533,12 @@ namespace IvyFEM.Lapack
             int lda = n;
             int[] ipiv = new int[n];
             int ldb = bRow;
+            double[] C = new double[B.Length];
+            B.CopyTo(C, 0);
 
             // LAPACKE
             int ret = IvyFEM.Lapack.ImportedFunctions.LAPACKE_dgesv(
-                MatrixLayout.ColMajor, n, nrhs, A, lda, ipiv, B, ldb);
+                MatrixLayout.ColMajor, n, nrhs, A, lda, ipiv, C, ldb);
             /*
             // LAPACK
             int ret = 0;
@@ -318,7 +560,7 @@ namespace IvyFEM.Lapack
                 return ret;
             }
 
-            X = B;
+            X = C;
             xRow = bRow;
             xCol = bCol;
             return ret;
@@ -416,6 +658,68 @@ namespace IvyFEM.Lapack
             return ret;
         }
 
+        public static int zgbsv(out System.Numerics.Complex[] X, out int xRow, out int xCol,
+                         System.Numerics.Complex[] A, int aRow, int aCol, int subdia, int superdia,
+                         System.Numerics.Complex[] B, int bRow, int bCol)
+        {
+            // COMPLEX*16 array, dimension (LDAB,N)
+            // On entry, the matrix A in band storage, in rows KL+1 to 2*KL+KU+1; rows 1 to KL of the array need not be set.
+            // The j-th column of A is stored in the j-th column of the array AB as follows:
+            // AB(KL+KU+1+i-j,j) = A(i,j) for max(1,j-KU)<=i<=min(N,j+KL)
+
+            // COMPLEX*16 array, dimension (LDB,NRHS)
+            // On entry, the N-by-NRHS right hand side matrix B.
+
+            int n = aRow;
+            // The number of linear equations, i.e., the order of the matrix A.  N >= 0.
+
+            int kl = subdia;
+            // The number of subdiagonals within the band of A.  KL >= 0.
+
+            int ku = superdia;
+            // The number of superdiagonals within the band of A.  KU >= 0.
+
+            int nrhs = bCol;
+            // The number of right hand sides, i.e., the number of columns
+
+            int lda = 2 * subdia + superdia + 1;
+            // The leading dimension of the array AB.  LDAB >= 2*KL+KU+1.
+
+            int[] ipiv = new int[n];
+
+            int ldb = bRow;
+
+            System.Numerics.Complex[] C = new System.Numerics.Complex[B.Length];
+            B.CopyTo(C, 0);
+
+            int ret;
+            unsafe
+            {
+                fixed (System.Numerics.Complex* AP = &A[0])
+                fixed (System.Numerics.Complex* CP = &C[0])
+                {
+                    ret = IvyFEM.Lapack.ImportedFunctions.LAPACKE_zgbsv(
+                        MatrixLayout.ColMajor,
+                        n, kl, ku, nrhs, AP, lda, ipiv, CP, ldb);
+
+                }
+            }
+            if (ret != 0)
+            {
+                X = null;
+                xRow = 0;
+                xCol = 0;
+                throw new InvalidOperationException("Error occurred: ret = " + ret);
+                return ret;
+            }
+
+            X = C;
+            xRow = bRow;
+            xCol = bCol;
+
+            return ret;
+        }
+
         public static int zgesv(out System.Numerics.Complex[] X, out int xRow, out int xCol,
                          System.Numerics.Complex[] A, int aRow, int aCol,
                          System.Numerics.Complex[] B, int bRow, int bCol)
@@ -425,16 +729,18 @@ namespace IvyFEM.Lapack
             int lda = n;
             int[] ipiv = new int[n];
             int ldb = bRow;
+            System.Numerics.Complex[] C = new System.Numerics.Complex[B.Length];
+            B.CopyTo(C, 0);
 
             int ret = 0;
             unsafe
             {
                 fixed (System.Numerics.Complex* AP = &A[0])
-                fixed (System.Numerics.Complex* BP = &B[0])
+                fixed (System.Numerics.Complex* CP = &C[0])
                 {
                     ret = IvyFEM.Lapack.ImportedFunctions.LAPACKE_zgesv(
                         MatrixLayout.ColMajor,
-                        n, nrhs, AP, lda, ipiv, BP, ldb);
+                        n, nrhs, AP, lda, ipiv, CP, ldb);
                 }
             }
 
@@ -447,29 +753,33 @@ namespace IvyFEM.Lapack
                 return ret;
             }
 
-            X = B;
+            X = C;
             xRow = bRow;
             xCol = bCol;
 
             return ret;
         }
 
-        public static void zlacgv(System.Numerics.Complex[] X)
+        public static System.Numerics.Complex[] zlacgv(System.Numerics.Complex[] X)
         {
             int n = X.Length;
             int incX = 1;
 
+            System.Numerics.Complex[] Y = new System.Numerics.Complex[n];
+            X.CopyTo(Y, 0);
+
             unsafe
             {
-                fixed (System.Numerics.Complex* XP = &X[0])
+                fixed (System.Numerics.Complex* YP = &Y[0])
                 {
                     // LAPACK
-                    //IvyFEM.Lapack.ImportedFunctions.zlacgv_(&n, XP, &incX);
+                    //IvyFEM.Lapack.ImportedFunctions.zlacgv_(&n, YP, &incX);
 
                     // LAPACKE
-                    IvyFEM.Lapack.ImportedFunctions.LAPACKE_zlacgv(n, XP, incX);
+                    IvyFEM.Lapack.ImportedFunctions.LAPACKE_zlacgv(n, YP, incX);
                 }
             }
+            return Y;
         }
     }
 }

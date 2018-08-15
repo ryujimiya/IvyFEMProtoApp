@@ -60,6 +60,72 @@ namespace IvyFEM
             }            
         }
 
+        public IntegrationPoints GetIntegrationPoints(int integrationPointCount)
+        {
+            foreach (var ip in IntegrationPoints.TriangleIntegrationPoints)
+            {
+                if (ip.PointCount == integrationPointCount)
+                {
+                    return ip;
+                }
+            }
+            System.Diagnostics.Debug.Assert(false);
+            return null;
+        }
+
+        public double GetDetJacobian()
+        {
+            double A = GetArea();
+            return 2.0 * A;
+        }
+
+        /// <summary>
+        /// N
+        /// </summary>
+        /// <param name="L"></param>
+        /// <returns></returns>
+        public double [] CalcN(double[] L)
+        {
+            double[] N = new double[3];
+
+            // N = L
+            L.CopyTo(N, 0);
+
+            return N;
+        }
+
+        /// <summary>
+        /// dN/du
+        /// </summary>
+        /// <returns></returns>
+        public double[][] CalcNu()
+        {
+            double[][] Nu = new double[2][];
+            double[] a;
+            double[] b;
+            double[] c;
+            CalcTransMatrix(out a, out b, out c);
+
+            // dN/dx
+            Nu[0] = b;
+
+            // dN/dy
+            Nu[1] = c;
+            return Nu;
+        }
+
+
+        /// <summary>
+        /// SNdx
+        /// </summary>
+        /// <returns></returns>
+        public double CalcSN()
+        {
+            double A = GetArea();
+
+            return A / 3.0;
+        }
+
         /// <summary>
         /// S{N}{N}Tdx
         /// </summary>
@@ -144,12 +210,5 @@ namespace IvyFEM
             }
             return sNuNv;
         }
-
-        public double CalcLumpedSNN()
-        {
-            double A = GetArea();
-            return A / 3.0;
-        }
-
     }
 }

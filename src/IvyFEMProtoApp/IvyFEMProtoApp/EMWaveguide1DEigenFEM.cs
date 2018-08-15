@@ -109,9 +109,10 @@ namespace IvyFEM
 
             System.Numerics.Complex[] eVals;
             System.Numerics.Complex[][] eVecs;
-            int ret = IvyFEM.Lapack.Functions.dggev(A.Buffer, A.RowSize, A.ColumnSize,
-                B.Buffer, B.RowSize, B.ColumnSize,
+            int ret = IvyFEM.Lapack.Functions.dggev(A.Buffer, A.RowLength, A.ColumnLength,
+                B.Buffer, B.RowLength, B.ColumnLength,
                 out eVals, out eVecs);
+            System.Diagnostics.Debug.Assert(ret == 0);
 
             SortEVals(eVals, eVecs);
             AdjustPhaseEVecs(eVecs);
@@ -201,7 +202,8 @@ namespace IvyFEM
                 var d = System.Numerics.Complex.Sqrt(
                     (System.Numerics.Complex)(omega * Constants.Mu0) /
                     (((System.Numerics.Complex)beta.Magnitude) * work2));
-                IvyFEM.Lapack.Functions.zscal(eVec, d);
+                eVec = IvyFEM.Lapack.Functions.zscal(eVec, d);
+                eVecs[iMode] = eVec;
             }
         }
 
@@ -216,12 +218,9 @@ namespace IvyFEM
             {
                 var beta = betas[iMode];
                 var ezEVec = ezEVecs[iMode];
-                var ez = new IvyFEM.Lapack.ComplexMatrix(ezEVec, nodeCnt, 1);
                 var RyyZ = (IvyFEM.Lapack.ComplexMatrix)Ryy;
-                var vec1 = RyyZ * ez;
-                var vec2 = RyyZ * IvyFEM.Lapack.ComplexMatrix.Conjugate(ez);
-                System.Diagnostics.Debug.Assert(vec1.RowSize == nodeCnt && vec1.ColumnSize == 1);
-                System.Diagnostics.Debug.Assert(vec2.RowSize == nodeCnt && vec2.ColumnSize == 1);
+                var vec1 = RyyZ * ezEVec;
+                var vec2 = RyyZ * IvyFEM.Lapack.Utils.Conjugate(ezEVec);
 
                 for (int col = 0; col < nodeCnt; col++)
                 {
@@ -230,7 +229,7 @@ namespace IvyFEM
                         System.Numerics.Complex value = (System.Numerics.Complex.ImaginaryOne /
                             (omega * Constants.Mu0)) *
                             beta * beta.Magnitude *
-                            vec1.Buffer[col] * vec2.Buffer[row];
+                            vec1[col] * vec2[row];
                         X[row, col] += value;
                     }
                 }
@@ -238,18 +237,16 @@ namespace IvyFEM
             return X;
         }
 
-        public System.Numerics.Complex[] CalcIncidentResidualVec(
+        public System.Numerics.Complex[] CalcIncidentVec(
             System.Numerics.Complex beta0, System.Numerics.Complex[] ezEVec0)
         {
             System.Numerics.Complex[] I = null;
 
-            int nodeCnt = ezEVec0.Length;
-            var ez = new IvyFEM.Lapack.ComplexMatrix(ezEVec0, nodeCnt, 1);
             var RyyZ = (IvyFEM.Lapack.ComplexMatrix)Ryy;
-            var vec1 = RyyZ * ez;
+            var vec1 = RyyZ * ezEVec0;
             var a1 = System.Numerics.Complex.ImaginaryOne * 2.0 * beta0;
-            IvyFEM.Lapack.Functions.zscal(vec1.Buffer, a1);
-            I = vec1.Buffer;
+            vec1 = IvyFEM.Lapack.Functions.zscal(vec1, a1);
+            I = vec1;
             return I;
         }
 
@@ -265,10 +262,9 @@ namespace IvyFEM
             {
                 var beta = betas[iMode];
                 var ezEVec = ezEVecs[iMode];
-                var ez = new IvyFEM.Lapack.ComplexMatrix(ezEVec, (int)nodeCnt, 1);
                 var RyyZ = (IvyFEM.Lapack.ComplexMatrix)Ryy;
-                var vec1 = RyyZ * IvyFEM.Lapack.ComplexMatrix.Conjugate(ez);
-                System.Numerics.Complex work1 = IvyFEM.Lapack.Functions.zdotu(vec1.Buffer, Ez);
+                var vec1 = RyyZ * IvyFEM.Lapack.Utils.Conjugate(ezEVec);
+                System.Numerics.Complex work1 = IvyFEM.Lapack.Functions.zdotu(vec1, Ez);
                 var b = (System.Numerics.Complex)(beta.Magnitude / (omega * Constants.Mu0)) * work1;
                 if (incidentModeId != -1 && incidentModeId == iMode)
                 {

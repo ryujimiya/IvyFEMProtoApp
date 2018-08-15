@@ -68,18 +68,9 @@ namespace IvyFEM
             }
             {
                 // rotate
-                double[] rot = new double[16];
-                camera.RotMatrix44Trans(rot);
-                /*
-                System.Diagnostics.Debug.WriteLine("RotMatrix44");
-                for (int i = 0; i < 16; i++)
-                {
-                    System.Diagnostics.Debug.Write(rot[i] + " ");
-                }
-                System.Diagnostics.Debug.WriteLine("");
-                */
+                OpenTK.Matrix4d rot = camera.RotMatrix44();
 
-                GL.MultMatrix(rot);
+                GL.MultMatrix(ref rot);
             }
             {
                 // put the origin at the center of object
@@ -156,34 +147,29 @@ namespace IvyFEM
             objectZ = 0;
 
             // Transformation matrices
-            Matrix4x4 projectionM = new Matrix4x4(
+            OpenTK.Matrix4d projectionM = new OpenTK.Matrix4d(
                 (float)projection[0], (float)projection[4], (float)projection[8], (float)projection[12],
                 (float)projection[1], (float)projection[5], (float)projection[9], (float)projection[13],
                 (float)projection[2], (float)projection[6], (float)projection[10], (float)projection[14],
                 (float)projection[3], (float)projection[7], (float)projection[11], (float)projection[15]);
-            Matrix4x4 modelviewM = new Matrix4x4(
+            OpenTK.Matrix4d modelviewM = new OpenTK.Matrix4d(
                 (float)modelview[0], (float)modelview[4], (float)modelview[8], (float)modelview[12],
                 (float)modelview[1], (float)modelview[5], (float)modelview[9], (float)modelview[13],
                 (float)modelview[2], (float)modelview[6], (float)modelview[10], (float)modelview[14],
                 (float)modelview[3], (float)modelview[7], (float)modelview[11], (float)modelview[15]);
             // Calculation for inverting a matrix, compute projection x modelview
             // and store in A[16]
-            Matrix4x4 AM = projectionM * modelviewM;
+            OpenTK.Matrix4d AM = projectionM * modelviewM;
             // Now compute the inverse of matrix A
-            Matrix4x4 mM;
-            bool invRet = Matrix4x4.Invert(AM, out mM);
-            if (!invRet)
-            {
-                return 0;
-            }
+            OpenTK.Matrix4d mM = OpenTK.Matrix4d.Invert(AM);
 
             // Transformation of normalized coordinates between -1 and 1
-            Vector4 inV = new Vector4();
-            inV.W = (float)((winx - viewport[0]) / viewport[2] * 2.0 - 1.0);
-            inV.X = (float)((winy - viewport[1]) / viewport[3] * 2.0 - 1.0);
-            inV.Y = (float)(2.0 * winz - 1.0);
-            inV.Z = (float)1.0;
-            Vector4 outV;
+            OpenTK.Vector4d inV = new OpenTK.Vector4d();
+            inV.X = (float)((winx - viewport[0]) / viewport[2] * 2.0 - 1.0);
+            inV.Y = (float)((winy - viewport[1]) / viewport[3] * 2.0 - 1.0);
+            inV.Z = (float)(2.0 * winz - 1.0);
+            inV.W = (float)1.0;
+            OpenTK.Vector4d outV;
             // Objects coordinates
             MultiplyMatrix4x4ByVector4(out outV, mM, inV);
             if (outV.Z == 0.0)
@@ -191,10 +177,10 @@ namespace IvyFEM
                 return 0;
 
             }
-            outV.Z = (float)(1.0 / outV.Z);
-            objectX = outV.W * outV.Z;
-            objectY = outV.X * outV.Z;
-            objectZ = outV.Y * outV.Z;
+            outV.W = (float)(1.0 / outV.W);
+            objectX = outV.X * outV.W;
+            objectY = outV.Y * outV.W;
+            objectZ = outV.Z * outV.W;
 
             /*
             System.Diagnostics.Debug.WriteLine("GluUnProject");
@@ -205,17 +191,17 @@ namespace IvyFEM
             return 1;
         }
 
-        public static void MultiplyMatrix4x4ByVector4(out Vector4 resultvector,
-            Matrix4x4 matrix, Vector4 pvector)
+        public static void MultiplyMatrix4x4ByVector4(out OpenTK.Vector4d resultvector,
+            OpenTK.Matrix4d matrix, OpenTK.Vector4d pvector)
         {
-            resultvector.W = matrix.M11 * pvector.W + matrix.M12 * pvector.X +
-                matrix.M13 * pvector.Y + matrix.M14 * pvector.Z;
-            resultvector.X = matrix.M21 * pvector.W + matrix.M22 * pvector.X +
-                matrix.M23 * pvector.Y + matrix.M24 * pvector.Z;
-            resultvector.Y = matrix.M31 * pvector.W + matrix.M32 * pvector.X +
-                matrix.M33 * pvector.Y + matrix.M34 * pvector.Z;
-            resultvector.Z = matrix.M41 * pvector.W + matrix.M42 * pvector.X +
-                matrix.M43 * pvector.Y + matrix.M44 * pvector.Z;
+            resultvector.X = matrix.M11 * pvector.X + matrix.M12 * pvector.Y +
+                matrix.M13 * pvector.Z + matrix.M14 * pvector.W;
+            resultvector.Y = matrix.M21 * pvector.X + matrix.M22 * pvector.Y +
+                matrix.M23 * pvector.Z + matrix.M24 * pvector.W;
+            resultvector.Z = matrix.M31 * pvector.X + matrix.M32 * pvector.Y +
+                matrix.M33 * pvector.Z + matrix.M34 * pvector.W;
+            resultvector.W = matrix.M41 * pvector.X + matrix.M42 * pvector.Y +
+                matrix.M43 * pvector.Z + matrix.M44 * pvector.W;
         }
 
         public static void PickPre(

@@ -67,6 +67,7 @@ namespace IvyFEM
     {
         NOT_SET,
         ELASTIC,
+        SAINTVENANT_KIRCHHOFF_HYPERELASTIC,
         DIELECTRIC
     }
 

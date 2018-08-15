@@ -110,7 +110,7 @@ namespace IvyFEM
             }
             var mesh = world.Mesh;
 
-            // あとで
+            // TODO: あとで
             //throw new NotImplementedException();
         }
 
@@ -162,7 +162,8 @@ namespace IvyFEM
             }
             var mesh = world.Mesh;
 
-            throw new NotImplementedException();
+            // TODO: あとで
+            //throw new NotImplementedException();
         }
 
         public void Update(uint valueId, FieldDerivationType dt, VectorFieldDrawerType drawerType, FEWorld world)
@@ -177,11 +178,45 @@ namespace IvyFEM
             {
                 UpdateSymmetricTensor2(valueId, dt, world);
             }
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
 
         private void UpdateVector(uint valueId, FieldDerivationType dt, FEWorld world)
         {
-            throw new NotImplementedException();
+            ValueDof = 2;
+
+            FieldValue fv = world.GetFieldValue(valueId);
+            uint dof = fv.Dof;
+            System.Diagnostics.Debug.Assert(fv.IsBubble == true);
+            var mesh = world.Mesh;
+            MeshType meshType;
+            int[] vertexs;
+            mesh.GetConnectivity(MeshId, out meshType, out vertexs);
+
+            if (Type == ElementType.TRI)
+            {
+                Values = new double[ElemCount * ValueDof];
+                for (int iTri = 0; iTri < ElemCount; iTri++)
+                {
+                    // Bubble
+                    uint feId = world.GetTriangleFEIdFromMesh(MeshId, (uint)iTri);
+                    System.Diagnostics.Debug.Assert(feId != 0);
+                    System.Diagnostics.Debug.Assert(dof >= ValueDof);
+                    for (int iDof = 0; iDof < ValueDof; iDof++)
+                    {
+                        double u = fv.GetShowValue((int)(feId - 1), iDof, dt);
+                        Values[iTri * ValueDof + iDof] = u;
+                    }
+                }
+            }
+            else if (Type == ElementType.QUAD)
+            {
+                // TRIと同じでよいが要素IDを取得するメソッドが現状ない
+                throw new NotImplementedException();
+            }
         }
 
         private void UpdateSymmetricTensor2(uint valueId, FieldDerivationType dt, FEWorld world)
@@ -196,7 +231,7 @@ namespace IvyFEM
             int[] vertexs;
             mesh.GetConnectivity(MeshId, out meshType, out vertexs);
 
-            if (Type == ElementType.TRI || Type == ElementType.QUAD)
+            if (Type == ElementType.TRI)
             {
                 Values = new double[ElemCount * ValueDof];
                 for (int iTri = 0; iTri < ElemCount; iTri++)
@@ -210,30 +245,35 @@ namespace IvyFEM
                         sigma[iDof] = fv.GetShowValue((int)(feId - 1), iDof, dt);
                     }
 
-                    double[] pvecs;
+                    double[] vecs;
                     double ls;
-                    double[] pvecl;
+                    double[] vecl;
                     double ll;
                     GetPrincipleVectorForSymmetricTensor2(sigma,
-                        out pvecs, out ls,
-                        out pvecl, out ll);
-                    Values[iTri * ValueDof + 0] = pvecs[0];
-                    Values[iTri * ValueDof + 1] = pvecs[1];
+                        out vecs, out ls,
+                        out vecl, out ll);
+                    Values[iTri * ValueDof + 0] = vecs[0];
+                    Values[iTri * ValueDof + 1] = vecs[1];
                     Values[iTri * ValueDof + 2] = ls;
-                    Values[iTri * ValueDof + 3] = pvecl[0];
-                    Values[iTri * ValueDof + 4] = pvecl[1];
+                    Values[iTri * ValueDof + 3] = vecl[0];
+                    Values[iTri * ValueDof + 4] = vecl[1];
                     Values[iTri * ValueDof + 5] = ll;
                 }
+            }
+            else if (Type == ElementType.QUAD)
+            {
+                // TRIと同じでよいが要素IDを取得するメソッドが現状ない
+                throw new NotImplementedException();
             }
         }
 
         private void GetPrincipleVectorForSymmetricTensor2(double[] sigma, 
-            out double[] pvecs, out double ls,
-            out double[] pvecl, out double ll)
+            out double[] vecs, out double ls,
+            out double[] vecl, out double ll)
         {
-            pvecs = new double[2];
+            vecs = new double[2];
             ls = 0;
-            pvecl = new double[2];
+            vecl = new double[2];
             ll = 0;
             {
                 double tmp1 = Math.Sqrt((sigma[0] - sigma[1]) * (sigma[0] - sigma[1]) + 4 * sigma[2] * sigma[2]);
@@ -258,25 +298,25 @@ namespace IvyFEM
                 double sqlen2 = candl2[0] * candl2[0] + candl2[1] * candl2[1];
                 if (sqlen1 > sqlen2)
                 {
-                    pvecs[0] = candl1[0];
-                    pvecs[1] = candl1[1];
+                    vecs[0] = candl1[0];
+                    vecs[1] = candl1[1];
                 }
                 else
                 {
-                    pvecs[0] = candl2[0];
-                    pvecs[1] = candl2[1];
+                    vecs[0] = candl2[0];
+                    vecs[1] = candl2[1];
                 }
-                double len = Math.Sqrt(pvecs[0] * pvecs[0] + pvecs[1] * pvecs[1]);
+                double len = Math.Sqrt(vecs[0] * vecs[0] + vecs[1] * vecs[1]);
                 if (len < 1.0e-10)
                 {
-                    pvecs[0] = 0;
-                    pvecs[1] = 0;
+                    vecs[0] = 0;
+                    vecs[1] = 0;
                 }
                 else
                 {
                     double normalizer = ls / len;
-                    pvecs[0] *= normalizer;
-                    pvecs[1] *= normalizer;
+                    vecs[0] *= normalizer;
+                    vecs[1] *= normalizer;
                 }
             }
             {
@@ -284,18 +324,18 @@ namespace IvyFEM
                 double[] candl2 = { sigma[1] - ll, -sigma[2] };
                 double sqlen1 = candl1[0] * candl1[0] + candl1[1] * candl1[1];
                 double sqlen2 = candl2[0] * candl2[0] + candl2[1] * candl2[1];
-                if (sqlen1 > sqlen2) { pvecl[0] = candl1[0]; pvecl[1] = candl1[1]; }
-                else { pvecl[0] = candl2[0]; pvecl[1] = candl2[1]; }
-                double len = Math.Sqrt(pvecl[0] * pvecl[0] + pvecl[1] * pvecl[1]);
+                if (sqlen1 > sqlen2) { vecl[0] = candl1[0]; vecl[1] = candl1[1]; }
+                else { vecl[0] = candl2[0]; vecl[1] = candl2[1]; }
+                double len = Math.Sqrt(vecl[0] * vecl[0] + vecl[1] * vecl[1]);
                 if (len < 1.0e-10)
                 {
-                    pvecl[0] = 0; pvecl[1] = 0;
+                    vecl[0] = 0; vecl[1] = 0;
                 }
                 else
                 {
                     double normalizer = ll / len;
-                    pvecl[0] *= normalizer;
-                    pvecl[1] *= normalizer;
+                    vecl[0] *= normalizer;
+                    vecl[1] *= normalizer;
                 }
             }
         }
@@ -304,7 +344,7 @@ namespace IvyFEM
         {
             if (Type != ElementType.TRI)
             {
-                // あとで
+                // TODO: あとで
                 return;
             }
 
@@ -313,7 +353,18 @@ namespace IvyFEM
             {
                 if (DrawerType == VectorFieldDrawerType.VECTOR)
                 {
-                    throw new NotImplementedException();
+                    System.Diagnostics.Debug.Assert(ValueDof == 2);
+                    for (int iElem = 0; iElem < ElemCount; iElem++)
+                    {
+                        double[] co = { Coords[iElem * dim], Coords[iElem * dim + 1] };
+                        double[] va = new double[ValueDof];
+                        for (int iDof = 0; iDof < ValueDof; iDof++)
+                        {
+                            va[iDof] = Values[iElem * ValueDof + iDof];
+                        }
+                        GL.Vertex2(co);
+                        GL.Vertex2(co[0] + va[0], co[1] + va[1]);
+                    }
                 }
                 else if (DrawerType == VectorFieldDrawerType.SYMMETRIC_TENSOR2)
                 {
@@ -359,6 +410,7 @@ namespace IvyFEM
             }
             else if (dim == 3)
             {
+                // TODO: あとで
                 throw new NotImplementedException();
             }
         }

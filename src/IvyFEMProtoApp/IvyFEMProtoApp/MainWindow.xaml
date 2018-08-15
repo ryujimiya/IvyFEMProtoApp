@@ -6,15 +6,17 @@
         xmlns:OpenTK="clr-namespace:OpenTK;assembly=OpenTK.GLControl"        
         xmlns:local="clr-namespace:IvyFEM"
         mc:Ignorable="d"
-        Title="IvyFEMProtoApp" Height="350" Width="525" Loaded="Window_Loaded">
+        Title="IvyFEMProtoApp" Height="350" Width="500" Loaded="Window_Loaded">
     <Grid>
         <WrapPanel Margin="0,0,0,263">
             <Button x:Name="cad2DBtn" Content="Cad2D" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" RenderTransformOrigin="-0.04,0.15" Click="cad2DBtn_Click"/>
             <Button x:Name="coarseMesh2DBtn" Content="Coarse Mesh2D" Width="98" Click="coarseMesh2DBtn_Click"/>
             <Button x:Name="mesh2DBtn" Content="Mesh2D" Width="75" Click="mesh2DBtn_Click"/>
-            <Button x:Name="MatrixOperation" Content="Matrix Operation" Width="97" Click="MatrixOperation_Click"/>
+            <Button x:Name="lapackBtn" Content="LAPACK" Width="74" Click="lapackBtn_Click"/>
+            <Button x:Name="lisBtn" Content="Lis" Width="75" Click="lisBtn_Click"/>
             <Button x:Name="waveguideBtn" Content="Waveguide" Width="75" Click="waveguideBtn_Click"/>
             <Button x:Name="elasticBtn" Content="Elastic" Width="75" Click="elasticBtn_Click"/>
+            <Button x:Name="SaintVenantKirchhoffHyperelasticBtn" Content="Saint Venant - Kirchhoff Hyperelastic" Width="201" Click="SaintVenantKirchhoffHyperelasticBtn_Click"/>
             <Button x:Name="elasticTDBtn" Content="Elastic Time Domain" Width="115" Click="elasticTDBtn_Click"/>
         </WrapPanel>
         <WindowsFormsHost Margin="0,56,0,0">

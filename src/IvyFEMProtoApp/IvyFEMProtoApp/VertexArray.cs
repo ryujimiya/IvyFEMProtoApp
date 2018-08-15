@@ -38,7 +38,7 @@ namespace IvyFEM
             UVCoordArray = new double[ptCnt * 2];
         }
 
-        public BoundingBox3D GetBoundingBox(double[] rot)
+        public BoundingBox3D GetBoundingBox(OpenTK.Matrix3d rot)
         {
             if (VertexCoordArray == null)
             {
@@ -99,18 +99,18 @@ namespace IvyFEM
                     double x1 = VertexCoordArray[0];
                     double y1 = VertexCoordArray[1];
                     double z1 = 0.0;
-                    minX = maxX = x1 * rot[0] + y1 * rot[1] + z1 * rot[2];
-                    minY = maxY = x1 * rot[3] + y1 * rot[4] + z1 * rot[5];
-                    minZ = maxZ = x1 * rot[6] + y1 * rot[7] + z1 * rot[8];
+                    minX = maxX = x1 * rot[0, 0] + y1 * rot[0, 1] + z1 * rot[0, 2];
+                    minY = maxY = x1 * rot[1, 0] + y1 * rot[1, 1] + z1 * rot[1, 2];
+                    minZ = maxZ = x1 * rot[2, 0] + y1 * rot[2, 1] + z1 * rot[2, 2];
                 }
                 for (uint iPt = 1; iPt < PointCount; iPt++)
                 {
                     double x1 = VertexCoordArray[iPt * 2];
                     double y1 = VertexCoordArray[iPt * 2 + 1];
                     double z1 = 0.0;
-                    double x2 = x1 * rot[0] + y1 * rot[1] + z1 * rot[2];
-                    double y2 = x1 * rot[3] + y1 * rot[4] + z1 * rot[5];
-                    double z2 = x1 * rot[6] + y1 * rot[7] + z1 * rot[8];
+                    double x2 = x1 * rot[0, 0] + y1 * rot[0, 1] + z1 * rot[0, 2];
+                    double y2 = x1 * rot[1, 0] + y1 * rot[1, 1] + z1 * rot[1, 2];
+                    double z2 = x1 * rot[2, 0] + y1 * rot[2, 1] + z1 * rot[2, 2];
                     maxX = (x2 > maxX) ? x2 : maxX; minX = (x2 < minX) ? x2 : minX;
                     maxY = (y2 > maxY) ? y2 : maxY; minY = (y2 < minY) ? y2 : minY;
                     maxZ = (z2 > maxZ) ? z2 : maxZ; minZ = (z2 < minZ) ? z2 : minZ;
@@ -119,9 +119,9 @@ namespace IvyFEM
                 double c1X = (minX + maxX) * 0.5;
                 double c1Y = (minY + maxY) * 0.5;
                 double c1Z = (minZ + maxZ) * 0.5;
-                double c2X = c1X * rot[0] + c1Y * rot[3] + c1Z * rot[6];
-                double c2Y = c1X * rot[1] + c1Y * rot[4] + c1Z * rot[7];
-                double c2Z = c1X * rot[2] + c1Y * rot[5] + c1Z * rot[8];
+                double c2X = c1X * rot[0, 0] + c1Y * rot[1, 0] + c1Z * rot[2, 0];
+                double c2Y = c1X * rot[0, 1] + c1Y * rot[1, 1] + c1Z * rot[2, 1];
+                double c2Z = c1X * rot[0, 2] + c1Y * rot[1, 2] + c1Z * rot[2, 2];
                 double hX = (maxX - minX) * 0.5;
                 double hY = (maxY - minY) * 0.5;
                 double hZ = (maxZ - minZ) * 0.5;
@@ -143,18 +143,18 @@ namespace IvyFEM
                     double x1 = VertexCoordArray[0];
                     double y1 = VertexCoordArray[1];
                     double z1 = VertexCoordArray[2];
-                    minX = maxX = x1 * rot[0] + y1 * rot[1] + z1 * rot[2];
-                    minY = maxY = x1 * rot[3] + y1 * rot[4] + z1 * rot[5];
-                    minZ = maxZ = x1 * rot[6] + y1 * rot[7] + z1 * rot[8];
+                    minX = maxX = x1 * rot[0, 0] + y1 * rot[0, 1] + z1 * rot[0, 2];
+                    minY = maxY = x1 * rot[1, 0] + y1 * rot[1, 1] + z1 * rot[1, 2];
+                    minZ = maxZ = x1 * rot[2, 0] + y1 * rot[2, 1] + z1 * rot[2, 2];
                 }
                 for (uint iPt = 1; iPt < PointCount; iPt++)
                 {
                     double x1 = VertexCoordArray[iPt * 3];
                     double y1 = VertexCoordArray[iPt * 3 + 1];
                     double z1 = VertexCoordArray[iPt * 3 + 2];
-                    double x2 = x1 * rot[0] + y1 * rot[1] + z1 * rot[2];
-                    double y2 = x1 * rot[3] + y1 * rot[4] + z1 * rot[5];
-                    double z2 = x1 * rot[6] + y1 * rot[7] + z1 * rot[8];
+                    double x2 = x1 * rot[0, 0] + y1 * rot[0, 1] + z1 * rot[0, 2];
+                    double y2 = x1 * rot[1, 0] + y1 * rot[1, 1] + z1 * rot[1, 2];
+                    double z2 = x1 * rot[2, 0] + y1 * rot[2, 1] + z1 * rot[2, 2];
                     maxX = (x2 > maxX) ? x2 : maxX; minX = (x2 < minX) ? x2 : minX;
                     maxY = (y2 > maxY) ? y2 : maxY; minY = (y2 < minY) ? y2 : minY;
                     maxZ = (z2 > maxZ) ? z2 : maxZ; minZ = (z2 < minZ) ? z2 : minZ;
@@ -163,9 +163,9 @@ namespace IvyFEM
                 double c1X = (minX + maxX) * 0.5;
                 double c1Y = (minY + maxY) * 0.5;
                 double c1Z = (minZ + maxZ) * 0.5;
-                double c2X = c1X * rot[0] + c1Y * rot[3] + c1Z * rot[6];
-                double c2Y = c1X * rot[1] + c1Y * rot[4] + c1Z * rot[7];
-                double c2Z = c1X * rot[2] + c1Y * rot[5] + c1Z * rot[8];
+                double c2X = c1X * rot[0, 0] + c1Y * rot[1, 0] + c1Z * rot[2, 0];
+                double c2Y = c1X * rot[0, 1] + c1Y * rot[1, 1] + c1Z * rot[2, 1];
+                double c2Z = c1X * rot[0, 2] + c1Y * rot[1, 2] + c1Z * rot[2, 2];
                 double hX = (maxX - minX) * 0.5;
                 double hY = (maxY - minY) * 0.5;
                 double hZ = (maxZ - minZ) * 0.5;

@@ -11,7 +11,7 @@ namespace IvyFEM
         RotMode SutableRotMode { get; }
         bool IsAntiAliasing { get; set; }
 
-        BoundingBox3D GetBoundingBox(double[] rot);
+        BoundingBox3D GetBoundingBox(OpenTK.Matrix3d rot);
 
         void DrawSelection(uint idraw);
         void Draw();

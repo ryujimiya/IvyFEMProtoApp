@@ -297,7 +297,7 @@ namespace IvyFEM
             }
         }
 
-        public BoundingBox3D GetBoundingBox(double[] rot)
+        public BoundingBox3D GetBoundingBox(OpenTK.Matrix3d rot)
         {
             return VertexArray.GetBoundingBox(rot);
         }

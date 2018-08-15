@@ -258,40 +258,35 @@ namespace IvyFEM
 
         public abstract void MouseRotation(double movBeginX, double movBeginY, double movEndX, double movEndY);
 
-        public abstract void RotMatrix33(double[] rot);
+        public abstract OpenTK.Matrix3d RotMatrix33();
 
-        public double[] RotMatrix33()
+        public OpenTK.Matrix4d RotMatrix44()
         {
-            double[] rot = new double[9];
-            RotMatrix33(rot);
+            OpenTK.Matrix4d rot = new OpenTK.Matrix4d();
+
+            var rot1 = RotMatrix33();
+
+            rot[0, 0] = rot1[0, 0];
+            rot[1, 0] = rot1[1, 0];
+            rot[2, 0] = rot1[2, 0];
+            rot[3, 0] = 0.0;
+
+            rot[0, 1] = rot1[0, 1];
+            rot[1, 1] = rot1[1, 1];
+            rot[2, 1] = rot1[2, 1];
+            rot[3, 1] = 0.0;
+
+            rot[0, 2] = rot1[0, 2];
+            rot[1, 2] = rot1[1, 2];
+            rot[2, 2] = rot1[2, 2];
+            rot[3, 2] = 0.0;
+
+            rot[0, 3] = 0.0;
+            rot[1, 3] = 0.0;
+            rot[2, 3] = 0.0;
+            rot[3, 3] = 1.0;
+
             return rot;
-        }
-
-        public void RotMatrix44Trans(double[] rot)
-        {
-            double[] rot1 = new double[9];
-
-            RotMatrix33(rot1);
-
-            rot[0] = rot1[0];
-            rot[1] = rot1[3];
-            rot[2] = rot1[6];
-            rot[3] = 0.0;
-
-            rot[4] = rot1[1];
-            rot[5] = rot1[4];
-            rot[6] = rot1[7];
-            rot[7] = 0.0;
-
-            rot[8] = rot1[2];
-            rot[9] = rot1[5];
-            rot[10] = rot1[8];
-            rot[11] = 0.0;
-
-            rot[12] = 0.0;
-            rot[13] = 0.0;
-            rot[14] = 0.0;
-            rot[15] = 1.0;
         }
 
     }

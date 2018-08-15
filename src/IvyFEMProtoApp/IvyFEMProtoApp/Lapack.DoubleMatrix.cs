@@ -12,38 +12,28 @@ namespace IvyFEM.Lapack
     ///    1次元配列は、clapackの配列数値格納順序と同じ（行データを先に格納する: Column Major Order)
     ///    既存のdouble[,]からの置き換えポイント
     ///       double[,] --> DoubleMatrix
-    ///       GetLength(0) --> RowSize
-    ///       GetLength(1) --> ColumnSize
+    ///       GetLength(0) --> RowLength
+    ///       GetLength(1) --> ColumnLength
     /// </summary>
-    public class DoubleMatrix
+    class DoubleMatrix
     {
         public double[] Buffer { get; protected set; } = null;
-        public int RowSize { get; protected set; } = 0;
-        public int ColumnSize = 0;
+        public int RowLength { get; protected set; } = 0;
+        public int ColumnLength { get; protected set; } = 0;
 
         public DoubleMatrix()
         {
             Clear();
         }
 
-        public DoubleMatrix(int rowSize, int columnSize)
+        public DoubleMatrix(int rowLength, int columnLength)
         {
-            Resize(rowSize, columnSize);
+            Resize(rowLength, columnLength);
         }
 
-        public DoubleMatrix(double[] buffer, int rowSize, int columnSize, bool alloc = true)
+        public DoubleMatrix(double[] buffer, int rowLength, int columnLength, bool alloc = true)
         {
-            if (alloc)
-            {
-                Copy(buffer, rowSize, columnSize);
-            }
-            else
-            {
-                System.Diagnostics.Debug.Assert(buffer.Length == rowSize * columnSize);
-                Buffer = buffer;
-                RowSize = rowSize;
-                ColumnSize = columnSize;
-            }
+            Copy(buffer, rowLength, columnLength, alloc);
         }
 
         public DoubleMatrix(DoubleMatrix src)
@@ -51,18 +41,34 @@ namespace IvyFEM.Lapack
             Copy(src);
         }
 
-        public void Resize(int rowSize, int columnSize)
+        public static explicit operator DoubleMatrix(IvyFEM.Linear.DoubleSparseMatrix sparseM)
         {
-            Buffer = new double[rowSize * columnSize];
-            RowSize = rowSize;
-            ColumnSize = columnSize;
+            DoubleMatrix m = new DoubleMatrix(sparseM.RowLength, sparseM.ColumnLength);
+            for (int col = 0; col < sparseM.ColumnLength; col++)
+            {
+                var sparseRowValues = sparseM.IndexsValues[col];
+                foreach (var sparseRowValue in sparseRowValues)
+                {
+                    int row = sparseRowValue.Key;
+                    double value = sparseRowValue.Value;
+                    m[row, col] = value;
+                }
+            }
+            return m;
+        }
+
+        public void Resize(int rowLength, int columnLength)
+        {
+            Buffer = new double[rowLength * columnLength];
+            RowLength = rowLength;
+            ColumnLength = columnLength;
         }
 
         public void Clear()
         {
             Buffer = null;
-            RowSize = 0;
-            ColumnSize = 0;
+            RowLength = 0;
+            ColumnLength = 0;
         }
 
         public string Dump()
@@ -71,11 +77,11 @@ namespace IvyFEM.Lapack
             string CRLF = System.Environment.NewLine;
 
             ret += "DoubleMatrix" + CRLF;
-            ret += "ColumnSize = " + ColumnSize + CRLF;
-            ret += "RowSize = " + RowSize + CRLF;
-            for (int col = 0; col < ColumnSize; col++)
+            ret += "ColumnLength = " + ColumnLength + CRLF;
+            ret += "RowLength = " + RowLength + CRLF;
+            for (int col = 0; col < ColumnLength; col++)
             {
-                for (int row = 0; row < RowSize; row++)
+                for (int row = 0; row < RowLength; row++)
                 {
                     ret += "[" + row + ", " + col + "] = " + this[row, col] + CRLF; 
                 }
@@ -85,66 +91,75 @@ namespace IvyFEM.Lapack
 
         public int BufferIndex(int row, int col)
         {
-            System.Diagnostics.Debug.Assert(row >= 0 && row < RowSize && col >= 0 && col < ColumnSize);
-            return (row + col * RowSize);
+            System.Diagnostics.Debug.Assert(row >= 0 && row < RowLength && col >= 0 && col < ColumnLength);
+            return (row + col * RowLength);
         }
 
         public double this[int row, int col]
         {
             get
             {
-                if (row < 0 || RowSize <= row || col < 0 || ColumnSize <= col)
+                if (row < 0 || RowLength <= row || col < 0 || ColumnLength <= col)
                 {
                     throw new IndexOutOfRangeException();
                 }
-                return Buffer[row + col * RowSize];
+                return Buffer[row + col * RowLength];
             }
             set
             {
-                if (row < 0 || RowSize <= row || col < 0 || ColumnSize <= col)
+                if (row < 0 || RowLength <= row || col < 0 || ColumnLength <= col)
                 {
                     throw new IndexOutOfRangeException();
                 }
-                Buffer[row + col * RowSize] = value;
+                Buffer[row + col * RowLength] = value;
             }
         }
 
         public void Copy(DoubleMatrix src)
         {
-            Copy(src.Buffer, src.RowSize, src.ColumnSize);
+            Copy(src.Buffer, src.RowLength, src.ColumnLength, true);
         }
 
-        public void Copy(double[] buffer, int rowSize, int columnSize)
+        public void Copy(double[] buffer, int rowLength, int columnLength, bool alloc)
         {
-            System.Diagnostics.Debug.Assert(buffer.Length == rowSize * columnSize);
-            if (buffer.Length != rowSize * columnSize)
+            System.Diagnostics.Debug.Assert(buffer.Length == rowLength * columnLength);
+            if (buffer.Length != rowLength * columnLength)
             {
                 return;
             }
 
-            // バッファ確保
-            if (RowSize == rowSize && ColumnSize == columnSize)
+            if (!alloc)
             {
-                // 何もしない
-            }
-            else if (Buffer != null && Buffer.Length == rowSize * columnSize)
-            {
-                RowSize = rowSize;
-                ColumnSize = columnSize;
+                Buffer = buffer;
+                RowLength = rowLength;
+                ColumnLength = columnLength;
             }
             else
             {
-                Resize(rowSize, columnSize);
-            }
+                // バッファ確保
+                if (RowLength == rowLength && ColumnLength == columnLength)
+                {
+                    // 何もしない
+                }
+                else if (Buffer != null && Buffer.Length == rowLength * columnLength)
+                {
+                    RowLength = rowLength;
+                    ColumnLength = columnLength;
+                }
+                else
+                {
+                    Resize(rowLength, columnLength);
+                }
 
-            // コピー
-            buffer.CopyTo(Buffer, 0);
+                // コピー
+                buffer.CopyTo(Buffer, 0);
+            }
         }
 
         public void Zero()
         {
             int size = Buffer.Length;
-            for (int i = 0; i < size; ++i)
+            for (int i = 0; i < size; i++)
             {
                 Buffer[i] = 0.0;
             }
@@ -153,7 +168,7 @@ namespace IvyFEM.Lapack
         public void Identity()
         {
             Zero();
-            for (int i = 0; i < RowSize; ++i)
+            for (int i = 0; i < RowLength; i++)
             {
                 this[i, i] = 1;
             }
@@ -161,26 +176,23 @@ namespace IvyFEM.Lapack
 
         public void Transpose()
         {
-            DoubleMatrix t = new DoubleMatrix(ColumnSize, RowSize);
+            DoubleMatrix t = new DoubleMatrix(ColumnLength, RowLength);
 
-            for (int row = 0; row < RowSize; row++)
+            for (int row = 0; row < RowLength; row++)
             {
-                for (int col = 0; col < ColumnSize; col++)
+                for (int col = 0; col < ColumnLength; col++)
                 {
                     t[col, row] = this[row, col];
                 }
             }
 
-            Clear();
-            Buffer = t.Buffer;
-            RowSize = t.RowSize;
-            ColumnSize = t.ColumnSize;
+            Copy(t.Buffer, t.RowLength, t.ColumnLength, false);
         }
 
         public static DoubleMatrix Inverse(DoubleMatrix A)
         {
-            System.Diagnostics.Debug.Assert(A.RowSize == A.ColumnSize);
-            int n = A.RowSize;
+            System.Diagnostics.Debug.Assert(A.RowLength == A.ColumnLength);
+            int n = A.RowLength;
             DoubleMatrix workA = new DoubleMatrix(A);
             DoubleMatrix workB = new DoubleMatrix(n, n);
             workB.Identity(); // 単位行列
@@ -200,9 +212,7 @@ namespace IvyFEM.Lapack
         public void Inverse()
         {
             DoubleMatrix ret = Inverse(this);
-            Buffer = ret.Buffer;
-            RowSize = ret.RowSize;
-            ColumnSize = ret.ColumnSize;
+            Copy(ret.Buffer, ret.RowLength, ret.ColumnLength, false);
         }
 
         public static DoubleMatrix operator *(DoubleMatrix A, DoubleMatrix B)
@@ -211,12 +221,21 @@ namespace IvyFEM.Lapack
             int cRow;
             int cCol;
             IvyFEM.Lapack.Functions.dgemmAB(out c, out cRow, out cCol,
-                A.Buffer, A.RowSize, A.ColumnSize,
-                B.Buffer, B.RowSize, B.ColumnSize);
+                A.Buffer, A.RowLength, A.ColumnLength, TransposeType.Nop,
+                B.Buffer, B.RowLength, B.ColumnLength, TransposeType.Nop);
 
             bool alloc = false;
             DoubleMatrix C = new DoubleMatrix(c, cRow, cCol, alloc);
             return C;
+        }
+
+        public static double[] operator *(DoubleMatrix A, double[] b)
+        {
+            double[] c;
+            IvyFEM.Lapack.Functions.dgemvAX(out c, 
+                A.Buffer, A.RowLength, A.ColumnLength, TransposeType.Nop,
+                b);
+            return c;
         }
     }
 }

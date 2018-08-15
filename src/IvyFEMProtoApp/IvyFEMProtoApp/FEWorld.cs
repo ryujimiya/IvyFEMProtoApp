@@ -290,8 +290,8 @@ namespace IvyFEM
             IList<uint> meshIds = Mesh.GetIds();
             IList<int> zeroCoordIds = GetZeroCoordIds(meshIds);
 
-            int nodeId = 0;
-
+            //////////////////////////////////////////////////
+            // 境界の線要素
             foreach (var portEIds in PortEIdss)
             {
                 var lineFEArray = new ObjectArray<LineFE>();
@@ -337,12 +337,10 @@ namespace IvyFEM
                             {
                                 int coId = vertexs[iElem * elemPtCnt + iPt];
                                 coIds[iPt] = coId;
-                                if (!Co2Node.ContainsKey(coId) &&
+                                if (!portCo2Node.ContainsKey(coId) &&
                                     zeroCoordIds.IndexOf(coId) == -1)
                                 {
-                                    Co2Node[coId] = nodeId;
                                     portCo2Node[coId] = portNodeId;
-                                    nodeId++;
                                     portNodeId++;
                                 }
                             }
@@ -361,7 +359,13 @@ namespace IvyFEM
                 }
             }
 
+            int nodeId = 0;
+
+            //////////////////////////////////////////////////
             // 領域の三角形要素
+            // まず要素を作る
+            // この順番で生成した要素は隣接していない
+            IList<TriangleFE> triFEs = new List<TriangleFE>();
             foreach (uint meshId in meshIds)
             {
                 uint elemCnt;
@@ -394,12 +398,6 @@ namespace IvyFEM
                     {
                         int coId = vertexs[iElem * elemPtCnt + iPt];
                         coIds[iPt] = coId;
-                        if (!Co2Node.ContainsKey(coId) &&
-                            zeroCoordIds.IndexOf(coId) == -1)
-                        {
-                            Co2Node[coId] = nodeId;
-                            nodeId++;
-                        }
                     }
 
                     TriangleFE fe = new TriangleFE();
@@ -408,18 +406,144 @@ namespace IvyFEM
                     fe.MaterialId = maId;
                     fe.MeshId = meshId;
                     fe.MeshElemId = iElem;
-                    uint freeId = TriangleFEArray.GetFreeObjectId();
-                    uint feId = TriangleFEArray.AddObject(new KeyValuePair<uint, TriangleFE>(freeId, fe));
-                    System.Diagnostics.Debug.Assert(feId == freeId);
-
-                    var triArray = Mesh.GetTriArrays();
-                    var tri = triArray[loc].Tris[iElem];
-                    tri.FEId = (int)feId;
-
-                    string key = string.Format(meshId + "_" + iElem);
-                    Mesh2TriangleFE.Add(key, feId);
+                    triFEs.Add(fe);
                 }
             }
+
+            Dictionary<TriangleFE, IList<int>> triFECoIds = new Dictionary<TriangleFE, IList<int>>();
+            // 共有とみなす節点を生成
+            foreach (TriangleFE fe in triFEs)
+            {
+                // 要素の節点
+                IList<int> coIds = fe.CoordIds.ToList();
+
+                //（EMWaveguideの場合、ポート上の節点は隣りあわせの要素以外でも関係がある)
+                bool isInclude = false;
+                foreach (var portCo2Node in PortCo2Nodes)
+                {
+                    var portCoIds = new List<int>();
+                    foreach (var pair in portCo2Node)
+                    {
+                        int coId = pair.Key;
+                        if (!portCoIds.Contains(coId))
+                        {
+                            portCoIds.Add(coId);
+                        }
+                        if (coIds.Contains(coId))
+                        {
+                            isInclude = true;
+                        }
+                    }
+                    if (isInclude)
+                    {
+                        foreach (int coId in portCoIds)
+                        {
+                            coIds.Add(coId);
+                        }
+                    }
+                }
+                triFECoIds.Add(fe, coIds);
+            }
+            // 節点を共有している要素を探す
+            IList<TriangleFE> sortedTriFEs = new List<TriangleFE>();
+            IList<TriangleFE> queueTriFE = new List<TriangleFE>();
+            while (triFEs.Count > 0 || queueTriFE.Count > 0)
+            {
+                TriangleFE checkFE = null;
+                if (queueTriFE.Count == 0 && triFEs.Count > 0)
+                {
+                    checkFE = triFEs[0];
+                    triFEs.Remove(checkFE);
+                    System.Diagnostics.Debug.Assert(!sortedTriFEs.Contains(checkFE));
+                    sortedTriFEs.Add(checkFE);
+                }
+                else if (queueTriFE.Count > 0)
+                {
+                    checkFE = queueTriFE[0];
+                    queueTriFE.RemoveAt(0);
+                    System.Diagnostics.Debug.Assert(!sortedTriFEs.Contains(checkFE));
+                    sortedTriFEs.Add(checkFE);
+                }
+                else
+                {
+                    System.Diagnostics.Debug.Assert(false);
+                }
+                var includeFEs = GetCoordIncludeTriFEs(checkFE, triFEs, triFECoIds);
+                foreach (TriangleFE includeFE in includeFEs)
+                {
+                    if (!sortedTriFEs.Contains(includeFE) &&
+                        !queueTriFE.Contains(includeFE))
+                    {
+                        queueTriFE.Add(includeFE);
+                        triFEs.Remove(includeFE);
+                    }
+                }
+            }
+
+            // ナンバリング
+            foreach (TriangleFE fe in sortedTriFEs)
+            {
+                int elemPtCnt = fe.CoordIds.Length;
+                int[] coIds = fe.CoordIds;
+                for (int iPt = 0; iPt < elemPtCnt; iPt++)
+                {
+                    int coId = coIds[iPt];
+                    if (!Co2Node.ContainsKey(coId) &&
+                        zeroCoordIds.IndexOf(coId) == -1)
+                    {
+                        Co2Node[coId] = nodeId;
+                        nodeId++;
+                    }
+                }
+
+                uint freeId = TriangleFEArray.GetFreeObjectId();
+                uint feId = TriangleFEArray.AddObject(new KeyValuePair<uint, TriangleFE>(freeId, fe));
+                System.Diagnostics.Debug.Assert(feId == freeId);
+
+                uint meshId = fe.MeshId;
+                int iElem = fe.MeshElemId;
+                uint elemCnt;
+                MeshType meshType;
+                int loc;
+                uint cadId;
+                Mesh.GetMeshInfo(meshId, out elemCnt, out meshType, out loc, out cadId);
+                System.Diagnostics.Debug.Assert(meshType == MeshType.TRI);
+                var triArray = Mesh.GetTriArrays();
+                var tri = triArray[loc].Tris[iElem];
+                tri.FEId = (int)feId;
+
+                string key = string.Format(meshId + "_" + iElem);
+                Mesh2TriangleFE.Add(key, feId);
+            }
+
+        }
+
+        private IList<TriangleFE> GetCoordIncludeTriFEs(TriangleFE fe, IList<TriangleFE> triFEs,
+            Dictionary<TriangleFE, IList<int>> triFECoIds)
+        {
+            IList<int> coIds = triFECoIds[fe];
+            IList<TriangleFE> includeTriFEs = new List<TriangleFE>();
+            foreach (TriangleFE tmpFE in triFEs)
+            {
+                bool isInclude = false;
+                IList<int> tmpCoIds = triFECoIds[tmpFE];
+                foreach (int tmpCoId in tmpCoIds)
+                {
+                    foreach (int coId in coIds)
+                    {
+                        if (tmpCoId == coId)
+                        {
+                            isInclude = true;
+                            break;
+                        }
+                    }
+                }
+                if (isInclude)
+                {
+                    includeTriFEs.Add(tmpFE);
+                }
+            }
+            return includeTriFEs;
         }
 
         private IList<int> GetZeroCoordIds(IList<uint> meshIds)

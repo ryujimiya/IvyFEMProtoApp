@@ -34,21 +34,24 @@ namespace IvyFEM
             Theta -= dTheta;
         }
 
-        public override void RotMatrix33(double[] rot)
+        public override OpenTK.Matrix3d RotMatrix33()
         {
+            var rot = new OpenTK.Matrix3d();
             double ct = Math.Cos(Theta);
             double st = Math.Sin(Theta);
-            rot[0] = ct;
-            rot[1] = -st;
-            rot[2] = 0.0;
 
-            rot[3] = st;
-            rot[4] = ct;
-            rot[5] = 0.0;
+            rot[0, 0] = ct;
+            rot[1, 0] = st;
+            rot[2, 0] = 0.0;
 
-            rot[6] = 0.0;
-            rot[7] = 0.0;
-            rot[8] = 1.0;
+            rot[0, 1] = -st;
+            rot[1, 1] = ct;
+            rot[2, 1] = 0.0;
+
+            rot[0, 2] = 0.0;
+            rot[1, 2] = 0.0;
+            rot[2, 2] = 1.0;
+            return rot;
         }
 
         public  Vector3 ProjectionOnPlane(double posX,   double posY,
