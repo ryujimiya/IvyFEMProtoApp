@@ -25,6 +25,11 @@ namespace IvyFEM
             foreach (uint feId in feIds)
             {
                 TriangleFE triFE = World.GetTriangleFE(feId);
+                Material ma0 = World.GetMaterial(triFE.MaterialId);
+                if (ma0.MaterialType != MaterialType.ELASTIC)
+                {
+                    continue;
+                }
                 int[] coIds = triFE.CoordIds;
                 uint elemNodeCnt = triFE.NodeCount;
                 int[] nodes = new int[elemNodeCnt];
@@ -35,11 +40,6 @@ namespace IvyFEM
                     nodes[iNode] = nodeId;
                 }
 
-                Material ma0 = World.GetMaterial(triFE.MaterialId);
-                if (ma0.MaterialType != MaterialType.ELASTIC)
-                {
-                    continue;
-                }
                 var ma = ma0 as ElasticMaterial;
                 double lambda = ma.LameLambda;
                 double mu = ma.LameMu;
@@ -110,6 +110,11 @@ namespace IvyFEM
             foreach (uint feId in feIds)
             {
                 TriangleFE triFE = World.GetTriangleFE(feId);
+                Material ma0 = World.GetMaterial(triFE.MaterialId);
+                if (ma0.MaterialType != MaterialType.SAINTVENANT_KIRCHHOFF_HYPERELASTIC)
+                {
+                    continue;
+                }
                 int[] coIds = triFE.CoordIds;
                 uint elemNodeCnt = triFE.NodeCount;
                 int[] nodes = new int[elemNodeCnt];
@@ -120,11 +125,6 @@ namespace IvyFEM
                     nodes[iNode] = nodeId;
                 }
 
-                Material ma0 = World.GetMaterial(triFE.MaterialId);
-                if (ma0.MaterialType != MaterialType.SAINTVENANT_KIRCHHOFF_HYPERELASTIC)
-                {
-                    continue;
-                }
                 var ma = ma0 as SaintVenantKirchhoffHyperelasticMaterial;
                 double lambda = ma.LameLambda;
                 double mu = ma.LameMu;

@@ -12,6 +12,7 @@ namespace IvyFEM.Linear
         public bool DoubleSolve(out double[] X, DoubleSparseMatrix A, double[] B)
         {
             bool success = false;
+            using (IvyFEM.Lis.LisInitializer LisInitializer = new IvyFEM.Lis.LisInitializer())
             using (IvyFEM.Lis.LisMatrix lisA = (IvyFEM.Lis.LisMatrix)A)
             using (IvyFEM.Lis.LisVector lisB = (IvyFEM.Lis.LisVector)B)
             using (IvyFEM.Lis.LisVector lisX = new IvyFEM.Lis.LisVector())
@@ -28,10 +29,10 @@ namespace IvyFEM.Linear
                 ret = lisSolver.Solve(lisA, lisB, lisX);
                 System.Diagnostics.Debug.Assert(ret == 0);
                 success = (ret == 0);
-                int iter;
-                ret = lisSolver.GetIter(out iter);
-                System.Diagnostics.Debug.Assert(ret == 0);
-                System.Diagnostics.Debug.WriteLine("Lis Solve iter = " + iter);
+                //int iter;
+                //ret = lisSolver.GetIter(out iter);
+                //System.Diagnostics.Debug.Assert(ret == 0);
+                //System.Diagnostics.Debug.WriteLine("Lis Solve iter = " + iter);
                 System.Numerics.Complex[] complexX = new System.Numerics.Complex[n];
                 ret = lisX.GetValues(0, n, complexX);
                 System.Diagnostics.Debug.Assert(ret == 0);
@@ -47,6 +48,7 @@ namespace IvyFEM.Linear
         public bool ComplexSolve(out Complex[] X, ComplexSparseMatrix A, Complex[] B)
         {
             bool success = false;
+            using (IvyFEM.Lis.LisInitializer LisInitializer = new IvyFEM.Lis.LisInitializer())
             using (IvyFEM.Lis.LisMatrix lisA = (IvyFEM.Lis.LisMatrix)A)
             using (IvyFEM.Lis.LisVector lisB = (IvyFEM.Lis.LisVector)B)
             using (IvyFEM.Lis.LisVector lisX = new IvyFEM.Lis.LisVector())
@@ -63,10 +65,10 @@ namespace IvyFEM.Linear
                 ret = lisSolver.Solve(lisA, lisB, lisX);
                 System.Diagnostics.Debug.Assert(ret == 0);
                 success = (ret == 0);
-                int iter;
-                ret = lisSolver.GetIter(out iter);
-                System.Diagnostics.Debug.Assert(ret == 0);
-                System.Diagnostics.Debug.WriteLine("Lis Solve iter = " + iter);
+                //int iter;
+                //ret = lisSolver.GetIter(out iter);
+                //System.Diagnostics.Debug.Assert(ret == 0);
+                //System.Diagnostics.Debug.WriteLine("Lis Solve iter = " + iter);
                 X = new System.Numerics.Complex[n];
                 ret = lisX.GetValues(0, n, X);
                 System.Diagnostics.Debug.Assert(ret == 0);

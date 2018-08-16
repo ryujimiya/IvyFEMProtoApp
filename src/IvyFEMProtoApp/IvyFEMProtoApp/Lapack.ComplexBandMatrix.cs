@@ -106,6 +106,7 @@ namespace IvyFEM.Lapack
                         m[r, c] = denseM[r, c];
                     }
                 }
+                // superdiagonal成分
                 if (c > 0)
                 {
                     for (int r = c - 1; r >= c - superdiaLength && r >= 0; r--)
@@ -200,6 +201,7 @@ namespace IvyFEM.Lapack
                         m[r, c] = sparseM[r, c];
                     }
                 }
+                // superdiagonal成分
                 if (c > 0)
                 {
                     for (int r = c - 1; r >= c - superdiaLength && r >= 0; r--)

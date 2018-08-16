@@ -104,6 +104,7 @@ namespace IvyFEM.Lapack
                         m[r, c] = denseM[r, c];
                     }
                 }
+                // superdiagonal成分
                 if (c > 0)
                 {
                     for (int r = c - 1; r >= c - superdiaLength && r >= 0; r--)
@@ -136,7 +137,6 @@ namespace IvyFEM.Lapack
                     for (int r = rowColLength - 1; r >= c + 1; r--)
                     {
                         // 非０要素が見つかったら抜ける
-                        // Note: Magnitue >= 0
                         if (Math.Abs(sparseM[r, c]) >= Constants.PrecisionLowerLimit)
                         {
                             cnt = r - c;
@@ -154,7 +154,6 @@ namespace IvyFEM.Lapack
                     for (int r = 0; r <= c - 1; r++)
                     {
                         // 非０要素が見つかったら抜ける
-                        // Note: Magnitue >= 0
                         if (Math.Abs(sparseM[r, c]) >= Constants.PrecisionLowerLimit)
                         {
                             cnt = c - r;
@@ -186,6 +185,7 @@ namespace IvyFEM.Lapack
                         m[r, c] = sparseM[r, c];
                     }
                 }
+                // superdiagonal成分
                 if (c > 0)
                 {
                     for (int r = c - 1; r >= c - superdiaLength && r >= 0; r--)

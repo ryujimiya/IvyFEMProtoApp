@@ -29,9 +29,9 @@ namespace IvyFEM
                 double[] prevU = null;
                 SetInitialU(nodeCnt, dof);
                 double norm = 0;
-                const int maxCnt = 50;
-                int itr = 0;
-                for (; itr < maxCnt; itr++)
+                const int maxCnt = 100;
+                int iter = 0;
+                for (; iter < maxCnt; iter++)
                 {
                     var A = new IvyFEM.Linear.DoubleSparseMatrix(nodeCnt * dof, nodeCnt * dof);
                     var B = new double[nodeCnt * dof];
@@ -41,7 +41,7 @@ namespace IvyFEM
 
                     SetFixedCadsCondtion(World, A, B, nodeCnt, dof);
 
-                    if (itr > 0)
+                    if (iter > 0)
                     {
                         double[] R = IvyFEM.Lapack.Functions.daxpy(-1.0, prevU, U);
                         norm = IvyFEM.Lapack.Functions.dnrm2(R);
@@ -59,8 +59,8 @@ namespace IvyFEM
                     U = X;
                     //---------------------------------------------------
                 }
-                System.Diagnostics.Debug.WriteLine("itr = " + itr + " norm = " + norm);
-                //System.Diagnostics.Debug.Assert(itr < maxCnt);
+                System.Diagnostics.Debug.WriteLine("iter = " + iter + " norm = " + norm);
+                System.Diagnostics.Debug.Assert(iter < maxCnt);
             }
             else
             {
@@ -70,7 +70,6 @@ namespace IvyFEM
                 CalcLinearElasticAB(A, B, nodeCnt, dof);
 
                 SetFixedCadsCondtion(World, A, B, nodeCnt, dof);
-
 
                 //-------------------------------
                 double[] X;

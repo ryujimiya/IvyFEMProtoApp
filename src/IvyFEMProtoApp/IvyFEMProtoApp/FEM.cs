@@ -17,6 +17,7 @@ namespace IvyFEM
         {
             var fixedCoIdFixedCad = world.GetFixedCoordIdFixedCad();
 
+            // A21の右辺移行
             for (int rowNodeId = 0; rowNodeId < nodeCnt; rowNodeId++)
             {
                 int rowCoId = world.Node2Coord(rowNodeId);
@@ -25,29 +26,32 @@ namespace IvyFEM
                 {
                     rowfixedCads = fixedCoIdFixedCad[rowCoId];
                 }
-                for (int colNodeId = 0; colNodeId < nodeCnt; colNodeId++)
+                // fixedでない節点、自由度
+                IList<int> rowDofs = new List<int>();
+                for (int rowDof = 0; rowDof < dof; rowDof++)
                 {
-                    int colCoId = world.Node2Coord(colNodeId);
-                    if (!fixedCoIdFixedCad.ContainsKey(colCoId))
+                    rowDofs.Add(rowDof);
+                }
+                foreach (var rowfixedCad in rowfixedCads)
+                {
+                    rowDofs.Remove(rowfixedCad.DofIndex);
+                }
+                foreach (int rowDof in rowDofs)
+                {
+                    for (int colNodeId = 0; colNodeId < nodeCnt; colNodeId++)
                     {
-                        continue;
-                    }
-                    IList<FieldFixedCad> fixedCads = fixedCoIdFixedCad[colCoId];
-                    foreach (var fixedCad in fixedCads)
-                    {
-                        System.Diagnostics.Debug.Assert(fixedCad.ValueType == FieldValueType.VECTOR2);
-                        int iDof = fixedCad.DofIndex;
-                        double value = fixedCad.Value;
-                        for (int rowDof = 0; rowDof < dof; rowDof++)
+                        // fixed節点、自由度
+                        int colCoId = world.Node2Coord(colNodeId);
+                        if (!fixedCoIdFixedCad.ContainsKey(colCoId))
                         {
-                            var hits = (
-                                from rowfixedCad in rowfixedCads
-                                where rowfixedCad.DofIndex == rowDof
-                                select rowfixedCad).ToList();
-                            if (hits.Count > 0)
-                            {
-                                continue;
-                            }
+                            continue;
+                        }
+                        IList<FieldFixedCad> fixedCads = fixedCoIdFixedCad[colCoId];
+                        foreach (var fixedCad in fixedCads)
+                        {
+                            System.Diagnostics.Debug.Assert(fixedCad.ValueType == FieldValueType.VECTOR2);
+                            int iDof = fixedCad.DofIndex;
+                            double value = fixedCad.Value;
                             double a = A[rowNodeId * dof + rowDof, colNodeId * dof + iDof];
                             B[rowNodeId * dof + rowDof] -= a * value;
                             A[rowNodeId * dof + rowDof, colNodeId * dof + iDof] = 0;
@@ -56,6 +60,7 @@ namespace IvyFEM
                 }
             }
 
+            // A11, A12
             for (int rowNodeId = 0; rowNodeId < nodeCnt; rowNodeId++)
             {
                 int rowCoId = world.Node2Coord(rowNodeId);
@@ -71,10 +76,10 @@ namespace IvyFEM
                     double value = fixedCad.Value;
                     for (int colNodeId = 0; colNodeId < nodeCnt; colNodeId++)
                     {
-                        for (int dofCol = 0; dofCol < dof; dofCol++)
+                        for (int colDof = 0; colDof < dof; colDof++)
                         {
-                            double a = ((colNodeId == rowNodeId && dofCol == iDof) ? 1 : 0);
-                            A[rowNodeId * dof + iDof, colNodeId * dof + dofCol] = a;
+                            double a = ((colNodeId == rowNodeId && colDof == iDof) ? 1 : 0);
+                            A[rowNodeId * dof + iDof, colNodeId * dof + colDof] = a;
                         }
                     }
 

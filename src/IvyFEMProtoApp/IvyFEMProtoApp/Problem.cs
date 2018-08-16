@@ -15,7 +15,6 @@ namespace IvyFEMProtoApp
     {
         private double WaveguideWidth = 0;
         private double InputWGLength = 0;
-        private IvyFEM.Lis.LisInitializer LisInitializer = new IvyFEM.Lis.LisInitializer();
 
         public Problem()
         {
@@ -49,6 +48,7 @@ namespace IvyFEMProtoApp
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.glControl_ResizeProc();
             mainWindow.glControl.Invalidate();
+            mainWindow.glControl.Update();
         }
 
         public void MakeCoarseMesh(MainWindow mainWindow)
@@ -75,6 +75,7 @@ namespace IvyFEMProtoApp
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.glControl_ResizeProc();
             mainWindow.glControl.Invalidate();
+            mainWindow.glControl.Update();
         }
 
         public void MakeMesh(MainWindow mainWindow)
@@ -91,7 +92,7 @@ namespace IvyFEMProtoApp
                 var res = cad2D.AddPolygon(pts);
             }
 
-            double eLen = 0.1;
+            double eLen = 0.15;
             Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
 
             mainWindow.IsFieldDraw = false;
@@ -102,6 +103,7 @@ namespace IvyFEMProtoApp
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.glControl_ResizeProc();
             mainWindow.glControl.Invalidate();
+            mainWindow.glControl.Update();
         }
 
         public void InterseMatrixExample()
@@ -217,6 +219,7 @@ namespace IvyFEMProtoApp
             int @is = 0;
             int ie = 0;
 
+            using (IvyFEM.Lis.LisInitializer LisInitializer = new IvyFEM.Lis.LisInitializer())
             using (var A = new IvyFEM.Lis.LisMatrix(comm))
             using (var b = new IvyFEM.Lis.LisVector(comm))
             using (var u = new IvyFEM.Lis.LisVector(comm))
@@ -287,6 +290,7 @@ namespace IvyFEMProtoApp
                 AlertWindow.ShowDialog(str);
             }
 
+            using (IvyFEM.Lis.LisInitializer LisInitializer = new IvyFEM.Lis.LisInitializer())
             using (var v = new IvyFEM.Lis.LisVector(comm))
             {
                 int n1 = 5;
@@ -333,6 +337,7 @@ namespace IvyFEMProtoApp
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.glControl_ResizeProc();
             mainWindow.glControl.Invalidate();
+            mainWindow.glControl.Update();
             WPFUtils.DoEvents();
 
             double eLen = WaveguideWidth * 0.05;
@@ -346,6 +351,7 @@ namespace IvyFEMProtoApp
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.glControl_ResizeProc();
             mainWindow.glControl.Invalidate();
+            mainWindow.glControl.Update();
             WPFUtils.DoEvents();
             */
 
@@ -447,6 +453,7 @@ namespace IvyFEMProtoApp
             mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.glControl_ResizeProc();
             //mainWindow.glControl.Invalidate();
+            //mainWindow.glControl.Update();
             //WPFUtils.DoEvents();
 
             for (int iFreq = 0; iFreq < freqDiv + 1; iFreq++)
@@ -460,8 +467,8 @@ namespace IvyFEMProtoApp
 
                 var FEM = new EMWaveguide2DHPlaneFEM(world);
                 //FEM.Solver = new IvyFEM.Linear.LapackDenseEquationSolver();
-                //FEM.Solver = new IvyFEM.Linear.LapackBandEquationSolver();
-                FEM.Solver = new IvyFEM.Linear.LisEquationSolver();
+                FEM.Solver = new IvyFEM.Linear.LapackBandEquationSolver();
+                //FEM.Solver = new IvyFEM.Linear.LisEquationSolver();
                 FEM.WaveLength = waveLength;
                 FEM.Solve();
                 System.Numerics.Complex[] Ez = FEM.Ez;
@@ -490,6 +497,7 @@ namespace IvyFEMProtoApp
 
                 fieldDrawerArray.Update(world);
                 mainWindow.glControl.Invalidate();
+                mainWindow.glControl.Update();
                 WPFUtils.DoEvents();
             }
         }
@@ -515,9 +523,10 @@ namespace IvyFEMProtoApp
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.glControl_ResizeProc();
             mainWindow.glControl.Invalidate();
+            mainWindow.glControl.Update();
             */
 
-            double eLen = 0.2;
+            double eLen = 0.15;
             Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
 
             FEWorld world = new FEWorld();
@@ -613,11 +622,12 @@ namespace IvyFEMProtoApp
             mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.glControl_ResizeProc();
             //mainWindow.glControl.Invalidate();
+            //mainWindow.glControl.Update();
             //WPFUtils.DoEvents();
 
             double t = 0;
             double dt = 0.5;
-            for (int itr = 0; itr <= 20; itr++)
+            for (int iTime = 0; iTime <= 20; iTime++)
             {
                 /*
                 fixedCadY.Value = Math.Sin(t * Math.PI * 0.1 * 2);
@@ -627,8 +637,8 @@ namespace IvyFEMProtoApp
 
                 var FEM = new Elastic2DFEM(world);
                 //FEM.Solver = new IvyFEM.Linear.LapackDenseEquationSolver();
-                //FEM.Solver = new IvyFEM.Linear.LapackBandEquationSolver();
-                FEM.Solver = new IvyFEM.Linear.LisEquationSolver();
+                FEM.Solver = new IvyFEM.Linear.LapackBandEquationSolver();
+                //FEM.Solver = new IvyFEM.Linear.LisEquationSolver();
                 FEM.Solve();
                 double[] U = FEM.U;
 
@@ -640,6 +650,7 @@ namespace IvyFEMProtoApp
 
                 fieldDrawerArray.Update(world);
                 mainWindow.glControl.Invalidate();
+                mainWindow.glControl.Update();
                 WPFUtils.DoEvents();
                 t += dt;
             }
@@ -666,9 +677,10 @@ namespace IvyFEMProtoApp
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.glControl_ResizeProc();
             mainWindow.glControl.Invalidate();
+            mainWindow.glControl.Update();
             */
 
-            double eLen = 0.2;
+            double eLen = 0.15;
             Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
 
             FEWorld world = new FEWorld();
@@ -764,11 +776,12 @@ namespace IvyFEMProtoApp
             mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.glControl_ResizeProc();
             //mainWindow.glControl.Invalidate();
+            //mainWindow.glControl.Update();
             //WPFUtils.DoEvents();
 
             double t = 0;
             double dt = 0.5;
-            for (int itr = 0; itr <= 20; itr++)
+            for (int iTime = 0; iTime <= 20; iTime++)
             {
                 /*
                 fixedCadY.Value = Math.Sin(t * Math.PI * 0.1 * 2);
@@ -778,8 +791,8 @@ namespace IvyFEMProtoApp
 
                 var FEM = new Elastic2DFEM(world);
                 //FEM.Solver = new IvyFEM.Linear.LapackDenseEquationSolver();
-                //FEM.Solver = new IvyFEM.Linear.LapackBandEquationSolver();
-                FEM.Solver = new IvyFEM.Linear.LisEquationSolver();
+                FEM.Solver = new IvyFEM.Linear.LapackBandEquationSolver();
+                //FEM.Solver = new IvyFEM.Linear.LisEquationSolver();
                 FEM.Solve();
                 double[] U = FEM.U;
 
@@ -791,6 +804,7 @@ namespace IvyFEMProtoApp
 
                 fieldDrawerArray.Update(world);
                 mainWindow.glControl.Invalidate();
+                mainWindow.glControl.Update();
                 WPFUtils.DoEvents();
                 t += dt;
             }
@@ -817,9 +831,10 @@ namespace IvyFEMProtoApp
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.glControl_ResizeProc();
             mainWindow.glControl.Invalidate();
+            mainWindow.glControl.Update();
             */
 
-            double eLen = 0.2;
+            double eLen = 0.15;
             Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
 
             FEWorld world = new FEWorld();
@@ -827,8 +842,7 @@ namespace IvyFEMProtoApp
 
             world.ClearMaterial();
             ElasticMaterial ma = new ElasticMaterial();
-            //ma.SetYoungPoisson(10.0, 0.3);
-            ma.SetYoungPoisson(50.0, 0.3);
+            ma.SetYoungPoisson(10.0, 0.3);
             ma.GravityX = 0;
             ma.GravityY = 0;
             uint maId = world.AddMaterial(ma);
@@ -889,13 +903,14 @@ namespace IvyFEMProtoApp
             mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.glControl_ResizeProc();
             //mainWindow.glControl.Invalidate();
+            //mainWindow.glControl.Update();
             //WPFUtils.DoEvents();
 
             double t = 0;
             double dt = 0.5;
             double newmarkBeta = 1.0 / 4.0;
             double newmarkGamma = 1.0 / 2.0;
-            for (int itr = 0; itr <= 60; itr++)
+            for (int iTime = 0; iTime <= 100; iTime++)
             {
                 fixedCadX.Value = 0;
                 fixedCadY.Value = Math.Sin(t * Math.PI * 0.1 * 2);
@@ -904,8 +919,8 @@ namespace IvyFEMProtoApp
                     newmarkBeta, newmarkGamma,
                     valueId, prevValueId);
                 //FEM.Solver = new IvyFEM.Linear.LapackDenseEquationSolver();
-                //FEM.Solver = new IvyFEM.Linear.LapackBandEquationSolver();
-                FEM.Solver = new IvyFEM.Linear.LisEquationSolver();
+                FEM.Solver = new IvyFEM.Linear.LapackBandEquationSolver();
+                //FEM.Solver = new IvyFEM.Linear.LisEquationSolver();
                 FEM.Solve();
                 //double[] U = FEM.U;
 
@@ -913,6 +928,7 @@ namespace IvyFEMProtoApp
 
                 fieldDrawerArray.Update(world);
                 mainWindow.glControl.Invalidate();
+                mainWindow.glControl.Update();
                 WPFUtils.DoEvents();
                 t += dt;
             }

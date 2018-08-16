@@ -23,7 +23,9 @@ namespace IvyFEM
         public IList<IList<uint>> PortEIdss { get; } = new List<IList<uint>>();
 
         private IList<Dictionary<int, int>> PortCo2Nodes = new List<Dictionary<int, int>>();
+        private IList<Dictionary<int, int>> PortNode2Cos = new List<Dictionary<int, int>>();
         private Dictionary<int, int> Co2Node = new Dictionary<int, int>();
+        private Dictionary<int, int> Node2Co = new Dictionary<int, int>();
         private Dictionary<string, uint> Mesh2TriangleFE = new Dictionary<string, uint>();
         private IList<ObjectArray<LineFE>> PortLineFEArrays = new List<ObjectArray<LineFE>>();
         private ObjectArray<TriangleFE> TriangleFEArray = new ObjectArray<TriangleFE>();
@@ -61,7 +63,13 @@ namespace IvyFEM
                 portCo2Node.Clear();
             }
             PortCo2Nodes.Clear();
+            foreach (var portNode2Co in PortNode2Cos)
+            {
+                portNode2Co.Clear();
+            }
+            PortNode2Cos.Clear();
             Co2Node.Clear();
+            Node2Co.Clear();
             Mesh2TriangleFE.Clear();
             foreach (var lineFEArray in PortLineFEArrays)
             {
@@ -103,11 +111,11 @@ namespace IvyFEM
 
         public int Node2Coord(int nodeId)
         {
-            var coId = (
-                from pair in Co2Node
-                where pair.Value == nodeId
-                select pair.Key).First();
-            return coId;
+            if (!Node2Co.ContainsKey(nodeId))
+            {
+                return -1;
+            }
+            return Node2Co[nodeId];
         }
 
         public uint GetPortCount()
@@ -133,12 +141,12 @@ namespace IvyFEM
 
         public int PortNode2Coord(uint portId, int nodeId)
         {
-            var portCo2Node = PortCo2Nodes[(int)portId];
-            var coId = (
-                from pair in portCo2Node
-                where pair.Value == nodeId
-                select pair.Key).First();
-            return coId;
+            var portNode2Co = PortNode2Cos[(int)portId];
+            if (!portNode2Co.ContainsKey(nodeId))
+            {
+                return -1;
+            }
+            return portNode2Co[nodeId];
         }
 
         public IList<uint> GetMaterialIds()
@@ -516,6 +524,25 @@ namespace IvyFEM
                 Mesh2TriangleFE.Add(key, feId);
             }
 
+            //////////////////////////////////////////////////////
+            // 逆参照
+            foreach (var portCo2Node in PortCo2Nodes)
+            {
+                var portNode2Co = new Dictionary<int, int>();
+                PortNode2Cos.Add(portNode2Co);
+                foreach (var pair in portCo2Node)
+                {
+                    int tmpPortCoId = pair.Key;
+                    int tmpPortNodeId = pair.Value;
+                    portNode2Co[tmpPortNodeId] = tmpPortCoId;
+                }
+            }
+            foreach (var pair in Co2Node)
+            {
+                int tmpCoId = pair.Key;
+                int tmpNodeId = pair.Value;
+                Node2Co[tmpNodeId] = tmpCoId;
+            }
         }
 
         private IList<TriangleFE> GetCoordIncludeTriFEs(TriangleFE fe, IList<TriangleFE> triFEs,

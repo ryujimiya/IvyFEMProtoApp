@@ -18,7 +18,7 @@ namespace IvyFEM.Lis
             byte[][] argv = new byte[argc][];
             for (int i = 0; i < argc; i++)
             {
-                argv[i] = System.Text.Encoding.Unicode.GetBytes(args[i]);
+                argv[i] = System.Text.Encoding.UTF8.GetBytes(args[i]);
             }
 
             int ret = 0;
@@ -394,7 +394,7 @@ namespace IvyFEM.Lis
         public static int SolverSetOption(string text, LisSolver solver)
         {
             int ret = 0;
-            byte[] textBytes = System.Text.Encoding.Unicode.GetBytes(text);
+            byte[] textBytes = System.Text.Encoding.UTF8.GetBytes(text);
             unsafe
             {
                 ret = IvyFEM.Lis.ImportedFunctions.lis_solver_set_option(textBytes, solver.Native);
