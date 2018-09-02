@@ -54,7 +54,7 @@ namespace IvyFEM
                 }
 
                 Material ma0 = World.GetMaterial(lineFE.MaterialId);
-                System.Diagnostics.Debug.Assert(ma0.MaterialType == MaterialType.DIELECTRIC);
+                System.Diagnostics.Debug.Assert(ma0.MaterialType == MaterialType.Dielectric);
                 var ma = ma0 as DielectricMaterial;
 
                 double[] sNN = lineFE.CalcSNN();

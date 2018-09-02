@@ -11,7 +11,7 @@ namespace IvyFEM
     {
         public bool IsSelected { get; set; } = false;
         public uint MeshId { get; set; } = 0; 
-        public ElementType Type { get; private set; } = ElementType.NOT_SET;
+        public ElementType Type { get; private set; } = ElementType.NotSet;
         public int Layer { get; set; } = 0;
         public double[] Color { get; } = new double[3] { 0.8, 0.8, 0.8 };
         public uint ElemCount { get; set; } = 0;
@@ -23,9 +23,9 @@ namespace IvyFEM
         {
             get
             {
-                if (Type == ElementType.LINE) { return 1; }
-                if (Type == ElementType.TRI || Type == ElementType.QUAD) { return 2; }
-                if (Type == ElementType.TET || Type == ElementType.HEX) { return 3; }
+                if (Type == ElementType.Line) { return 1; }
+                if (Type == ElementType.Tri || Type == ElementType.Quad) { return 2; }
+                if (Type == ElementType.Tet || Type == ElementType.Hex) { return 3; }
                 return 0;
             }
         }
@@ -80,29 +80,29 @@ namespace IvyFEM
             Layer = layer;
             ElemCount = elemCount;
 
-            if (meshType == MeshType.VERTEX)
+            if (meshType == MeshType.Vertex)
             {
-                Type = ElementType.POINT;
+                Type = ElementType.Point;
                 Color[0] = 0;
                 Color[1] = 0;
                 Color[2] = 0;
             }
-            else if (meshType == MeshType.BAR)
+            else if (meshType == MeshType.Bar)
             {
-                Type = ElementType.LINE;
+                Type = ElementType.Line;
                 Color[0] = 0;
                 Color[1] = 0;
                 Color[2] = 0;
                 SetLine(world);
             }
-            else if (meshType == MeshType.TRI)
+            else if (meshType == MeshType.Tri)
             {
-                Type = ElementType.TRI;
+                Type = ElementType.Tri;
                 SetTri(world);
             }
-            else if (meshType == MeshType.QUAD)
+            else if (meshType == MeshType.Quad)
             {
-                Type = ElementType.QUAD;
+                Type = ElementType.Quad;
                 SetQuad(world);
             }
             else
@@ -113,8 +113,8 @@ namespace IvyFEM
 
         private void SetLine(FEWorld world)
         {
-            System.Diagnostics.Debug.Assert(Type == ElementType.LINE);
-            if (Type != ElementType.LINE)
+            System.Diagnostics.Debug.Assert(Type == ElementType.Line);
+            if (Type != ElementType.Line)
             {
                 return;
             }
@@ -138,8 +138,8 @@ namespace IvyFEM
 
         private void SetTri(FEWorld world)
         {
-            System.Diagnostics.Debug.Assert(Type == ElementType.TRI);
-            if (Type != ElementType.TRI)
+            System.Diagnostics.Debug.Assert(Type == ElementType.Tri);
+            if (Type != ElementType.Tri)
             {
                 return;
             }
@@ -163,8 +163,8 @@ namespace IvyFEM
 
         private void SetQuad(FEWorld world)
         {
-            System.Diagnostics.Debug.Assert(Type == ElementType.QUAD);
-            if (Type != ElementType.QUAD)
+            System.Diagnostics.Debug.Assert(Type == ElementType.Quad);
+            if (Type != ElementType.Quad)
             {
                 return;
             }
@@ -195,7 +195,7 @@ namespace IvyFEM
             int[] vertexs;
             mesh.GetConnectivity(MeshId, out meshType, out vertexs);
 
-            if (Type == ElementType.TRI)
+            if (Type == ElementType.Tri)
             {
                 Colors = new float[ElemCount * 3];
                 for (int iTri = 0; iTri < ElemCount; iTri++)
@@ -211,7 +211,7 @@ namespace IvyFEM
                     }
                 }
             }
-            else if (Type == ElementType.QUAD)
+            else if (Type == ElementType.Quad)
             {
                 // TRIと同じでよいが要素IDを取得するメソッドが現状ない
                 throw new NotImplementedException();
@@ -238,21 +238,21 @@ namespace IvyFEM
             if (Colors == null)
             {
                 //GL.Color3(Color[0], Color[1], Color[2]);
-                if (Type == ElementType.LINE)
+                if (Type == ElementType.Line)
                 {
                     GL.DrawElements(PrimitiveType.Lines, (int)(ElemCount * 2), DrawElementsType.UnsignedInt, Indexs);
                 }
-                else if (Type == ElementType.TRI || Type == ElementType.TET) 
+                else if (Type == ElementType.Tri || Type == ElementType.Tet) 
                 {
                     GL.DrawElements(PrimitiveType.Triangles, (int)(ElemCount * 3), DrawElementsType.UnsignedInt, Indexs);
                 }
-                else if (Type == ElementType.QUAD || Type == ElementType.HEX)
+                else if (Type == ElementType.Quad || Type == ElementType.Hex)
                 {
                     GL.DrawElements(PrimitiveType.Quads, (int)(ElemCount * 4), DrawElementsType.UnsignedInt, Indexs);
                 }
                 return;
             }
-            if (Type == ElementType.QUAD || Type == ElementType.HEX)
+            if (Type == ElementType.Quad || Type == ElementType.Hex)
             {
                 GL.Begin(PrimitiveType.Quads);
                 for (int iQuad = 0; iQuad < ElemCount; iQuad++)
@@ -266,7 +266,7 @@ namespace IvyFEM
                 }
                 GL.End();
             }
-            else if (Type == ElementType.TRI || Type == ElementType.TET)
+            else if (Type == ElementType.Tri || Type == ElementType.Tet)
             {
                 GL.Begin(PrimitiveType.Triangles);
                 for (int iTri = 0; iTri < ElemCount; iTri++)

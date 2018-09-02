@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Numerics;
 
 namespace IvyFEM
 {
@@ -54,7 +53,7 @@ namespace IvyFEM
             return rot;
         }
 
-        public  Vector3 ProjectionOnPlane(double posX,   double posY,
+        public OpenTK.Vector3d ProjectionOnPlane(double posX,   double posY,
             double planeX = 0, double planeY = 0, double planeZ = 0,
             double normX = 0,  double normY = 0,  double normZ = 1)
       	{
@@ -79,7 +78,7 @@ namespace IvyFEM
                 hh * Math.Cos(Theta) * (posY * InvScale - WindowCenter.Y) + objCY;
             double oz = +objCZ;
 
-            return new Vector3((float)ox, (float)oy, (float)oz);
+            return new OpenTK.Vector3d(ox, oy, oz);
         }
 
     }

@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Numerics;
 
 namespace IvyFEM
 {
     class MeshPoint2D
     {
-        public Vector2 Point { get; set; } = new Vector2();
+        public OpenTK.Vector2d Point { get; set; } = new OpenTK.Vector2d();
         public int Elem { get; set; } = 0;
         public uint Dir { get; set; } = 0;
 
@@ -20,7 +19,7 @@ namespace IvyFEM
 
         public MeshPoint2D(double x, double y, int elem, uint dir)
         {
-            Point = new Vector2((float)x, (float)y);
+            Point = new OpenTK.Vector2d(x, y);
             Elem = elem;
             Dir = dir;
         }

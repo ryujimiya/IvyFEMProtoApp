@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Numerics;
 
 namespace IvyFEM
 {
@@ -11,7 +10,7 @@ namespace IvyFEM
     {
         public TriangleFE() : base()
         {
-            Type = ElementType.TRI;
+            Type = ElementType.Tri;
             NodeCount = 3;
         }
 
@@ -30,9 +29,9 @@ namespace IvyFEM
             double[] co1 = World.GetCoord(CoordIds[0]);
             double[] co2 = World.GetCoord(CoordIds[1]);
             double[] co3 = World.GetCoord(CoordIds[2]);
-            Vector2 v1 = new Vector2((float)co1[0], (float)co1[1]);
-            Vector2 v2 = new Vector2((float)co2[0], (float)co2[1]);
-            Vector2 v3 = new Vector2((float)co3[0], (float)co3[1]);
+            OpenTK.Vector2d v1 = new OpenTK.Vector2d(co1[0], co1[1]);
+            OpenTK.Vector2d v2 = new OpenTK.Vector2d(co2[0], co2[1]);
+            OpenTK.Vector2d v3 = new OpenTK.Vector2d(co3[0], co3[1]);
             double area = CadUtils.TriArea(v1, v2, v3);
             return area;
         }
@@ -45,18 +44,18 @@ namespace IvyFEM
             double[] co1 = World.GetCoord(CoordIds[0]);
             double[] co2 = World.GetCoord(CoordIds[1]);
             double[] co3 = World.GetCoord(CoordIds[2]);
-            Vector2 v1 = new Vector2((float)co1[0], (float)co1[1]);
-            Vector2 v2 = new Vector2((float)co2[0], (float)co2[1]);
-            Vector2 v3 = new Vector2((float)co3[0], (float)co3[1]);
+            OpenTK.Vector2d v1 = new OpenTK.Vector2d(co1[0], co1[1]);
+            OpenTK.Vector2d v2 = new OpenTK.Vector2d(co2[0], co2[1]);
+            OpenTK.Vector2d v3 = new OpenTK.Vector2d(co3[0], co3[1]);
             double area = CadUtils.TriArea(v1, v2, v3);
-            Vector2[] v = { v1, v2, v3 };
+            OpenTK.Vector2d[] v = { v1, v2, v3 };
             for (int k = 0; k < 3; k++)
             {
                 int l = (k + 1) % 3;
                 int m = (k + 2) % 3;
-                a[k] = (0.5 / area) * (v[l].X * v[m].Y - v[m].X * v[k].Y);
-                b[k] = (0.5 / area) * (v[l].Y - v[m].Y);
-                c[k] = (0.5 / area) * (v[m].X - v[l].X);
+                a[k] = (1.0 / (2.0 * area)) * (v[l].X * v[m].Y - v[m].X * v[l].Y);
+                b[k] = (1.0 / (2.0 * area)) * (v[l].Y - v[m].Y);
+                c[k] = (1.0 / (2.0 * area)) * (v[m].X - v[l].X);
             }            
         }
 
@@ -130,21 +129,26 @@ namespace IvyFEM
         /// S{N}{N}Tdx
         /// </summary>
         /// <returns></returns>
-        public double[] CalcSNN()
+        public double[,] CalcSNN()
         {
             double A = GetArea();
-            /// Note: Columnから先に格納: col * NodeCount + row
-            double[] sNN = new double[9]
+            double[,] sNN = new double[3, 3]
             {
-                A / 6.0,
-                A / 12.0,
-                A / 12.0,
-                A / 12.0,
-                A / 6.0,
-                A / 12.0,
-                A / 12.0,
-                A / 12.0,
-                A / 6.0
+                {
+                    A / 6.0,
+                    A / 12.0,
+                    A / 12.0,
+                },
+                {
+                    A / 12.0,
+                    A / 6.0,
+                    A / 12.0,
+                },
+                {
+                    A / 12.0,
+                    A / 12.0,
+                    A / 6.0
+                }
             };
             return sNN;
         }
@@ -153,7 +157,7 @@ namespace IvyFEM
         /// S{Nu}{Nv}Tdx, u,v = x, y
         /// </summary>
         /// <returns></returns>
-        public double[][] CalcSNuNvs()
+        public double[,][,] CalcSNuNv()
         {
             double A = GetArea();
             double[] a;
@@ -161,51 +165,45 @@ namespace IvyFEM
             double[] c;
             CalcTransMatrix(out a, out b, out c);
 
-            /// Note: Columnから先に格納: col * NodeCount + row
-            double[][] sNuNv = new double[4][];
+            double[,][,] sNuNv = new double[2, 2][,];
 
-            int index;
             // sNxNx
-            index = 0;
-            sNuNv[index] = new double[9];
+            sNuNv[0, 0] = new double[3, 3];
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    sNuNv[index][i * 3 + j] = A * b[i] * b[j];
+                    sNuNv[0, 0][i, j] = A * b[i] * b[j];
                 }
             }
 
             // sNyNx
-            index = 1;
-            sNuNv[index] = new double[9];
+            sNuNv[1, 0] = new double[3, 3];
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    sNuNv[index][i * 3 + j] = A * b[i] * c[j];
+                    sNuNv[1, 0][i, j] = A * c[i] * b[j];
                 }
             }
 
-            // sNyNx
-            index = 2;
-            sNuNv[index] = new double[9];
+            // sNxNy
+            sNuNv[0, 1] = new double[3, 3];
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    sNuNv[index][i * 3 + j] = A * c[i] * b[j];
+                    sNuNv[0, 1][i, j] = A * b[i] * c[j];
                 }
             }
 
             // sNyNy
-            index = 3;
-            sNuNv[index] = new double[9];
+            sNuNv[1, 1] = new double[3, 3];
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    sNuNv[index][i * 3 + j] = A * c[i] * c[j];
+                    sNuNv[1, 1][i, j] = A * c[i] * c[j];
                 }
             }
             return sNuNv;

@@ -11,7 +11,7 @@ namespace IvyFEM.Lis
     {
         internal NativeLisMatrix* Native = null;
 
-        public LisMatrix(int comm = IvyFEM.Lis.Constants.LIS_COMM_WORLD)
+        public LisMatrix(int comm = IvyFEM.Lis.Constants.LisCommWorld)
         {
             int ret = IvyFEM.Lis.Functions.MatrixCreate(comm, this);
             System.Diagnostics.Debug.Assert(ret == 0);
@@ -65,11 +65,11 @@ namespace IvyFEM.Lis
                     {
                         continue;
                     }
-                    ret = A.SetValue(SetValueFlag.LIS_INS_VALUE, col, row, value);
+                    ret = A.SetValue(SetValueFlag.LisInsValue, col, row, value);
                     System.Diagnostics.Debug.Assert(ret == 0);
                 }
             }
-            ret = A.SetType(IvyFEM.Lis.MatrixType.LIS_MATRIX_CSR);
+            ret = A.SetType(IvyFEM.Lis.MatrixType.LisMatrixCSR);
             System.Diagnostics.Debug.Assert(ret == 0);
             ret = A.Assemble();
             System.Diagnostics.Debug.Assert(ret == 0);
@@ -94,11 +94,11 @@ namespace IvyFEM.Lis
                     {
                         continue;
                     }
-                    ret = A.SetValue(SetValueFlag.LIS_INS_VALUE, col, row, value);
+                    ret = A.SetValue(SetValueFlag.LisInsValue, col, row, value);
                     System.Diagnostics.Debug.Assert(ret == 0);
                 }
             }
-            ret = A.SetType(IvyFEM.Lis.MatrixType.LIS_MATRIX_CSR);
+            ret = A.SetType(IvyFEM.Lis.MatrixType.LisMatrixCSR);
             System.Diagnostics.Debug.Assert(ret == 0);
             ret = A.Assemble();
             System.Diagnostics.Debug.Assert(ret == 0);
@@ -123,11 +123,11 @@ namespace IvyFEM.Lis
                     {
                         continue;
                     }
-                    ret = A.SetValue(SetValueFlag.LIS_INS_VALUE, col, row, value);
+                    ret = A.SetValue(SetValueFlag.LisInsValue, col, row, value);
                     System.Diagnostics.Debug.Assert(ret == 0);
                 }
             }
-            ret = A.SetType(IvyFEM.Lis.MatrixType.LIS_MATRIX_CSR);
+            ret = A.SetType(IvyFEM.Lis.MatrixType.LisMatrixCSR);
             System.Diagnostics.Debug.Assert(ret == 0);
             ret = A.Assemble();
             System.Diagnostics.Debug.Assert(ret == 0);
@@ -152,11 +152,11 @@ namespace IvyFEM.Lis
                     {
                         continue;
                     }
-                    ret = A.SetValue(SetValueFlag.LIS_INS_VALUE, col, row, value);
+                    ret = A.SetValue(SetValueFlag.LisInsValue, col, row, value);
                     System.Diagnostics.Debug.Assert(ret == 0);
                 }
             }
-            ret = A.SetType(IvyFEM.Lis.MatrixType.LIS_MATRIX_CSR);
+            ret = A.SetType(IvyFEM.Lis.MatrixType.LisMatrixCSR);
             System.Diagnostics.Debug.Assert(ret == 0);
             ret = A.Assemble();
             System.Diagnostics.Debug.Assert(ret == 0);

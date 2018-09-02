@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Numerics;
 using OpenTK.Graphics.OpenGL;
 
 namespace IvyFEM
@@ -13,7 +12,7 @@ namespace IvyFEM
         public int ShowMode { get; set; } = 0;  // -1:not_show 0:default 1:hilight 2:selected
         public float[] Color { get; } = new float[3] { 0, 0, 0 };
 
-        public CadElementType Type { get; set; } = CadElementType.VERTEX;
+        public CadElementType Type { get; set; } = CadElementType.Vertex;
         public uint CadId { get; set; } = 0;
         public uint MeshId { get; set; } = 0;
 
@@ -26,7 +25,7 @@ namespace IvyFEM
         public double DispY { get; set; } = 0;
 
         public CurveType CurveType;
-        public IList<Vector2> CtrlPoints = new List<Vector2>();
+        public IList<OpenTK.Vector2d> CtrlPoints = new List<OpenTK.Vector2d>();
 
         public CadObject2DDrawPart()
         {
@@ -75,7 +74,7 @@ namespace IvyFEM
             System.Diagnostics.Debug.Assert(CadId != 0);
             MeshId = triArray.Id;
             System.Diagnostics.Debug.Assert(MeshId != 0);
-            Type = CadElementType.LOOP;
+            Type = CadElementType.Loop;
 
             ElemPtCount = 3;
             ElemCount = (uint)triArray.Tris.Count;
@@ -106,7 +105,7 @@ namespace IvyFEM
             System.Diagnostics.Debug.Assert(CadId != 0);
             MeshId = BarArray.Id;
             System.Diagnostics.Debug.Assert(MeshId != 0);
-            Type = CadElementType.EDGE;
+            Type = CadElementType.Edge;
 
             ElemPtCount = 2;
             ElemCount = (uint)BarArray.Bars.Count;
@@ -132,7 +131,7 @@ namespace IvyFEM
             System.Diagnostics.Debug.Assert(CadId != 0);
             MeshId = vertex.Id;
             System.Diagnostics.Debug.Assert(MeshId != 0);
-            Type = CadElementType.VERTEX;
+            Type = CadElementType.Vertex;
 
             ElemPtCount = 1;
             ElemCount = 1;

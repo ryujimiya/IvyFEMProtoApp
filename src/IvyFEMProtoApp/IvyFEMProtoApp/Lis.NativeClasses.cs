@@ -161,7 +161,7 @@ namespace IvyFEM.Lis
         private int conv_bnc;
         private int* conv_row;
         private int* conv_col;
-        //int[] options = new int[IvyFEM.Lis.Constants.LIS_MATRIX_OPTION_LEN];
+        //int[] options = new int[IvyFEM.Lis.Constants.LisMatrixOptionLen];
         private int option1;
         private int option2;
         private int option3;
@@ -234,7 +234,7 @@ namespace IvyFEM.Lis
         private NativeLisVector** work;
         private double* rhistory;
         private int worklen;
-        //int[] options = new int[IvyFEM.Lis.Constants.LIS_OPTIONS_LEN];
+        //int[] options = new int[IvyFEM.Lis.Constants.LisOptionsLen];
         private int option1;
         private int option2;
         private int option3;
@@ -262,7 +262,7 @@ namespace IvyFEM.Lis
         private int option25;
         private int option26;
         private int option27;
-        //LisScalar[] @params = new double[IvyFEM.Lis.Constants.LIS_PARAMS_LEN];
+        //LisScalar[] @params = new double[IvyFEM.Lis.Constants.LisParamsLen];
         private LisScalar param1;
         private LisScalar param2;
         private LisScalar param3;

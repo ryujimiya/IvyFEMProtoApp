@@ -9,8 +9,8 @@ namespace IvyFEM
     class FieldFixedCad
     {
         public int CadId { get; set; } = -1;
-        public CadElementType CadElemType { get; private set; } = CadElementType.NOT_SET;
-        public FieldValueType ValueType { get; private set; } = FieldValueType.NO_VALUE;
+        public CadElementType CadElemType { get; private set; } = CadElementType.NotSet;
+        public FieldValueType ValueType { get; private set; } = FieldValueType.NoValue;
         public int DofIndex { get; private set; } = -1;
         public double Value { get; set; } = 0;
 

@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Numerics;
 
 namespace IvyFEM
 {
     class Edge2D : IObject
     {
-        public CurveType CurveType { get; private set; } = CurveType.CURVE_LINE;
+        public CurveType CurveType { get; private set; } = CurveType.CurveLine;
         private double[] Color = new double[3];
 
         private bool IsLeftSide;
@@ -17,10 +16,10 @@ namespace IvyFEM
         private IList<double> RelCos = new List<double>();
         private uint SVId = 0;
         private uint EVId = 0;
-        private Vector2 SPt;
-        private Vector2 EPt;
+        private OpenTK.Vector2d SPt;
+        private OpenTK.Vector2d EPt;
         private BoundingBox2D BB = new BoundingBox2D();
-        private IList<Vector2> Coords = new List<Vector2>();
+        private IList<OpenTK.Vector2d> Coords = new List<OpenTK.Vector2d>();
 
         public Edge2D()
         {
@@ -62,8 +61,8 @@ namespace IvyFEM
             {
                 Color[i] = srcEdge.Color[i];
             }
-            SPt = new Vector2(srcEdge.SPt.X, srcEdge.SPt.Y);
-            EPt = new Vector2(srcEdge.EPt.X, srcEdge.EPt.Y);
+            SPt = new OpenTK.Vector2d(srcEdge.SPt.X, srcEdge.SPt.Y);
+            EPt = new OpenTK.Vector2d(srcEdge.EPt.X, srcEdge.EPt.Y);
             BB.Copy(srcEdge.BB);
             Coords.Clear();
             foreach (var co in srcEdge.Coords)
@@ -110,25 +109,25 @@ namespace IvyFEM
 
         public void SetCurveLine()
         {
-            CurveType = CurveType.CURVE_LINE;
+            CurveType = CurveType.CurveLine;
         }
 
         public void SetCurveArc(bool isLeftSide, double dist)
         {
-            CurveType = CurveType.CURVE_ARC;
+            CurveType = CurveType.CurveArc;
             Dist = dist;
             IsLeftSide = isLeftSide;
         }
 
         public void SetCurvePolyline(IList<double> relCos)
         {
-            CurveType = CurveType.CURVE_POLYLINE;
+            CurveType = CurveType.CurvePolyline;
             SetCurveRelPoint(relCos);
         }
 
         public void SetCurveBezier(double cx0, double cy0, double cx1, double cy1)
         {
-            CurveType = CurveType.CURVE_BEZIER;
+            CurveType = CurveType.CurveBezier;
             RelCos.Clear();
             for (int i = 0; i < 4; i++)
             {
@@ -138,12 +137,12 @@ namespace IvyFEM
             RelCos[1] = cy0;
             RelCos[2] = cx1;
             RelCos[3] = cy1;
-            Vector2 v0 = EPt - SPt;
-            Vector2 v1 = new Vector2(-v0.Y, v0.X);
+            OpenTK.Vector2d v0 = EPt - SPt;
+            OpenTK.Vector2d v1 = new OpenTK.Vector2d(-v0.Y, v0.X);
             for (uint i = 0; i < 2; i++)
             {
-                Vector2 pt0 = SPt + v0 * (float)RelCos[(int)(i * 2 + 0)] +
-                    v1 * (float)RelCos[(int)(i * 2 + 1)];
+                OpenTK.Vector2d pt0 = SPt + v0 * RelCos[(int)(i * 2 + 0)] +
+                    v1 * RelCos[(int)(i * 2 + 1)];
                 Coords.Add(pt0);
             }
         }
@@ -162,28 +161,28 @@ namespace IvyFEM
         public void SetCurveRelPoint(IList<double> relCo0)
         {
             RelCos = relCo0;
-            Vector2 h = EPt - SPt;
-            Vector2 v = new Vector2(-h.Y, h.X);
+            OpenTK.Vector2d h = EPt - SPt;
+            OpenTK.Vector2d v = new OpenTK.Vector2d(-h.Y, h.X);
             uint n = (uint)(RelCos.Count / 2);
             int coCnt = Coords.Count;
             for (int i = coCnt; i < n; i++)
             {
-                Coords.Add(new Vector2());
+                Coords.Add(new OpenTK.Vector2d());
             }
             for (uint i = 0; i < n; i++)
             {
-                Vector2 p = SPt + h * (float)RelCos[(int)(i * 2 + 0)] +
-                    v * (float)RelCos[(int)(i * 2 + 1)];
+                OpenTK.Vector2d p = SPt + h * RelCos[(int)(i * 2 + 0)] +
+                    v * RelCos[(int)(i * 2 + 1)];
                 Coords[(int)i] = p;
             }
         }
 
-        public IList<Vector2> GetCurvePoint()
+        public IList<OpenTK.Vector2d> GetCurvePoint()
         {
             return Coords;
         }
 
-        public void SetVertexs(Vector2 sPt, Vector2 ePt)
+        public void SetVertexs(OpenTK.Vector2d sPt, OpenTK.Vector2d ePt)
         {
             SPt = sPt;
             EPt = ePt;
@@ -193,22 +192,22 @@ namespace IvyFEM
             int coCnt = Coords.Count;
             for (int i = coCnt; i < n; i++)
             {
-                Coords.Add(new Vector2());
+                Coords.Add(new OpenTK.Vector2d());
             }
             if (n > 0)
             {
-                Vector2 gh = EPt - SPt;
-                Vector2 gv = new Vector2(-gh.Y, gh.X);
+                OpenTK.Vector2d gh = EPt - SPt;
+                OpenTK.Vector2d gv = new OpenTK.Vector2d(-gh.Y, gh.X);
                 for (uint i = 0; i < n; i++)
                 {
-                    Vector2 scPt = SPt + gh * (float)RelCos[(int)(i * 2 + 0)] +
-                        gv * (float)RelCos[(int)(i * 2 + 1)];
+                    OpenTK.Vector2d scPt = SPt + gh * RelCos[(int)(i * 2 + 0)] +
+                        gv * RelCos[(int)(i * 2 + 1)];
                     Coords[(int)i] = scPt;
                 }
             }
         }
 
-        public Vector2 GetVertex(bool isRoot)
+        public OpenTK.Vector2d GetVertex(bool isRoot)
         {
             return isRoot ? SPt : EPt;
         }
@@ -242,34 +241,34 @@ namespace IvyFEM
 
         public double Distance(Edge2D e1)
         {
-            Vector2 sPt1 = e1.SPt;
-            Vector2 ePt1 = e1.EPt;
-            if (CurveType == CurveType.CURVE_LINE && e1.CurveType == CurveType.CURVE_LINE)
+            OpenTK.Vector2d sPt1 = e1.SPt;
+            OpenTK.Vector2d ePt1 = e1.EPt;
+            if (CurveType == CurveType.CurveLine && e1.CurveType == CurveType.CurveLine)
             {
                 return CadUtils.GetDistanceLineSegLineSeg(SPt, EPt, sPt1, ePt1);
             }
-            else if (CurveType == CurveType.CURVE_LINE && e1.CurveType == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CurveLine && e1.CurveType == CurveType.CurveArc)
             {
-                Vector2 cPt1;
+                OpenTK.Vector2d cPt1;
                 double radius1 = 0;
                 e1.GetCenterRadius(out cPt1, out radius1);
                 return CadUtils.GetDistanceLineSegArc(SPt, EPt, e1.SPt, e1.EPt, cPt1, radius1, e1.IsLeftSide);
             }
-            else if (CurveType == CurveType.CURVE_ARC && e1.CurveType == CurveType.CURVE_LINE)
+            else if (CurveType == CurveType.CurveArc && e1.CurveType == CurveType.CurveLine)
             {
                 return e1.Distance(this);
             }
-            else if (CurveType == CurveType.CURVE_ARC && e1.CurveType == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CurveArc && e1.CurveType == CurveType.CurveArc)
             {
-                Vector2 cPt0;
+                OpenTK.Vector2d cPt0;
                 double radius0 = 0;
                 GetCenterRadius(out cPt0, out radius0);
-                Vector2 cPt1;
+                OpenTK.Vector2d cPt1;
                 double radius1 = 0;
                 e1.GetCenterRadius(out cPt1, out radius1);
 
-                Vector2 pt0;
-                Vector2 pt1;
+                OpenTK.Vector2d pt0;
+                OpenTK.Vector2d pt1;
                 bool isCrossCircle01 = false;
                 if (CadUtils.IsCrossCircleCircle(cPt0, radius0, cPt1, radius1, out pt0, out pt1))
                 {
@@ -292,15 +291,15 @@ namespace IvyFEM
                 double minDist = (minDist0 < minDist1) ? minDist0 : minDist1;
                 if (!isCrossCircle01)
                 {
-                    bool isC0InsideC1 = Vector2.Distance(cPt0, cPt1) < radius1;
-                    bool isC1InsideC0 = Vector2.Distance(cPt1, cPt0) < radius0;
+                    bool isC0InsideC1 = OpenTK.Vector2d.Distance(cPt0, cPt1) < radius1;
+                    bool isC1InsideC0 = OpenTK.Vector2d.Distance(cPt1, cPt0) < radius0;
                     if (!isC0InsideC1 && !isC1InsideC0)
                     {
-                        Vector2 v1 = CadUtils.GetProjectedPointOnCircle(cPt1, radius1, cPt0);
-                        Vector2 v0 = CadUtils.GetProjectedPointOnCircle(cPt0, radius0, cPt1);
+                        OpenTK.Vector2d v1 = CadUtils.GetProjectedPointOnCircle(cPt1, radius1, cPt0);
+                        OpenTK.Vector2d v0 = CadUtils.GetProjectedPointOnCircle(cPt0, radius0, cPt1);
                         if (e1.IsDirectionArc(v1) != 0 && IsDirectionArc(v0) != 0)
                         {
-                            double d0 = Vector2.Distance(v0, v1);
+                            double d0 = OpenTK.Vector2d.Distance(v0, v1);
                             minDist = (d0 < minDist) ? d0 : minDist;
                         }
                     }
@@ -308,22 +307,22 @@ namespace IvyFEM
                     {
                         if (radius0 < radius1)
                         {
-                            Vector2 v1 = CadUtils.GetProjectedPointOnCircle(cPt1, radius1, cPt0);
-                            Vector2 v0 = CadUtils.GetProjectedPointOnCircle(cPt0, radius0, v1);
+                            OpenTK.Vector2d v1 = CadUtils.GetProjectedPointOnCircle(cPt1, radius1, cPt0);
+                            OpenTK.Vector2d v0 = CadUtils.GetProjectedPointOnCircle(cPt0, radius0, v1);
                             if (e1.IsDirectionArc(v1) != 0 && IsDirectionArc(v0) != 0)
                             {
-                                double d0 = Vector2.Distance(v0, v1);
+                                double d0 = OpenTK.Vector2d.Distance(v0, v1);
                                 minDist = (d0 < minDist) ? d0 : minDist;
                             }
                         }
                         else
                         {
                             System.Diagnostics.Debug.Assert(isC1InsideC0);
-                            Vector2 v0 = CadUtils.GetProjectedPointOnCircle(cPt0, radius0, cPt1);
-                            Vector2 v1 = CadUtils.GetProjectedPointOnCircle(cPt1, radius1, v0);
+                            OpenTK.Vector2d v0 = CadUtils.GetProjectedPointOnCircle(cPt0, radius0, cPt1);
+                            OpenTK.Vector2d v1 = CadUtils.GetProjectedPointOnCircle(cPt1, radius1, v0);
                             if (e1.IsDirectionArc(v1) != 0 && IsDirectionArc(v0) != 0)
                             {
-                                double d0 = Vector2.Distance(v0, v1);
+                                double d0 = OpenTK.Vector2d.Distance(v0, v1);
                                 minDist = (d0 < minDist) ? d0 : minDist;
                             }
                         }
@@ -331,14 +330,14 @@ namespace IvyFEM
                 }
                 return minDist;
             }
-            else if (CurveType == CurveType.CURVE_LINE && e1.CurveType == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CurveLine && e1.CurveType == CurveType.CurvePolyline)
             {
                 uint div1 = (uint)(e1.Coords.Count + 1);
                 double minDist = -1;
                 for (uint iDiv = 0; iDiv < div1; iDiv++)
                 {
-                    Vector2 pt0 = (iDiv == 0) ? e1.SPt : e1.Coords[(int)(iDiv - 1)];
-                    Vector2 pt1 = (iDiv == div1 - 1) ? e1.EPt : e1.Coords[(int)(iDiv + 0)];
+                    OpenTK.Vector2d pt0 = (iDiv == 0) ? e1.SPt : e1.Coords[(int)(iDiv - 1)];
+                    OpenTK.Vector2d pt1 = (iDiv == div1 - 1) ? e1.EPt : e1.Coords[(int)(iDiv + 0)];
                     double dist = CadUtils.GetDistanceLineSegLineSeg(SPt, EPt, pt0, pt1);
                     if (dist < -0.5)
                     {
@@ -351,17 +350,17 @@ namespace IvyFEM
                 }
                 return minDist;
             }
-            else if (CurveType == CurveType.CURVE_POLYLINE && e1.CurveType == CurveType.CURVE_LINE)
+            else if (CurveType == CurveType.CurvePolyline && e1.CurveType == CurveType.CurveLine)
             {
                 return e1.Distance(this);
             }
-            else if (CurveType == CurveType.CURVE_POLYLINE && e1.CurveType == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CurvePolyline && e1.CurveType == CurveType.CurveArc)
             {
                 return e1.Distance(this);
             }
-            else if (CurveType == CurveType.CURVE_ARC && e1.CurveType == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CurveArc && e1.CurveType == CurveType.CurvePolyline)
             {
-                Vector2 cPt0;
+                OpenTK.Vector2d cPt0;
                 double radius0;
                 GetCenterRadius(out cPt0, out radius0);
 
@@ -369,8 +368,8 @@ namespace IvyFEM
                 double minDist = -1;
                 for (uint iDiv = 0; iDiv < div1; iDiv++)
                 {
-                    Vector2 pt0 = (iDiv == 0) ? e1.SPt : e1.Coords[(int)(iDiv - 1)];
-                    Vector2 pt1 = (iDiv == div1 - 1) ? e1.EPt : e1.Coords[(int)(iDiv + 0)];
+                    OpenTK.Vector2d pt0 = (iDiv == 0) ? e1.SPt : e1.Coords[(int)(iDiv - 1)];
+                    OpenTK.Vector2d pt1 = (iDiv == div1 - 1) ? e1.EPt : e1.Coords[(int)(iDiv + 0)];
                     double dist = CadUtils.GetDistanceLineSegArc(pt0, pt1, SPt, EPt, cPt0, radius0, IsLeftSide);
                     if (dist < -0.5)
                     {
@@ -383,19 +382,19 @@ namespace IvyFEM
                 }
                 return minDist;
             }
-            else if (CurveType == CurveType.CURVE_POLYLINE && e1.CurveType == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CurvePolyline && e1.CurveType == CurveType.CurvePolyline)
             {
                 uint div0 = (uint)(Coords.Count + 1);
                 uint div1 = (uint)(e1.Coords.Count + 1);
                 double minDist = -1;
                 for (uint iDiv = 0; iDiv < div0; iDiv++)
                 {
-                    Vector2 iPt0 = (iDiv == 0) ? SPt : Coords[(int)(iDiv - 1)];
-                    Vector2 iPt1 = (iDiv == div0 - 1) ? EPt : Coords[(int)(iDiv + 0)];
+                    OpenTK.Vector2d iPt0 = (iDiv == 0) ? SPt : Coords[(int)(iDiv - 1)];
+                    OpenTK.Vector2d iPt1 = (iDiv == div0 - 1) ? EPt : Coords[(int)(iDiv + 0)];
                     for (uint jDiv = 0; jDiv < div1; jDiv++)
                     {
-                        Vector2 jPt0 = (jDiv == 0) ? e1.SPt : e1.Coords[(int)(jDiv - 1)];
-                        Vector2 jPt1 = (jDiv == div1 - 1) ? e1.EPt : e1.Coords[(int)(jDiv + 0)];
+                        OpenTK.Vector2d jPt0 = (jDiv == 0) ? e1.SPt : e1.Coords[(int)(jDiv - 1)];
+                        OpenTK.Vector2d jPt1 = (jDiv == div1 - 1) ? e1.EPt : e1.Coords[(int)(jDiv + 0)];
                         double dist = CadUtils.GetDistanceLineSegLineSeg(iPt0, iPt1, jPt0, jPt1);
                         if (dist < -0.5)
                         {
@@ -434,24 +433,24 @@ namespace IvyFEM
             minY = (SPt.Y < EPt.Y) ? SPt.Y : EPt.Y;
             maxY = (SPt.Y > EPt.Y) ? SPt.Y : EPt.Y;
 
-            if (CurveType ==CurveType.CURVE_LINE)
+            if (CurveType ==CurveType.CurveLine)
             {
                 return;
             }
-            else if (CurveType == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CurveArc)
             {
-                Vector2 cPt;
+                OpenTK.Vector2d cPt;
                 double radius;
                 GetCenterRadius(out cPt, out radius);
 
-                Vector2 tmpV;
-                tmpV.X = cPt.X + (float)radius;
+                OpenTK.Vector2d tmpV;
+                tmpV.X = cPt.X + radius;
                 tmpV.Y = cPt.Y;
                 if (IsDirectionArc(tmpV) == 1)
                 {
                     maxX = (tmpV.X > maxX) ? tmpV.X : maxX;
                 }
-                tmpV.X = cPt.X - (float)radius;
+                tmpV.X = cPt.X - radius;
                 tmpV.Y = cPt.Y;
                 if (IsDirectionArc(tmpV) == 1)
                 {
@@ -459,23 +458,23 @@ namespace IvyFEM
                 }
 
                 tmpV.X = cPt.X;
-                tmpV.Y = cPt.Y + (float)radius;
+                tmpV.Y = cPt.Y + radius;
                 if (IsDirectionArc(tmpV) == 1)
                 {
                     maxY = (tmpV.Y > maxY) ? tmpV.Y : maxY;
                 }
 
                 tmpV.X = cPt.X;
-                tmpV.Y = cPt.Y - (float)radius;
+                tmpV.Y = cPt.Y - radius;
                 if (IsDirectionArc(tmpV) == 1)
                 {
                     minY = (tmpV.Y < minY) ? tmpV.Y : minY;
                 }
             }
-            else if (CurveType == CurveType.CURVE_POLYLINE || CurveType == CurveType.CURVE_BEZIER)
+            else if (CurveType == CurveType.CurvePolyline || CurveType == CurveType.CurveBezier)
             {
                 uint coCnt = (uint)Coords.Count;
-                if (CurveType == CurveType.CURVE_BEZIER)
+                if (CurveType == CurveType.CurveBezier)
                 {
 
                     System.Diagnostics.Debug.Assert(coCnt == 2);
@@ -483,7 +482,7 @@ namespace IvyFEM
 
                 for (int i = 0; i < coCnt; i++)
                 {
-                    Vector2 pt0 = Coords[i];
+                    OpenTK.Vector2d pt0 = Coords[i];
 
                     minX = (pt0.X < minX) ? pt0.X : minX;
                     maxX = (pt0.X > maxX) ? pt0.X : maxX;
@@ -500,21 +499,21 @@ namespace IvyFEM
 
         public bool IsCrossEdgeSelf()
         {
-            if (CurveType == CurveType.CURVE_LINE || CurveType == CurveType.CURVE_ARC)
+            if (CurveType == CurveType.CurveLine || CurveType == CurveType.CurveArc)
             {
                 return false;
             }
-            if (CurveType == CurveType.CURVE_POLYLINE)
+            if (CurveType == CurveType.CurvePolyline)
             {
                 uint div = (uint)(Coords.Count + 1);
                 for (uint iDiv = 0; iDiv < div; iDiv++)
                 {
-                    Vector2 iPt0 = (iDiv == 0) ? SPt : Coords[(int)(iDiv - 1)];
-                    Vector2 iPt1 = (iDiv == div - 1) ? EPt : Coords[(int)(iDiv + 0)];
+                    OpenTK.Vector2d iPt0 = (iDiv == 0) ? SPt : Coords[(int)(iDiv - 1)];
+                    OpenTK.Vector2d iPt1 = (iDiv == div - 1) ? EPt : Coords[(int)(iDiv + 0)];
                     for (uint jDiv = iDiv + 2; jDiv < div; jDiv++)
                     {
-                        Vector2 jPt0 = (jDiv == 0) ? SPt : Coords[(int)(jDiv - 1)];
-                        Vector2 jPt1 = (jDiv == div - 1) ? EPt : Coords[(int)(jDiv + 0)];
+                        OpenTK.Vector2d jPt0 = (jDiv == 0) ? SPt : Coords[(int)(jDiv - 1)];
+                        OpenTK.Vector2d jPt1 = (jDiv == div - 1) ? EPt : Coords[(int)(jDiv + 0)];
                         if (CadUtils.IsCrossLineSegLineSeg(iPt0, iPt1, jPt0, jPt1))
                         {
                             return true;
@@ -523,7 +522,7 @@ namespace IvyFEM
                 }
                 return false;
             }
-            else if (CurveType == CurveType.CURVE_BEZIER)
+            else if (CurveType == CurveType.CurveBezier)
             { 
                 // TODO
                 return false;
@@ -537,15 +536,15 @@ namespace IvyFEM
 
         public bool IsCrossEdge(Edge2D e1)
         {
-            Vector2 sPt1 = e1.SPt;
-            Vector2 ePt1 = e1.EPt;
-            if (CurveType == CurveType.CURVE_LINE && e1.CurveType == CurveType.CURVE_LINE)
+            OpenTK.Vector2d sPt1 = e1.SPt;
+            OpenTK.Vector2d ePt1 = e1.EPt;
+            if (CurveType == CurveType.CurveLine && e1.CurveType == CurveType.CurveLine)
             {
                 return CadUtils.IsCrossLineSegLineSeg(SPt, EPt, sPt1, ePt1);
             }
-            else if (CurveType == CurveType.CURVE_LINE && e1.CurveType == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CurveLine && e1.CurveType == CurveType.CurveArc)
             {
-                Vector2 cPt1;
+                OpenTK.Vector2d cPt1;
                 double radius1;
                 e1.GetCenterRadius(out cPt1, out radius1);
                 double t0;
@@ -554,31 +553,31 @@ namespace IvyFEM
                 {
                     return false;
                 }
-                if (0 < t0 && t0 < 1 && e1.IsDirectionArc(SPt + (EPt - SPt) * (float)t0) == 1)
+                if (0 < t0 && t0 < 1 && e1.IsDirectionArc(SPt + (EPt - SPt) * t0) == 1)
                 {
                     return true;
                 }
-                if (0 < t1 && t1 < 1 && e1.IsDirectionArc(SPt + (EPt - SPt) * (float)t1) == 1)
+                if (0 < t1 && t1 < 1 && e1.IsDirectionArc(SPt + (EPt - SPt) * t1) == 1)
                 {
                     return true;
                 }
                 return false;
             }
-            else if (CurveType == CurveType.CURVE_ARC && e1.CurveType == CurveType.CURVE_LINE)
+            else if (CurveType == CurveType.CurveArc && e1.CurveType == CurveType.CurveLine)
             {
                 return e1.IsCrossEdge(this);
             }
-            else if (CurveType == CurveType.CURVE_ARC && e1.CurveType == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CurveArc && e1.CurveType == CurveType.CurveArc)
             {
-                Vector2 cPt0;
+                OpenTK.Vector2d cPt0;
                 double radius0;
                 GetCenterRadius(out cPt0, out radius0);
-                Vector2 cPt1;
+                OpenTK.Vector2d cPt1;
                 double radius1;
                 e1.GetCenterRadius(out cPt1, out radius1);
 
-                Vector2 pt0;
-                Vector2 pt1;
+                OpenTK.Vector2d pt0;
+                OpenTK.Vector2d pt1;
                 if (!CadUtils.IsCrossCircleCircle(cPt0, radius0, cPt1, radius1, out pt0, out pt1))
                 {
                     return false;
@@ -593,13 +592,13 @@ namespace IvyFEM
                 }
                 return false;
             }
-            else if (CurveType == CurveType.CURVE_LINE && e1.CurveType == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CurveLine && e1.CurveType == CurveType.CurvePolyline)
             {
                 uint div1 = (uint)(e1.Coords.Count + 1);
                 for (uint iDiv = 0; iDiv < div1; iDiv++)
                 {
-                    Vector2 pt0 = (iDiv == 0) ? e1.SPt : e1.Coords[(int)(iDiv - 1)];
-                    Vector2 pt1 = (iDiv == div1 - 1) ? e1.EPt : e1.Coords[(int)(iDiv + 0)];
+                    OpenTK.Vector2d pt0 = (iDiv == 0) ? e1.SPt : e1.Coords[(int)(iDiv - 1)];
+                    OpenTK.Vector2d pt1 = (iDiv == div1 - 1) ? e1.EPt : e1.Coords[(int)(iDiv + 0)];
                     if (CadUtils.IsCrossLineSegLineSeg(SPt, EPt, pt0, pt1))
                     {
                         return true;
@@ -607,55 +606,55 @@ namespace IvyFEM
                 }
                 return false;
             }
-            else if (CurveType == CurveType.CURVE_POLYLINE && e1.CurveType == CurveType.CURVE_LINE)
+            else if (CurveType == CurveType.CurvePolyline && e1.CurveType == CurveType.CurveLine)
             {
                 return e1.IsCrossEdge(this);
             }
-            else if (CurveType == CurveType.CURVE_POLYLINE && e1.CurveType == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CurvePolyline && e1.CurveType == CurveType.CurveArc)
             {
                 return e1.IsCrossEdge(this);
             }
-            else if (CurveType == CurveType.CURVE_ARC && e1.CurveType == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CurveArc && e1.CurveType == CurveType.CurvePolyline)
             {
-                Vector2 cPt0;
+                OpenTK.Vector2d cPt0;
                 double radius0;
                 GetCenterRadius(out cPt0, out radius0);
 
                 uint div1 = (uint)(e1.Coords.Count + 1);
                 for (uint iDiv = 0; iDiv < div1; iDiv++)
                 {
-                    Vector2 pt0 = (iDiv == 0) ? e1.SPt : e1.Coords[(int)(iDiv - 1)];
-                    Vector2 pt1 = (iDiv == div1 - 1) ? e1.EPt : e1.Coords[(int)(iDiv + 0)];
+                    OpenTK.Vector2d pt0 = (iDiv == 0) ? e1.SPt : e1.Coords[(int)(iDiv - 1)];
+                    OpenTK.Vector2d pt1 = (iDiv == div1 - 1) ? e1.EPt : e1.Coords[(int)(iDiv + 0)];
                     double t0;
                     double t1;
                     if (!CadUtils.IsCrossLineCircle(cPt0, radius0, pt0, pt1, out t0, out t1))
                     {
                         continue;
                     }
-                    if (0 < t0 && t0 < 1 && IsDirectionArc(pt0 + (pt1 - pt0) * (float)t0) == 1)
+                    if (0 < t0 && t0 < 1 && IsDirectionArc(pt0 + (pt1 - pt0) * t0) == 1)
                     {
                         return true;
                     }
-                    if (0 < t1 && t1 < 1 && IsDirectionArc(pt0 + (pt1 - pt0) * (float)t1) == 1)
+                    if (0 < t1 && t1 < 1 && IsDirectionArc(pt0 + (pt1 - pt0) * t1) == 1)
                     {
                         return true;
                     }
                 }
                 return false;
             }
-            else if (CurveType == CurveType.CURVE_POLYLINE && e1.CurveType == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CurvePolyline && e1.CurveType == CurveType.CurvePolyline)
             {
                 uint div0 = (uint)(Coords.Count + 1);
                 uint div1 = (uint)(e1.Coords.Count + 1);
 
                 for (uint iDiv = 0; iDiv < div0; iDiv++)
                 {
-                    Vector2 iPt0 = (iDiv == 0) ? SPt : Coords[(int)(iDiv - 1)];
-                    Vector2 iPt1 = (iDiv == div0 - 1) ? EPt : Coords[(int)(iDiv + 0)];
+                    OpenTK.Vector2d iPt0 = (iDiv == 0) ? SPt : Coords[(int)(iDiv - 1)];
+                    OpenTK.Vector2d iPt1 = (iDiv == div0 - 1) ? EPt : Coords[(int)(iDiv + 0)];
                     for (uint jDiv = 0; jDiv < div1; jDiv++)
                     {
-                        Vector2 jPt0 = (jDiv == 0) ? e1.SPt : e1.Coords[(int)(iDiv - 1)];
-                        Vector2 jPt1 = (jDiv == div1 - 1) ? e1.EPt : e1.Coords[(int)(iDiv + 0)];
+                        OpenTK.Vector2d jPt0 = (jDiv == 0) ? e1.SPt : e1.Coords[(int)(iDiv - 1)];
+                        OpenTK.Vector2d jPt1 = (jDiv == div1 - 1) ? e1.EPt : e1.Coords[(int)(iDiv + 0)];
                         if (CadUtils.IsCrossLineSegLineSeg(iPt0, iPt1, jPt0, jPt1))
                         {
                             return true;
@@ -670,8 +669,8 @@ namespace IvyFEM
         public bool IsCrossEdgeShareOnePoint(Edge2D e1, bool isShareS0, bool isShareS1)
         {
 
-            Vector2 sPt1 = e1.SPt;
-            Vector2 ePt1 = e1.EPt;
+            OpenTK.Vector2d sPt1 = e1.SPt;
+            OpenTK.Vector2d ePt1 = e1.EPt;
             if (isShareS0 && isShareS1)
             {
                 System.Diagnostics.Debug.Assert(CadUtils.SquareLength(SPt, sPt1) < 1.0e-20);
@@ -688,13 +687,13 @@ namespace IvyFEM
             {
                 System.Diagnostics.Debug.Assert(CadUtils.SquareLength(EPt, ePt1) < 1.0e-20);
             }
-            if (CurveType == CurveType.CURVE_LINE && e1.CurveType == CurveType.CURVE_LINE)
+            if (CurveType == CurveType.CurveLine && e1.CurveType == CurveType.CurveLine)
             {
                 return false;
             }
-            else if (CurveType == CurveType.CURVE_LINE && e1.CurveType == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CurveLine && e1.CurveType == CurveType.CurveArc)
             {
-                Vector2 cPt1;
+                OpenTK.Vector2d cPt1;
                 double radius1;
                 e1.GetCenterRadius(out cPt1, out radius1);
 
@@ -703,8 +702,8 @@ namespace IvyFEM
                 {
                     return false;
                 }
-                Vector2 p0 = SPt + (EPt - SPt) * (float)t0;
-                Vector2 p1 = SPt + (EPt - SPt) * (float)t1;
+                OpenTK.Vector2d p0 = SPt + (EPt - SPt) * t0;
+                OpenTK.Vector2d p1 = SPt + (EPt - SPt) * t1;
                 if (!isShareS0)
                 {
                     t0 = 1 - t0;
@@ -722,29 +721,29 @@ namespace IvyFEM
                 }
                 return false;
             }
-            else if (CurveType == CurveType.CURVE_ARC && e1.CurveType == CurveType.CURVE_LINE)
+            else if (CurveType == CurveType.CurveArc && e1.CurveType == CurveType.CurveLine)
             {
                 return e1.IsCrossEdgeShareOnePoint(this, isShareS1, isShareS0);
             }
-            else if (CurveType == CurveType.CURVE_ARC && e1.CurveType == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CurveArc && e1.CurveType == CurveType.CurveArc)
             {
-                Vector2 cPt0;
+                OpenTK.Vector2d cPt0;
                 double radius0;
                 GetCenterRadius(out cPt0, out radius0);
 
-                Vector2 cPt1;
+                OpenTK.Vector2d cPt1;
                 double radius1;
                 e1.GetCenterRadius(out cPt1, out radius1);
 
-                Vector2 pt0;
-                Vector2 pt1;
+                OpenTK.Vector2d pt0;
+                OpenTK.Vector2d pt1;
                 bool isCross = CadUtils.IsCrossCircleCircle(cPt0, radius0, cPt1, radius1, out pt0, out pt1);
                 if (!isCross)
                 {
                     return false;
                 }
 
-                Vector2 sharePt;
+                OpenTK.Vector2d sharePt;
                 if (isShareS0)
                 {
                     sharePt = SPt;
@@ -767,15 +766,15 @@ namespace IvyFEM
                 }
                 return false;
             }
-            else if (CurveType == CurveType.CURVE_LINE && e1.CurveType == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CurveLine && e1.CurveType == CurveType.CurvePolyline)
             {
                 uint div1 = (uint)(e1.Coords.Count + 1);
                 uint iSDiv = (isShareS1) ? 1u : 0;
                 uint iEDiv = (isShareS1) ? div1 : div1 - 1;
                 for (uint iDiv = iSDiv; iDiv < iEDiv; iDiv++)
                 {
-                    Vector2 pt0 = (iDiv == 0) ? e1.SPt : e1.Coords[(int)(iDiv - 1)];
-                    Vector2 pt1 = (iDiv == div1 - 1) ? e1.EPt : e1.Coords[(int)(iDiv + 0)];
+                    OpenTK.Vector2d pt0 = (iDiv == 0) ? e1.SPt : e1.Coords[(int)(iDiv - 1)];
+                    OpenTK.Vector2d pt1 = (iDiv == div1 - 1) ? e1.EPt : e1.Coords[(int)(iDiv + 0)];
                     if (CadUtils.IsCrossLineSegLineSeg(SPt, EPt, pt0, pt1))
                     {
                         return true;
@@ -783,13 +782,13 @@ namespace IvyFEM
                 }
                 return false;
             }
-            else if (CurveType == CurveType.CURVE_POLYLINE && e1.CurveType == CurveType.CURVE_LINE)
+            else if (CurveType == CurveType.CurvePolyline && e1.CurveType == CurveType.CurveLine)
             {
                 return e1.IsCrossEdgeShareOnePoint(this, isShareS1, isShareS0);
             }
-            else if (CurveType == CurveType.CURVE_ARC && e1.CurveType == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CurveArc && e1.CurveType == CurveType.CurvePolyline)
             {
-                Vector2 cPt0;
+                OpenTK.Vector2d cPt0;
                 double radius0;
                 GetCenterRadius(out cPt0, out radius0);
 
@@ -798,26 +797,26 @@ namespace IvyFEM
                 uint iEDiv = (isShareS1) ? div1 : div1 - 1;
                 for (uint iDiv = iSDiv; iDiv < iEDiv; iDiv++)
                 {
-                    Vector2 pt0 = (iDiv == 0) ? e1.SPt : e1.Coords[(int)(iDiv - 1)];
-                    Vector2 pt1 = (iDiv == div1 - 1) ? e1.EPt : e1.Coords[(int)(iDiv + 0)];
+                    OpenTK.Vector2d pt0 = (iDiv == 0) ? e1.SPt : e1.Coords[(int)(iDiv - 1)];
+                    OpenTK.Vector2d pt1 = (iDiv == div1 - 1) ? e1.EPt : e1.Coords[(int)(iDiv + 0)];
                     double t0;
                     double t1;
                     if (!CadUtils.IsCrossLineCircle(cPt0, radius0, pt0, pt1, out t0, out t1))
                     {
                         continue;
                     }
-                    if (0 < t0 && t0 < 1 && IsDirectionArc(pt0 + (pt1 - pt0) * (float)t0) == 1)
+                    if (0 < t0 && t0 < 1 && IsDirectionArc(pt0 + (pt1 - pt0) * t0) == 1)
                     {
                         return true;
                     }
-                    if (0 < t1 && t1 < 1 && IsDirectionArc(pt0 + (pt1 - pt0) * (float)t1) == 1)
+                    if (0 < t1 && t1 < 1 && IsDirectionArc(pt0 + (pt1 - pt0) * t1) == 1)
                     {
                         return true;
                     }
                 }
                 {
-                    Vector2 pt0;
-                    Vector2 pt1;
+                    OpenTK.Vector2d pt0;
+                    OpenTK.Vector2d pt1;
                     if (isShareS1)
                     {
                         pt0 = e1.SPt;
@@ -833,8 +832,8 @@ namespace IvyFEM
                     {
                         return false;
                     }
-                    Vector2 r0 = pt0 + (pt1 - pt0) * (float)t0;
-                    Vector2 r1 = pt0 + (pt1 - pt0) * (float)t1;
+                    OpenTK.Vector2d r0 = pt0 + (pt1 - pt0) * t0;
+                    OpenTK.Vector2d r1 = pt0 + (pt1 - pt0) * t1;
                     // この後t0,t1は共有点との距離計算に使われる
                     if (!isShareS1)
                     {
@@ -854,11 +853,11 @@ namespace IvyFEM
                 }
                 return false;
             }
-            else if (CurveType == CurveType.CURVE_POLYLINE && e1.CurveType == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CurvePolyline && e1.CurveType == CurveType.CurveArc)
             {
                 return e1.IsCrossEdgeShareOnePoint(this, isShareS1, isShareS0);
             }
-            else if (CurveType == CurveType.CURVE_POLYLINE && e1.CurveType == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CurvePolyline && e1.CurveType == CurveType.CurvePolyline)
             {
                 uint div0 = (uint)(Coords.Count + 1);
                 uint div1 = (uint)(e1.Coords.Count + 1);
@@ -867,16 +866,16 @@ namespace IvyFEM
 
                 for (uint iDiv = 0; iDiv < div0; iDiv++)
                 {
-                    Vector2 iPt0 = (iDiv == 0) ? SPt : Coords[(int)(iDiv - 1)];
-                    Vector2 iPt1 = (iDiv == div0 - 1) ? EPt : Coords[(int)(iDiv + 0)];
+                    OpenTK.Vector2d iPt0 = (iDiv == 0) ? SPt : Coords[(int)(iDiv - 1)];
+                    OpenTK.Vector2d iPt1 = (iDiv == div0 - 1) ? EPt : Coords[(int)(iDiv + 0)];
                     for (uint jDiv = 0; jDiv < div1; jDiv++)
                     {
                         if (iDiv == iExcDiv0 && jDiv == iExcDiv1)
                         {
                             continue;
                         }
-                        Vector2 jPt0 = (jDiv == 0) ? e1.SPt : e1.Coords[(int)(jDiv - 1)];
-                        Vector2 jPt1 = (jDiv == div1 - 1) ? e1.EPt : e1.Coords[(int)(jDiv + 0)];
+                        OpenTK.Vector2d jPt0 = (jDiv == 0) ? e1.SPt : e1.Coords[(int)(jDiv - 1)];
+                        OpenTK.Vector2d jPt1 = (jDiv == div1 - 1) ? e1.EPt : e1.Coords[(int)(jDiv + 0)];
                         if (CadUtils.IsCrossLineSegLineSeg(iPt0, iPt1, jPt0, jPt1))
                         {
                             return true;
@@ -885,7 +884,7 @@ namespace IvyFEM
                 }
                 return false;
             }
-            else if (CurveType == CurveType.CURVE_BEZIER || e1.CurveType == CurveType.CURVE_BEZIER)
+            else if (CurveType == CurveType.CurveBezier || e1.CurveType == CurveType.CurveBezier)
             {
                 return false;
             }
@@ -909,25 +908,25 @@ namespace IvyFEM
                     CadUtils.SquareLength(EPt, e1.SPt) < 1.0e-20);
             }
 
-            if (CurveType == CurveType.CURVE_LINE && e1.CurveType == CurveType.CURVE_LINE)
+            if (CurveType == CurveType.CurveLine && e1.CurveType == CurveType.CurveLine)
             {
                 return true;
             }
-            else if (CurveType == CurveType.CURVE_LINE && e1.CurveType == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CurveLine && e1.CurveType == CurveType.CurveArc)
             {
                 return false;
             }
-            else if (CurveType == CurveType.CURVE_ARC && e1.CurveType == CurveType.CURVE_LINE)
+            else if (CurveType == CurveType.CurveArc && e1.CurveType == CurveType.CurveLine)
             {
                 return e1.IsCrossEdgeShareBothPoints(this, isShareS0S1);
             }
-            else if (CurveType == CurveType.CURVE_ARC && e1.CurveType == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CurveArc && e1.CurveType == CurveType.CurveArc)
             {
-                Vector2 cPt0;
+                OpenTK.Vector2d cPt0;
                 double radius0;
                 GetCenterRadius(out cPt0, out radius0);
 
-                Vector2 cPt1;
+                OpenTK.Vector2d cPt1;
                 double radius1;
                 e1.GetCenterRadius(out cPt1, out radius1);
 
@@ -937,13 +936,13 @@ namespace IvyFEM
                 }
                 return false;
             }
-            else if (CurveType == CurveType.CURVE_LINE && e1.CurveType == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CurveLine && e1.CurveType == CurveType.CurvePolyline)
             {
                 uint div1 = (uint)(e1.Coords.Count + 1);
                 for (uint iDiv = 1; iDiv < div1 - 1; iDiv++)
                 {
-                    Vector2 pt0 = (iDiv == 0) ? e1.SPt : e1.Coords[(int)(iDiv - 1)];
-                    Vector2 pt1 = (iDiv == div1 - 1) ? e1.EPt : e1.Coords[(int)(iDiv + 0)];
+                    OpenTK.Vector2d pt0 = (iDiv == 0) ? e1.SPt : e1.Coords[(int)(iDiv - 1)];
+                    OpenTK.Vector2d pt1 = (iDiv == div1 - 1) ? e1.EPt : e1.Coords[(int)(iDiv + 0)];
                     if (CadUtils.IsCrossLineSegLineSeg(SPt, EPt, pt0, pt1))
                     {
                         return true;
@@ -951,53 +950,53 @@ namespace IvyFEM
                 }
                 return false;
             }
-            else if (CurveType == CurveType.CURVE_POLYLINE && e1.CurveType == CurveType.CURVE_LINE)
+            else if (CurveType == CurveType.CurvePolyline && e1.CurveType == CurveType.CurveLine)
             {
                 return e1.IsCrossEdgeShareBothPoints(this, isShareS0S1);
             }
-            else if (CurveType == CurveType.CURVE_ARC && e1.CurveType == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CurveArc && e1.CurveType == CurveType.CurvePolyline)
             {
-                Vector2 cPt0;
+                OpenTK.Vector2d cPt0;
                 double radius0;
                 GetCenterRadius(out cPt0, out radius0);
                 uint div1 = (uint)(e1.Coords.Count + 1);
                 for (uint iDiv = 1; iDiv < div1 - 1; iDiv++)
                 {
-                    Vector2 pt0 = (iDiv == 0) ? e1.SPt : e1.Coords[(int)(iDiv - 1)];
-                    Vector2 pt1 = (iDiv == div1 - 1) ? e1.EPt : e1.Coords[(int)(iDiv + 0)];
+                    OpenTK.Vector2d pt0 = (iDiv == 0) ? e1.SPt : e1.Coords[(int)(iDiv - 1)];
+                    OpenTK.Vector2d pt1 = (iDiv == div1 - 1) ? e1.EPt : e1.Coords[(int)(iDiv + 0)];
                     double t0;
                     double t1;
                     if (!CadUtils.IsCrossLineCircle(cPt0, radius0, pt0, pt1, out t0, out t1))
                     {
                         continue;
                     }
-                    if (0 < t0 && t0 < 1 && IsDirectionArc(pt0 + (pt1 - pt0) * (float)t0) == 1)
+                    if (0 < t0 && t0 < 1 && IsDirectionArc(pt0 + (pt1 - pt0) * t0) == 1)
                     {
                         return true;
                     }
-                    if (0 < t1 && t1 < 1 && IsDirectionArc(pt0 + (pt1 - pt0) * (float)t1) == 1)
+                    if (0 < t1 && t1 < 1 && IsDirectionArc(pt0 + (pt1 - pt0) * t1) == 1)
                     {
                         return true;
                     }
                 }
                 return false;
             }
-            else if (CurveType == CurveType.CURVE_POLYLINE && e1.CurveType == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CurvePolyline && e1.CurveType == CurveType.CurveArc)
             {
                 return e1.IsCrossEdgeShareBothPoints(this, isShareS0S1);
             }
-            else if (CurveType == CurveType.CURVE_POLYLINE && e1.CurveType == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CurvePolyline && e1.CurveType == CurveType.CurvePolyline)
             {
                 uint div0 = (uint)(Coords.Count + 1);
                 uint div1 = (uint)(e1.Coords.Count + 1);
                 for (uint idiv = 1; idiv < div0 - 1; idiv++)
                 {
-                    Vector2 iPt0 = (idiv == 0) ? SPt : Coords[(int)(idiv - 1)];
-                    Vector2 iPt1 = (idiv == div0 - 1) ? EPt : Coords[(int)(idiv + 0)];
+                    OpenTK.Vector2d iPt0 = (idiv == 0) ? SPt : Coords[(int)(idiv - 1)];
+                    OpenTK.Vector2d iPt1 = (idiv == div0 - 1) ? EPt : Coords[(int)(idiv + 0)];
                     for (uint jdiv = 1; jdiv < div1 - 1; jdiv++)
                     {
-                        Vector2 jPt0 = (jdiv == 0) ? e1.SPt : e1.Coords[(int)(idiv - 1)];
-                        Vector2 jPt1 = (jdiv == div1 - 1) ? e1.EPt : e1.Coords[(int)(idiv + 0)];
+                        OpenTK.Vector2d jPt0 = (jdiv == 0) ? e1.SPt : e1.Coords[(int)(idiv - 1)];
+                        OpenTK.Vector2d jPt1 = (jdiv == div1 - 1) ? e1.EPt : e1.Coords[(int)(idiv + 0)];
                         if (CadUtils.IsCrossLineSegLineSeg(iPt0, iPt1, jPt0, jPt1))
                         {
                             return true;
@@ -1013,14 +1012,14 @@ namespace IvyFEM
             return false;
         }
 
-        private int NumCrossArcLineSeg(Vector2 sPt1, Vector2 ePt1)
+        private int NumCrossArcLineSeg(OpenTK.Vector2d sPt1, OpenTK.Vector2d ePt1)
         {
-            if (CurveType != CurveType.CURVE_ARC)
+            if (CurveType != CurveType.CurveArc)
             {
                 return -1;
             }
 
-            Vector2 cPt0;
+            OpenTK.Vector2d cPt0;
             double radius0;
             GetCenterRadius(out cPt0, out radius0);
 
@@ -1080,20 +1079,20 @@ namespace IvyFEM
                 {
                     return 1;
                 }
-                Vector2 foot;
+                OpenTK.Vector2d foot;
                 {
-                    Vector2 v01 = new Vector2(ePt1.X - sPt1.X, ePt1.Y - sPt1.Y);
-                    Vector2 vc0 = new Vector2(sPt1.X - cPt0.X, sPt1.Y - cPt0.Y);
-                    Vector2 vc1 = new Vector2(ePt1.X - cPt0.X, ePt1.Y - cPt0.Y);
-                    double dc0 = Vector2.Dot(vc0, v01);
-                    double dc1 = Vector2.Dot(vc1, v01);
+                    OpenTK.Vector2d v01 = new OpenTK.Vector2d(ePt1.X - sPt1.X, ePt1.Y - sPt1.Y);
+                    OpenTK.Vector2d vc0 = new OpenTK.Vector2d(sPt1.X - cPt0.X, sPt1.Y - cPt0.Y);
+                    OpenTK.Vector2d vc1 = new OpenTK.Vector2d(ePt1.X - cPt0.X, ePt1.Y - cPt0.Y);
+                    double dc0 = OpenTK.Vector2d.Dot(vc0, v01);
+                    double dc1 = OpenTK.Vector2d.Dot(vc1, v01);
                     if (dc0 * dc1 > 0.0)
                     {
                         return 0;
                     }
                     double r0 = -dc0 / (-dc0 + dc1);
                     double r1 = dc1 / (-dc0 + dc1);
-                    foot = sPt1 * (float)r1 + ePt1 * (float)r0;
+                    foot = sPt1 * r1 + ePt1 * r0;
                 }
                 if (CadUtils.SquareLength(cPt0, foot) > radius0 * radius0)
                 {
@@ -1111,38 +1110,38 @@ namespace IvyFEM
 
         public double GetCurveLength()
         {
-            if (CurveType == CurveType.CURVE_LINE)
+            if (CurveType == CurveType.CurveLine)
             {
-                Vector2 h0 = SPt - EPt;
-                return h0.Length();
+                OpenTK.Vector2d h0 = SPt - EPt;
+                return h0.Length;
             }
-            else if (CurveType == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CurveArc)
             {
                 double radius;
                 double theta;
-                Vector2 cPt;
-                Vector2 lx;
-                Vector2 ly;
+                OpenTK.Vector2d cPt;
+                OpenTK.Vector2d lx;
+                OpenTK.Vector2d ly;
                 GetCenterRadiusThetaLXY(out cPt, out radius, out theta, out lx, out ly);
                 return radius * theta;
             }
-            else if (CurveType == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CurvePolyline)
             {
                 uint div = (uint)(Coords.Count + 1);
                 double totLen = 0;
                 for (uint iDiv = 0; iDiv < div; iDiv++)
                 {
-                    Vector2 pt0 = (iDiv == 0) ? SPt : Coords[(int)(iDiv - 1)];
-                    Vector2 pt1 = (iDiv == div - 1) ? EPt : Coords[(int)(iDiv + 0)];
-                    totLen += Vector2.Distance(pt0, pt1);
+                    OpenTK.Vector2d pt0 = (iDiv == 0) ? SPt : Coords[(int)(iDiv - 1)];
+                    OpenTK.Vector2d pt1 = (iDiv == div - 1) ? EPt : Coords[(int)(iDiv + 0)];
+                    totLen += OpenTK.Vector2d.Distance(pt0, pt1);
                 }
                 return totLen;
             }
-            else if (CurveType == CurveType.CURVE_BEZIER)
+            else if (CurveType == CurveType.CurveBezier)
             {
                 // TODO : use the Sympthon's rule integration 
-                Vector2 scPt = Coords[0];
-                Vector2 ecPt = Coords[1];
+                OpenTK.Vector2d scPt = Coords[0];
+                OpenTK.Vector2d ecPt = Coords[1];
                 uint div = 16;
                 double divT = 1.0 / (div);
                 double edgeLen = 0;
@@ -1150,15 +1149,15 @@ namespace IvyFEM
                 {
                     double t0 = (i + 0) * divT;
                     double t1 = (i + 1) * divT;
-                    Vector2 vect0 = (float)(-3 * (1 - t0) * (1 - t0)) * SPt +
-                        (float)(3 * (3 * t0 - 1) * (t0 - 1)) * scPt -
-                        (float)(3 * t0 * (3 * t0 - 2)) * ecPt +
-                        (float)(3 * t0 * t0) * EPt;
-                    Vector2 vect1 = (float)(-3 * (1 - t1) * (1 - t1)) * SPt +
-                        (float)(3 * (3 * t1 - 1) * (t1 - 1)) * scPt -
-                        (float)(3 * t1 * (3 * t1 - 2)) * ecPt +
-                        (float)(3 * t1 * t1) * EPt;
-                    double aveLen = (vect0.Length() + vect1.Length()) * 0.5;
+                    OpenTK.Vector2d vect0 = (-3 * (1 - t0) * (1 - t0)) * SPt +
+                        (3 * (3 * t0 - 1) * (t0 - 1)) * scPt -
+                        (3 * t0 * (3 * t0 - 2)) * ecPt +
+                        (3 * t0 * t0) * EPt;
+                    OpenTK.Vector2d vect1 = (-3 * (1 - t1) * (1 - t1)) * SPt +
+                        (3 * (3 * t1 - 1) * (t1 - 1)) * scPt -
+                        (3 * t1 * (3 * t1 - 2)) * ecPt +
+                        (3 * t1 * t1) * EPt;
+                    double aveLen = (vect0.Length + vect1.Length) * 0.5;
                     edgeLen += aveLen * divT;
                 }
                 return edgeLen;
@@ -1166,27 +1165,27 @@ namespace IvyFEM
             return 0;
         }
 
-        public bool GetCurveAsPolyline(out IList<Vector2> pts, int div)
+        public bool GetCurveAsPolyline(out IList<OpenTK.Vector2d> pts, int div)
         {
-            pts = new List<Vector2>();
+            pts = new List<OpenTK.Vector2d>();
             if (div <= 0)
             {
-                if (CurveType == CurveType.CURVE_LINE)
+                if (CurveType == CurveType.CurveLine)
                 {
                     return true;
                 }
-                else if (CurveType == CurveType.CURVE_ARC)
+                else if (CurveType == CurveType.CurveArc)
                 {
                     double radius;
                     double theta;
-                    Vector2 cPt;
-                    Vector2 lx;
-                    Vector2 ly;
+                    OpenTK.Vector2d cPt;
+                    OpenTK.Vector2d lx;
+                    OpenTK.Vector2d ly;
                     GetCenterRadiusThetaLXY(out cPt, out radius, out theta, out lx, out ly);
                     uint div1 = (uint)(theta * 360 / (5.0 * 6.28) + 1);
                     return GetCurveAsPolyline(out pts, (int)div1);
                 }
-                else if (CurveType == CurveType.CURVE_POLYLINE)
+                else if (CurveType == CurveType.CurvePolyline)
                 {
                     uint nPt = (uint)Coords.Count;
                     for (uint i = 0; i < nPt; i++)
@@ -1195,43 +1194,43 @@ namespace IvyFEM
                     }
                     return true;
                 }
-                else if (CurveType == CurveType.CURVE_BEZIER)
+                else if (CurveType == CurveType.CurveBezier)
                 {
                     return GetCurveAsPolyline(out pts, 16);
                 }
             }
             else
             { 
-                if (CurveType == CurveType.CURVE_LINE)
+                if (CurveType == CurveType.CurveLine)
                 {
-                    Vector2 tDiv = (EPt - SPt) * (float)(1.0 / div);
+                    OpenTK.Vector2d tDiv = (EPt - SPt) * (1.0 / div);
                     for (uint iDiv = 1; iDiv < div; iDiv++){
-                        Vector2 vec0 = SPt + tDiv * iDiv;
+                        OpenTK.Vector2d vec0 = SPt + tDiv * iDiv;
                         pts.Add(vec0);
                     }
                     System.Diagnostics.Debug.Assert(pts.Count <= div);
                     return true;
                 }
-                else if (CurveType == CurveType.CURVE_ARC)
+                else if (CurveType == CurveType.CurveArc)
                 {
                     double radius;
                     double theta;
-                    Vector2 cPt;
-                    Vector2 lx;
-                    Vector2 ly;
+                    OpenTK.Vector2d cPt;
+                    OpenTK.Vector2d lx;
+                    OpenTK.Vector2d ly;
                     GetCenterRadiusThetaLXY(out cPt, out radius, out theta, out lx, out ly);
                     double thetaDiv = theta / div;
                     for (uint i = 1; i < div; i++)
                     {
                         double curTheta = i * thetaDiv;
-                        Vector2 vec0 = ((float)Math.Cos(curTheta) * lx +
-                            (float)Math.Sin(curTheta) * ly) * (float)radius + cPt;
+                        OpenTK.Vector2d vec0 = (Math.Cos(curTheta) * lx +
+                            Math.Sin(curTheta) * ly) * radius + cPt;
                         pts.Add(vec0);
                     }
                     System.Diagnostics.Debug.Assert(pts.Count <= div);
                     return true;
                 }
-                else if (CurveType == CurveType.CURVE_POLYLINE)
+                else if (CurveType == CurveType.CurvePolyline)
                 {
                     // mesh
                     double totLen = GetCurveLength();
@@ -1248,13 +1247,13 @@ namespace IvyFEM
                         {
                             System.Diagnostics.Debug.Assert(iCurDiv0 < Coords.Count + 1);
                             System.Diagnostics.Debug.Assert(curRatio0 >= 0 && curRatio0 <= 1);
-                            Vector2 pt0 = (iCurDiv0 == 0) ? SPt :Coords[(int)(iCurDiv0 - 1)];
-                            Vector2 pt1 = (iCurDiv0 == div0 - 1) ? EPt : Coords[(int)(iCurDiv0 + 0)];
-                            double iDivLen0 = Vector2.Distance(pt0, pt1);
+                            OpenTK.Vector2d pt0 = (iCurDiv0 == 0) ? SPt :Coords[(int)(iCurDiv0 - 1)];
+                            OpenTK.Vector2d pt1 = (iCurDiv0 == div0 - 1) ? EPt : Coords[(int)(iCurDiv0 + 0)];
+                            double iDivLen0 = OpenTK.Vector2d.Distance(pt0, pt1);
                             if (iDivLen0 * (1 - curRatio0) > curRestLen0)
                             {
                                 curRatio0 += curRestLen0 / iDivLen0;
-                                Vector2 p = pt0 * (float)(1.0 - curRatio0) + pt1 * (float)curRatio0;
+                                OpenTK.Vector2d p = pt0 * (1.0 - curRatio0) + pt1 * curRatio0;
                                 pts.Add(p);
                                 break;
                             }
@@ -1265,19 +1264,19 @@ namespace IvyFEM
                     }
                     return true;
                 }
-                else if (CurveType == CurveType.CURVE_BEZIER)
+                else if (CurveType == CurveType.CurveBezier)
                 {
                     System.Diagnostics.Debug.Assert(Coords.Count == 2);
-                    Vector2 scPt = Coords[0];
-                    Vector2 ecPt = Coords[1];
+                    OpenTK.Vector2d scPt = Coords[0];
+                    OpenTK.Vector2d ecPt = Coords[1];
                     double divT = 1.0 / (div);
                     for (uint i = 1; i < div; i++)
                     {
                         double t = i * divT;
-                        Vector2 vec0 = (float)((1 - t) * (1 - t) * (1 - t)) * SPt +
-                            (float)(3 * (1 - t) * (1 - t) * t) * scPt +
-                            (float)(3 * (1 - t) * t * t) * ecPt +
-                            (float)(t * t * t) * EPt;
+                        OpenTK.Vector2d vec0 = ((1 - t) * (1 - t) * (1 - t)) * SPt +
+                            (3 * (1 - t) * (1 - t) * t) * scPt +
+                            (3 * (1 - t) * t * t) * ecPt +
+                            (t * t * t) * EPt;
                         pts.Add(vec0);
                     }
                     return true;
@@ -1286,35 +1285,35 @@ namespace IvyFEM
             return false;
         }
 
-        public bool GetCenterRadius(out Vector2 cPt, out double radius)
+        public bool GetCenterRadius(out OpenTK.Vector2d cPt, out double radius)
         {
-            if (CurveType != CurveType.CURVE_ARC)
+            if (CurveType != CurveType.CurveArc)
             {
-                cPt = new Vector2();
+                cPt = new OpenTK.Vector2d();
                 radius = 0;
                 return false;
             }
 
-            double edgeLen = Vector2.Distance(SPt, EPt);
-            Vector2 hPt = new Vector2((SPt.X + EPt.X) * 0.5f, (SPt.Y + EPt.Y) * 0.5f);
-            Vector2 vv = new Vector2(SPt.Y - hPt.Y, hPt.X - SPt.X);
-            double vvLen = vv.Length();
-            vv.X /= (float)vvLen;
-            vv.Y /= (float)vvLen;
-            cPt.X = hPt.X + vv.X * (float)(this.Dist * edgeLen);
-            cPt.Y = hPt.Y + vv.Y * (float)(this.Dist * edgeLen);
-            Vector2 vcs = new Vector2(SPt.X - cPt.X, SPt.Y - cPt.Y);
-            radius = vcs.Length();
+            double edgeLen = OpenTK.Vector2d.Distance(SPt, EPt);
+            OpenTK.Vector2d hPt = new OpenTK.Vector2d((SPt.X + EPt.X) * 0.5, (SPt.Y + EPt.Y) * 0.5);
+            OpenTK.Vector2d vv = new OpenTK.Vector2d(SPt.Y - hPt.Y, hPt.X - SPt.X);
+            double vvLen = vv.Length;
+            vv.X /= vvLen;
+            vv.Y /= vvLen;
+            cPt.X = hPt.X + vv.X * (this.Dist * edgeLen);
+            cPt.Y = hPt.Y + vv.Y * (this.Dist * edgeLen);
+            OpenTK.Vector2d vcs = new OpenTK.Vector2d(SPt.X - cPt.X, SPt.Y - cPt.Y);
+            radius = vcs.Length;
             return true;
         }
 
-        private int IsDirectionArc(Vector2 pt)
+        private int IsDirectionArc(OpenTK.Vector2d pt)
         {
-            if (CurveType != CurveType.CURVE_ARC)
+            if (CurveType != CurveType.CurveArc)
             {
                 return -1;
             }
-            Vector2 cPt;
+            OpenTK.Vector2d cPt;
             double radius = 0;
             GetCenterRadius(out cPt, out radius);
             if (IsLeftSide)
@@ -1371,24 +1370,24 @@ namespace IvyFEM
             return -1;
         }
 
-        public bool GetCenterRadiusThetaLXY(out Vector2 cPt, out double radius,
-            out double theta, out Vector2 lx, out Vector2 ly)
+        public bool GetCenterRadiusThetaLXY(out OpenTK.Vector2d cPt, out double radius,
+            out double theta, out OpenTK.Vector2d lx, out OpenTK.Vector2d ly)
         {
-            cPt = new Vector2(0, 0);
+            cPt = new OpenTK.Vector2d(0, 0);
             radius = 0;
             theta = 0;
-            lx = new Vector2(0, 0);
-            ly = new Vector2(0, 0);
+            lx = new OpenTK.Vector2d(0, 0);
+            ly = new OpenTK.Vector2d(0, 0);
 
-            if (CurveType != CurveType.CURVE_ARC)
+            if (CurveType != CurveType.CurveArc)
             {
                 return false;
             }
 
             GetCenterRadius(out cPt, out radius);
-            Vector2 rsV = new Vector2(SPt.X - cPt.X, SPt.Y - cPt.Y);
-            lx.X = rsV.X / (float)radius;
-            lx.Y = rsV.Y / (float)radius;
+            OpenTK.Vector2d rsV = new OpenTK.Vector2d(SPt.X - cPt.X, SPt.Y - cPt.Y);
+            lx.X = rsV.X / radius;
+            lx.Y = rsV.Y / radius;
             if (IsLeftSide)
             {
                 ly.X = lx.Y;
@@ -1399,10 +1398,11 @@ namespace IvyFEM
                 ly.X = -lx.Y;
                 ly.Y = lx.X;
             }
-            Vector2 reV = new Vector2(EPt.X-cPt.X, EPt.Y - cPt.Y);
-            System.Diagnostics.Debug.Assert(Math.Abs(CadUtils.SquareLength(rsV) - CadUtils.SquareLength(reV)) < 1.0e-10);
-            double x = Vector2.Dot(reV, lx);
-            double y = Vector2.Dot(reV, ly);
+            OpenTK.Vector2d reV = new OpenTK.Vector2d(EPt.X-cPt.X, EPt.Y - cPt.Y);
+            System.Diagnostics.Debug.Assert(
+                Math.Abs(CadUtils.SquareLength(rsV) - CadUtils.SquareLength(reV)) < 1.0e-10);
+            double x = OpenTK.Vector2d.Dot(reV, lx);
+            double y = OpenTK.Vector2d.Dot(reV, ly);
             theta = Math.Atan2(y, x);
             const double PI = Math.PI;
             if (theta < 0.0)
@@ -1412,9 +1412,9 @@ namespace IvyFEM
             return true;
         }
 
-        public Vector2 GetNearestPoint(Vector2 pt)
+        public OpenTK.Vector2d GetNearestPoint(OpenTK.Vector2d pt)
         {
-            if (CurveType == CurveType.CURVE_LINE)
+            if (CurveType == CurveType.CurveLine)
             {
                 double t = CadUtils.FindNearestPointParameterLinePoint(pt, SPt, EPt);
                 if (t < 0)
@@ -1427,23 +1427,23 @@ namespace IvyFEM
                 }
                 else
                 {
-                    return SPt + (EPt - SPt) * (float)t;
+                    return SPt + (EPt - SPt) * t;
                 }
             }
-            else if (CurveType == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CurveArc)
             {
                 double radius;
-                Vector2 cPt;
+                OpenTK.Vector2d cPt;
 
                 GetCenterRadius(out cPt, out radius);
 
-                double len = Vector2.Distance(cPt, pt);
+                double len = OpenTK.Vector2d.Distance(cPt, pt);
                 if (len < 1.0e-10)
                 {
                     return SPt;
                 }
 
-                Vector2 pPt = cPt * (float)(1 - radius / len) + pt * (float)(radius / len);
+                OpenTK.Vector2d pPt = cPt * (1 - radius / len) + pt * (radius / len);
                 if (IsDirectionArc(pPt) != 0)
                 {
                     return pPt;
@@ -1459,18 +1459,18 @@ namespace IvyFEM
                     return EPt;
                 }
             }
-            else if (CurveType == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CurvePolyline)
             {
                 uint div = (uint)(Coords.Count + 1);
-                double minDist = Vector2.Distance(SPt, pt);
-                Vector2 cand = new Vector2(SPt.X, SPt.Y);
+                double minDist = OpenTK.Vector2d.Distance(SPt, pt);
+                OpenTK.Vector2d cand = new OpenTK.Vector2d(SPt.X, SPt.Y);
                 for (uint iDiv = 0; iDiv < div; iDiv++)
                 {
-                    Vector2 iPt0 = (iDiv == 0) ? SPt : Coords[(int)(iDiv - 1)];
-                    Vector2 iPt1 = (iDiv == div - 1) ? EPt : Coords[(int)(iDiv + 0)];
-                    if (Vector2.Distance(pt, iPt1) < minDist)
+                    OpenTK.Vector2d iPt0 = (iDiv == 0) ? SPt : Coords[(int)(iDiv - 1)];
+                    OpenTK.Vector2d iPt1 = (iDiv == div - 1) ? EPt : Coords[(int)(iDiv + 0)];
+                    if (OpenTK.Vector2d.Distance(pt, iPt1) < minDist)
                     {
-                        minDist = Vector2.Distance(pt, iPt1);
+                        minDist = OpenTK.Vector2d.Distance(pt, iPt1);
                         cand = iPt1;
                     }
                     double t = CadUtils.FindNearestPointParameterLinePoint(pt, iPt0, iPt1);
@@ -1478,10 +1478,10 @@ namespace IvyFEM
                     {
                         continue;
                     }
-                    Vector2 midPt = iPt0 + (iPt1 - iPt0) * (float)t;
-                    if (Vector2.Distance(pt, midPt) < minDist)
+                    OpenTK.Vector2d midPt = iPt0 + (iPt1 - iPt0) * t;
+                    if (OpenTK.Vector2d.Distance(pt, midPt) < minDist)
                     {
-                        minDist = Vector2.Distance(pt, midPt);
+                        minDist = OpenTK.Vector2d.Distance(pt, midPt);
                         cand = midPt;
                     }
                 }
@@ -1489,25 +1489,25 @@ namespace IvyFEM
             }
 
             System.Diagnostics.Debug.Assert(false);
-            Vector2 zeroV = new Vector2(0,0);
+            OpenTK.Vector2d zeroV = new OpenTK.Vector2d(0,0);
             return zeroV;
         }
 
-        public Vector2 GetTangentEdge(bool isS)
+        public OpenTK.Vector2d GetTangentEdge(bool isS)
         {
-            if (CurveType == CurveType.CURVE_LINE)
+            if (CurveType == CurveType.CurveLine)
             {
-                Vector2 d = (isS) ? EPt - SPt : SPt - EPt;
+                OpenTK.Vector2d d = (isS) ? EPt - SPt : SPt - EPt;
                 d = CadUtils.Normalize(d);
                 return d;
             }
-            else if (CurveType == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CurveArc)
             {
                 double radius;
-                Vector2 cPt;
+                OpenTK.Vector2d cPt;
                 GetCenterRadius(out cPt, out radius);
-                Vector2 h = (isS) ? SPt - cPt : EPt - cPt;
-                Vector2 v;
+                OpenTK.Vector2d h = (isS) ? SPt - cPt : EPt - cPt;
+                OpenTK.Vector2d v;
                 if ((isS && !IsLeftSide) || (!isS && IsLeftSide))
                 {
                     v.X = -h.Y;
@@ -1521,7 +1521,7 @@ namespace IvyFEM
                 v = CadUtils.Normalize(v);
                 return v;
             }
-            else if (CurveType == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CurvePolyline)
             {
                 if (isS)
                 {
@@ -1529,7 +1529,7 @@ namespace IvyFEM
                     {
                         return EPt - SPt;
                     }
-                    Vector2 d = Coords[1] - SPt;
+                    OpenTK.Vector2d d = Coords[1] - SPt;
                     d = CadUtils.Normalize(d);
                     return d;
                 }
@@ -1539,74 +1539,74 @@ namespace IvyFEM
                     {
                         return SPt - EPt;
                     }
-                    Vector2 d = Coords[Coords.Count - 1] - EPt;
+                    OpenTK.Vector2d d = Coords[Coords.Count - 1] - EPt;
                     d = CadUtils.Normalize(d);
                     return d;
                 }
             }
-            else if (CurveType == CurveType.CURVE_BEZIER)
+            else if (CurveType == CurveType.CurveBezier)
             {
-                Vector2 scPt = Coords[0];
-                Vector2 ecPt = Coords[1];
-                Vector2 d = (isS) ? scPt - SPt : ecPt - EPt;
+                OpenTK.Vector2d scPt = Coords[0];
+                OpenTK.Vector2d ecPt = Coords[1];
+                OpenTK.Vector2d d = (isS) ? scPt - SPt : ecPt - EPt;
                 d = CadUtils.Normalize(d);
                 return d;
             }
 
             System.Diagnostics.Debug.Assert(false);
-            Vector2 zeroV = new Vector2(0,0);
+            OpenTK.Vector2d zeroV = new OpenTK.Vector2d(0,0);
             return zeroV;
         }
 
-        public bool Split(Edge2D addEdge, Vector2 addPt)
+        public bool Split(Edge2D addEdge, OpenTK.Vector2d addPt)
         {
-            if (CurveType == CurveType.CURVE_LINE)
+            if (CurveType == CurveType.CurveLine)
             {
 
             }
-            else if (CurveType == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CurveArc)
             {
-                Vector2 sPt = SPt;
-                Vector2 ePt = EPt;
-                Vector2 cPt;
+                OpenTK.Vector2d sPt = SPt;
+                OpenTK.Vector2d ePt = EPt;
+                OpenTK.Vector2d cPt;
                 double r;
                 GetCenterRadius(out cPt, out r);
-                Dist = CadUtils.TriHeight(cPt, sPt, addPt) / Vector2.Distance(sPt, addPt);
-                addEdge.CurveType = CurveType.CURVE_ARC;
+                Dist = CadUtils.TriHeight(cPt, sPt, addPt) / OpenTK.Vector2d.Distance(sPt, addPt);
+                addEdge.CurveType = CurveType.CurveArc;
                 addEdge.IsLeftSide = IsLeftSide;
-                addEdge.Dist = CadUtils.TriHeight(cPt, addPt, ePt) / Vector2.Distance(addPt, ePt);
+                addEdge.Dist = CadUtils.TriHeight(cPt, addPt, ePt) / OpenTK.Vector2d.Distance(addPt, ePt);
             }
-            else if (CurveType == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CurvePolyline)
             {
-                Vector2 sPt = SPt;
-                Vector2 ePt = EPt;
-                IList<Vector2> cos = new List<Vector2>(Coords);
+                OpenTK.Vector2d sPt = SPt;
+                OpenTK.Vector2d ePt = EPt;
+                IList<OpenTK.Vector2d> cos = new List<OpenTK.Vector2d>(Coords);
                 int iEPt0;
                 int iSPt1;
                 {
                     bool isSegment = false;
                     int ind = -1;
-                    double minDist = Vector2.Distance(sPt, addPt);
+                    double minDist = OpenTK.Vector2d.Distance(sPt, addPt);
                     for (uint iDiv = 0; iDiv < cos.Count + 1; iDiv++)
                     {
-                        Vector2 iPt0 = (iDiv == 0) ? sPt : cos[(int)(iDiv - 1)];
-                        Vector2 iPt1 = (iDiv == cos.Count) ? ePt : cos[(int)iDiv];
-                        if (Vector2.Distance(addPt, iPt1) < minDist)
+                        OpenTK.Vector2d iPt0 = (iDiv == 0) ? sPt : cos[(int)(iDiv - 1)];
+                        OpenTK.Vector2d iPt1 = (iDiv == cos.Count) ? ePt : cos[(int)iDiv];
+                        if (OpenTK.Vector2d.Distance(addPt, iPt1) < minDist)
                         {
                             isSegment = false;
                             ind = (int)iDiv;
-                            minDist = Vector2.Distance(addPt, iPt1);
+                            minDist = OpenTK.Vector2d.Distance(addPt, iPt1);
                         }
                         double t = CadUtils.FindNearestPointParameterLinePoint(addPt, iPt0, iPt1);
                         if (t < 0.01 || t > 0.99)
                         {
                             continue;
                         }
-                        Vector2 midPt = iPt0 + (iPt1 - iPt0) * (float)t;
-                        if (Vector2.Distance(addPt, midPt) < minDist)
+                        OpenTK.Vector2d midPt = iPt0 + (iPt1 - iPt0) * t;
+                        if (OpenTK.Vector2d.Distance(addPt, midPt) < minDist)
                         {
                             isSegment = true;
-                            minDist = Vector2.Distance(addPt, midPt);
+                            minDist = OpenTK.Vector2d.Distance(addPt, midPt);
                             ind = (int)iDiv;
                         }
                     }
@@ -1625,12 +1625,12 @@ namespace IvyFEM
 
                 if (iEPt0 > 0)
                 {
-                    CurveType = CurveType.CURVE_POLYLINE;
+                    CurveType = CurveType.CurvePolyline;
                     uint nPt = (uint)(iEPt0 + 1);
                     int nCos = Coords.Count;
                     for (int i = nCos; i < nPt; i++)
                     {
-                        Coords.Add(new Vector2());
+                        Coords.Add(new OpenTK.Vector2d());
                     }
                     for (uint ipt = 0; ipt < nPt; ipt++)
                     {
@@ -1639,17 +1639,17 @@ namespace IvyFEM
                 }
                 else
                 {
-                    CurveType = CurveType.CURVE_LINE;
+                    CurveType = CurveType.CurveLine;
                 }
 
                 if (iSPt1 < (int)cos.Count)
                 {
-                    addEdge.CurveType = CurveType.CURVE_POLYLINE;
+                    addEdge.CurveType = CurveType.CurvePolyline;
                     uint nPt = (uint)(cos.Count - iSPt1);
                     int nCos = addEdge.Coords.Count;
                     for (int i = nCos; i < nPt; i++)
                     {
-                        addEdge.Coords.Add(new Vector2());
+                        addEdge.Coords.Add(new OpenTK.Vector2d());
                     }
                     for (uint ipt = 0; ipt < nPt; ipt++)
                     {
@@ -1658,7 +1658,7 @@ namespace IvyFEM
                 }
                 else
                 {
-                    addEdge.CurveType = CurveType.CURVE_LINE;
+                    addEdge.CurveType = CurveType.CurveLine;
                 }
             }
             return true;
@@ -1666,18 +1666,18 @@ namespace IvyFEM
 
         public double EdgeArea()
         {
-            if (CurveType == CurveType.CURVE_LINE)
+            if (CurveType == CurveType.CurveLine)
             {
                 return 0;
             }
-            else if (CurveType == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CurveArc)
             {
-                Vector2 cPt;
+                OpenTK.Vector2d cPt;
                 double radius;
                 GetCenterRadius(out cPt, out radius);
-                Vector2 scV = SPt - cPt;
-                Vector2 ax = scV * (float)(1 / radius);
-                Vector2 ay;
+                OpenTK.Vector2d scV = SPt - cPt;
+                OpenTK.Vector2d ax = scV * (1 / radius);
+                OpenTK.Vector2d ay;
                 if (IsLeftSide)
                 {
                     ay.X = ax.Y;
@@ -1688,9 +1688,9 @@ namespace IvyFEM
                     ay.X = -ax.Y;
                     ay.Y = ax.X;
                 }
-                Vector2 ecV = EPt - cPt;
-                double x = Vector2.Dot(ecV, ax);
-                double y = Vector2.Dot(ecV, ay);
+                OpenTK.Vector2d ecV = EPt - cPt;
+                double x = OpenTK.Vector2d.Dot(ecV, ax);
+                double y = OpenTK.Vector2d.Dot(ecV, ay);
                 double theta = Math.Atan2(y, x);
                 const double PI = Math.PI;
                 if (theta < 0.0)
@@ -1705,52 +1705,52 @@ namespace IvyFEM
                 }
                 return segmentArea;
             }
-            else if (CurveType == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CurvePolyline)
             {
                 uint div = (uint)(Coords.Count + 1);
                 if (div == 1) { return 0; }
-                Vector2 eh = EPt - SPt;
+                OpenTK.Vector2d eh = EPt - SPt;
                 eh = CadUtils.Normalize(eh);
-                Vector2 ev = new Vector2(eh.Y, -eh.X);
+                OpenTK.Vector2d ev = new OpenTK.Vector2d(eh.Y, -eh.X);
                 double area = 0;
                 for (uint iDiv = 0; iDiv < div; iDiv++)
                 {
-                    Vector2 pt0 = (iDiv == 0) ? SPt : Coords[(int)(iDiv - 1)];
-                    Vector2 pt1 = (iDiv == div - 1) ? EPt : Coords[(int)(iDiv + 0)];
-                    double h0 = Vector2.Dot(pt0 - SPt, ev);
-                    double h1 = Vector2.Dot(pt1 - SPt, ev);
-                    double divx = Vector2.Dot(pt1 - pt0, eh);
+                    OpenTK.Vector2d pt0 = (iDiv == 0) ? SPt : Coords[(int)(iDiv - 1)];
+                    OpenTK.Vector2d pt1 = (iDiv == div - 1) ? EPt : Coords[(int)(iDiv + 0)];
+                    double h0 = OpenTK.Vector2d.Dot(pt0 - SPt, ev);
+                    double h1 = OpenTK.Vector2d.Dot(pt1 - SPt, ev);
+                    double divx = OpenTK.Vector2d.Dot(pt1 - pt0, eh);
                     area += 0.5 * divx * (h0 + h1);
                 }
                 return area;
             }
-            else if (CurveType == CurveType.CURVE_BEZIER)
+            else if (CurveType == CurveType.CurveBezier)
             {
-                Vector2 scPt = Coords[0];
-                Vector2 ecPt = Coords[1];
+                OpenTK.Vector2d scPt = Coords[0];
+                OpenTK.Vector2d ecPt = Coords[1];
                 uint ndiv = 32;
                 double tdiv = 1.0 / (ndiv);
                 double area = 0;
                 for (uint i = 0; i < ndiv; i++){
                     double t0 = (i + 0) * tdiv;
                     double t1 = (i + 1) * tdiv;
-                    Vector2 vec0 = (float)((1 - t0) * (1 - t0) * (1 - t0)) * SPt +
-                        (float)(3 * (1 - t0) * (1 - t0) * t0) * scPt +
-                        (float)(3 * (1 - t0) * t0 * t0) * ecPt +
-                        (float)(t0 * t0 * t0) * EPt;
-                    Vector2 vecT0 = (float)(-3 * (1 - t0) * (1 - t0)) * SPt +
-                        (float)(3 * (3 * t0 - 1) * (t0 - 1)) * scPt -
-                        (float)(3 * t0 * (3 * t0 - 2)) * ecPt +
-                        (float)(3 * t0 * t0) * EPt;
+                    OpenTK.Vector2d vec0 = ((1 - t0) * (1 - t0) * (1 - t0)) * SPt +
+                        (3 * (1 - t0) * (1 - t0) * t0) * scPt +
+                        (3 * (1 - t0) * t0 * t0) * ecPt +
+                        (t0 * t0 * t0) * EPt;
+                    OpenTK.Vector2d vecT0 = (-3 * (1 - t0) * (1 - t0)) * SPt +
+                        (3 * (3 * t0 - 1) * (t0 - 1)) * scPt -
+                        (3 * t0 * (3 * t0 - 2)) * ecPt +
+                        (3 * t0 * t0) * EPt;
                     double area0 = CadUtils.TriArea(SPt, vec0, vecT0 + vec0);
-                    Vector2 vec1 = (float)((1 - t1) * (1 - t1) * (1 - t1)) * SPt +
-                        (float)(3 * (1 - t1) * (1 - t1) * t1) * scPt +
-                        (float)(3 * (1 - t1) * t1 * t1) * ecPt +
-                        (float)(t1 * t1 * t1) * EPt;
-                    Vector2 vecT1 = (float)(-3 * (1 - t1) * (1 - t1)) * SPt +
-                        (float)(3 * (3 * t1 - 1) * (t1 - 1)) * scPt -
-                        (float)(3 * t1 * (3 * t1 - 2)) * ecPt +
-                        (float)(3 * t1 * t1) * EPt;
+                    OpenTK.Vector2d vec1 = ((1 - t1) * (1 - t1) * (1 - t1)) * SPt +
+                        (3 * (1 - t1) * (1 - t1) * t1) * scPt +
+                        (3 * (1 - t1) * t1 * t1) * ecPt +
+                        (t1 * t1 * t1) * EPt;
+                    OpenTK.Vector2d vecT1 = (-3 * (1 - t1) * (1 - t1)) * SPt +
+                        (3 * (3 * t1 - 1) * (t1 - 1)) * scPt -
+                        (3 * t1 * (3 * t1 - 2)) * ecPt +
+                        (3 * t1 * t1) * EPt;
                     double area1 = CadUtils.TriArea(SPt, vec1, vecT1 + vec1);
                     double aveLen = (area0 + area1) * 0.5;
                     area += aveLen * tdiv;
@@ -1764,9 +1764,9 @@ namespace IvyFEM
             return 0;
         }
 
-        public int NumIntersectAgainstHalfLine(Vector2 bPt, Vector2 dir0)
+        public int NumIntersectAgainstHalfLine(OpenTK.Vector2d bPt, OpenTK.Vector2d dir0)
         {
-            Vector2 dir1 = dir0 * (float)(1.0 / dir0.Length());
+            OpenTK.Vector2d dir1 = dir0 * (1.0 / dir0.Length);
             double longLen = 0;
             {
                 double minX;
@@ -1774,11 +1774,11 @@ namespace IvyFEM
                 double minY;
                 double maxY;
                 GetBoundingBox(out minX, out maxX, out minY, out maxY);
-                Vector2 tmpDPt = bPt + dir1;
-                double area1 = CadUtils.TriArea(bPt, tmpDPt, new Vector2((float)minX, (float)minY));
-                double area2 = CadUtils.TriArea(bPt, tmpDPt, new Vector2((float)minX, (float)maxY));
-                double area3 = CadUtils.TriArea(bPt, tmpDPt, new Vector2((float)maxX, (float)minY));
-                double area4 = CadUtils.TriArea(bPt, tmpDPt, new Vector2((float)maxX, (float)maxY));
+                OpenTK.Vector2d tmpDPt = bPt + dir1;
+                double area1 = CadUtils.TriArea(bPt, tmpDPt, new OpenTK.Vector2d(minX, minY));
+                double area2 = CadUtils.TriArea(bPt, tmpDPt, new OpenTK.Vector2d(minX, maxY));
+                double area3 = CadUtils.TriArea(bPt, tmpDPt, new OpenTK.Vector2d(maxX, minY));
+                double area4 = CadUtils.TriArea(bPt, tmpDPt, new OpenTK.Vector2d(maxX, maxY));
                 if (area1 < 0 && area2 < 0 && area3 < 0 && area4 < 0)
                 {
                     return 0;
@@ -1787,31 +1787,31 @@ namespace IvyFEM
                 {
                     return 0;
                 }
-                double len0 = Vector2.Distance(bPt,
-                    new Vector2((float)(0.5 * (minX + maxX)), (float)(0.5 * (minY + maxY))));
+                double len0 = OpenTK.Vector2d.Distance(bPt,
+                    new OpenTK.Vector2d((0.5 * (minX + maxX)), (0.5 * (minY + maxY))));
                 double len1 = maxX - minX;
                 double len2 = maxY - minY;
                 longLen = 2 * (len0 + len1 + len2);
             }
-            Vector2 dPt = bPt + dir1 * (float)longLen;
-            if (CurveType == CurveType.CURVE_LINE)
+            OpenTK.Vector2d dPt = bPt + dir1 * longLen;
+            if (CurveType == CurveType.CurveLine)
             {
                 bool ret = CadUtils.IsCrossLineSegLineSeg(SPt, EPt, bPt, dPt);
                 return ret ? 1 : 0;
             }
-            else if (CurveType == CurveType.CURVE_ARC)
+            else if (CurveType == CurveType.CurveArc)
             {
                 return NumCrossArcLineSeg(bPt, dPt);
 
             }
-            else if (CurveType == CurveType.CURVE_POLYLINE)
+            else if (CurveType == CurveType.CurvePolyline)
             {
                 uint div = (uint)(Coords.Count + 1);
                 int iCnt = 0;
                 for (uint iDiv = 0; iDiv < div; iDiv++)
                 {
-                    Vector2 iPt0 = (iDiv == 0) ? SPt : Coords[(int)(iDiv - 1)];
-                    Vector2 iPt1 = (iDiv == div - 1) ? EPt : Coords[(int)(iDiv + 0)];
+                    OpenTK.Vector2d iPt0 = (iDiv == 0) ? SPt : Coords[(int)(iDiv - 1)];
+                    OpenTK.Vector2d iPt1 = (iDiv == div - 1) ? EPt : Coords[(int)(iDiv + 0)];
                     int res = 0;
                     if (CadUtils.IsCrossLineSegLineSeg(bPt, dPt, iPt0, iPt1))
                     {
@@ -1843,20 +1843,20 @@ namespace IvyFEM
             {
                 System.Diagnostics.Debug.Assert(SVId == e1.SVId);
             }
-            if (CurveType == CurveType.CURVE_POLYLINE)
+            if (CurveType == CurveType.CurvePolyline)
             {
-                IList<Vector2> pts0 = Coords;
+                IList<OpenTK.Vector2d> pts0 = Coords;
 
                 double aveELen = GetCurveLength() / (pts0.Count + 1.0);
-                IList<Vector2> pts1;
+                IList<OpenTK.Vector2d> pts1;
                 {
                     uint div1 = (uint)(e1.GetCurveLength() / aveELen);
                     e1.GetCurveAsPolyline(out pts1, (int)div1);
                 }
-                IList<Vector2> pts2;
+                IList<OpenTK.Vector2d> pts2;
                 if (isAheadAdd)
                 {
-                    pts2 = new List<Vector2>(pts0);
+                    pts2 = new List<OpenTK.Vector2d>(pts0);
                     pts2.Add(EPt);
                     if (isSameDir)
                     {
@@ -1881,7 +1881,7 @@ namespace IvyFEM
                 {
                     if (isSameDir)
                     {
-                        pts2 = new List<Vector2>(pts1);
+                        pts2 = new List<OpenTK.Vector2d>(pts1);
                         pts2.Add(SPt);
                         for (uint i = 0; i < pts0.Count; i++)
                         {
@@ -1892,7 +1892,7 @@ namespace IvyFEM
                     }
                     else
                     {
-                        pts2 = new List<Vector2>();
+                        pts2 = new List<OpenTK.Vector2d>();
                         for (int i = pts1.Count - 1; i >= 0; i--)
                         {
                             pts2.Add(pts1[i]);
@@ -1907,7 +1907,7 @@ namespace IvyFEM
                     }
                 }
 
-                Coords = new List<Vector2>(pts2);
+                Coords = new List<OpenTK.Vector2d>(pts2);
             }
             return true;
         }

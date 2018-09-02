@@ -15,18 +15,22 @@ namespace IvyFEM.Lis
         {
             string[] args = System.Environment.GetCommandLineArgs();
             int argc = args.Length;
-            byte[][] argv = new byte[argc][];
-            for (int i = 0; i < argc; i++)
-            {
-                argv[i] = System.Text.Encoding.UTF8.GetBytes(args[i]);
-            }
 
             int ret = 0;
             unsafe
             {
-                fixed (byte* argvP = argv[0]) // 多分間違っている
+                byte*[] argv = new byte*[argc];
+                for (int i = 0; i < argc; i++)
                 {
-                    ret = IvyFEM.Lis.ImportedFunctions.lis_initialize(&argc, &argvP);
+                    byte[] v = System.Text.Encoding.UTF8.GetBytes(args[i]);
+                    fixed (byte* vP = &v[0])
+                    {
+                        argv[i] = vP;
+                    }
+                }
+                fixed (byte** argvP = &argv[0])
+                {
+                    ret = IvyFEM.Lis.ImportedFunctions.lis_initialize(&argc, argvP);
                 }
             }
             return ret;

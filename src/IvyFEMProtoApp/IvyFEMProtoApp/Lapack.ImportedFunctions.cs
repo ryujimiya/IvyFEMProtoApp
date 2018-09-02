@@ -28,8 +28,8 @@ namespace IvyFEM.Lapack
         public static extern unsafe void dgbmv_(
             byte* trans, int* m, int* n, int* kl, int* ku,
             double* alpha, double[] a, int* lda,
-            double[] x, int* incx, double* beta,
-            double[] y, int* incy);
+            double[] x, int* incx, 
+            double* beta, double[] y, int* incy);
 
         [DllImport("libblas.dll")]
         public static extern unsafe void dgemm_(
@@ -139,6 +139,11 @@ namespace IvyFEM.Lapack
             double[] b, int ldb);
 
         [DllImport("liblapacke.dll")]
+        public static extern int LAPACKE_dgetrf(
+            MatrixLayout matrix_layout,
+            int m, int n, double[] a, int lda, int[] ipiv);
+
+        [DllImport("liblapacke.dll")]
         public static extern int LAPACKE_dggev(
             MatrixLayout matrix_layout,
             byte jobvl, byte jobvr,
@@ -147,6 +152,12 @@ namespace IvyFEM.Lapack
             double[] alphar, double[] alphai, double[] beta,
             double[] vl, int ldvl,
             double[] vr, int ldvr);
+
+        [DllImport("liblapacke.dll")]
+        public static extern int LAPACKE_dpbsv(
+            MatrixLayout matrix_layout,
+            byte uplo, int n, int kd, int nrhs, double[] ab, int ldab,
+            double[] b, int ldb);
 
         [DllImport("liblapacke.dll")]
         public static extern unsafe int LAPACKE_zgbsv(
@@ -163,7 +174,18 @@ namespace IvyFEM.Lapack
             System.Numerics.Complex* b, int ldb);
 
         [DllImport("liblapacke.dll")]
+        public static extern unsafe int LAPACKE_zgetrf(
+            MatrixLayout matrix_layout,
+            int m, int n, System.Numerics.Complex* a, int lda, int[] ipiv);
+
+        [DllImport("liblapacke.dll")]
         public static extern unsafe int LAPACKE_zlacgv(int n, System.Numerics.Complex* x, int incx);
 
+        [DllImport("liblapacke.dll")]
+        public static extern unsafe int LAPACKE_zpbsv(
+            MatrixLayout matrix_layout,
+            byte uplo, int n, int kd, int nrhs,
+            System.Numerics.Complex* ab, int ldab,
+            System.Numerics.Complex* b, int ldb);
     }
 }

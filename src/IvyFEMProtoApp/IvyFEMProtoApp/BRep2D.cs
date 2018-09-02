@@ -77,15 +77,15 @@ namespace IvyFEM
 
         public bool IsElemId(CadElementType type, uint id)
         {
-            if (type == CadElementType.VERTEX)
+            if (type == CadElementType.Vertex)
             {
                 return BRep.IsUseVertexId(id);
             }
-            else if (type == CadElementType.EDGE)
+            else if (type == CadElementType.Edge)
             {
                 return Edge2HalfEdge.ContainsKey(id);
             }
-            else if (type == CadElementType.LOOP)
+            else if (type == CadElementType.Loop)
             {
                 return Loop2UseLoop.ContainsKey(id);
             }
@@ -104,19 +104,19 @@ namespace IvyFEM
 
         public IList<uint> GetElemIds(CadElementType type)
         {
-            if (type == CadElementType.VERTEX)
+            if (type == CadElementType.Vertex)
             {
                 return BRep.GetUseVertexIds();
             }
             IList<uint> res = new List<uint>();
-            if (type == CadElementType.EDGE)
+            if (type == CadElementType.Edge)
             {
                 foreach (var key in Edge2HalfEdge.Keys)
                 {
                     res.Add(key);
                 }
             }
-            else if (type == CadElementType.LOOP)
+            else if (type == CadElementType.Loop)
             {
                 foreach (var key in Loop2UseLoop.Keys)
                 {

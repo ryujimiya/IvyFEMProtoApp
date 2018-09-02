@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Numerics;
 using OpenTK.Graphics.OpenGL;
 
 namespace IvyFEM
@@ -15,9 +14,9 @@ namespace IvyFEM
         private IList<LineFE> lineFEs = new List<LineFE>();
         private uint LineCount => (uint)lineFEs.Count;
         private uint ValueId = 0;
-        private FieldDerivationType ValueDt = FieldDerivationType.VALUE;
+        private FieldDerivationType ValueDt = FieldDerivationType.Value;
         private bool IsntDisplacementValue = false;
-        public RotMode SutableRotMode { get; private set; } = RotMode.ROTMODE_NOT_SET;
+        public RotMode SutableRotMode { get; private set; } = RotMode.RotModeNotSet;
         public bool IsAntiAliasing { get; set; } = false;
 
         public EdgeFieldDrawer()
@@ -38,7 +37,7 @@ namespace IvyFEM
             if (!world.IsFieldValueId(valueId))
             {
                 throw new ArgumentException();
-                return;
+                //return;
             }
 
             ValueId = valueId;
@@ -55,7 +54,7 @@ namespace IvyFEM
             uint drawDim;
             if (!IsntDisplacementValue
                 && dim == 2
-                && (fv.Type == FieldValueType.SCALAR || fv.Type == FieldValueType.ZSCALAR))
+                && (fv.Type == FieldValueType.Scalar || fv.Type == FieldValueType.ZScalar))
             {
                 drawDim = 3;
             }
@@ -65,9 +64,9 @@ namespace IvyFEM
             }
             VertexArray.SetSize(ptCnt, drawDim);
 
-            if (drawDim == 2) { SutableRotMode = RotMode.ROTMODE_2D; }
-            else if (dim == 3) { SutableRotMode = RotMode.ROTMODE_3D; }
-            else { SutableRotMode = RotMode.ROTMODE_2DH; }
+            if (drawDim == 2) { SutableRotMode = RotMode.RotMode2D; }
+            else if (dim == 3) { SutableRotMode = RotMode.RotMode3D; }
+            else { SutableRotMode = RotMode.RotMode2DH; }
 
 
             Update(world);

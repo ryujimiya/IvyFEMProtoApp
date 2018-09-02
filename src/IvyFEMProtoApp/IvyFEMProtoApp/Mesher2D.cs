@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Numerics;
 
 namespace IvyFEM
 {
@@ -23,7 +22,7 @@ namespace IvyFEM
         private IList<MeshTriArray2D> TriArrays = new List<MeshTriArray2D>();
         private IList<MeshQuadArray2D> QuadArrays = new List<MeshQuadArray2D>();
 
-        private IList<Vector2> Vec2Ds = new List<Vector2>();
+        private IList<OpenTK.Vector2d> Vec2Ds = new List<OpenTK.Vector2d>();
 
         public Mesher2D()
         {
@@ -37,7 +36,7 @@ namespace IvyFEM
             MeshingMode = 0;
             ELen = 1;
             ESize = 1000;
-            IList<uint> lIds = cad2D.GetElemIds(CadElementType.LOOP);
+            IList<uint> lIds = cad2D.GetElemIds(CadElementType.Loop);
             for (uint i = 0; i < lIds.Count; i++)
             {
                 CutMeshLCadIdSet.Add(lIds[(int)i]);
@@ -52,7 +51,7 @@ namespace IvyFEM
             ELen = eLen;
             ESize = 1000;
 
-            IList<uint> lIds = cad2D.GetElemIds(CadElementType.LOOP);
+            IList<uint> lIds = cad2D.GetElemIds(CadElementType.Loop);
             for (int i = 0; i < lIds.Count; i++)
             {
                 CutMeshLCadIdSet.Add(lIds[i]);
@@ -82,7 +81,7 @@ namespace IvyFEM
             TriArrays = new List<MeshTriArray2D>(src.TriArrays);
             QuadArrays = new List<MeshQuadArray2D>(src.QuadArrays);
 
-            Vec2Ds = new List<Vector2>(src.Vec2Ds);
+            Vec2Ds = new List<OpenTK.Vector2d>(src.Vec2Ds);
         }
 
         public void Clear()
@@ -128,7 +127,7 @@ namespace IvyFEM
             return Vertexs;
         }
 
-        public IList<Vector2> GetVectors()
+        public IList<OpenTK.Vector2d> GetVectors()
         {
             return Vec2Ds;
         }
@@ -256,7 +255,7 @@ namespace IvyFEM
 
         public void GetConnectivity(uint id, out MeshType meshType, out int[] vertexs)
         {
-            meshType = MeshType.NOT_SET;
+            meshType = MeshType.NotSet;
             vertexs = null;
 
             System.Diagnostics.Debug.Assert(IsId(id));
@@ -267,7 +266,7 @@ namespace IvyFEM
             System.Diagnostics.Debug.Assert(type != -1 && loc != -1);
             if (type == 0)
             {
-                meshType = MeshType.VERTEX;
+                meshType = MeshType.Vertex;
                 elemNodeCnt = 1;
                 elemCnt = 1;
                 vertexs = new int[elemNodeCnt * elemCnt];
@@ -275,7 +274,7 @@ namespace IvyFEM
             }
             else if (type == 1)
             {
-                meshType = MeshType.BAR;
+                meshType = MeshType.Bar;
                 elemNodeCnt = 2;
                 IList<MeshBar> bars = BarArrays[loc].Bars;
                 elemCnt = (uint)bars.Count;
@@ -288,7 +287,7 @@ namespace IvyFEM
             }
             else if (type == 2)
             {
-                meshType = MeshType.TRI;
+                meshType = MeshType.Tri;
                 elemNodeCnt = 3;
                 IList<MeshTri2D> tris = TriArrays[loc].Tris;
                 elemCnt = (uint)tris.Count;
@@ -302,7 +301,7 @@ namespace IvyFEM
             }
             else if (type == 3)
             {
-                meshType = MeshType.QUAD;
+                meshType = MeshType.Quad;
                 elemNodeCnt = 4;
                 IList<MeshQuad2D> quads = QuadArrays[loc].Quads;
                 elemCnt = (uint)quads.Count;
@@ -325,7 +324,7 @@ namespace IvyFEM
             out uint elemCount, out MeshType meshType, out int loc, out uint cadId)
         {
             elemCount = 0;
-            meshType = MeshType.NOT_SET;
+            meshType = MeshType.NotSet;
             loc = 0;
             cadId = 0;
 
@@ -346,7 +345,7 @@ namespace IvyFEM
                         MeshVertex vertex = Vertexs[loc];
                         cadId = vertex.VCadId;
                         elemCount = 1;
-                        meshType = MeshType.VERTEX;
+                        meshType = MeshType.Vertex;
                         break;
                     }
 
@@ -356,7 +355,7 @@ namespace IvyFEM
                         MeshBarArray barArray = BarArrays[loc];
                         cadId = barArray.ECadId;
                         elemCount = (uint)barArray.Bars.Count;
-                        meshType = MeshType.BAR;
+                        meshType = MeshType.Bar;
                         break;
 
                     }
@@ -367,7 +366,7 @@ namespace IvyFEM
                         MeshTriArray2D triArray = TriArrays[loc];
                         cadId = triArray.LCadId;
                         elemCount = (uint)triArray.Tris.Count;
-                        meshType = MeshType.TRI;
+                        meshType = MeshType.Tri;
                         break;
 
                     }
@@ -378,7 +377,7 @@ namespace IvyFEM
                         MeshQuadArray2D quadArray = QuadArrays[loc];
                         cadId = quadArray.LCadId;
                         elemCount = (uint)quadArray.Quads.Count;
-                        meshType = MeshType.QUAD;
+                        meshType = MeshType.Quad;
                         break;
 
                     }
@@ -386,7 +385,7 @@ namespace IvyFEM
                 default:
                     System.Diagnostics.Debug.Assert(false);
                     throw new NotSupportedException();
-                    break;
+                    //break;
             }
             return true;
         }
@@ -409,7 +408,7 @@ namespace IvyFEM
             {
                 foreach (uint lId in CutMeshLCadIdSet)
                 {
-                    if (!cad2D.IsElemId(CadElementType.LOOP, lId))
+                    if (!cad2D.IsElemId(CadElementType.Loop, lId))
                     {
                         continue;
                     }
@@ -434,13 +433,13 @@ namespace IvyFEM
         private bool Tessellation(CadObject2D cad2D, IList<uint> loopIds)
         {
             {
-                IList<uint> vIds = cad2D.GetElemIds(CadElementType.VERTEX);
+                IList<uint> vIds = cad2D.GetElemIds(CadElementType.Vertex);
                 for (uint iV = 0; iV < vIds.Count; iV++)
                 {
                     uint vId = vIds[(int)iV];
-                    System.Diagnostics.Debug.Assert(GetIdFromCadId(vId, CadElementType.VERTEX) == 0);
+                    System.Diagnostics.Debug.Assert(GetIdFromCadId(vId, CadElementType.Vertex) == 0);
                     uint addId = GetFreeObjectId();
-                    Vector2 vec2d = cad2D.GetVertex(vId);
+                    OpenTK.Vector2d vec2d = cad2D.GetVertex(vId);
                     Vec2Ds.Add(vec2d);
                     {
                         MeshVertex tmpVer = new MeshVertex();
@@ -463,10 +462,10 @@ namespace IvyFEM
                     }
                     System.Diagnostics.Debug.Assert(CheckMesh() == 0);
                 }
-                System.Diagnostics.Debug.Assert(Vec2Ds.Count <= cad2D.GetElemIds(CadElementType.VERTEX).Count * 10);
+                System.Diagnostics.Debug.Assert(Vec2Ds.Count <= cad2D.GetElemIds(CadElementType.Vertex).Count * 10);
             }
             {
-                IList<uint> eIds = cad2D.GetElemIds(CadElementType.EDGE);
+                IList<uint> eIds = cad2D.GetElemIds(CadElementType.Edge);
                 for (uint iE = 0; iE < eIds.Count; iE++)
                 {
                     uint eId = eIds[(int)iE];
@@ -496,7 +495,7 @@ namespace IvyFEM
         {
             uint sVId;
             uint eVId;
-            System.Diagnostics.Debug.Assert(cad2D.IsElemId(CadElementType.EDGE, eId));
+            System.Diagnostics.Debug.Assert(cad2D.IsElemId(CadElementType.Edge, eId));
             if (!cad2D.GetEdgeVertexId(out sVId, out eVId, eId))
             {
                 System.Diagnostics.Debug.WriteLine("error edge : " + eId);
@@ -510,7 +509,7 @@ namespace IvyFEM
             {
                 uint loc;
                 uint type;
-                if (!FindElemLocTypeFromCadIdType(out loc, out type, sVId, CadElementType.VERTEX))
+                if (!FindElemLocTypeFromCadIdType(out loc, out type, sVId, CadElementType.Vertex))
                 {
                     System.Diagnostics.Debug.Assert(false);
                 }
@@ -518,7 +517,7 @@ namespace IvyFEM
                 MeshVertex sVer = Vertexs[(int)loc];
                 iSP = sVer.V;
                 sMeshId = sVer.Id;
-                if (!FindElemLocTypeFromCadIdType(out loc, out type, eVId, CadElementType.VERTEX))
+                if (!FindElemLocTypeFromCadIdType(out loc, out type, eVId, CadElementType.Vertex))
                 {
                     System.Diagnostics.Debug.Assert(false);
                 }
@@ -551,7 +550,7 @@ namespace IvyFEM
                 BarArrays.Add(new MeshBarArray());
             }
             MeshBarArray barArray = BarArrays[(int)ibarArary0];
-            IList<Vector2> pts;
+            IList<OpenTK.Vector2d> pts;
             cad2D.GetCurveAsPolyline(eId, out pts, -1);
 
             uint div = (uint)(pts.Count + 1);
@@ -572,7 +571,7 @@ namespace IvyFEM
             {
                 barArray.Id = newElemArrayId;
                 barArray.ECadId = eId;
-                barArray.Layer = cad2D.GetLayer(CadElementType.EDGE, eId);
+                barArray.Layer = cad2D.GetLayer(CadElementType.Edge, eId);
                 int barCnt = barArray.Bars.Count;
                 for (int i = barCnt; i < div; i++)
                 {
@@ -623,7 +622,7 @@ namespace IvyFEM
                                 uint vId = itrEdgeLoop.GetVertexId();
                                 uint locTmp;
                                 uint typeTmp;
-                                if (!FindElemLocTypeFromCadIdType(out locTmp, out typeTmp, vId, CadElementType.VERTEX))
+                                if (!FindElemLocTypeFromCadIdType(out locTmp, out typeTmp, vId, CadElementType.Vertex))
                                 {
                                     System.Diagnostics.Debug.Assert(false);
                                 }
@@ -639,7 +638,7 @@ namespace IvyFEM
                             }
                             uint type;
                             uint loc;
-                            if (!FindElemLocTypeFromCadIdType(out loc, out type, eId, CadElementType.EDGE))
+                            if (!FindElemLocTypeFromCadIdType(out loc, out type, eId, CadElementType.Edge))
                             {
                                 System.Diagnostics.Debug.Assert(false);
                             }
@@ -683,7 +682,7 @@ namespace IvyFEM
                     {
                         uint ip = (uint)vec2Pt[(int)iVec];
                         System.Diagnostics.Debug.Assert(ip < points.Count);
-                        points[(int)ip].Point = new Vector2(Vec2Ds[(int)iVec].X, Vec2Ds[(int)iVec].Y);
+                        points[(int)ip].Point = new OpenTK.Vector2d(Vec2Ds[(int)iVec].X, Vec2Ds[(int)iVec].Y);
                         points[(int)ip].Elem = -1;
                         points[(int)ip].Dir = 0;
                     }
@@ -735,19 +734,19 @@ namespace IvyFEM
                 {
                     points.Add(new MeshPoint2D());
                 }
-                points[ptCnt + 0].Point = new Vector2(
-                    (float)center[0],
-                    (float)(center[1] + 2.0 * tmpLen));
+                points[ptCnt + 0].Point = new OpenTK.Vector2d(
+                    center[0],
+                    (center[1] + 2.0 * tmpLen));
                 points[ptCnt + 0].Elem = 0;
                 points[ptCnt + 0].Dir = 0;
-                points[ptCnt + 1].Point = new Vector2(
-                    (float)(center[0] - 0.5 * triLen),
-                    (float)(center[1] - tmpLen));
+                points[ptCnt + 1].Point = new OpenTK.Vector2d(
+                    (center[0] - 0.5 * triLen),
+                    (center[1] - tmpLen));
                 points[ptCnt + 1].Elem = 0;
                 points[ptCnt + 1].Dir = 1;
-                points[ptCnt + 2].Point = new Vector2(
-                    (float)(center[0] + 0.5 * triLen),
-                    (float)(center[1] - tmpLen));
+                points[ptCnt + 2].Point = new OpenTK.Vector2d(
+                    (center[0] + 0.5 * triLen),
+                    (center[1] - tmpLen));
                 points[ptCnt + 2].Elem = 0;
                 points[ptCnt + 2].Dir = 2;
 
@@ -794,7 +793,7 @@ namespace IvyFEM
                 {
                     continue;  // 既にメッシュの一部である。
                 }
-                Vector2 addPo = points[(int)iPt].Point;
+                OpenTK.Vector2d addPo = points[(int)iPt].Point;
                 int iInTri = -1;
                 int iEdge = -1;
                 uint iflg1 = 0;
@@ -922,7 +921,7 @@ namespace IvyFEM
                         }
                         uint loc;
                         uint type;
-                        if (!FindElemLocTypeFromCadIdType(out loc, out type, eId, CadElementType.EDGE))
+                        if (!FindElemLocTypeFromCadIdType(out loc, out type, eId, CadElementType.Edge))
                         {
                             System.Diagnostics.Debug.Assert(false);
                         }
@@ -1079,7 +1078,7 @@ namespace IvyFEM
                         }
                         uint loc;
                         uint type;
-                        if (!FindElemLocTypeFromCadIdType(out loc, out type, eId, CadElementType.EDGE))
+                        if (!FindElemLocTypeFromCadIdType(out loc, out type, eId, CadElementType.Edge))
                         {
                             System.Diagnostics.Debug.Assert(false);
                         }
@@ -1185,7 +1184,7 @@ namespace IvyFEM
                         }
                         uint loc;
                         uint type;
-                        if (!FindElemLocTypeFromCadIdType(out loc, out type, eId, CadElementType.EDGE))
+                        if (!FindElemLocTypeFromCadIdType(out loc, out type, eId, CadElementType.Edge))
                         {
                             System.Diagnostics.Debug.Assert(false);
                         }
@@ -1316,7 +1315,7 @@ namespace IvyFEM
                         itrEdgeLoop.GetEdgeId(out eId, out isSameDir);
                         uint loc;
                         uint type;
-                        if (!FindElemLocTypeFromCadIdType(out loc, out type, eId, CadElementType.EDGE))
+                        if (!FindElemLocTypeFromCadIdType(out loc, out type, eId, CadElementType.Edge))
                         {
                             System.Diagnostics.Debug.Assert(false);
                         }
@@ -1327,18 +1326,16 @@ namespace IvyFEM
                         IList<MeshBar> bars = barArray.Bars;
                         if (barArray.LRId[0] == newTriId)
                         {
-                            for (uint ibar = 0; ibar < bars.Count; ibar++)
+                            if (bars.Count > 0)
                             {
-                                iKerTri0 = bars[(int)ibar].S2[0];
-                                break;
+                                iKerTri0 = bars[0].S2[0];
                             }
                         }
                         else if (barArray.LRId[1] == newTriId)
                         {
-                            for (uint ibar = 0; ibar < bars.Count; ibar++)
+                            if (bars.Count > 0)
                             {
-                                iKerTri0 = bars[(int)ibar].S2[1];
-                                break;
+                                iKerTri0 = bars[0].S2[1];
                             }
                         }
                     }
@@ -1429,7 +1426,7 @@ namespace IvyFEM
                             }
                             uint loc;
                             uint type;
-                            if (!FindElemLocTypeFromCadIdType(out loc, out type, eId, CadElementType.EDGE))
+                            if (!FindElemLocTypeFromCadIdType(out loc, out type, eId, CadElementType.Edge))
                             {
                                 System.Diagnostics.Debug.Assert(false);
                             }
@@ -1541,7 +1538,7 @@ namespace IvyFEM
                 TriArrays[(int)iTriArray].Tris = inTris;
                 TriArrays[(int)iTriArray].LCadId = lId;
                 TriArrays[(int)iTriArray].Id = newTriId;
-                TriArrays[(int)iTriArray].Layer = cad2D.GetLayer(CadElementType.LOOP, lId);
+                TriArrays[(int)iTriArray].Layer = cad2D.GetLayer(CadElementType.Loop, lId);
 
                 int typeCnt = Types.Count;
                 for (int i = typeCnt; i < newTriId + 1; i++)
@@ -1646,7 +1643,7 @@ namespace IvyFEM
         {
             switch (cadType)
             {
-                case CadElementType.VERTEX:
+                case CadElementType.Vertex:
                     for (uint iVer = 0; iVer < Vertexs.Count; iVer++)
                     {
                         if (Vertexs[(int)iVer].VCadId == cadId)
@@ -1659,7 +1656,7 @@ namespace IvyFEM
                     }
                     break;
 
-                case CadElementType.EDGE:
+                case CadElementType.Edge:
                     for (uint iBar = 0; iBar < BarArrays.Count; iBar++)
                     {
                         if (BarArrays[(int)iBar].ECadId == cadId)
@@ -1672,7 +1669,7 @@ namespace IvyFEM
                     }
                     break;
 
-                case CadElementType.LOOP:
+                case CadElementType.Loop:
                     for (uint iTri = 0; iTri < TriArrays.Count; iTri++)
                     {
                         if (TriArrays[(int)iTri].LCadId == cadId)
@@ -1708,7 +1705,7 @@ namespace IvyFEM
 
             switch (cadType)
             {
-                case CadElementType.VERTEX:
+                case CadElementType.Vertex:
                     for (uint iVer = 0; iVer < Vertexs.Count; iVer++)
                     {
                         if (Vertexs[(int)iVer].VCadId == cadId)
@@ -1723,7 +1720,7 @@ namespace IvyFEM
                     }
                     break;
 
-                case CadElementType.EDGE:
+                case CadElementType.Edge:
                     for (uint iBar = 0; iBar < BarArrays.Count; iBar++)
                     {
                         if (BarArrays[(int)iBar].ECadId == cadId)
@@ -1738,7 +1735,7 @@ namespace IvyFEM
                     }
                     break;
 
-                case CadElementType.LOOP:
+                case CadElementType.Loop:
                     for (uint iTri = 0; iTri < TriArrays.Count; iTri++)
                     {
                         if (TriArrays[(int)iTri].LCadId == cadId)
@@ -1933,11 +1930,11 @@ namespace IvyFEM
             {
                 IncludeRelations.Add(new List<uint>());
             }
-            IList<uint> lIds = cad2D.GetElemIds(CadElementType.LOOP);
+            IList<uint> lIds = cad2D.GetElemIds(CadElementType.Loop);
             for (uint iLId = 0; iLId < lIds.Count; iLId++)
             {
                 uint lId = lIds[(int)iLId];
-                uint triId = GetIdFromCadId(lId, CadElementType.LOOP);
+                uint triId = GetIdFromCadId(lId, CadElementType.Loop);
                 if (!IsId(triId))
                 {
                     continue;
@@ -1948,7 +1945,7 @@ namespace IvyFEM
                     for (; !itrL.IsEnd(); itrL++)
                     {
                         uint vCadId = itrL.GetVertexId();
-                        uint meshVId = GetIdFromCadId(vCadId, CadElementType.VERTEX);
+                        uint meshVId = GetIdFromCadId(vCadId, CadElementType.Vertex);
                         IncludeRelations[(int)triId].Add(meshVId);
                         System.Diagnostics.Debug.Assert(IsId(meshVId));
 
@@ -1958,7 +1955,7 @@ namespace IvyFEM
                         {
                             continue;
                         }
-                        uint barId = GetIdFromCadId(eId, CadElementType.EDGE);
+                        uint barId = GetIdFromCadId(eId, CadElementType.Edge);
                         System.Diagnostics.Debug.Assert(IsId(barId));
                         IncludeRelations[(int)triId].Add(barId);
                     }
@@ -1969,12 +1966,12 @@ namespace IvyFEM
                 }
             }
 
-            IList<uint> eIds = cad2D.GetElemIds(CadElementType.EDGE);
+            IList<uint> eIds = cad2D.GetElemIds(CadElementType.Edge);
             for (uint iEId = 0; iEId < eIds.Count; iEId++)
             {
                 uint eId = eIds[(int)iEId];
-                System.Diagnostics.Debug.Assert(cad2D.IsElemId(CadElementType.EDGE, eId));
-                uint barId = GetIdFromCadId(eId, CadElementType.EDGE);
+                System.Diagnostics.Debug.Assert(cad2D.IsElemId(CadElementType.Edge, eId));
+                uint barId = GetIdFromCadId(eId, CadElementType.Edge);
                 if (!IsId(barId))
                 {
                     // 浮いている辺があって，辺メッシュが切られなかった場合
@@ -1986,8 +1983,8 @@ namespace IvyFEM
                 {
                     System.Diagnostics.Debug.Assert(false);
                 }
-                uint meshSVId = GetIdFromCadId(sVId, CadElementType.VERTEX);
-                uint meshEVId = GetIdFromCadId(eVId, CadElementType.VERTEX);
+                uint meshSVId = GetIdFromCadId(sVId, CadElementType.Vertex);
+                uint meshEVId = GetIdFromCadId(eVId, CadElementType.Vertex);
                 System.Diagnostics.Debug.Assert(IsId(meshSVId));
                 System.Diagnostics.Debug.Assert(IsId(meshEVId));
                 IncludeRelations[(int)barId].Add(meshSVId);
@@ -2053,13 +2050,13 @@ namespace IvyFEM
                         continue;
                     }
                     uint addId = GetFreeObjectId();
-                    Vector2 vec2d = cad2D.GetVertex(vId);
+                    OpenTK.Vector2d vec2d = cad2D.GetVertex(vId);
                     Vec2Ds.Add(vec2d);
                     {
                         MeshVertex tmpVer = new MeshVertex();
                         tmpVer.Id = addId;
                         tmpVer.VCadId = vId;
-                        tmpVer.Layer = cad2D.GetLayer(CadElementType.VERTEX, vId);
+                        tmpVer.Layer = cad2D.GetLayer(CadElementType.Vertex, vId);
                         tmpVer.V = (uint)(Vec2Ds.Count - 1);
 
                         Vertexs.Add(tmpVer);
@@ -2097,7 +2094,7 @@ namespace IvyFEM
                         {
                             continue;
                         }
-                        if (GetIdFromCadId(eId, CadElementType.EDGE) != 0)
+                        if (GetIdFromCadId(eId, CadElementType.Edge) != 0)
                         {
                             // 既にこの辺はMeshに存在
                             continue;
@@ -2126,7 +2123,7 @@ namespace IvyFEM
         private bool MakeMeshEdge(CadObject2D cad2D, uint eId, double len)
         {
             {
-                System.Diagnostics.Debug.Assert(GetIdFromCadId(eId, CadElementType.EDGE) == 0);
+                System.Diagnostics.Debug.Assert(GetIdFromCadId(eId, CadElementType.Edge) == 0);
                 /*
                 このEdgeに含まれるVertexが引数に存在するかどうか
                 調べて存在しなかったら付け足すルーティンをそのうち追加
@@ -2148,7 +2145,7 @@ namespace IvyFEM
             {
                 uint loc;
                 uint type;
-                if (!FindElemLocTypeFromCadIdType(out loc, out type, sVId, CadElementType.VERTEX))
+                if (!FindElemLocTypeFromCadIdType(out loc, out type, sVId, CadElementType.Vertex))
                 {
                     System.Diagnostics.Debug.Assert(false);
                 }
@@ -2156,7 +2153,7 @@ namespace IvyFEM
                 MeshVertex sVP = Vertexs[(int)loc];
                 sPId = sVP.V;
                 sMeshId = sVP.Id;
-                if (!FindElemLocTypeFromCadIdType(out loc, out type, eVId, CadElementType.VERTEX))
+                if (!FindElemLocTypeFromCadIdType(out loc, out type, eVId, CadElementType.Vertex))
                 {
                     System.Diagnostics.Debug.Assert(false);
                 }
@@ -2187,7 +2184,7 @@ namespace IvyFEM
                 Types[(int)newElemId] = 1;
             }
             MeshBarArray barArray = BarArrays[(int)iBarArray0];
-            IList<Vector2> pts;
+            IList<OpenTK.Vector2d> pts;
             cad2D.GetCurveAsPolyline(eId, out pts, len);
             ////////////////
             uint div = (uint)pts.Count + 1;
@@ -2208,7 +2205,7 @@ namespace IvyFEM
             {
                 barArray.Id = newElemId;
                 barArray.ECadId = eId;
-                barArray.Layer = cad2D.GetLayer(CadElementType.EDGE, eId);
+                barArray.Layer = cad2D.GetLayer(CadElementType.Edge, eId);
                 barArray.SEId[0] = sMeshId;
                 barArray.SEId[1] = eMeshId;
                 barArray.LRId[0] = 0;
@@ -2251,7 +2248,7 @@ namespace IvyFEM
                 }
                 uint loc;
                 uint type;
-                if (!FindElemLocTypeFromCadIdType(out loc, out type, lCadId, CadElementType.LOOP))
+                if (!FindElemLocTypeFromCadIdType(out loc, out type, lCadId, CadElementType.Loop))
                 {
                     System.Diagnostics.Debug.Assert(false);
                 }
@@ -2297,7 +2294,7 @@ namespace IvyFEM
                     {
                         int ipo0 = vec2Pt[(int)iVec];
                         System.Diagnostics.Debug.Assert(ipo0 >= 0 && ipo0 < points.Count);
-                        points[ipo0].Point = new Vector2(Vec2Ds[(int)iVec].X, Vec2Ds[(int)iVec].Y);
+                        points[ipo0].Point = new OpenTK.Vector2d(Vec2Ds[(int)iVec].X, Vec2Ds[(int)iVec].Y);
                     }
                     else
                     {
@@ -2383,11 +2380,11 @@ namespace IvyFEM
                             {
                                 points.Add(new MeshPoint2D());
                             }
-                            points[(int)iPt0].Point = new Vector2(
-                                (float)((points[(int)tris[(int)iTri].V[0]].Point.X +
+                            points[(int)iPt0].Point = new OpenTK.Vector2d(
+                                ((points[(int)tris[(int)iTri].V[0]].Point.X +
                                 points[(int)tris[(int)iTri].V[1]].Point.X +
                                 points[(int)tris[(int)iTri].V[2]].Point.X) / 3.0),
-                                (float)((points[(int)tris[(int)iTri].V[0]].Point.Y +
+                                ((points[(int)tris[(int)iTri].V[0]].Point.Y +
                                 points[(int)tris[(int)iTri].V[1]].Point.Y +
                                 points[(int)tris[(int)iTri].V[2]].Point.Y) / 3.0));
                             MeshUtils.InsertPointElem(iPt0, iTri, points, tris);
@@ -2453,7 +2450,8 @@ namespace IvyFEM
                 {
                     if (pt2Vec[(int)iPt] == -1)
                     {
-                        Vector2 vec0 = new Vector2(points[(int)iPt].Point.X, points[(int)iPt].Point.Y);
+                        OpenTK.Vector2d vec0 = new OpenTK.Vector2d(
+                            points[(int)iPt].Point.X, points[(int)iPt].Point.Y);
                         uint iVec0 = (uint)Vec2Ds.Count;
                         Vec2Ds.Add(vec0);
                         pt2Vec[(int)iPt] = (int)iVec0;
@@ -2479,7 +2477,7 @@ namespace IvyFEM
             {
                 uint loc;
                 uint type;
-                if (!FindElemLocTypeFromCadIdType(out loc, out type, lCadId, CadElementType.LOOP))
+                if (!FindElemLocTypeFromCadIdType(out loc, out type, lCadId, CadElementType.Loop))
                 {
                     System.Diagnostics.Debug.Assert(false);
                 }
@@ -2542,7 +2540,7 @@ namespace IvyFEM
             {
                 uint loc;
                 uint type;
-                if (!FindElemLocTypeFromCadIdType(out loc, out type, lCadId, CadElementType.LOOP))
+                if (!FindElemLocTypeFromCadIdType(out loc, out type, lCadId, CadElementType.Loop))
                 {
                     System.Diagnostics.Debug.Assert(false);
                 }

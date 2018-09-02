@@ -17,92 +17,91 @@ namespace IvyFEM
 
     enum RotMode
     {
-        ROTMODE_NOT_SET,
-        ROTMODE_2D,
-        ROTMODE_2DH,
-        ROTMODE_3D
+        RotModeNotSet,
+        RotMode2D,
+        RotMode2DH,
+        RotMode3D
     }
 
     enum CurveType
     {
-        CURVE_END_POINT,
-        CURVE_LINE,
-        CURVE_ARC,
-        CURVE_POLYLINE,
-        CURVE_BEZIER
+        CurveEndPoint,
+        CurveLine,
+        CurveArc,
+        CurvePolyline,
+        CurveBezier
     }
 
     enum CadElementType
     {
-        NOT_SET,
-        VERTEX,
-        EDGE,
-        LOOP,
-        SOLID,
+        NotSet,
+        Vertex,
+        Edge,
+        Loop
     }
 
     enum MeshType
     {
-        NOT_SET,
-        VERTEX,
-        BAR,
-        TRI,
-        QUAD,
-        TET,
-        HEX
+        NotSet,
+        Vertex,
+        Bar,
+        Tri,
+        Quad,
+        Tet,
+        Hex
     }
 
     enum ElementType
     {
-        NOT_SET,
-        POINT,
-        LINE,
-        TRI,
-        QUAD,
-        TET,
-        HEX
+        NotSet,
+        Point,
+        Line,
+        Tri,
+        Quad,
+        Tet,
+        Hex
     }
 
     enum MaterialType
     {
-        NOT_SET,
-        ELASTIC,
-        SAINTVENANT_KIRCHHOFF_HYPERELASTIC,
-        DIELECTRIC
+        NotSet,
+        Elastic,
+        SaintVenantHyperelastic,
+        Dielectric
     }
 
     enum FieldValueType
     {
-        NO_VALUE,
-        SCALAR,
-        VECTOR2,
-        VECTOR3,
-        SYMMETRICAL_TENSOR2,
-        ZSCALAR
+        NoValue,
+        Scalar,
+        Vector2,
+        Vector3,
+        SymmetricTensor2,
+        ZScalar
     }
 
     [Flags]
     enum FieldDerivationType
     {
-        VALUE = 1,
-        VELOCITY = 2,
-        ACCELERATION = 4
+        Value = 1,
+        Velocity = 2,
+        Acceleration = 4
     }
 
     enum FieldShowType
     {
-        SCALAR,
-        ABS,
-        ZREAL,
-        ZIMAGINARIY,
-        ZABS
+        Real,
+        Abs,
+        ZReal,
+        ZImaginary,
+        ZAbs
     }
 
     enum VectorFieldDrawerType
     {
-        NOT_SET,
-        VECTOR,
-        SYMMETRIC_TENSOR2
+        NotSet,
+        Vector,
+        SymmetricTensor2
     }
 
 }

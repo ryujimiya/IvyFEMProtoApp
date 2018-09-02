@@ -8,7 +8,7 @@ namespace IvyFEM
 {
     class Material : IObject
     {
-        public MaterialType MaterialType { get; protected set; } = MaterialType.NOT_SET; 
+        public MaterialType MaterialType { get; protected set; } = MaterialType.NotSet; 
         public double[] Values { get; protected set; } = null;
 
         public Material()

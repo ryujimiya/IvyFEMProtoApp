@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Numerics;
 
 namespace IvyFEM
 {
@@ -123,7 +122,8 @@ namespace IvyFEM
         /// <param name="p2"></param>
         /// <param name="p3"></param>
         /// <returns></returns>
-        public static int DetDelaunay(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3)
+        public static int DetDelaunay(
+            OpenTK.Vector2d p0, OpenTK.Vector2d p1, OpenTK.Vector2d p2, OpenTK.Vector2d p3)
         {
             double area = CadUtils.TriArea(p0, p1, p2);
             if (Math.Abs(area) < 1.0e-10)
@@ -140,9 +140,9 @@ namespace IvyFEM
             double etmp1 = tmpVal * dtmp1 * (dtmp0 + dtmp2 - dtmp1);
             double etmp2 = tmpVal * dtmp2 * (dtmp0 + dtmp1 - dtmp2);
 
-            Vector2 outCenter = new Vector2(
-                (float)etmp0 * p0.X + (float)etmp1 * p1.X + (float)etmp2 * p2.X,
-                (float)etmp0 * p0.Y + (float)etmp1 * p1.Y + (float)etmp2 * p2.Y);
+            OpenTK.Vector2d outCenter = new OpenTK.Vector2d(
+                etmp0 * p0.X + etmp1 * p1.X + etmp2 * p2.X,
+                etmp0 * p0.Y + etmp1 * p1.Y + etmp2 * p2.Y);
 
             double qradius = CadUtils.SquareLength(outCenter, p0);
             double qdistance = CadUtils.SquareLength(outCenter, p3);
@@ -1068,7 +1068,7 @@ namespace IvyFEM
                 uint iNoElC0 = iNoElCIni;
                 uint iNoElB0 = TriElEdgeNo[iNoElC0][0];
                 bool isBound = false;
-                Vector2 vecDelta = points[(int)iPt].Point;
+                OpenTK.Vector2d vecDelta = points[(int)iPt].Point;
                 uint ntriAround = 1;
                 for (;;)
                 {
@@ -1109,13 +1109,14 @@ namespace IvyFEM
                 {
                     continue;
                 }
-                points[(int)iPt].Point = new Vector2(
+                points[(int)iPt].Point = new OpenTK.Vector2d(
                     vecDelta.X / ntriAround,
                     vecDelta.Y / ntriAround);
             }
         }
 
-        public static void LaplaceDelaunaySmoothing(IList<MeshPoint2D> points, IList<MeshTri2D> tris, IList<uint> isntMoves)
+        public static void LaplaceDelaunaySmoothing(
+            IList<MeshPoint2D> points, IList<MeshTri2D> tris, IList<uint> isntMoves)
         {
             for (uint iPt = 0; iPt < points.Count; iPt++)
             {
@@ -1136,7 +1137,7 @@ namespace IvyFEM
                 uint iNoElC0 = iNoElCIni;
                 uint iNoElB0 = TriElEdgeNo[iNoElC0][0];
                 bool isBound = false;
-                Vector2 vecDelta = points[(int)iPt].Point;
+                OpenTK.Vector2d vecDelta = points[(int)iPt].Point;
                 uint ntriAround = 1;
                 for (;;)
                 { 
@@ -1178,7 +1179,7 @@ namespace IvyFEM
                 {
                     continue;
                 }
-                points[(int)iPt].Point = new Vector2(
+                points[(int)iPt].Point = new OpenTK.Vector2d(
                     vecDelta.X / ntriAround,
                     vecDelta.Y / ntriAround);
                 DelaunayAroundPoint(iPt, points, tris);

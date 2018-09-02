@@ -10,7 +10,7 @@ namespace IvyFEM
     {
         public ElasticMaterial() : base()
         {
-            MaterialType = MaterialType.ELASTIC;
+            MaterialType = MaterialType.Elastic;
         }
     }
 }

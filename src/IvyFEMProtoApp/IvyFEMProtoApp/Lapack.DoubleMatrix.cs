@@ -44,13 +44,13 @@ namespace IvyFEM.Lapack
         public static explicit operator DoubleMatrix(IvyFEM.Linear.DoubleSparseMatrix sparseM)
         {
             DoubleMatrix m = new DoubleMatrix(sparseM.RowLength, sparseM.ColumnLength);
-            for (int col = 0; col < sparseM.ColumnLength; col++)
+            for (int row = 0; row < sparseM.RowLength; row++)
             {
-                var sparseRowValues = sparseM.IndexsValues[col];
-                foreach (var sparseRowValue in sparseRowValues)
+                var colIndexValues = sparseM.RowColIndexValues[row];
+                foreach (var pair in colIndexValues)
                 {
-                    int row = sparseRowValue.Key;
-                    double value = sparseRowValue.Value;
+                    int col = pair.Key;
+                    double value = pair.Value;
                     m[row, col] = value;
                 }
             }
@@ -87,12 +87,6 @@ namespace IvyFEM.Lapack
                 }
             }
             return ret;
-        }
-
-        public int BufferIndex(int row, int col)
-        {
-            System.Diagnostics.Debug.Assert(row >= 0 && row < RowLength && col >= 0 && col < ColumnLength);
-            return (row + col * RowLength);
         }
 
         public double this[int row, int col]
@@ -236,6 +230,26 @@ namespace IvyFEM.Lapack
                 A.Buffer, A.RowLength, A.ColumnLength, TransposeType.Nop,
                 b);
             return c;
+        }
+
+        public bool IsSymmetric()
+        {
+            System.Diagnostics.Debug.Assert(RowLength == ColumnLength);
+            bool isSymmetric = true;
+            int n = RowLength;
+            for (int row = 0; row < n; row++)
+            {
+                for (int col = row + 1; col < n; col++)
+                {
+                    double diff = this[row, col] - this[col, row];
+                    if (Math.Abs(diff) >= IvyFEM.Constants.PrecisionLowerLimit)
+                    {
+                        isSymmetric = false;
+                        break;
+                    }
+                }
+            }
+            return isSymmetric;
         }
     }
 }

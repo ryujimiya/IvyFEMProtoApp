@@ -45,13 +45,13 @@ namespace IvyFEM.Lapack
         public static explicit operator ComplexMatrix(IvyFEM.Linear.ComplexSparseMatrix sparseM)
         {
             ComplexMatrix m = new ComplexMatrix(sparseM.RowLength, sparseM.ColumnLength);
-            for (int col = 0; col < sparseM.ColumnLength; col++)
+            for (int row = 0; row < sparseM.RowLength; row++)
             {
-                var sparseRowValues = sparseM.IndexsValues[col];
-                foreach (var sparseRowValue in sparseRowValues)
+                var sparseColIndexValues = sparseM.RowColIndexValues[row];
+                foreach (var pair in sparseColIndexValues)
                 {
-                    int row = sparseRowValue.Key;
-                    System.Numerics.Complex value = sparseRowValue.Value;
+                    int col = pair.Key;
+                    System.Numerics.Complex value = pair.Value;
                     m[row, col] = value;
                 }
             }
@@ -88,12 +88,6 @@ namespace IvyFEM.Lapack
                 }
             }
             return ret;
-        }
-
-        public int BufferIndex(int row, int col)
-        {
-            System.Diagnostics.Debug.Assert(row >= 0 && row < RowLength && col >= 0 && col < ColumnLength);
-            return (row + col * RowLength);
         }
 
         public System.Numerics.Complex this[int row, int col]
@@ -248,6 +242,47 @@ namespace IvyFEM.Lapack
             IvyFEM.Lapack.Functions.zgemvAX(out c,
                 A.Buffer, A.RowLength, A.ColumnLength, TransposeType.Nop, b);
             return c;
+        }
+
+        public bool IsHermitian()
+        {
+            System.Diagnostics.Debug.Assert(RowLength == ColumnLength);
+            bool isHermitian = true;
+            int n = RowLength;
+            for (int row = 0; row < n; row++)
+            {
+                for (int col = row + 1; col < n; col++)
+                {
+                    System.Numerics.Complex diff =
+                        this[row, col] - System.Numerics.Complex.Conjugate(this[col, row]);
+                    if (diff.Magnitude >= IvyFEM.Constants.PrecisionLowerLimit)
+                    {
+                        isHermitian = false;
+                        break;
+                    }
+                }
+            }
+            return isHermitian;
+        }
+
+        public bool IsSymmetric()
+        {
+            System.Diagnostics.Debug.Assert(RowLength == ColumnLength);
+            bool isSymmetric = true;
+            int n = RowLength;
+            for (int row = 0; row < n; row++)
+            {
+                for (int col = row + 1; col < n; col++)
+                {
+                    System.Numerics.Complex diff = this[row, col] - this[col, row];
+                    if (diff.Magnitude >= IvyFEM.Constants.PrecisionLowerLimit)
+                    {
+                        isSymmetric = false;
+                        break;
+                    }
+                }
+            }
+            return isSymmetric;
         }
     }
 }

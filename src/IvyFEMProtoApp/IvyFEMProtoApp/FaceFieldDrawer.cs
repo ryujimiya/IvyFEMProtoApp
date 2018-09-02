@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Numerics;
 using OpenTK.Graphics.OpenGL;
 
 namespace IvyFEM
@@ -13,9 +12,9 @@ namespace IvyFEM
         private IList<FaceFieldDrawPart> DrawParts = new List<FaceFieldDrawPart>();
         private VertexArray VertexArray = new VertexArray();
         private uint ValueId = 0;
-        private FieldDerivationType ValueDt = FieldDerivationType.VALUE;
+        private FieldDerivationType ValueDt = FieldDerivationType.Value;
         private uint ColorValueId = 0;
-        private FieldDerivationType ColorValueDt = FieldDerivationType.VALUE;
+        private FieldDerivationType ColorValueDt = FieldDerivationType.Value;
         private bool IsntDisplacementValue = false;
         private bool IsNsvDraw = false;
         private float[] ColorArray = null;
@@ -26,7 +25,7 @@ namespace IvyFEM
         public double TexCentX { get; set; } = 0;
         public double TexCentY { get; set; } = 0;
         public double TexScale { get; private set; } = 1;
-        public RotMode SutableRotMode { get; private set; } = RotMode.ROTMODE_NOT_SET;
+        public RotMode SutableRotMode { get; private set; } = RotMode.RotModeNotSet;
         public bool IsAntiAliasing { get; set; } = false;
 
         public FaceFieldDrawer()
@@ -36,7 +35,7 @@ namespace IvyFEM
 
         public FaceFieldDrawer(uint valueId, FieldDerivationType valueDt, bool isntDisplacementValue,
             FEWorld world, 
-            uint colorValueId = 0, FieldDerivationType colorValueDt = FieldDerivationType.VALUE)
+            uint colorValueId = 0, FieldDerivationType colorValueDt = FieldDerivationType.Value)
         {
             Set(valueId, valueDt, isntDisplacementValue, world, colorValueId, colorValueDt);
         }
@@ -59,7 +58,7 @@ namespace IvyFEM
             if (!world.IsFieldValueId(valueId))
             {
                 throw new ArgumentException();
-                return;
+                //return;
             }
             if (world.IsFieldValueId(colorValueId))
             {
@@ -93,7 +92,7 @@ namespace IvyFEM
             uint drawDim;
             if (!IsntDisplacementValue 
                 && dim == 2 
-                && (fv.Type == FieldValueType.SCALAR ||fv.Type== FieldValueType.ZSCALAR))
+                && (fv.Type == FieldValueType.Scalar ||fv.Type== FieldValueType.ZScalar))
             {
                 drawDim = 3;
             }
@@ -127,9 +126,9 @@ namespace IvyFEM
                 }
             }
 
-            if (drawDim == 2) { SutableRotMode = RotMode.ROTMODE_2D; }
-            else if (dim == 3) { SutableRotMode =RotMode.ROTMODE_3D; }
-            else { SutableRotMode = RotMode.ROTMODE_2DH; }
+            if (drawDim == 2) { SutableRotMode = RotMode.RotMode2D; }
+            else if (dim == 3) { SutableRotMode =RotMode.RotMode3D; }
+            else { SutableRotMode = RotMode.RotMode2DH; }
 
             {
                 DrawParts.Clear();
@@ -176,7 +175,7 @@ namespace IvyFEM
                 // 変位を伴う場合
 
                 if (dim == 2 &&
-                    (fv.Type == FieldValueType.SCALAR || fv.Type == FieldValueType.ZSCALAR))
+                    (fv.Type == FieldValueType.Scalar || fv.Type == FieldValueType.ZScalar))
                 {
                     // 垂直方向の変位として捉える
 
@@ -297,18 +296,18 @@ namespace IvyFEM
                 for (int iElem = 0; iElem < elemCnt; iElem++)
                 {
                     uint[] vertexs = dp.GetVertexs((uint)iElem);
-                    Vector3 c0 = new Vector3(
-                        (float)VertexArray.VertexCoordArray[vertexs[0] * 3],
-                        (float)VertexArray.VertexCoordArray[vertexs[0] * 3 + 1],
-                        (float)VertexArray.VertexCoordArray[vertexs[0] * 3 + 2]);
-                    Vector3 c1 = new Vector3(
-                        (float)VertexArray.VertexCoordArray[vertexs[1] * 3],
-                        (float)VertexArray.VertexCoordArray[vertexs[1] * 3 + 1],
-                        (float)VertexArray.VertexCoordArray[vertexs[1] * 3 + 2]);
-                    Vector3 c2 = new Vector3(
-                        (float)VertexArray.VertexCoordArray[vertexs[2] * 3],
-                        (float)VertexArray.VertexCoordArray[vertexs[2] * 3 + 1],
-                        (float)VertexArray.VertexCoordArray[vertexs[2] * 3 + 2]);
+                    OpenTK.Vector3d c0 = new OpenTK.Vector3d(
+                        VertexArray.VertexCoordArray[vertexs[0] * 3],
+                        VertexArray.VertexCoordArray[vertexs[0] * 3 + 1],
+                        VertexArray.VertexCoordArray[vertexs[0] * 3 + 2]);
+                    OpenTK.Vector3d c1 = new OpenTK.Vector3d(
+                        VertexArray.VertexCoordArray[vertexs[1] * 3],
+                        VertexArray.VertexCoordArray[vertexs[1] * 3 + 1],
+                        VertexArray.VertexCoordArray[vertexs[1] * 3 + 2]);
+                    OpenTK.Vector3d c2 = new OpenTK.Vector3d(
+                        VertexArray.VertexCoordArray[vertexs[2] * 3],
+                        VertexArray.VertexCoordArray[vertexs[2] * 3 + 1],
+                        VertexArray.VertexCoordArray[vertexs[2] * 3 + 2]);
                     double[] n;
                     double area;
                     CadUtils.UnitNormalAreaTri3D(out n, out area, c0, c1, c2);

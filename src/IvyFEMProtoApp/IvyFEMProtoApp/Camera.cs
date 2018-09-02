@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Numerics;
 
 namespace IvyFEM
 {
@@ -11,7 +10,7 @@ namespace IvyFEM
     {
         public double WindowAspect { get; set; }
 
-        public Vector2 WindowCenter { get; set; } = new Vector2();
+        public OpenTK.Vector2d WindowCenter { get; set; } = new OpenTK.Vector2d();
         protected double InvScale;
         public double Scale
         {
@@ -29,7 +28,7 @@ namespace IvyFEM
         private double ObjectW;
         private double ObjectH;
         private double ObjectD;
-        public Vector3 ObjectCenter { get; set; } = new Vector3();
+        public OpenTK.Vector3d ObjectCenter { get; set; } = new OpenTK.Vector3d();
 
         private bool isPers;
         public bool IsPers
@@ -63,12 +62,12 @@ namespace IvyFEM
 
             HalfViewHeight = 1.0;
             InvScale = 1.0;
-            WindowCenter = new Vector2(0.0f, 0.0f);
+            WindowCenter = new OpenTK.Vector2d(0.0, 0.0);
 
             ObjectW = 1.0;
             ObjectH = 1.0;
             ObjectD = 1.0;
-            ObjectCenter = Vector3.Zero;
+            ObjectCenter = OpenTK.Vector3d.Zero;
 
             IsPers = false;
             fovY = 30.0 * Math.PI / 180.0;
@@ -108,7 +107,7 @@ namespace IvyFEM
 
         private double GetFovY()
         {
-            return fovY * 180.0/Math.PI;
+            return fovY * 180.0 / Math.PI;
         }
 
         private void SetFovY(double fovY)
@@ -169,13 +168,13 @@ namespace IvyFEM
             }
         }
 
-        public Vector3 GetCenterPosition()
+        public OpenTK.Vector3d GetCenterPosition()
         {
             double x;
             double y;
             double z;
             GetCenterPosition(out x, out y, out z);
-            return new Vector3((float)x, (float)y, (float)z);
+            return new OpenTK.Vector3d(x, y, z);
         }
 
         public void GetObjectCenter(out double x, out double y, out double z)
@@ -185,14 +184,14 @@ namespace IvyFEM
             z = ObjectCenter.Z;
         }
 
-        public Vector3 GetObjectCenter()
+        public OpenTK.Vector3d GetObjectCenter()
         {
             return ObjectCenter;
         }
 
         public void SetObjectCenter(double x, double y, double z)
         {
-            ObjectCenter = new Vector3((float)x, (float)y, (float)z);
+            ObjectCenter = new OpenTK.Vector3d(x, y, z);
         }
 
         public void GetObjectSize(out double w, out double h, out double d)
@@ -211,10 +210,10 @@ namespace IvyFEM
 
         public void SetObjectBoundingBox(BoundingBox3D bb)
         {
-            ObjectCenter = new Vector3(
-                (float)((bb.MinX + bb.MaxX) * 0.5),
-                (float)((bb.MinY + bb.MaxY) * 0.5),
-                (float)((bb.MinZ + bb.MaxZ) * 0.5)
+            ObjectCenter = new OpenTK.Vector3d(
+                ((bb.MinX + bb.MaxX) * 0.5),
+                ((bb.MinY + bb.MaxY) * 0.5),
+                ((bb.MinZ + bb.MaxZ) * 0.5)
                 );
             ObjectW = bb.MaxX - bb.MinX;
             ObjectH = bb.MaxY - bb.MinY;
@@ -236,7 +235,7 @@ namespace IvyFEM
                 HalfViewHeight = tmpH * 0.5 * margin;
             }
             Dist = HalfViewHeight * InvScale / Math.Tan(fovY * 0.5) + ObjectD * 0.5;
-            WindowCenter = new Vector2(0.0f, 0.0f);
+            WindowCenter = new OpenTK.Vector2d(0.0, 0.0);
         }
 
         public void Fit(BoundingBox3D bb)
@@ -253,7 +252,7 @@ namespace IvyFEM
             x += (movEndX - movBeginX) * InvScale;
             y += (movEndY - movBeginY) * InvScale;
 
-            WindowCenter = new Vector2((float)x, (float)y);
+            WindowCenter = new OpenTK.Vector2d(x, y);
         }
 
         public abstract void MouseRotation(double movBeginX, double movBeginY, double movEndX, double movEndY);

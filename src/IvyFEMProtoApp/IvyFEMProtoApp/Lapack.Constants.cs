@@ -12,6 +12,12 @@ namespace IvyFEM.Lapack
         ColMajor = 102
     }
 
+    class UpperLower
+    {
+        public static byte Upper = Convert.ToByte('U');
+        public static byte Lower = Convert.ToByte('L');
+    }
+
     class Job
     {
         public static byte DontCompute = Convert.ToByte('N');

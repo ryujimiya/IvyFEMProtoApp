@@ -15,7 +15,7 @@ namespace IvyFEM
         protected abstract void CalcLinearElasticAB(IvyFEM.Linear.DoubleSparseMatrix A, double[] B,
             int nodeCnt, int dof);
 
-        protected abstract void CalcSaintVenantKirchhoffHyperelasticAB(IvyFEM.Linear.DoubleSparseMatrix A, double[] B,
+        protected abstract void CalcSaintVenantHyperelasticAB(IvyFEM.Linear.DoubleSparseMatrix A, double[] B,
             int nodeCnt, int dof);
 
         public override void Solve()
@@ -25,57 +25,84 @@ namespace IvyFEM
 
             if (HasNonLinearElasticMaterial())
             {
-                U = new double[nodeCnt * dof];
-                double[] prevU = null;
-                SetInitialU(nodeCnt, dof);
-                double norm = 0;
-                const int maxCnt = 100;
+                // Newton Raphson
+                double sqNorm = 0;
+                double sqInvNorm0 = 0;
+                double tolerance = IvyFEM.Linear.Constants.ConvRatioTolerance;
+                double convRatio = tolerance;
+                const int maxCnt = 1000;
                 int iter = 0;
-                for (; iter < maxCnt; iter++)
+                U = new double[nodeCnt * dof];
+                for (iter = 0; iter < maxCnt; iter++)
                 {
+                    int t;
                     var A = new IvyFEM.Linear.DoubleSparseMatrix(nodeCnt * dof, nodeCnt * dof);
                     var B = new double[nodeCnt * dof];
 
+                    t = System.Environment.TickCount;
                     CalcLinearElasticAB(A, B, nodeCnt, dof);
-                    CalcSaintVenantKirchhoffHyperelasticAB(A, B, nodeCnt, dof);
+                    CalcSaintVenantHyperelasticAB(A, B, nodeCnt, dof);
+                    System.Diagnostics.Debug.WriteLine("CalcAB: t = " + (System.Environment.TickCount - t));
 
+                    t = System.Environment.TickCount;
                     SetFixedCadsCondtion(World, A, B, nodeCnt, dof);
+                    System.Diagnostics.Debug.WriteLine("Condition: t = " + (System.Environment.TickCount - t));
 
-                    if (iter > 0)
+                    t = System.Environment.TickCount;
+                    double[] AU = A * U;
+                    double[] R = IvyFEM.Lapack.Functions.daxpy(-1.0, B, AU);
+                    sqNorm = IvyFEM.Lapack.Functions.ddot(R, R);
+                    System.Diagnostics.Debug.WriteLine("Calc Norm: t = " + (System.Environment.TickCount - t));
+                    if (iter == 0)
                     {
-                        double[] R = IvyFEM.Lapack.Functions.daxpy(-1.0, prevU, U);
-                        norm = IvyFEM.Lapack.Functions.dnrm2(R);
-                        System.Diagnostics.Debug.Assert(norm >= 0);
-                        if (norm < Constants.PrecisionLowerLimit)
+                        if (sqNorm < IvyFEM.Constants.PrecisionLowerLimit)
                         {
+                            convRatio = 0;
+                            break;
+                        }
+                        sqInvNorm0 = 1.0 / sqNorm;
+                    }
+                    else
+                    {
+                        if (sqNorm * sqInvNorm0 < tolerance * tolerance)
+                        {
+                            convRatio = Math.Sqrt(sqNorm * sqInvNorm0);
                             break;
                         }
                     }
 
+                    t = System.Environment.TickCount;
                     //---------------------------------------------------
                     double[] X;
                     Solver.DoubleSolve(out X, A, B);
-                    prevU = U;
                     U = X;
                     //---------------------------------------------------
+                    System.Diagnostics.Debug.WriteLine("Solve: t = " + (System.Environment.TickCount - t));
                 }
-                System.Diagnostics.Debug.WriteLine("iter = " + iter + " norm = " + norm);
+                System.Diagnostics.Debug.WriteLine("Newton Raphson iter = " + iter + " norm = " + convRatio);
                 System.Diagnostics.Debug.Assert(iter < maxCnt);
             }
             else
             {
+                int t;
                 var A = new IvyFEM.Linear.DoubleSparseMatrix(nodeCnt * dof, nodeCnt * dof);
                 var B = new double[nodeCnt * dof];
 
+                t = System.Environment.TickCount;
                 CalcLinearElasticAB(A, B, nodeCnt, dof);
+                System.Diagnostics.Debug.WriteLine("CalcAB: t = " + (System.Environment.TickCount - t));
 
+                t = System.Environment.TickCount;
                 SetFixedCadsCondtion(World, A, B, nodeCnt, dof);
+                System.Diagnostics.Debug.WriteLine("Condtion: t = " + (System.Environment.TickCount - t));
 
+                t = System.Environment.TickCount;
                 //-------------------------------
                 double[] X;
                 Solver.DoubleSolve(out X, A, B);
                 U = X;
                 //-------------------------------
+                System.Diagnostics.Debug.WriteLine("Solve: t = " + (System.Environment.TickCount - t));
             }
 
         }
@@ -90,39 +117,18 @@ namespace IvyFEM
                 Material ma = World.GetMaterial(triFE.MaterialId);
                 switch (ma.MaterialType)
                 {
-                    case MaterialType.ELASTIC:
+                    case MaterialType.Elastic:
                         break;
-                    case MaterialType.SAINTVENANT_KIRCHHOFF_HYPERELASTIC:
+                    case MaterialType.SaintVenantHyperelastic:
                         hasNonlinear = true;
                         break;
                     default:
                         System.Diagnostics.Debug.Assert(false);
                         throw new NotImplementedException("MaterialType is not supported: " + ma.MaterialType);
-                        break;
+                        //break;
                 }
             }
             return hasNonlinear;
-        }
-
-        protected void SetInitialU(int nodeCnt, int dof)
-        {
-            var fixedCoIdFixedCad = World.GetFixedCoordIdFixedCad();
-            foreach (var pair in fixedCoIdFixedCad)
-            {
-                int fixedCoId = pair.Key;
-                int fixedNodeId = World.Coord2Node(fixedCoId);
-                if (fixedNodeId == -1)
-                {
-                    continue;
-                }
-                var fixedCads = pair.Value;
-                foreach (FieldFixedCad fixedCad in fixedCads)
-                {
-                    int iDof = fixedCad.DofIndex;
-                    double value = fixedCad.Value;
-                    U[fixedNodeId * dof + iDof] = value;
-                }
-            }
         }
 
         public static void SetStressValue(uint displacementValueId, uint stressValueId, uint equivStressValueId, FEWorld world)
@@ -135,7 +141,7 @@ namespace IvyFEM
             {
                 System.Diagnostics.Debug.Assert(world.IsFieldValueId(stressValueId));
                 sigmaFV = world.GetFieldValue(stressValueId);
-                System.Diagnostics.Debug.Assert(sigmaFV.Type == FieldValueType.SYMMETRICAL_TENSOR2);
+                System.Diagnostics.Debug.Assert(sigmaFV.Type == FieldValueType.SymmetricTensor2);
                 System.Diagnostics.Debug.Assert(sigmaFV.Dof == 3);
             }
             FieldValue eqSigmaFV = null;
@@ -143,7 +149,7 @@ namespace IvyFEM
             {
                 System.Diagnostics.Debug.Assert(world.IsFieldValueId(equivStressValueId));
                 eqSigmaFV = world.GetFieldValue(equivStressValueId);
-                System.Diagnostics.Debug.Assert(eqSigmaFV.Type == FieldValueType.SCALAR);
+                System.Diagnostics.Debug.Assert(eqSigmaFV.Type == FieldValueType.Scalar);
                 System.Diagnostics.Debug.Assert(eqSigmaFV.Dof == 1);
             }
 
@@ -155,15 +161,15 @@ namespace IvyFEM
                 Material ma = world.GetMaterial(triFE.MaterialId);
                 double lambda = 0;
                 double mu = 0;
-                if (ma.MaterialType == MaterialType.ELASTIC)
+                if (ma.MaterialType == MaterialType.Elastic)
                 {
                     var ma1 = ma as ElasticMaterial;
                     lambda = ma1.LameLambda;
                     mu = ma1.LameMu;
                 }
-                else if (ma.MaterialType == MaterialType.SAINTVENANT_KIRCHHOFF_HYPERELASTIC)
+                else if (ma.MaterialType == MaterialType.SaintVenantHyperelastic)
                 {
-                    var ma1 = ma as SaintVenantKirchhoffHyperelasticMaterial;
+                    var ma1 = ma as SaintVenantHyperelasticMaterial;
                     lambda = ma1.LameLambda;
                     mu = ma1.LameMu;
                 }
@@ -179,7 +185,7 @@ namespace IvyFEM
                 for (int iNode = 0; iNode < coIds.Length; iNode++)
                 {
                     int coId = coIds[iNode];
-                    double[] u = uFV.GetValue(coId, FieldDerivationType.VALUE);
+                    double[] u = uFV.GetValue(coId, FieldDerivationType.Value);
                     uu[0] += u[0] * Nx[iNode];
                     uu[1] += u[1] * Nx[iNode];
                     uu[2] += u[0] * Ny[iNode];
@@ -188,14 +194,14 @@ namespace IvyFEM
 
                 //ε strain
                 double[] eps = new double[4];
-                if (ma.MaterialType == MaterialType.ELASTIC)
+                if (ma.MaterialType == MaterialType.Elastic)
                 {
                     eps[0] = 0.5 * (uu[0] + uu[0]);
                     eps[1] = 0.5 * (uu[1] + uu[2]);
                     eps[2] = 0.5 * (uu[2] + uu[1]);
                     eps[3] = 0.5 * (uu[3] + uu[3]);
                 }
-                else if (ma.MaterialType == MaterialType.SAINTVENANT_KIRCHHOFF_HYPERELASTIC)
+                else if (ma.MaterialType == MaterialType.SaintVenantHyperelastic)
                 {
                     eps[0] = 0.5 * (uu[0] + uu[0] + uu[0] * uu[0] + uu[1] * uu[1]);
                     eps[1] = 0.5 * (uu[1] + uu[2] + uu[2] * uu[0] + uu[1] * uu[3]);
@@ -222,7 +228,7 @@ namespace IvyFEM
 
                 if (stressValueId != 0)
                 {
-                    double[] Sigma = sigmaFV.GetValues(FieldDerivationType.VALUE);
+                    double[] Sigma = sigmaFV.GetValues(FieldDerivationType.Value);
                     uint dof = sigmaFV.Dof;
                     Sigma[(feId - 1) * dof + 0] = sigma[0]; // σxx
                     Sigma[(feId - 1) * dof + 1] = sigma[3]; // σyy
@@ -230,7 +236,7 @@ namespace IvyFEM
                 }
                 if (equivStressValueId != 0)
                 {
-                    double[] EqSigma = eqSigmaFV.GetValues(FieldDerivationType.VALUE);
+                    double[] EqSigma = eqSigmaFV.GetValues(FieldDerivationType.Value);
                     EqSigma[feId - 1] = misesStress;
                 }
             }

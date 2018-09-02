@@ -71,7 +71,7 @@ namespace IvyFEM
             CadId = quadArray.LCadId;
             MeshId = quadArray.Id;
             System.Diagnostics.Debug.Assert(MeshId != 0);
-            Type = ElementType.QUAD;
+            Type = ElementType.Quad;
             ElemIndexs = null;
             EdgeIndexs = null;
 
@@ -124,7 +124,7 @@ namespace IvyFEM
 
             MeshId = triArray.Id;
             System.Diagnostics.Debug.Assert(MeshId != 0);
-            Type = ElementType.TRI;
+            Type = ElementType.Tri;
 
             ElemCount = (uint)triArray.Tris.Count;
 
@@ -173,7 +173,7 @@ namespace IvyFEM
 
             MeshId = barArray.Id;
             System.Diagnostics.Debug.Assert(MeshId != 0);
-            Type = ElementType.LINE;
+            Type = ElementType.Line;
 
             ElemCount = (uint)barArray.Bars.Count;
             ElemIndexs = new int[ElemCount * 2];
@@ -200,7 +200,7 @@ namespace IvyFEM
 
             MeshId = vtx.Id;
             System.Diagnostics.Debug.Assert(MeshId != 0);
-            Type = ElementType.POINT;
+            Type = ElementType.Point;
 
             ElemCount = 1;
             ElemIndexs = new int[ElemCount];
@@ -209,27 +209,27 @@ namespace IvyFEM
 
         public void DrawElements()
         {
-            if (Type == ElementType.POINT)
+            if (Type == ElementType.Point)
             {
                 DrawElementsVertex();
             }
-            else if (Type == ElementType.LINE)
+            else if (Type == ElementType.Line)
             {
                 DrawElementsBar();
             }
-            else if (Type == ElementType.TRI)
+            else if (Type == ElementType.Tri)
             {
                 DrawElementsTri();
             }
-            else if (Type == ElementType.QUAD)
+            else if (Type == ElementType.Quad)
             {
                 DrawElementsQuad();
             }
-            else if (Type == ElementType.TET)
+            else if (Type == ElementType.Tet)
             {
                 new NotImplementedException();
             }
-            else if (Type == ElementType.HEX)
+            else if (Type == ElementType.Hex)
             {
                 new NotImplementedException();
             }
@@ -237,27 +237,27 @@ namespace IvyFEM
 
         public void DrawElementsSelection()
         {
-            if (Type == ElementType.POINT)
+            if (Type == ElementType.Point)
             {
                 DrawElementsSelectionVertex();
             }
-            else if (Type == ElementType.LINE)
+            else if (Type == ElementType.Line)
             {
                 DrawElementsSelectionBar();
             }
-            else if (Type == ElementType.TRI)
+            else if (Type == ElementType.Tri)
             {
                 DrawElementsSelectionTri();
             }
-            else if (Type == ElementType.QUAD)
+            else if (Type == ElementType.Quad)
             {
                 DrawElementsSelectionQuad();
             }
-            else if (Type == ElementType.TET)
+            else if (Type == ElementType.Tet)
             {
                 new NotImplementedException();
             }
-            else if (Type == ElementType.HEX)
+            else if (Type == ElementType.Hex)
             {
                 new NotImplementedException();
             }
@@ -265,27 +265,27 @@ namespace IvyFEM
 
         public uint GetElemDim()
         {
-            if (Type == ElementType.POINT)
+            if (Type == ElementType.Point)
             {
                 return 1;
             }
-            else if (Type == ElementType.LINE)
+            else if (Type == ElementType.Line)
             {
                 return 1;
             }
-            else if (Type == ElementType.TRI)
+            else if (Type == ElementType.Tri)
             {
                 return 2;
             }
-            else if (Type == ElementType.QUAD)
+            else if (Type == ElementType.Quad)
             {
                 return 2;
             }
-            else if (Type == ElementType.TET)
+            else if (Type == ElementType.Tet)
             {
                 return 3;
             }
-            else if (Type == ElementType.HEX)
+            else if (Type == ElementType.Hex)
             {
                 return 3;
             }

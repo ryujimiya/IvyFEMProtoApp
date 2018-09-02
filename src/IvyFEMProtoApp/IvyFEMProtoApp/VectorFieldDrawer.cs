@@ -11,12 +11,12 @@ namespace IvyFEM
     {
         private IList<VectorFieldDrawPart> DrawParts = new List<VectorFieldDrawPart>();
         private uint ValueId = 0;
-        private FieldDerivationType ValueDt = FieldDerivationType.VALUE;
+        private FieldDerivationType ValueDt = FieldDerivationType.Value;
 
-        public RotMode SutableRotMode { get; private set; } = RotMode.ROTMODE_NOT_SET;
+        public RotMode SutableRotMode { get; private set; } = RotMode.RotModeNotSet;
         public bool IsAntiAliasing { get; set; } = false;
 
-        public VectorFieldDrawerType Type { get; private set; } = VectorFieldDrawerType.NOT_SET;
+        public VectorFieldDrawerType Type { get; private set; } = VectorFieldDrawerType.NotSet;
 
         public VectorFieldDrawer() : base()
         {
@@ -38,21 +38,21 @@ namespace IvyFEM
             {
                 if (dim == 2)
                 {
-                    SutableRotMode = RotMode.ROTMODE_2D;
+                    SutableRotMode = RotMode.RotMode2D;
                 }
                 else if (dim == 3)
                 {
-                    SutableRotMode = RotMode.ROTMODE_3D;
+                    SutableRotMode = RotMode.RotMode3D;
                 }
             }
             FieldValue fv = world.GetFieldValue(valueId);
-            if (fv.Type == FieldValueType.VECTOR2 || fv.Type == FieldValueType.VECTOR3)
+            if (fv.Type == FieldValueType.Vector2 || fv.Type == FieldValueType.Vector3)
             {
-                Type = VectorFieldDrawerType.VECTOR;
+                Type = VectorFieldDrawerType.Vector;
             }
-            else if (fv.Type == FieldValueType.SYMMETRICAL_TENSOR2)
+            else if (fv.Type == FieldValueType.SymmetricTensor2)
             {
-                Type = VectorFieldDrawerType.SYMMETRIC_TENSOR2;
+                Type = VectorFieldDrawerType.SymmetricTensor2;
             }
 
             {

@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Numerics;
 using OpenTK.Graphics.OpenGL;
 
 namespace IvyFEM
 {
     class CadObject2DDrawer : IDrawer
     {
-        public RotMode SutableRotMode { get; private set; } = RotMode.ROTMODE_2D;
+        public RotMode SutableRotMode { get; private set; } = RotMode.RotMode2D;
         public bool IsAntiAliasing { get; set; } = false;
 
         private double[] SelectedColor = { 1.0, 0.5, 1.0 }; //{ 1.0, 1.0, 0.0 };
@@ -59,7 +58,7 @@ namespace IvyFEM
 
         public bool UpdateCadTopologyGeometry(CadObject2D cad2D)
         {
-            SutableRotMode = RotMode.ROTMODE_2D;
+            SutableRotMode = RotMode.RotMode2D;
             IList<CadObject2DDrawPart> oldDrawParts = new List<CadObject2DDrawPart>();
             for (int i = 0; i < DrawParts.Count; i++)
             {
@@ -80,20 +79,20 @@ namespace IvyFEM
 
             {
                 // 面をセット
-                IList<uint> lIds = cad2D.GetElemIds(CadElementType.LOOP);
+                IList<uint> lIds = cad2D.GetElemIds(CadElementType.Loop);
                 for (int iLId = 0; iLId < lIds.Count; iLId++)
                 {
                     uint lId = lIds[iLId];
                     double height = 0;
                     {
-                        int layer = cad2D.GetLayer(CadElementType.LOOP, lId);
+                        int layer = cad2D.GetLayer(CadElementType.Loop, lId);
                         height = (layer - minLayer) * layerHeight;
                     }
                     int idp0 = 0;
                     for (; idp0 < oldDrawParts.Count; idp0++)
                     {
                         CadObject2DDrawPart olddp = oldDrawParts[idp0];
-                        if (olddp.Type == CadElementType.LOOP && olddp.CadId == lId)
+                        if (olddp.Type == CadElementType.Loop && olddp.CadId == lId)
                         {
                             olddp.MeshId = 1;
                             olddp.Height = height;
@@ -111,7 +110,7 @@ namespace IvyFEM
                     {
                         CadObject2DDrawPart dp = new CadObject2DDrawPart();
                         dp.CadId = lId;
-                        dp.Type = CadElementType.LOOP;
+                        dp.Type = CadElementType.Loop;
                         dp.Height = height;
                         double[] color = new double[3];
                         cad2D.GetLoopColor(lId, color);
@@ -126,20 +125,20 @@ namespace IvyFEM
 
             {
                 // set edge
-                IList<uint> eIds = cad2D.GetElemIds(CadElementType.EDGE);
+                IList<uint> eIds = cad2D.GetElemIds(CadElementType.Edge);
                 for (int iEId = 0; iEId < eIds.Count; iEId++)
                 {
                     uint eId = eIds[iEId];
                     double height = 0;
                     {
-                        int layer = cad2D.GetLayer(CadElementType.EDGE, eId);
+                        int layer = cad2D.GetLayer(CadElementType.Edge, eId);
                         height += (layer - minLayer + 0.01) * layerHeight;
                     }
                     int idp0 = 0;
                     for (; idp0 < oldDrawParts.Count; idp0++)
                     {
                         CadObject2DDrawPart olddp = oldDrawParts[idp0];
-                        if (olddp.Type == CadElementType.EDGE && olddp.CadId == eId)
+                        if (olddp.Type == CadElementType.Edge && olddp.CadId == eId)
                         {
                             olddp.MeshId = 1;
                             olddp.Height = height;
@@ -151,7 +150,7 @@ namespace IvyFEM
                     {
                         CadObject2DDrawPart dp = new CadObject2DDrawPart();
                         dp.CadId = eId;
-                        dp.Type = CadElementType.EDGE;
+                        dp.Type = CadElementType.Edge;
                         dp.Height = height;
                         DrawParts.Add(dp);
                     }
@@ -160,16 +159,16 @@ namespace IvyFEM
                         Edge2D edge = cad2D.GetEdge(eId);
                         dp.CtrlPoints.Clear();
                         dp.CurveType = edge.CurveType;
-                        if (edge.CurveType == CurveType.CURVE_ARC)
+                        if (edge.CurveType == CurveType.CurveArc)
                         {
-                            Vector2 cPt;
+                            OpenTK.Vector2d cPt;
                             double radius;
                             edge.GetCenterRadius(out cPt, out radius);
                             dp.CtrlPoints.Add(cPt);
                         }
-                        else if (edge.CurveType == CurveType.CURVE_BEZIER)
+                        else if (edge.CurveType == CurveType.CurveBezier)
                         {
-                            IList<Vector2> cos = edge.GetCurvePoint();
+                            IList<OpenTK.Vector2d> cos = edge.GetCurvePoint();
                             dp.CtrlPoints.Add(cos[0]);
                             dp.CtrlPoints.Add(cos[1]);
                         }
@@ -179,17 +178,17 @@ namespace IvyFEM
 
             { 
                 // set vertex
-                IList<uint> vIds = cad2D.GetElemIds(CadElementType.VERTEX);
+                IList<uint> vIds = cad2D.GetElemIds(CadElementType.Vertex);
                 for (int iVId = 0; iVId < vIds.Count; iVId++)
                 {
                     uint vCadId = vIds[iVId];
-                    int layer = cad2D.GetLayer(CadElementType.VERTEX, vCadId);
+                    int layer = cad2D.GetLayer(CadElementType.Vertex, vCadId);
                     double height = (layer - minLayer + 0.1) * layerHeight;
                     int idp0 = 0;
                     for (; idp0 < oldDrawParts.Count; idp0++)
                     {
                         CadObject2DDrawPart olddp = oldDrawParts[idp0];
-                        if (olddp.Type == CadElementType.VERTEX && olddp.CadId == vCadId)
+                        if (olddp.Type == CadElementType.Vertex && olddp.CadId == vCadId)
                         {
                             olddp.MeshId = 1;
                             olddp.Height = height;
@@ -201,7 +200,7 @@ namespace IvyFEM
                     {
                         CadObject2DDrawPart dp = new CadObject2DDrawPart();
                         dp.CadId = vCadId;
-                        dp.Type = CadElementType.VERTEX;
+                        dp.Type = CadElementType.Vertex;
                         dp.Height = height;
                         DrawParts.Add(dp);
                     }
@@ -238,7 +237,7 @@ namespace IvyFEM
                 uint cadId0;
                 mesh.GetMeshInfo(meshId, out elemCnt, out meshType, out loc, out cadId0);
                 System.Diagnostics.Debug.Assert(cadId0 == cadId);
-                if (meshType == MeshType.TRI)
+                if (meshType == MeshType.Tri)
                 {
                     dp.SetTriArray(mesh.GetTriArrays()[loc]);
                     double[] color = new double[3];
@@ -248,28 +247,28 @@ namespace IvyFEM
                         dp.Color[iTmp] = (float)color[iTmp];
                     }
                 }
-                else if (meshType == MeshType.BAR)
+                else if (meshType == MeshType.Bar)
                 {
                     dp.SetBarArray(mesh.GetBarArrays()[loc]);
-                    System.Diagnostics.Debug.Assert(cadType == CadElementType.EDGE);
+                    System.Diagnostics.Debug.Assert(cadType == CadElementType.Edge);
                     Edge2D edge = cad2D.GetEdge(cadId);
                     dp.CurveType = edge.CurveType;
                     dp.CtrlPoints.Clear();
-                    if (edge.CurveType == CurveType.CURVE_ARC)
+                    if (edge.CurveType == CurveType.CurveArc)
                     {
-                        Vector2 cPt;
+                        OpenTK.Vector2d cPt;
                         double radius;
                         edge.GetCenterRadius(out cPt, out radius);
                         dp.CtrlPoints.Add(cPt);
                     }
-                    else if (edge.CurveType == CurveType.CURVE_BEZIER)
+                    else if (edge.CurveType == CurveType.CurveBezier)
                     {
-                        IList<Vector2> cos = edge.GetCurvePoint();
+                        IList<OpenTK.Vector2d> cos = edge.GetCurvePoint();
                         dp.CtrlPoints.Add(cos[0]);
                         dp.CtrlPoints.Add(cos[1]);
                     }
                 }
-                else if (meshType == MeshType.VERTEX)
+                else if (meshType == MeshType.Vertex)
                 {
                     dp.SetVertex(mesh.GetVertexs()[loc]);
                 }
@@ -277,7 +276,7 @@ namespace IvyFEM
 
             {
                 // 座標をセット
-                IList<Vector2> vec2Ds = mesh.GetVectors();
+                IList<OpenTK.Vector2d> vec2Ds = mesh.GetVectors();
                 uint ptCnt = (uint)vec2Ds.Count;
                 uint ndim = 2;
                 VertexArray.SetSize(ptCnt, ndim);
@@ -340,7 +339,7 @@ namespace IvyFEM
                 double height = dp.Height;
                 double dispX = dp.DispX;
                 double dispY = dp.DispY;
-                if (dp.Type == CadElementType.VERTEX)
+                if (dp.Type == CadElementType.Vertex)
                 {
                     GL.Disable(EnableCap.Texture2D);
                     if (dp.ShowMode == 1)
@@ -365,7 +364,7 @@ namespace IvyFEM
                         GL.Enable(EnableCap.Texture2D);
                     }
                 }
-                if (dp.Type == CadElementType.EDGE)
+                if (dp.Type == CadElementType.Edge)
                 {
                     GL.Disable(EnableCap.Texture2D);
                     GL.LineWidth(LineWidth);
@@ -397,7 +396,7 @@ namespace IvyFEM
                         GL.Begin(PrimitiveType.Points);
                         for (int icp = 0; icp < dp.CtrlPoints.Count; icp++)
                         {
-                            Vector2 cp = dp.CtrlPoints[icp];
+                            OpenTK.Vector2d cp = dp.CtrlPoints[icp];
                             GL.Vertex3(cp.X, cp.Y, 0.0);
                         }
                         GL.End();
@@ -410,18 +409,16 @@ namespace IvyFEM
                         uint sVI = dp.Indexs[0];
                         uint eVI = dp.Indexs[dp.ElemCount * dp.ElemPtCount - 1];
                         double[] va = VertexArray.VertexCoordArray;
-                        Vector2 sPt = new Vector2(
-                            (float)va[sVI * 2 + 0], (float)va[sVI * 2 + 1]);
-                        Vector2 ePt = new Vector2(
-                            (float)va[eVI * 2 + 0], (float)va[eVI * 2 + 1]);
-                        if (dp.CurveType == CurveType.CURVE_ARC)
+                        OpenTK.Vector2d sPt = new OpenTK.Vector2d(va[sVI * 2 + 0], va[sVI * 2 + 1]);
+                        OpenTK.Vector2d ePt = new OpenTK.Vector2d(va[eVI * 2 + 0], va[eVI * 2 + 1]);
+                        if (dp.CurveType == CurveType.CurveArc)
                         {
                             OpenGLUtils.GLVertex2(sPt);
                             OpenGLUtils.GLVertex2(dp.CtrlPoints[0]);
                             OpenGLUtils.GLVertex2(ePt);
                             OpenGLUtils.GLVertex2(dp.CtrlPoints[0]);
                         }
-                        if (dp.CurveType == CurveType.CURVE_BEZIER)
+                        if (dp.CurveType == CurveType.CurveBezier)
                         {
                             OpenGLUtils.GLVertex2(sPt);
                             OpenGLUtils.GLVertex2(dp.CtrlPoints[0]);
@@ -439,7 +436,7 @@ namespace IvyFEM
                         GL.Enable(EnableCap.Texture2D);
                     }
                 }
-                else if (dp.Type == CadElementType.LOOP)
+                else if (dp.Type == CadElementType.Loop)
                 {
                     GL.Disable(EnableCap.Blend);
                     if (dp.ShowMode > 0)
@@ -520,11 +517,11 @@ namespace IvyFEM
                 GL.PushName(idp);
                 GL.Translate(0.0, 0.0, +height);
                 dp.DrawElements();
-                if (dp.Type == CadElementType.EDGE && dp.ShowMode == 2)
+                if (dp.Type == CadElementType.Edge && dp.ShowMode == 2)
                 {
                     for (int icp = 0; icp < dp.CtrlPoints.Count; icp++)
                     {
-                        Vector2 cp = dp.CtrlPoints[icp];
+                        OpenTK.Vector2d cp = dp.CtrlPoints[icp];
                         GL.PushName(icp);
                         GL.Begin(PrimitiveType.Points);
                         OpenGLUtils.GLVertex2(cp);
@@ -568,7 +565,7 @@ namespace IvyFEM
                 ctrlIndex = selectFlag[2];
                 return;
             }
-            partType = CadElementType.NOT_SET;
+            partType = CadElementType.NotSet;
             partId = 0;
             ctrlIndex = 0;
         }
@@ -638,7 +635,7 @@ namespace IvyFEM
             uint partId;
             int ctrlIndex;
             GetPartCadId(selectFlag, out partType, out partId, out ctrlIndex);
-            if (partType == CadElementType.NOT_SET)
+            if (partType == CadElementType.NotSet)
             {
                 return;
             }

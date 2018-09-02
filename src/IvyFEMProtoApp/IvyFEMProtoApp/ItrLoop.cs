@@ -132,7 +132,7 @@ namespace IvyFEM
             System.Diagnostics.Debug.Assert(BRep2D.BRep.IsUseVertexId(hE.UVId));
             UseVertex uV = BRep2D.BRep.GetUseVertex(hE.UVId);
             uint vId = uV.VId;
-            System.Diagnostics.Debug.Assert(BRep2D.IsElemId(CadElementType.VERTEX, vId));
+            System.Diagnostics.Debug.Assert(BRep2D.IsElemId(CadElementType.Vertex, vId));
             return vId;
         }
 
@@ -150,7 +150,7 @@ namespace IvyFEM
             uint fUVId = fHE.UVId;
             UseVertex fUV = BRep2D.BRep.GetUseVertex(fUVId);
             uint vId = fUV.VId;
-            System.Diagnostics.Debug.Assert(BRep2D.IsElemId(CadElementType.VERTEX, vId));
+            System.Diagnostics.Debug.Assert(BRep2D.IsElemId(CadElementType.Vertex, vId));
             return vId;
         }
 
@@ -168,7 +168,7 @@ namespace IvyFEM
             uint bUVId = bHE.UVId;
             UseVertex bUV = BRep2D.BRep.GetUseVertex(bUVId);
             uint vId = bUV.VId;
-            System.Diagnostics.Debug.Assert(BRep2D.IsElemId(CadElementType.VERTEX, vId));
+            System.Diagnostics.Debug.Assert(BRep2D.IsElemId(CadElementType.Vertex, vId));
             return vId;
         }
 

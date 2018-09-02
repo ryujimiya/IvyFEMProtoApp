@@ -16,13 +16,13 @@ namespace IvyFEM
 
         public ElasticBaseMaterial()
         {
-            MaterialType = MaterialType.NOT_SET;
+            MaterialType = MaterialType.NotSet;
             int len = 5;
             Values = new double[len];
 
             MassDensity = 1.0;
             LameLambda = 0.0;
-            LameMu = 1.0;
+            LameMu = 0.0;
             GravityX = 0.0;
             GravityY = 0.0;
         }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Numerics;
 
 namespace IvyFEM
 {
@@ -78,7 +77,7 @@ namespace IvyFEM
 
         }
 
-        public bool IsInside(Vector3 vec)
+        public bool IsInside(OpenTK.Vector3d vec)
         {
             if (!IsntEmpty)
             {
@@ -93,7 +92,7 @@ namespace IvyFEM
             return false;
         }
 
-        public bool IsPossibilityIntersectSphere(Vector3 vec, double radius)
+        public bool IsPossibilityIntersectSphere(OpenTK.Vector3d vec, double radius)
         {
             if (!IsntEmpty)
             {
@@ -109,7 +108,7 @@ namespace IvyFEM
             return true;
         }
 
-        public bool AddPoint(Vector3 vec, double eps)
+        public bool AddPoint(OpenTK.Vector3d vec, double eps)
         {
             if (eps <= 0)
             {
@@ -147,18 +146,18 @@ namespace IvyFEM
             bb[5] = MaxZ;
         }
 
-        public void ProjectOnLine(out double minR, out double maxR, Vector3 org, Vector3 dir)
+        public void ProjectOnLine(out double minR, out double maxR, OpenTK.Vector3d org, OpenTK.Vector3d dir)
         {
             double[] d = new double[8]
             {
-                Vector3.Dot(dir, new Vector3((float)MinX, (float)MinY, (float)MinZ) - org),
-                Vector3.Dot(dir, new Vector3((float)MaxX, (float)MinY, (float)MinZ) - org),
-                Vector3.Dot(dir, new Vector3((float)MinX, (float)MaxY, (float)MinZ) - org),
-                Vector3.Dot(dir, new Vector3((float)MaxX, (float)MaxY, (float)MinZ) - org),
-                Vector3.Dot(dir, new Vector3((float)MinX, (float)MinY, (float)MaxZ) - org),
-                Vector3.Dot(dir, new Vector3((float)MaxX, (float)MinY, (float)MaxZ) - org),
-                Vector3.Dot(dir, new Vector3((float)MinX, (float)MaxY, (float)MaxZ) - org),
-                Vector3.Dot(dir, new Vector3((float)MaxX, (float)MaxY, (float)MaxZ) - org)
+                OpenTK.Vector3d.Dot(dir, new OpenTK.Vector3d(MinX, MinY, MinZ) - org),
+                OpenTK.Vector3d.Dot(dir, new OpenTK.Vector3d(MaxX, MinY, MinZ) - org),
+                OpenTK.Vector3d.Dot(dir, new OpenTK.Vector3d(MinX, MaxY, MinZ) - org),
+                OpenTK.Vector3d.Dot(dir, new OpenTK.Vector3d(MaxX, MaxY, MinZ) - org),
+                OpenTK.Vector3d.Dot(dir, new OpenTK.Vector3d(MinX, MinY, MaxZ) - org),
+                OpenTK.Vector3d.Dot(dir, new OpenTK.Vector3d(MaxX, MinY, MaxZ) - org),
+                OpenTK.Vector3d.Dot(dir, new OpenTK.Vector3d(MinX, MaxY, MaxZ) - org),
+                OpenTK.Vector3d.Dot(dir, new OpenTK.Vector3d(MaxX, MaxY, MaxZ) - org)
             };
             minR = d[0];
             maxR = d[0];

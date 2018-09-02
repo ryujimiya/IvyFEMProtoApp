@@ -9,7 +9,7 @@ namespace IvyFEM
 {
     class Mesher2DDrawer : IDrawer
     {
-        public RotMode SutableRotMode { get; private set; } = RotMode.ROTMODE_2D;
+        public RotMode SutableRotMode { get; private set; } = RotMode.RotMode2D;
         public bool IsAntiAliasing { get; set; } = false;
 
         private IList<Mesher2DDrawPart> DrawParts = new List<Mesher2DDrawPart>();
@@ -29,7 +29,7 @@ namespace IvyFEM
 
         private bool Set(Mesher2D mesher)
         {
-            SutableRotMode = RotMode.ROTMODE_2D; // DrawMode 1 : 2D
+            SutableRotMode = RotMode.RotMode2D; // DrawMode 1 : 2D
 
             int layerMin = 0;
             int layerMax = 0;
@@ -135,7 +135,7 @@ namespace IvyFEM
 
             {
                 // 座標をセット
-                IList<System.Numerics.Vector2> vec2Ds = mesher.GetVectors();
+                IList<OpenTK.Vector2d> vec2Ds = mesher.GetVectors();
                 uint nDim = 2;
                 uint nVec = (uint)vec2Ds.Count;
                 VertexArray.SetSize(nVec, nDim);
@@ -152,7 +152,7 @@ namespace IvyFEM
         {
             {
                 // 座標をセット
-                IList<System.Numerics.Vector2> vecs = mesher.GetVectors();
+                IList<OpenTK.Vector2d> vecs = mesher.GetVectors();
                 uint nDim = 2;
                 uint nVec = (uint)vecs.Count;
                 if (VertexArray.Dimension != nDim)

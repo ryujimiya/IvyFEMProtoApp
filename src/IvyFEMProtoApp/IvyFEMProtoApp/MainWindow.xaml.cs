@@ -296,18 +296,27 @@ namespace IvyFEMProtoApp
 
         private void elasticBtn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.ElasticProblem(this, false);
-            Problem.ElasticProblem(this, true);
+            bool isSaintVenant = false;
+            Problem.ElasticProblem(this, false, isSaintVenant);
+            Problem.ElasticProblem(this, true, isSaintVenant);
+        }
+
+        private void saintVenantHyperelasticBtn_Click(object sender, RoutedEventArgs e)
+        {
+            bool isSaintVenant = true;
+            Problem.ElasticProblem(this, false, isSaintVenant);
         }
 
         private void elasticTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.ElasticTDProblem(this);
+            bool isSaintVenant = false;
+            Problem.ElasticTDProblem(this, isSaintVenant);
         }
 
-        private void SaintVenantKirchhoffHyperelasticBtn_Click(object sender, RoutedEventArgs e)
+        private void saintVenantHyperelasticTimeDomainBtn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.SaintVenantKirchhoffHyperelasticProblem(this, false);
+            bool isSaintVenant = true;
+            Problem.ElasticTDProblem(this, isSaintVenant);
         }
     }
 }

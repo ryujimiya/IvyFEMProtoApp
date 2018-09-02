@@ -27,6 +27,7 @@ namespace IvyFEM
 
         public override void Solve()
         {
+            int t;
             Ez = null;
             S = null;
             
@@ -35,12 +36,36 @@ namespace IvyFEM
             // 角周波数
             double omega = k0 * Constants.C0;
 
+            t = System.Environment.TickCount;
             int nodeCnt = (int)World.GetNodeCount();
-            IList<uint> feIds = World.GetTriangleFEIds();
-
             var A = new IvyFEM.Linear.ComplexSparseMatrix(nodeCnt, nodeCnt);
             var B = new System.Numerics.Complex[nodeCnt];
+            CalcAB(k0, A, B, nodeCnt);
+            System.Diagnostics.Debug.WriteLine("CalcAB t = " + (System.Environment.TickCount - t));
 
+            t = System.Environment.TickCount;
+            uint portCnt = World.GetPortCount();
+            EMWaveguide1DEigenFEM[] eigenFEMs;
+            SetBoundaryCondition(omega, A, B, portCnt, out eigenFEMs);
+            System.Diagnostics.Debug.WriteLine("SetBoundaryCondition t = " + (System.Environment.TickCount - t));
+
+            t = System.Environment.TickCount;
+            //----------------------------------
+            System.Numerics.Complex[] X;
+            Solver.ComplexSolve(out X, A, B);
+            Ez = X;
+            //----------------------------------
+            System.Diagnostics.Debug.WriteLine("Solve t = " + (System.Environment.TickCount - t));
+
+            t = System.Environment.TickCount;
+            S = CalcS(omega, Ez, portCnt, eigenFEMs);
+            System.Diagnostics.Debug.WriteLine("CalcS t = " + (System.Environment.TickCount - t));
+        }
+
+        private void CalcAB(double k0,
+            IvyFEM.Linear.ComplexSparseMatrix A, System.Numerics.Complex[] B, int nodeCnt)
+        {
+            IList<uint> feIds = World.GetTriangleFEIds();
             foreach (uint feId in feIds)
             {
                 TriangleFE triFE = World.GetTriangleFE(feId);
@@ -54,15 +79,15 @@ namespace IvyFEM
                 }
 
                 Material ma0 = World.GetMaterial(triFE.MaterialId);
-                System.Diagnostics.Debug.Assert(ma0.MaterialType == MaterialType.DIELECTRIC);
+                System.Diagnostics.Debug.Assert(ma0.MaterialType == MaterialType.Dielectric);
                 var ma = ma0 as DielectricMaterial;
 
-                double[] sNN = triFE.CalcSNN();
-                double[][] sNuNvs = triFE.CalcSNuNvs();
-                double[] sNxNx = sNuNvs[0];
-                double[] sNyNx = sNuNvs[1];
-                double[] sNxNy = sNuNvs[2];
-                double[] sNyNy = sNuNvs[3];
+                double[,] sNN = triFE.CalcSNN();
+                double[,][,] sNuNv = triFE.CalcSNuNv();
+                double[,] sNxNx = sNuNv[0, 0];
+                double[,] sNyNx = sNuNv[1, 0];
+                double[,] sNxNy = sNuNv[0, 1];
+                double[,] sNyNy = sNuNv[1, 1];
                 for (int row = 0; row < elemNodeCnt; row++)
                 {
                     int rowNodeId = nodes[row];
@@ -77,19 +102,20 @@ namespace IvyFEM
                         {
                             continue;
                         }
-                        int index = (int)(col * elemNodeCnt + row);
-                        double a = (1.0 / ma.Muxx) * sNyNy[index] + (1.0 / ma.Muyy) * sNxNx[index] -
-                            (k0 * k0 * ma.Epzz) * sNN[index];
+                        double a = (1.0 / ma.Muxx) * sNyNy[row, col] + (1.0 / ma.Muyy) * sNxNx[row, col] -
+                            (k0 * k0 * ma.Epzz) * sNN[row, col];
 
                         A[rowNodeId, colNodeId] += (System.Numerics.Complex)a;
                     }
                 }
             }
+        }
 
-            uint portCnt = World.GetPortCount();
-            var eigenFEMs = new EMWaveguide1DEigenFEM[portCnt];
-            var betass = new System.Numerics.Complex[2][];
-            var ezEVecss = new System.Numerics.Complex[2][][];
+        private void SetBoundaryCondition(double omega,
+            IvyFEM.Linear.ComplexSparseMatrix A, System.Numerics.Complex[] B,
+            uint portCnt, out EMWaveguide1DEigenFEM[] eigenFEMs)
+        {
+            eigenFEMs = new EMWaveguide1DEigenFEM[portCnt];
             for (uint portId = 0; portId < portCnt; portId++)
             {
                 uint portNodeCnt = World.GetPortNodeCount(portId);
@@ -101,10 +127,6 @@ namespace IvyFEM
                 eigenFEM.Solve();
                 System.Numerics.Complex[] betas = eigenFEM.Betas;
                 System.Numerics.Complex[][] ezEVecs = eigenFEM.EzEVecs;
-
-                betass[portId] = betas;
-                ezEVecss[portId] = ezEVecs;
-
                 IvyFEM.Lapack.ComplexMatrix b = eigenFEM.CalcBoundaryMatrix(omega, betas, ezEVecs);
                 for (int col = 0; col < portNodeCnt; col++)
                 {
@@ -136,20 +158,19 @@ namespace IvyFEM
                     }
                 }
             }
+        }
 
-            //----------------------------------
-            System.Numerics.Complex[] X;
-            Solver.ComplexSolve(out X, A, B);
-            Ez = X;
-            //----------------------------------
-
-            S = new System.Numerics.Complex[portCnt][];
+        private System.Numerics.Complex[][] CalcS(double omega,
+            System.Numerics.Complex[] Ez,
+            uint portCnt, EMWaveguide1DEigenFEM[] eigenFEMs)
+        {
+            var S = new System.Numerics.Complex[portCnt][];
             for (uint portId = 0; portId < portCnt; portId++)
             {
                 System.Numerics.Complex[] portEz = GetPortEz(portId, Ez);
                 var eigenFEM = eigenFEMs[portId];
-                var betas = betass[portId];
-                var ezEVecs = ezEVecss[portId];
+                System.Numerics.Complex[] betas = eigenFEM.Betas;
+                System.Numerics.Complex[][] ezEVecs = eigenFEM.EzEVecs;
                 int incidentModeId = -1;
                 if (World.IncidentPortId == portId)
                 {
@@ -158,6 +179,7 @@ namespace IvyFEM
                 System.Numerics.Complex[] S1 = eigenFEM.CalcSMatrix(omega, incidentModeId, betas, ezEVecs, portEz);
                 S[portId] = S1;
             }
+            return S;
         }
 
         private System.Numerics.Complex[] GetPortEz(uint portId, System.Numerics.Complex[] Ez)

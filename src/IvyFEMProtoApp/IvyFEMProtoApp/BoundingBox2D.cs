@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Numerics;
 
 namespace IvyFEM
 {
@@ -86,7 +85,7 @@ namespace IvyFEM
             return result;
         }
 
-        public bool IsInside(Vector2 vec)
+        public bool IsInside(OpenTK.Vector2d vec)
         {
             if (!IsntEmpty)
             {
@@ -101,7 +100,7 @@ namespace IvyFEM
             return false;
         }
 
-        public bool IsIntersectSphere(Vector2 vec, double radius)
+        public bool IsIntersectSphere(OpenTK.Vector2d vec, double radius)
         {
             if (!IsntEmpty)
             {

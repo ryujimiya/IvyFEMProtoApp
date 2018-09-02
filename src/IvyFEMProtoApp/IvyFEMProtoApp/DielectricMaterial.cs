@@ -17,7 +17,7 @@ namespace IvyFEM
 
         public DielectricMaterial() : base()
         {
-            MaterialType = MaterialType.DIELECTRIC;
+            MaterialType = MaterialType.Dielectric;
             int len = 6;
             Values = new double[len];
             for (int i = 0; i < len; i++)

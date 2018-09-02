@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Numerics;
 
 namespace IvyFEM
 {
@@ -11,7 +10,7 @@ namespace IvyFEM
     {
         public LineFE() : base()
         {
-            Type = ElementType.LINE;
+            Type = ElementType.Line;
             NodeCount = 2;
         }
 
@@ -29,9 +28,9 @@ namespace IvyFEM
         {
             double[] co1 = World.GetCoord(CoordIds[0]);
             double[] co2 = World.GetCoord(CoordIds[1]);
-            Vector2 v1 = new Vector2((float)co1[0], (float)co1[1]);
-            Vector2 v2 = new Vector2((float)co2[0], (float)co2[1]);
-            double l = (v2 - v1).Length();
+            OpenTK.Vector2d v1 = new OpenTK.Vector2d(co1[0], co1[1]);
+            OpenTK.Vector2d v2 = new OpenTK.Vector2d(co2[0], co2[1]);
+            double l = (v2 - v1).Length;
             return l;
         }
 

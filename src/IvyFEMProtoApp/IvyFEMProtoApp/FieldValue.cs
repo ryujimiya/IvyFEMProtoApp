@@ -8,11 +8,11 @@ namespace IvyFEM
 {
     class FieldValue : IObject
     {
-        public FieldValueType Type { get; set; } = FieldValueType.NO_VALUE;
+        public FieldValueType Type { get; set; } = FieldValueType.NoValue;
         public FieldDerivationType DerivationType { get; set; } = 0;
         public uint Dof { get; set; } = 1;
         public bool IsBubble { get; set; } = false;
-        public FieldShowType ShowType { get; set; } = FieldShowType.SCALAR;
+        public FieldShowType ShowType { get; set; } = FieldShowType.Real;
         public double[] Values { get; set; } = null;
         public double[] VelocityValues { get; set; } = null;
         public double[] AccelerationValues { get; set; } = null;
@@ -63,15 +63,15 @@ namespace IvyFEM
         public void AllocValues(uint dof, uint pointCnt)
         {
             Dof = dof;
-            if (DerivationType.HasFlag(FieldDerivationType.VALUE))
+            if (DerivationType.HasFlag(FieldDerivationType.Value))
             {
                 Values = new double[pointCnt * Dof];
             }
-            if (DerivationType.HasFlag(FieldDerivationType.VELOCITY))
+            if (DerivationType.HasFlag(FieldDerivationType.Velocity))
             {
                 VelocityValues = new double[pointCnt * Dof];
             }
-            if (DerivationType.HasFlag(FieldDerivationType.ACCELERATION))
+            if (DerivationType.HasFlag(FieldDerivationType.Acceleration))
             {
                 AccelerationValues = new double[pointCnt * Dof];
             }
@@ -89,15 +89,15 @@ namespace IvyFEM
         public double[] GetValues(FieldDerivationType dt)
         {
             double[] values = null;
-            if (dt.HasFlag(FieldDerivationType.VALUE) && Values != null)
+            if (dt.HasFlag(FieldDerivationType.Value) && Values != null)
             {
                 values = Values;
             }
-            else if (dt.HasFlag(FieldDerivationType.VELOCITY) && VelocityValues != null)
+            else if (dt.HasFlag(FieldDerivationType.Velocity) && VelocityValues != null)
             {
                 values = VelocityValues;
             }
-            else if (dt.HasFlag(FieldDerivationType.ACCELERATION) && AccelerationValues != null)
+            else if (dt.HasFlag(FieldDerivationType.Acceleration) && AccelerationValues != null)
             {
                 values = AccelerationValues;
             }
@@ -125,19 +125,19 @@ namespace IvyFEM
             double value = 0;
             switch(ShowType)
             {
-                case FieldShowType.SCALAR:
+                case FieldShowType.Real:
                     value = values[coId * Dof + iDof];
                     break;
-                case FieldShowType.ABS:
+                case FieldShowType.Abs:
                     value = Math.Abs(values[coId * Dof + iDof]);
                     break;
-                case FieldShowType.ZREAL:
+                case FieldShowType.ZReal:
                     value = values[coId * Dof];
                     break;
-                case FieldShowType.ZIMAGINARIY:
+                case FieldShowType.ZImaginary:
                     value = values[coId * Dof + 1];
                     break;
-                case FieldShowType.ZABS:
+                case FieldShowType.ZAbs:
                     System.Numerics.Complex cValue = new System.Numerics.Complex(
                         values[coId * Dof], Values[coId * Dof + 1]);
                     value = cValue.Magnitude;

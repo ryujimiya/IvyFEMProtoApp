@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Numerics;
 //using OpenTK; // System.Numericsと衝突するので注意
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
@@ -13,7 +12,7 @@ namespace IvyFEM
 {
     class OpenGLUtils
     {
-        public static void GLVertex2(Vector2 p)
+        public static void GLVertex2(OpenTK.Vector2d p)
         {
             GL.Vertex2(p.X, p.Y);
         }
@@ -32,8 +31,8 @@ namespace IvyFEM
 
                 GL.MatrixMode(MatrixMode.Projection);
                 GL.LoadIdentity();
-                OpenTK.Matrix4 perspective = OpenTK.Matrix4.CreatePerspectiveFieldOfView(
-                    (float)fovY, (float)aspect, (float)clipNear, (float)clipFar);
+                OpenTK.Matrix4d perspective = OpenTK.Matrix4d.CreatePerspectiveFieldOfView(
+                    fovY, aspect, clipNear, clipFar);
                 GL.LoadMatrix(ref perspective);
             }
             else
@@ -77,7 +76,7 @@ namespace IvyFEM
                 double x;
                 double y;
                 double z;
-                Vector3 objCenter = camera.ObjectCenter;
+                OpenTK.Vector3d objCenter = camera.ObjectCenter;
                 x = objCenter.X;
                 y = objCenter.Y;
                 z = objCenter.Z;
@@ -148,15 +147,15 @@ namespace IvyFEM
 
             // Transformation matrices
             OpenTK.Matrix4d projectionM = new OpenTK.Matrix4d(
-                (float)projection[0], (float)projection[4], (float)projection[8], (float)projection[12],
-                (float)projection[1], (float)projection[5], (float)projection[9], (float)projection[13],
-                (float)projection[2], (float)projection[6], (float)projection[10], (float)projection[14],
-                (float)projection[3], (float)projection[7], (float)projection[11], (float)projection[15]);
+                projection[0], projection[4], projection[8], projection[12],
+                projection[1], projection[5], projection[9], projection[13],
+                projection[2], projection[6], projection[10], projection[14],
+                projection[3], projection[7], projection[11], projection[15]);
             OpenTK.Matrix4d modelviewM = new OpenTK.Matrix4d(
-                (float)modelview[0], (float)modelview[4], (float)modelview[8], (float)modelview[12],
-                (float)modelview[1], (float)modelview[5], (float)modelview[9], (float)modelview[13],
-                (float)modelview[2], (float)modelview[6], (float)modelview[10], (float)modelview[14],
-                (float)modelview[3], (float)modelview[7], (float)modelview[11], (float)modelview[15]);
+                modelview[0], modelview[4], modelview[8], modelview[12],
+                modelview[1], modelview[5], modelview[9], modelview[13],
+                modelview[2], modelview[6], modelview[10], modelview[14],
+                modelview[3], modelview[7], modelview[11], modelview[15]);
             // Calculation for inverting a matrix, compute projection x modelview
             // and store in A[16]
             OpenTK.Matrix4d AM = projectionM * modelviewM;
@@ -165,10 +164,10 @@ namespace IvyFEM
 
             // Transformation of normalized coordinates between -1 and 1
             OpenTK.Vector4d inV = new OpenTK.Vector4d();
-            inV.X = (float)((winx - viewport[0]) / viewport[2] * 2.0 - 1.0);
-            inV.Y = (float)((winy - viewport[1]) / viewport[3] * 2.0 - 1.0);
-            inV.Z = (float)(2.0 * winz - 1.0);
-            inV.W = (float)1.0;
+            inV.X = ((winx - viewport[0]) / viewport[2] * 2.0 - 1.0);
+            inV.Y = ((winy - viewport[1]) / viewport[3] * 2.0 - 1.0);
+            inV.Z = (2.0 * winz - 1.0);
+            inV.W = 1.0;
             OpenTK.Vector4d outV;
             // Objects coordinates
             MultiplyMatrix4x4ByVector4(out outV, mM, inV);
@@ -177,7 +176,7 @@ namespace IvyFEM
                 return 0;
 
             }
-            outV.W = (float)(1.0 / outV.W);
+            outV.W = (1.0 / outV.W);
             objectX = outV.X * outV.W;
             objectY = outV.Y * outV.W;
             objectZ = outV.Z * outV.W;
@@ -342,7 +341,7 @@ namespace IvyFEM
                         mvMatrix, pjMatrix, viewport,
                         out ox, out oy, out oz);
                 }
-                selectedObj.PickedPos = new Vector3((float)ox, (float)oy, (float)oz);
+                selectedObj.PickedPos = new OpenTK.Vector3d(ox, oy, oz);
             }
             return selectedObjs;
         }

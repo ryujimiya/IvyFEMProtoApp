@@ -317,7 +317,7 @@ namespace IvyFEM
                     int loc;
                     uint cadId;
                     Mesh.GetMeshInfo(meshId, out elemCnt, out meshType, out loc, out cadId);
-                    if (meshType != MeshType.BAR)
+                    if (meshType != MeshType.Bar)
                     {
                         continue;
                     }
@@ -381,7 +381,7 @@ namespace IvyFEM
                 int loc;
                 uint cadId;
                 Mesh.GetMeshInfo(meshId, out elemCnt, out meshType, out loc, out cadId);
-                if (meshType != MeshType.TRI)
+                if (meshType != MeshType.Tri)
                 {
                     continue;
                 }
@@ -515,7 +515,7 @@ namespace IvyFEM
                 int loc;
                 uint cadId;
                 Mesh.GetMeshInfo(meshId, out elemCnt, out meshType, out loc, out cadId);
-                System.Diagnostics.Debug.Assert(meshType == MeshType.TRI);
+                System.Diagnostics.Debug.Assert(meshType == MeshType.Tri);
                 var triArray = Mesh.GetTriArrays();
                 var tri = triArray[loc].Tris[iElem];
                 tri.FEId = (int)feId;
@@ -598,7 +598,7 @@ namespace IvyFEM
                 int loc;
                 uint cadId;
                 Mesh.GetMeshInfo(meshId, out elemCnt, out meshType, out loc, out cadId);
-                if (meshType != MeshType.BAR)
+                if (meshType != MeshType.Bar)
                 {
                     continue;
                 }
@@ -670,7 +670,7 @@ namespace IvyFEM
             return valueId;
         }
 
-        public void UpdateFieldValueValuesFromNodeValue(uint valueId, FieldDerivationType dt, double[] nodeValues)
+        public void UpdateFieldValueValuesFromNodeValues(uint valueId, FieldDerivationType dt, double[] nodeValues)
         {
             System.Diagnostics.Debug.Assert(FieldValueArray.IsObjectId(valueId));
             FieldValue fv = FieldValueArray.GetObject(valueId);
@@ -739,7 +739,7 @@ namespace IvyFEM
                 int loc;
                 uint cadId;
                 Mesh.GetMeshInfo(meshId, out elemCnt, out meshType, out loc, out cadId);
-                if (meshType != MeshType.TRI)
+                if (meshType != MeshType.Tri)
                 {
                     continue;
                 }

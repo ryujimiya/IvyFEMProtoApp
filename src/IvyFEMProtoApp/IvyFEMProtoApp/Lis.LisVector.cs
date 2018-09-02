@@ -11,7 +11,7 @@ namespace IvyFEM.Lis
     {
         internal NativeLisVector* Native = null;
 
-        public LisVector(int comm = IvyFEM.Lis.Constants.LIS_COMM_WORLD)
+        public LisVector(int comm = IvyFEM.Lis.Constants.LisCommWorld)
         {
             int ret = IvyFEM.Lis.Functions.VectorCreate(comm, this);
             System.Diagnostics.Debug.Assert(ret == 0);
@@ -57,7 +57,7 @@ namespace IvyFEM.Lis
             System.Diagnostics.Debug.Assert(ret == 0);
             for (int i = 0; i < n; i++)
             {
-                ret = v.SetValue(SetValueFlag.LIS_INS_VALUE, i, values[i]);
+                ret = v.SetValue(SetValueFlag.LisInsValue, i, values[i]);
                 System.Diagnostics.Debug.Assert(ret == 0);
             }
             return v;
@@ -72,7 +72,7 @@ namespace IvyFEM.Lis
             System.Diagnostics.Debug.Assert(ret == 0);
             for (int i = 0; i < n; i++)
             {
-                ret = v.SetValue(SetValueFlag.LIS_INS_VALUE, i, values[i]);
+                ret = v.SetValue(SetValueFlag.LisInsValue, i, values[i]);
                 System.Diagnostics.Debug.Assert(ret == 0);
             }
             return v;

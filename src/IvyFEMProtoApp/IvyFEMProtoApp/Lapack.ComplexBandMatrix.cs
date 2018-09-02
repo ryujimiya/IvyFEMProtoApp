@@ -41,6 +41,7 @@ namespace IvyFEM.Lapack
             System.Diagnostics.Debug.Assert(denseM.RowLength == denseM.ColumnLength);
             if (denseM.RowLength != denseM.ColumnLength)
             {
+                System.Diagnostics.Debug.Assert(false);
                 return m;
             }
             int rowColLength = denseM.RowLength;
@@ -57,7 +58,7 @@ namespace IvyFEM.Lapack
                     {
                         // 非０要素が見つかったら抜ける
                         // Note: Magnitue >= 0
-                        if (denseM[r, c].Magnitude >= Constants.PrecisionLowerLimit)
+                        if (denseM[r, c].Magnitude >= IvyFEM.Constants.PrecisionLowerLimit)
                         {
                             cnt = r - c;
                             break;
@@ -75,7 +76,7 @@ namespace IvyFEM.Lapack
                     {
                         // 非０要素が見つかったら抜ける
                         // Note: Magnitue >= 0
-                        if (denseM[r, c].Magnitude >= Constants.PrecisionLowerLimit)
+                        if (denseM[r, c].Magnitude >= IvyFEM.Constants.PrecisionLowerLimit)
                         {
                             cnt = c - r;
                             break;
@@ -136,6 +137,7 @@ namespace IvyFEM.Lapack
             System.Diagnostics.Debug.Assert(sparseM.RowLength == sparseM.ColumnLength);
             if (sparseM.RowLength != sparseM.ColumnLength)
             {
+                System.Diagnostics.Debug.Assert(false);
                 return m;
             }
             int rowColLength = sparseM.RowLength;
@@ -152,7 +154,7 @@ namespace IvyFEM.Lapack
                     {
                         // 非０要素が見つかったら抜ける
                         // Note: Magnitue >= 0
-                        if (sparseM[r, c].Magnitude >= Constants.PrecisionLowerLimit)
+                        if (sparseM[r, c].Magnitude >= IvyFEM.Constants.PrecisionLowerLimit)
                         {
                             cnt = r - c;
                             break;
@@ -170,7 +172,7 @@ namespace IvyFEM.Lapack
                     {
                         // 非０要素が見つかったら抜ける
                         // Note: Magnitue >= 0
-                        if (sparseM[r, c].Magnitude >= Constants.PrecisionLowerLimit)
+                        if (sparseM[r, c].Magnitude >= IvyFEM.Constants.PrecisionLowerLimit)
                         {
                             cnt = c - r;
                             break;
@@ -257,23 +259,6 @@ namespace IvyFEM.Lapack
         {
             bufferRowLength = subdiaLength * 2 + superdiaLength + 1;
             bufferColLength = rowColLength;
-        }
-
-        public int BufferIndex(int row, int col)
-        {
-            int bufferRowLength;
-            int bufferColLength;
-            GetBufferRowColLength(out bufferRowLength, out bufferColLength,
-                RowColLength, SubdiaLength, SuperdiaLength);
-
-            System.Diagnostics.Debug.Assert(row >= 0 && row < RowLength && col >= 0 && col < ColumnLength);
-            if (!(row >= col - SuperdiaLength && row <= col + SubdiaLength))
-            {
-                System.Diagnostics.Debug.Assert(false);
-                return -1;
-            }
-
-            return ((row - col) + SubdiaLength + SubdiaLength + col * bufferRowLength);
         }
 
         public System.Numerics.Complex this[int row, int col]
@@ -375,10 +360,12 @@ namespace IvyFEM.Lapack
             }
         }
 
+        /*
         public void Transpose()
         {
             throw new NotImplementedException();
         }
+        */
 
         public static ComplexBandMatrix Conjugate(ComplexBandMatrix A)
         {
@@ -394,10 +381,12 @@ namespace IvyFEM.Lapack
             Buffer = ret.Buffer;
         }
 
+        /*
         public static ComplexBandMatrix operator *(ComplexBandMatrix A, ComplexBandMatrix B)
         {
             throw new NotImplementedException();
         }
+        */
 
         public static System.Numerics.Complex[] operator *(ComplexBandMatrix A, System.Numerics.Complex[] b)
         {

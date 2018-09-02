@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Numerics;
 
 namespace IvyFEM
 {
@@ -14,60 +13,61 @@ namespace IvyFEM
         /// </summary>
         public const double MinTriArea = 1.0e-10;
 
-        public static string Dump(Vector2 v)
+        public static string Dump(OpenTK.Vector2d v)
         {
             string ret = "";
             string CRLF = System.Environment.NewLine;
 
-            ret += "Vector2" + CRLF;
+            ret += "Vector2d" + CRLF;
             ret += "(" + v.X + ", " + v.Y + ")" + CRLF;
             return ret;
         }
 
-        public static Vector2 Normalize(Vector2 v)
+        public static OpenTK.Vector2d Normalize(OpenTK.Vector2d v)
         {
-            float len = v.Length();
+            double len = v.Length;
             return v / len;
         }
 
-        public static Vector2 GetProjectedPointOnCircle(Vector2 c, double r, Vector2 v)
+        public static OpenTK.Vector2d GetProjectedPointOnCircle(OpenTK.Vector2d c, double r, OpenTK.Vector2d v)
         {
-            Vector2 cv = v - c;
-            double k = (r / cv.Length());
-            return cv * (float)k + c;
+            OpenTK.Vector2d cv = v - c;
+            double k = (r / cv.Length);
+            return cv * k + c;
         }
 
-        public static double SquareLength(Vector2 iPt0, Vector2 iPt1)
+        public static double SquareLength(OpenTK.Vector2d iPt0, OpenTK.Vector2d iPt1)
         {
-            Vector2 v = iPt1 - iPt0;
-            float len = v.Length();
+            OpenTK.Vector2d v = iPt1 - iPt0;
+            double len = v.Length;
             return len * len;
         }
 
-        public static double SquareLength(Vector2 point)
+        public static double SquareLength(OpenTK.Vector2d point)
         {
-            float len = point.Length();
+            double len = point.Length;
             return len * len;
         }
 
-        public static double TriHeight(Vector2 v1, Vector2 v2, Vector2 v3)
+        public static double TriHeight(OpenTK.Vector2d v1, OpenTK.Vector2d v2, OpenTK.Vector2d v3)
         {
             double area = TriArea(v1, v2, v3);
             double len = Math.Sqrt(SquareLength(v2, v3));
             return area * 2.0 / len;
         }
 
-        public static double TriArea(Vector2 v1, Vector2 v2, Vector2 v3)
+        public static double TriArea(OpenTK.Vector2d v1, OpenTK.Vector2d v2, OpenTK.Vector2d v3)
         {
             return 0.5 * ((v2.X - v1.X) * (v3.Y - v1.Y) - (v3.X - v1.X) * (v2.Y - v1.Y));
         }
 
-        public static double TriArea(int iv1, int iv2, int iv3, IList<Vector2> points)
+        public static double TriArea(int iv1, int iv2, int iv3, IList<OpenTK.Vector2d> points)
         {
             return TriArea(points[iv1], points[iv2], points[iv3]);
         }
 
-        public static void UnitNormalAreaTri3D(out double[] n, out double a, Vector3 v1, Vector3 v2, Vector3 v3)
+        public static void UnitNormalAreaTri3D(out double[] n, out double a,
+            OpenTK.Vector3d v1, OpenTK.Vector3d v2, OpenTK.Vector3d v3)
         {
             n = new double[3];
             n[0] = (v2.Y - v1.Y) * (v3.Z - v1.Z) - (v3.Y - v1.Y) * (v2.Z - v1.Z);
@@ -80,7 +80,8 @@ namespace IvyFEM
             n[2] *= invA;
         }
 
-        public static bool IsCrossLineSegLineSeg(Vector2 sPt0, Vector2 ePt0, Vector2 sPt1, Vector2 ePt1)
+        public static bool IsCrossLineSegLineSeg(
+            OpenTK.Vector2d sPt0, OpenTK.Vector2d ePt0, OpenTK.Vector2d sPt1, OpenTK.Vector2d ePt1)
         {
             double minX0 = (sPt0.X < ePt0.X) ? sPt0.X : ePt0.X;
             double maxX0 = (sPt0.X > ePt0.X) ? sPt0.X : ePt0.X;
@@ -125,11 +126,13 @@ namespace IvyFEM
             return true;
         }
 
-        public static bool IsCrossCircleCircle(Vector2 cPt0, double radius0, Vector2 cPt1, double radius1,
-            out Vector2 pt0, out Vector2 pt1)
+        public static bool IsCrossCircleCircle(
+            OpenTK.Vector2d cPt0, double radius0,
+            OpenTK.Vector2d cPt1, double radius1,
+            out OpenTK.Vector2d pt0, out OpenTK.Vector2d pt1)
         {
-            pt0 = new Vector2();
-            pt1 = new Vector2();
+            pt0 = new OpenTK.Vector2d();
+            pt1 = new OpenTK.Vector2d();
 
             double sqDist = SquareLength(cPt0, cPt1);
             double dist = Math.Sqrt(sqDist);
@@ -148,14 +151,15 @@ namespace IvyFEM
             double ct = 0.5 * (sqDist + radius0 * radius0 - radius1 * radius1) / (radius0 * dist);
             System.Diagnostics.Debug.Assert(ct >= -1 && ct <= 1);
             double st = Math.Sqrt(1 - ct * ct);
-            Vector2 e0 = (cPt1 - cPt0) * (float)(1 / dist);
-            Vector2 e1 = new Vector2(e0.Y, -e0.X);
-            pt0 = cPt0 + e0 * (float)(radius0 * ct) + e1 * (float)(radius0 * st);
-            pt1 = cPt0 + e0 * (float)(radius0 * ct) - e1 * (float)(radius0 * st);
+            OpenTK.Vector2d e0 = (cPt1 - cPt0) * (1 / dist);
+            OpenTK.Vector2d e1 = new OpenTK.Vector2d(e0.Y, -e0.X);
+            pt0 = cPt0 + e0 * (radius0 * ct) + e1 * (radius0 * st);
+            pt1 = cPt0 + e0 * (radius0 * ct) - e1 * (radius0 * st);
             return true;
         }
 
-        public static bool IsCrossLineCircle(Vector2 cPt, double radius, Vector2 sPt, Vector2 ePt,
+        public static bool IsCrossLineCircle(
+            OpenTK.Vector2d cPt, double radius, OpenTK.Vector2d sPt, OpenTK.Vector2d ePt,
             out double t0, out double t1)
         {
             t0 = 0.0f;
@@ -182,10 +186,10 @@ namespace IvyFEM
                 return false;
             }
 
-            Vector2 es = ePt - sPt;
-            Vector2 cs = cPt - sPt;
+            OpenTK.Vector2d es = ePt - sPt;
+            OpenTK.Vector2d cs = cPt - sPt;
             double a = SquareLength(es);
-            double b = Vector2.Dot(es, cs);
+            double b = OpenTK.Vector2d.Dot(es, cs);
             double c = SquareLength(cs) - radius * radius;
             double det = b * b - a * c;
             if (det < 0)
@@ -197,16 +201,18 @@ namespace IvyFEM
             return true;
         }
 
-        public static double FindNearestPointParameterLinePoint(Vector2 cPt, Vector2 sPt, Vector2 ePt)
+        public static double FindNearestPointParameterLinePoint(
+            OpenTK.Vector2d cPt, OpenTK.Vector2d sPt, OpenTK.Vector2d ePt)
         {
-            Vector2 es = ePt - sPt;
-            Vector2 sc = sPt - cPt;
+            OpenTK.Vector2d es = ePt - sPt;
+            OpenTK.Vector2d sc = sPt - cPt;
             double a = SquareLength(es);
-            double b = Vector2.Dot(es, sc);
+            double b = OpenTK.Vector2d.Dot(es, sc);
             return -b / a;
         }
 
-        public static bool IsDirectionArc(Vector2 pt, Vector2 sPt, Vector2 ePt, Vector2 cPt, bool isLeftSide)
+        public static bool IsDirectionArc(
+            OpenTK.Vector2d pt, OpenTK.Vector2d sPt, OpenTK.Vector2d ePt, OpenTK.Vector2d cPt, bool isLeftSide)
         {
             if (isLeftSide)
             {
@@ -262,21 +268,22 @@ namespace IvyFEM
         }
 
 
-        public static double GetDistancePointArc(Vector2 pt, Vector2 sPt1, Vector2 ePt1,
-            Vector2 cPt1, double radius1, bool isLeftSide1)
+        public static double GetDistancePointArc(OpenTK.Vector2d pt, OpenTK.Vector2d sPt1, OpenTK.Vector2d ePt1,
+            OpenTK.Vector2d cPt1, double radius1, bool isLeftSide1)
         {
-            double minDist = Vector2.Distance(pt, sPt1);
-            double d0 = Vector2.Distance(pt, ePt1);
+            double minDist = OpenTK.Vector2d.Distance(pt, sPt1);
+            double d0 = OpenTK.Vector2d.Distance(pt, ePt1);
             minDist = (minDist < d0) ? minDist : d0;
             if (IsDirectionArc(GetProjectedPointOnCircle(cPt1, radius1, pt), sPt1, ePt1, cPt1, isLeftSide1))
             {
-                d0 = Math.Abs(Vector2.Distance(pt, cPt1) - radius1);
+                d0 = Math.Abs(OpenTK.Vector2d.Distance(pt, cPt1) - radius1);
                 minDist = (d0 < minDist) ? d0 : minDist;
             }
             return minDist;
         }
 
-        public static double GetDistanceLineSegLineSeg(Vector2 sPt0, Vector2 ePt0, Vector2 sPt1, Vector2 ePt1)
+        public static double GetDistanceLineSegLineSeg(
+            OpenTK.Vector2d sPt0, OpenTK.Vector2d ePt0, OpenTK.Vector2d sPt1, OpenTK.Vector2d ePt1)
         {
             if (IsCrossLineSegLineSeg(sPt0, ePt0, sPt1, ePt1))
             {
@@ -293,41 +300,41 @@ namespace IvyFEM
             return minDist;
         }
 
-        public static double GetDistanceLineSegPoint(Vector2 cPt, Vector2 sPt, Vector2 ePt)
+        public static double GetDistanceLineSegPoint(OpenTK.Vector2d cPt, OpenTK.Vector2d sPt, OpenTK.Vector2d ePt)
         {
-            Vector2 es = ePt - sPt;
-            Vector2 sc = sPt - cPt;
+            OpenTK.Vector2d es = ePt - sPt;
+            OpenTK.Vector2d sc = sPt - cPt;
             double a = SquareLength(es);
-            double b = Vector2.Dot(es, sc);
+            double b = OpenTK.Vector2d.Dot(es, sc);
             double t = -b / a;
             if (t < 0)
             {
-                return Vector2.Distance(sPt, cPt);
+                return OpenTK.Vector2d.Distance(sPt, cPt);
             }
             if (t > 1)
             {
-                return Vector2.Distance(ePt, cPt);
+                return OpenTK.Vector2d.Distance(ePt, cPt);
             }
-            Vector2 p = sPt + (float)t * (ePt - sPt);
-            return Vector2.Distance(p, cPt);
+            OpenTK.Vector2d p = sPt + t * (ePt - sPt);
+            return OpenTK.Vector2d.Distance(p, cPt);
         }
 
         public static double GetDistanceLineSegArc(
-            Vector2 sPt0, Vector2 ePt0,
-            Vector2 sPt1, Vector2 ePt1,
-            Vector2 cPt1, double radius1, bool isLeftSide1)
+            OpenTK.Vector2d sPt0, OpenTK.Vector2d ePt0,
+            OpenTK.Vector2d sPt1, OpenTK.Vector2d ePt1,
+            OpenTK.Vector2d cPt1, double radius1, bool isLeftSide1)
         {
             double t0 = 0;
             double t1 = 0;
             if (IsCrossLineCircle(cPt1, radius1, sPt0, ePt0, out t0, out t1))
             {
                 if (0 < t0 && t0 < 1 &&
-                    IsDirectionArc(sPt0 + (ePt0 - sPt0) * (float)t0, sPt1, ePt1, cPt1, isLeftSide1))
+                    IsDirectionArc(sPt0 + (ePt0 - sPt0) * t0, sPt1, ePt1, cPt1, isLeftSide1))
                 {
                     return -1;
                 }
                 if (0 < t1 && t1 < 1 &&
-                    IsDirectionArc(sPt0 + (ePt0 - sPt0) * (float)t1, sPt1, ePt1, cPt1, isLeftSide1))
+                    IsDirectionArc(sPt0 + (ePt0 - sPt0) * t1, sPt1, ePt1, cPt1, isLeftSide1))
                 {
                     return -1;
                 }
@@ -338,8 +345,8 @@ namespace IvyFEM
             double t = FindNearestPointParameterLinePoint(cPt1, sPt0, ePt0);
             if (t > 0 && t < 1)
             {
-                Vector2 v = sPt0 + (ePt0 - sPt0) * (float)t;
-                double d0 = Vector2.Distance(v, cPt1) - radius1;
+                OpenTK.Vector2d v = sPt0 + (ePt0 - sPt0) * t;
+                double d0 = OpenTK.Vector2d.Distance(v, cPt1) - radius1;
                 if (d0 > 0)
                 {
                     if (IsDirectionArc(GetProjectedPointOnCircle(cPt1, radius1, v), sPt1, ePt1, cPt1, isLeftSide1))
@@ -431,7 +438,7 @@ namespace IvyFEM
             return 0;
         }
 
-        public static void RotMatrix33(Quaternion quat, double[] m)
+        public static void RotMatrix33(OpenTK.Quaterniond quat, double[] m)
         {
             double real = quat.W;
             double x = quat.X;
