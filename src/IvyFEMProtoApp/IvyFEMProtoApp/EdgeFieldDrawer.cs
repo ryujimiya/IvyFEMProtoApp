@@ -11,8 +11,9 @@ namespace IvyFEM
     {
         public uint LineWidth { get; set; } = 1;
         private VertexArray VertexArray = new VertexArray();
-        private IList<LineFE> lineFEs = new List<LineFE>();
-        private uint LineCount => (uint)lineFEs.Count;
+        private IList<LineFE> LineFEs = new List<LineFE>();
+        private uint LineCount => (uint)LineFEs.Count;
+        private uint LinePtCount = 0;
         private uint ValueId = 0;
         private FieldDerivationType ValueDt = FieldDerivationType.Value;
         private bool IsntDisplacementValue = false;
@@ -44,11 +45,19 @@ namespace IvyFEM
             ValueDt = valueDt;
             IsntDisplacementValue = isntDisplacementValue;
 
-            // 線要素を生成
-            lineFEs = world.MakeBoundOfElements();
+            var fv = world.GetFieldValue(ValueId);
 
-            uint ptCnt = LineCount * 2;
-            var fv = world.GetFieldValue(valueId);
+            // 線要素を生成
+            uint quantityId = fv.QuantityId;
+            LineFEs = world.MakeBoundOfElements(quantityId);
+            int feOrder;
+            {
+                LineFE lineFE = LineFEs[0]; // 先頭の要素
+                feOrder = lineFE.Order;
+                LinePtCount = lineFE.NodeCount;
+            }
+
+            uint ptCnt = LineCount * LinePtCount;
             uint dim = world.Dimension;
 
             uint drawDim;
@@ -75,8 +84,9 @@ namespace IvyFEM
         public void Update(FEWorld world)
         {
             FieldValue fv = world.GetFieldValue(ValueId);
+            uint quantityId = fv.QuantityId;
             uint dim = world.Dimension;
-            uint ptCnt = LineCount * 2;
+            uint ptCnt = LineCount * LinePtCount;
             uint lineCnt = LineCount;
             uint drawDim = VertexArray.Dimension;
 
@@ -85,15 +95,15 @@ namespace IvyFEM
                 System.Diagnostics.Debug.Assert(drawDim == 2); // いまはそうなってる
                 for (int iEdge = 0; iEdge < lineCnt; iEdge++)
                 {
-                    LineFE lineFE = lineFEs[iEdge];
-                    int coId1 = lineFE.CoordIds[0];
-                    int coId2 = lineFE.CoordIds[1];
-                    double[] co1 = world.GetCoord(coId1);
-                    double[] co2 = world.GetCoord(coId2);
-                    VertexArray.VertexCoordArray[iEdge * 2 * drawDim] = co1[0];
-                    VertexArray.VertexCoordArray[iEdge * 2 * drawDim + 1] = co1[1];
-                    VertexArray.VertexCoordArray[iEdge * 2 * drawDim + drawDim] = co2[0];
-                    VertexArray.VertexCoordArray[iEdge * 2 * drawDim + drawDim + 1] = co2[1];
+                    LineFE lineFE = LineFEs[iEdge];
+                    for (int iPt = 0; iPt < LinePtCount; iPt++)
+                    {
+                        int coId = lineFE.NodeCoordIds[iPt];
+                        double[] co = world.GetCoord(quantityId, coId);
+                        VertexArray.VertexCoordArray[(iEdge * LinePtCount + iPt) * drawDim  + 0] = co[0];
+                        VertexArray.VertexCoordArray[(iEdge * LinePtCount + iPt) * drawDim  + 1] = co[1];
+
+                    }
                 }
             }
             else
@@ -104,17 +114,17 @@ namespace IvyFEM
                 {
                     for (int iEdge = 0; iEdge < LineCount; iEdge++)
                     {
-                        LineFE lineFE = lineFEs[iEdge];
-                        System.Diagnostics.Debug.Assert(lineFE.CoordIds.Length == 2);
-                        for (int iPt = 0; iPt < 2; iPt++)
+                        LineFE lineFE = LineFEs[iEdge];
+                        System.Diagnostics.Debug.Assert(lineFE.NodeCoordIds.Length == LinePtCount);
+                        for (int iPt = 0; iPt < LinePtCount; iPt++)
                         {
-                            int coId = lineFE.CoordIds[iPt];
-                            double[] coord = world.GetCoord(coId);
+                            int coId = lineFE.NodeCoordIds[iPt];
+                            double[] coord = world.GetCoord(quantityId, coId);
                             FieldDerivationType dt = ValueDt;
                             double value = fv.GetShowValue(coId, 0, dt);
-                            VertexArray.VertexCoordArray[(iEdge * 2 + iPt) * drawDim + 0] = coord[0];
-                            VertexArray.VertexCoordArray[(iEdge * 2 + iPt) * drawDim + 1] = coord[1];
-                            VertexArray.VertexCoordArray[(iEdge * 2 + iPt) * drawDim + 2] = value;
+                            VertexArray.VertexCoordArray[(iEdge * LinePtCount + iPt) * drawDim + 0] = coord[0];
+                            VertexArray.VertexCoordArray[(iEdge * LinePtCount + iPt) * drawDim + 1] = coord[1];
+                            VertexArray.VertexCoordArray[(iEdge * LinePtCount + iPt) * drawDim + 2] = value;
                         }
                     }
                 }
@@ -122,17 +132,17 @@ namespace IvyFEM
                 {
                     for (int iEdge = 0; iEdge < lineCnt; iEdge++)
                     {
-                        LineFE lineFE = lineFEs[iEdge];
-                        System.Diagnostics.Debug.Assert(lineFE.CoordIds.Length == 2);
-                        for (int iPt = 0; iPt < 2; iPt++)
+                        LineFE lineFE = LineFEs[iEdge];
+                        System.Diagnostics.Debug.Assert(lineFE.NodeCoordIds.Length == LinePtCount);
+                        for (int iPt = 0; iPt < LinePtCount; iPt++)
                         {
-                            int coId = lineFE.CoordIds[iPt];
-                            double[] coord = world.GetCoord(coId);
+                            int coId = lineFE.NodeCoordIds[iPt];
+                            double[] coord = world.GetCoord(quantityId, coId);
                             FieldDerivationType dt = ValueDt;
                             for (int iDim = 0; iDim < drawDim; iDim++)
                             {
                                 double value = fv.GetShowValue(coId, iDim, dt);
-                                VertexArray.VertexCoordArray[(iEdge * 2 + iPt) * drawDim + iDim] =
+                                VertexArray.VertexCoordArray[(iEdge * LinePtCount + iPt) * drawDim + iDim] =
                                     coord[iDim] + value;
                             }
                         }
@@ -164,7 +174,23 @@ namespace IvyFEM
                 GL.Translate(0, 0, +0.01);
             }
 
-            GL.DrawArrays(PrimitiveType.Lines, 0, (int)LineCount * 2);
+            if (LinePtCount == 2) // 1次要素
+            {
+                GL.DrawArrays(PrimitiveType.Lines, 0, (int)(LineCount * LinePtCount));
+            }
+            else if (LinePtCount == 3) // 2次要素
+            {
+                GL.Begin(PrimitiveType.Lines);
+                for (int iEdge = 0; iEdge < LineCount; iEdge++)
+                {
+                    GL.ArrayElement((int)(iEdge * LinePtCount + 0));
+                    GL.ArrayElement((int)(iEdge * LinePtCount + 2));
+                    GL.ArrayElement((int)(iEdge * LinePtCount + 2));
+                    GL.ArrayElement((int)(iEdge * LinePtCount + 1));
+                }
+                GL.End();
+            }
+
             if (drawDim == 2)
             {
                 GL.Translate(0, 0, -0.01);

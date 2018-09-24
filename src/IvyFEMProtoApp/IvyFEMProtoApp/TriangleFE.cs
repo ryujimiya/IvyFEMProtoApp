@@ -6,12 +6,22 @@ using System.Threading.Tasks;
 
 namespace IvyFEM
 {
-    class TriangleFE : FE
+    partial class TriangleFE : FE
     {
         public TriangleFE() : base()
         {
             Type = ElementType.Tri;
-            NodeCount = 3;
+            Order = 1;
+            VertexCount = 3;
+            NodeCount = GetNodeCount();
+        }
+
+        public TriangleFE(int order) : base()
+        {
+            Type = ElementType.Tri;
+            Order = order;
+            VertexCount = 3;
+            NodeCount = GetNodeCount();
         }
 
         public TriangleFE(TriangleFE src)
@@ -24,11 +34,29 @@ namespace IvyFEM
             base.Copy(src);
         }
 
+        protected uint GetNodeCount()
+        {
+            uint nodeCnt = 0;
+            if (Order == 1)
+            {
+                nodeCnt = 3;
+            }
+            else if (Order == 2)
+            {
+                nodeCnt = 6;
+            }
+            else
+            {
+                System.Diagnostics.Debug.Assert(false);
+            }
+            return nodeCnt;
+        }
+
         public double GetArea()
         {
-            double[] co1 = World.GetCoord(CoordIds[0]);
-            double[] co2 = World.GetCoord(CoordIds[1]);
-            double[] co3 = World.GetCoord(CoordIds[2]);
+            double[] co1 = World.GetVertexCoord(VertexCoordIds[0]);
+            double[] co2 = World.GetVertexCoord(VertexCoordIds[1]);
+            double[] co3 = World.GetVertexCoord(VertexCoordIds[2]);
             OpenTK.Vector2d v1 = new OpenTK.Vector2d(co1[0], co1[1]);
             OpenTK.Vector2d v2 = new OpenTK.Vector2d(co2[0], co2[1]);
             OpenTK.Vector2d v3 = new OpenTK.Vector2d(co3[0], co3[1]);
@@ -41,9 +69,9 @@ namespace IvyFEM
             a = new double[3];
             b = new double[3];
             c = new double[3];
-            double[] co1 = World.GetCoord(CoordIds[0]);
-            double[] co2 = World.GetCoord(CoordIds[1]);
-            double[] co3 = World.GetCoord(CoordIds[2]);
+            double[] co1 = World.GetVertexCoord(VertexCoordIds[0]);
+            double[] co2 = World.GetVertexCoord(VertexCoordIds[1]);
+            double[] co3 = World.GetVertexCoord(VertexCoordIds[2]);
             OpenTK.Vector2d v1 = new OpenTK.Vector2d(co1[0], co1[1]);
             OpenTK.Vector2d v2 = new OpenTK.Vector2d(co2[0], co2[1]);
             OpenTK.Vector2d v3 = new OpenTK.Vector2d(co3[0], co3[1]);
@@ -59,11 +87,11 @@ namespace IvyFEM
             }            
         }
 
-        public IntegrationPoints GetIntegrationPoints(int integrationPointCount)
+        public IntegrationPoints GetIntegrationPoints(TriangleIntegrationPointCount integrationPointCount)
         {
             foreach (var ip in IntegrationPoints.TriangleIntegrationPoints)
             {
-                if (ip.PointCount == integrationPointCount)
+                if (ip.PointCount == (int)integrationPointCount)
                 {
                     return ip;
                 }
@@ -72,7 +100,7 @@ namespace IvyFEM
             return null;
         }
 
-        public double GetDetJacobian()
+        public double GetDetJacobian(double[] L)
         {
             double A = GetArea();
             return 2.0 * A;
@@ -83,46 +111,66 @@ namespace IvyFEM
         /// </summary>
         /// <param name="L"></param>
         /// <returns></returns>
-        public double [] CalcN(double[] L)
+        public double[] CalcN(double[] L)
         {
-            double[] N = new double[3];
-
-            // N = L
-            L.CopyTo(N, 0);
-
-            return N;
+            double[] ret = null;
+            if (Order == 1)
+            {
+                ret = Calc1stN(L);
+            }
+            else if (Order == 2)
+            {
+                ret = Calc2ndN(L);
+            }
+            else
+            {
+                System.Diagnostics.Debug.Assert(false);
+            }
+            return ret;
         }
 
         /// <summary>
         /// dN/du
         /// </summary>
         /// <returns></returns>
-        public double[][] CalcNu()
+        public double[][] CalcNu(double[] L)
         {
-            double[][] Nu = new double[2][];
-            double[] a;
-            double[] b;
-            double[] c;
-            CalcTransMatrix(out a, out b, out c);
-
-            // dN/dx
-            Nu[0] = b;
-
-            // dN/dy
-            Nu[1] = c;
-            return Nu;
+            double[][] ret = null;
+            if (Order == 1)
+            {
+                ret = Calc1stNu(L);
+            }
+            else if (Order == 2)
+            {
+                ret = Calc2ndNu(L);
+            }
+            else
+            {
+                System.Diagnostics.Debug.Assert(false);
+            }
+            return ret;
         }
-
 
         /// <summary>
         /// SNdx
         /// </summary>
         /// <returns></returns>
-        public double CalcSN()
+        public double[] CalcSN()
         {
-            double A = GetArea();
-
-            return A / 3.0;
+            double[] ret = null;
+            if (Order == 1)
+            {
+                ret = Calc1stSN();
+            }
+            else if (Order == 2)
+            {
+                ret = Calc2ndSN();
+            }
+            else
+            {
+                System.Diagnostics.Debug.Assert(false);
+            }
+            return ret;
         }
 
         /// <summary>
@@ -131,26 +179,20 @@ namespace IvyFEM
         /// <returns></returns>
         public double[,] CalcSNN()
         {
-            double A = GetArea();
-            double[,] sNN = new double[3, 3]
+            double[,] ret = null;
+            if (Order == 1)
             {
-                {
-                    A / 6.0,
-                    A / 12.0,
-                    A / 12.0,
-                },
-                {
-                    A / 12.0,
-                    A / 6.0,
-                    A / 12.0,
-                },
-                {
-                    A / 12.0,
-                    A / 12.0,
-                    A / 6.0
-                }
-            };
-            return sNN;
+                ret = Calc1stSNN();
+            }
+            else if (Order == 2)
+            {
+                ret = Calc2ndSNN();
+            }
+            else
+            {
+                System.Diagnostics.Debug.Assert(false);
+            }
+            return ret;
         }
 
         /// <summary>
@@ -159,54 +201,20 @@ namespace IvyFEM
         /// <returns></returns>
         public double[,][,] CalcSNuNv()
         {
-            double A = GetArea();
-            double[] a;
-            double[] b;
-            double[] c;
-            CalcTransMatrix(out a, out b, out c);
-
-            double[,][,] sNuNv = new double[2, 2][,];
-
-            // sNxNx
-            sNuNv[0, 0] = new double[3, 3];
-            for (int i = 0; i < 3; i++)
+            double[,][,] ret = null;
+            if (Order == 1)
             {
-                for (int j = 0; j < 3; j++)
-                {
-                    sNuNv[0, 0][i, j] = A * b[i] * b[j];
-                }
+                ret = Calc1stSNuNv();
             }
-
-            // sNyNx
-            sNuNv[1, 0] = new double[3, 3];
-            for (int i = 0; i < 3; i++)
+            else if (Order == 2)
             {
-                for (int j = 0; j < 3; j++)
-                {
-                    sNuNv[1, 0][i, j] = A * c[i] * b[j];
-                }
+                ret = Calc2ndSNuNv();
             }
-
-            // sNxNy
-            sNuNv[0, 1] = new double[3, 3];
-            for (int i = 0; i < 3; i++)
+            else
             {
-                for (int j = 0; j < 3; j++)
-                {
-                    sNuNv[0, 1][i, j] = A * b[i] * c[j];
-                }
+                System.Diagnostics.Debug.Assert(false);
             }
-
-            // sNyNy
-            sNuNv[1, 1] = new double[3, 3];
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    sNuNv[1, 1][i, j] = A * c[i] * c[j];
-                }
-            }
-            return sNuNv;
+            return ret;
         }
     }
 }

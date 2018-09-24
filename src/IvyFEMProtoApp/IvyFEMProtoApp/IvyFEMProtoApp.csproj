@@ -120,10 +120,20 @@
       <DependentUpon>ChartWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ColorLegend.cs" />
+    <Compile Include="Elastic2DFEM.LinearElastic.cs" />
+    <Compile Include="Elastic2DFEM.SaintVenantHyperelastic.cs" />
+    <Compile Include="FEWorldQuantity.cs" />
+    <Compile Include="Linear.Utils.cs" />
+    <Compile Include="LineFE.2nd.cs" />
+    <Compile Include="LineFE.1st.cs" />
+    <Compile Include="MooneyRivlinHyperelastic2DFEM.cs" />
+    <Compile Include="Elastic2DTDFEM.LinearElastic.cs" />
+    <Compile Include="Elastic2DTDFEM.SaintVenantHyperelastic.cs" />
     <Compile Include="Lapack.ComplexHermitianBandMatrix.cs" />
     <Compile Include="Lapack.DoubleSymmetricBandMatrix.cs" />
     <Compile Include="Linear.Constants.cs" />
-    <Compile Include="Linear.Functions.cs" />
+    <Compile Include="Linear.Functions.Complex.cs" />
+    <Compile Include="Linear.Functions.Double.cs" />
     <Compile Include="Linear.LapackEquationSolver.cs" />
     <Compile Include="Linear.ComplexSparseMatrix.cs" />
     <Compile Include="Linear.DoubleSparseMatrix.cs" />
@@ -131,8 +141,8 @@
     <Compile Include="Elastic2DBaseFEM.cs" />
     <Compile Include="Elastic2DFEM.cs" />
     <Compile Include="Elastic2DTDFEM.cs" />
-    <Compile Include="ElasticBaseMaterial.cs" />
-    <Compile Include="ElasticMaterial.cs" />
+    <Compile Include="ElasticLameBaseMaterial.cs" />
+    <Compile Include="LinearElasticMaterial.cs" />
     <Compile Include="FEM.cs" />
     <Compile Include="FaceFieldDrawPart.cs" />
     <Compile Include="FieldFixedCad.cs" />
@@ -176,6 +186,8 @@
     <Compile Include="CadObjectArray.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="DrawerArray.cs" />
+    <Compile Include="MooneyRivlinHyperelastic2DTDFEM.cs" />
+    <Compile Include="MooneyRivlinHyperelasticMaterial.cs" />
     <Compile Include="Native.Functions.cs" />
     <Compile Include="Native.ImportedFunctions.cs" />
     <Compile Include="OpenGLUtils.cs" />
@@ -200,6 +212,8 @@
     <Compile Include="MeshTriArray2D.cs" />
     <Compile Include="SaintVenantHyperelasticMaterial.cs" />
     <Compile Include="Linear.IvyFEMEquationSolver.cs" />
+    <Compile Include="TriangleFE.2nd.cs" />
+    <Compile Include="TriangleFE.1st.cs" />
     <Compile Include="TriangleFE.cs" />
     <Compile Include="VectorFieldDrawer.cs" />
     <Compile Include="VectorFieldDrawPart.cs" />

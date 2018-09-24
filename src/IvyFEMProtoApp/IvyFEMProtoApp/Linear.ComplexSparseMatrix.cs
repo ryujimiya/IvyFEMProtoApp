@@ -254,14 +254,20 @@ namespace IvyFEM.Linear
                     int col = pair.Key;
                     if (col >= row + 1 && col < n)
                     {
+                        //System.Numerics.Complex diff =
+                        //    this[row, col] - System.Numerics.Complex.Conjugate(this[col, row]);
                         System.Numerics.Complex diff =
-                            this[row, col] - System.Numerics.Complex.Conjugate(this[col, row]);
+                            pair.Value - System.Numerics.Complex.Conjugate(this[col, row]);
                         if (diff.Magnitude >= IvyFEM.Constants.PrecisionLowerLimit)
                         {
                             isHermitian = false;
                             break;
                         }
                     }
+                }
+                if (!isHermitian)
+                {
+                    break;
                 }
             }
             return isHermitian;
@@ -279,13 +285,18 @@ namespace IvyFEM.Linear
                     int col = pair.Key;
                     if (col >= row + 1 && col < n)
                     {
-                        System.Numerics.Complex diff = this[row, col] - this[col, row];
+                        //System.Numerics.Complex diff = this[row, col] - this[col, row];
+                        System.Numerics.Complex diff = pair.Value - this[col, row];
                         if (diff.Magnitude >= IvyFEM.Constants.PrecisionLowerLimit)
                         {
                             isSymmetric = false;
                             break;
                         }
                     }
+                }
+                if (!isSymmetric)
+                {
+                    break;
                 }
             }
             return isSymmetric;

@@ -261,6 +261,10 @@ namespace IvyFEM.Lapack
                         break;
                     }
                 }
+                if (!isHermitian)
+                {
+                    break;
+                }
             }
             return isHermitian;
         }
@@ -280,6 +284,10 @@ namespace IvyFEM.Lapack
                         isSymmetric = false;
                         break;
                     }
+                }
+                if (!isSymmetric)
+                {
+                    break;
                 }
             }
             return isSymmetric;

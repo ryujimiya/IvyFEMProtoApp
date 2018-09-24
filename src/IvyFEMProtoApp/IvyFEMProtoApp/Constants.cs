@@ -62,14 +62,6 @@ namespace IvyFEM
         Hex
     }
 
-    enum MaterialType
-    {
-        NotSet,
-        Elastic,
-        SaintVenantHyperelastic,
-        Dielectric
-    }
-
     enum FieldValueType
     {
         NoValue,
@@ -102,6 +94,14 @@ namespace IvyFEM
         NotSet,
         Vector,
         SymmetricTensor2
+    }
+
+    enum TriangleIntegrationPointCount
+    {
+        Point1 = 1,
+        Point3 = 3,
+        Point4 = 4,
+        Point7 = 7
     }
 
 }

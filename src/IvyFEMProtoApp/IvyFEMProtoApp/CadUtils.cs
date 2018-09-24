@@ -264,7 +264,9 @@ namespace IvyFEM
                     }
                 }
             }
-            return true;
+
+            throw new InvalidOperationException();
+            //return true;
         }
 
 

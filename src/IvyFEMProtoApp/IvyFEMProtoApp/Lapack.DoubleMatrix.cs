@@ -248,6 +248,10 @@ namespace IvyFEM.Lapack
                         break;
                     }
                 }
+                if (!isSymmetric)
+                {
+                    break;
+                }
             }
             return isSymmetric;
         }

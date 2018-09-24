@@ -6,12 +6,22 @@ using System.Threading.Tasks;
 
 namespace IvyFEM
 {
-    class LineFE : FE
+    partial class LineFE : FE
     {
         public LineFE() : base()
         {
             Type = ElementType.Line;
-            NodeCount = 2;
+            Order = 1;
+            VertexCount = 2;
+            NodeCount = GetNodeCount();
+        }
+
+        public LineFE(int order) : base()
+        {
+            Type = ElementType.Line;
+            Order = order;
+            VertexCount = 2;
+            NodeCount = GetNodeCount();
         }
 
         public LineFE(TriangleFE src)
@@ -24,10 +34,28 @@ namespace IvyFEM
             base.Copy(src);
         }
 
+        protected uint GetNodeCount()
+        {
+            uint nodeCnt = 0;
+            if (Order == 1)
+            {
+                nodeCnt = 2;
+            }
+            else if (Order == 2)
+            {
+                nodeCnt = 3;
+            }
+            else
+            {
+                System.Diagnostics.Debug.Assert(false);
+            }
+            return nodeCnt;
+        }
+
         public double GetLineLength()
         {
-            double[] co1 = World.GetCoord(CoordIds[0]);
-            double[] co2 = World.GetCoord(CoordIds[1]);
+            double[] co1 = World.GetVertexCoord(VertexCoordIds[0]);
+            double[] co2 = World.GetVertexCoord(VertexCoordIds[1]);
             OpenTK.Vector2d v1 = new OpenTK.Vector2d(co1[0], co1[1]);
             OpenTK.Vector2d v2 = new OpenTK.Vector2d(co2[0], co2[1]);
             double l = (v2 - v1).Length;
@@ -38,36 +66,44 @@ namespace IvyFEM
         /// S{N}{N}Tdx
         /// </summary>
         /// <returns></returns>
-        public double[] CalcSNN()
+        public double[,] CalcSNN()
         {
-            double l = GetLineLength();
-            /// Note: Columnから先に格納: col * NodeCount + row
-            double[] sNN = new double[4]
+            double[,] ret = null;
+            if (Order == 1)
             {
-                l / 3.0,
-                l / 6.0,
-                l / 6.0,
-                l / 3.0
-            };
-            return sNN;
+                ret = Calc1stSNN();
+            }
+            else if (Order == 2)
+            {
+                ret = Calc2ndSNN();
+            }
+            else
+            {
+                System.Diagnostics.Debug.Assert(false);
+            }
+            return ret;
         }
 
         /// <summary>
         /// S{Nx}{Nx}Tdx
         /// </summary>
         /// <returns></returns>
-        public double[] CalcSNxNx()
+        public double[,] CalcSNxNx()
         {
-            double l = GetLineLength();
-            /// Note: Columnから先に格納: col * NodeCount + row
-            double[] sNxNx = new double[4]
+            double[,] ret = null;
+            if (Order == 1)
             {
-                1.0 / l,
-                -1.0 / l,
-                -1.0 / l,
-                1.0 / l
-            };
-            return sNxNx;
+                ret = Calc1stSNxNx();
+            }
+            else if (Order == 2)
+            {
+                ret = Calc2ndSNxNx();
+            }
+            else
+            {
+                System.Diagnostics.Debug.Assert(false);
+            }
+            return ret;
         }
 
     }

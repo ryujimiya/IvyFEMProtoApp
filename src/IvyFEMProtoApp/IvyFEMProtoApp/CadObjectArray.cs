@@ -172,7 +172,9 @@ namespace IvyFEM
                     return res;
                 }
             }
-            return res;
+
+            throw new InvalidOperationException();
+            //return res;
         }
 
         private uint AddId(uint id)

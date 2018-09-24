@@ -147,7 +147,9 @@ namespace IvyFEM
                     return res;
                 }
             }
-            return res;
+
+            throw new InvalidOperationException();
+            //return res;
         }
 
         public bool DeleteObject(uint id)

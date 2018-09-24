@@ -318,5 +318,15 @@ namespace IvyFEMProtoApp
             bool isSaintVenant = true;
             Problem.ElasticTDProblem(this, isSaintVenant);
         }
+
+        private void mooneyRivlinHyperelasticBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.MooneyRivlinHyperelasticProblem(this);
+        }
+
+        private void mooneyRivlinHyperelasticTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.MooneyRivlinHyperelasticTDProblem(this);
+        }
     }
 }

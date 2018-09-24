@@ -1367,7 +1367,8 @@ namespace IvyFEM
                 }
             }
 
-            return -1;
+            throw new InvalidOperationException();
+            //return -1;
         }
 
         public bool GetCenterRadiusThetaLXY(out OpenTK.Vector2d cPt, out double radius,

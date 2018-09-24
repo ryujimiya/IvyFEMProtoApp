@@ -8,7 +8,6 @@ namespace IvyFEM
 {
     class Material : IObject
     {
-        public MaterialType MaterialType { get; protected set; } = MaterialType.NotSet; 
         public double[] Values { get; protected set; } = null;
 
         public Material()
@@ -24,7 +23,6 @@ namespace IvyFEM
         public void Copy(IObject src)
         {
             Material srcMa = src as Material;
-            MaterialType = srcMa.MaterialType;
             Values = null;
             if (srcMa.Values != null)
             {

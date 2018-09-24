@@ -141,7 +141,13 @@ namespace IvyFEM.Linear
         // Symmetric / Hermitian Positive Definite Band Matrix
         private bool DoublePositiveDefiniteBandSolve(out double[] X, DoubleSparseMatrix A, double[] B)
         {
-            System.Diagnostics.Debug.Assert(A.IsSymmetric());
+            X = null;
+            bool isSymmetric = A.IsSymmetric();
+            System.Diagnostics.Debug.Assert(isSymmetric);
+            if (!isSymmetric)
+            {
+                return false;
+            }
 
             bool success = false;
             IvyFEM.Lapack.DoubleSymmetricBandMatrix pbA = (IvyFEM.Lapack.DoubleSymmetricBandMatrix)A;
@@ -160,7 +166,13 @@ namespace IvyFEM.Linear
         private bool ComplexPositiveDefiniteBandSolve(
             out System.Numerics.Complex[] X, ComplexSparseMatrix A, System.Numerics.Complex[] B)
         {
-            System.Diagnostics.Debug.Assert(A.IsHermitian());
+            X = null;
+            bool isHermitian = A.IsHermitian();
+            System.Diagnostics.Debug.Assert(isHermitian);
+            if (!isHermitian)
+            {
+                return false;
+            }
 
             bool success = false;
             IvyFEM.Lapack.ComplexHermitianBandMatrix pbA = (IvyFEM.Lapack.ComplexHermitianBandMatrix)A;

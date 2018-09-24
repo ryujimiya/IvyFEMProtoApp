@@ -76,6 +76,7 @@ namespace IvyFEM
             IsntDisplacementValue = isntDisplacementValue;
 
             var fv = world.GetFieldValue(valueId);
+            uint quantityId = fv.QuantityId;
             uint dim = world.Dimension;
             uint ptCnt = 0;
             if (IsNsvDraw)
@@ -86,7 +87,7 @@ namespace IvyFEM
             }
             else
             {
-                ptCnt = world.GetCoordCount();
+                ptCnt = world.GetCoordCount(quantityId);
             }
 
             uint drawDim;
@@ -144,7 +145,7 @@ namespace IvyFEM
                     {
 
                     }
-                    FaceFieldDrawPart dp = new FaceFieldDrawPart(meshId, world);
+                    FaceFieldDrawPart dp = new FaceFieldDrawPart(meshId, world, valueId);
                     DrawParts.Add(dp);
                 }
             }
@@ -155,6 +156,7 @@ namespace IvyFEM
         public void Update(FEWorld world)
         {
             FieldValue fv = world.GetFieldValue(ValueId);
+            uint quantityId = fv.QuantityId;
             uint dim = world.Dimension;
 
             uint ptCnt = 0;
@@ -166,7 +168,7 @@ namespace IvyFEM
             }
             else
             {
-                ptCnt = world.GetCoordCount();
+                ptCnt = world.GetCoordCount(quantityId);
             }
             System.Diagnostics.Debug.Assert(VertexArray.PointCount == ptCnt);
 
@@ -182,7 +184,7 @@ namespace IvyFEM
                     System.Diagnostics.Debug.Assert(VertexArray.Dimension == 3);
                     for (int coId = 0; coId < ptCnt; coId++)
                     {
-                        double[] coord = world.GetCoord(coId);
+                        double[] coord = world.GetCoord(quantityId, coId);
                         FieldDerivationType dt = ValueDt;
                         double value = fv.GetShowValue(coId, 0, dt);
                         VertexArray.VertexCoordArray[coId * 3 + 0] = coord[0];
@@ -195,7 +197,7 @@ namespace IvyFEM
                     System.Diagnostics.Debug.Assert(VertexArray.Dimension == dim);
                     for (int coId = 0; coId < ptCnt; coId++)
                     {
-                        double[] coord = world.GetCoord(coId);
+                        double[] coord = world.GetCoord(quantityId, coId);
                         FieldDerivationType dt = ValueDt;
                         for (int iDim = 0; iDim < dim; iDim++)
                         {
@@ -210,7 +212,7 @@ namespace IvyFEM
                 System.Diagnostics.Debug.Assert(VertexArray.Dimension == dim);
                 for (int coId = 0; coId < ptCnt; coId++)
                 {
-                    double[] coord = world.GetCoord(coId);
+                    double[] coord = world.GetCoord(quantityId, coId);
                     for (int iDim = 0; iDim < dim; iDim++)
                     {
                         VertexArray.VertexCoordArray[coId * dim + iDim] = coord[iDim];
@@ -223,6 +225,8 @@ namespace IvyFEM
                 FieldValue colorfv = world.GetFieldValue(ColorValueId);
                 FieldDerivationType dt = ColorValueDt;
                 bool isBubble = colorfv.IsBubble;
+                uint colorQuantityId = colorfv.QuantityId;
+                uint colorPtCnt = world.GetCoordCount(colorQuantityId);
                 if (!ColorMap.IsFixedMinMax)
                 {
                     double min;
@@ -238,9 +242,9 @@ namespace IvyFEM
                     // color is assigned to vertex
                     if (ColorArray == null)
                     {
-                        ColorArray = new float[ptCnt * 4];
+                        ColorArray = new float[colorPtCnt * 4];
                     }
-                    for (int coId = 0; coId < ptCnt; coId++)
+                    for (int coId = 0; coId < colorPtCnt; coId++)
                     {
                         double value = colorfv.GetShowValue(coId, 0, dt);
                         double[] color = ColorMap.GetColor(value);
@@ -271,7 +275,7 @@ namespace IvyFEM
             {
                 for (int coId = 0; coId < ptCnt; coId++)
                 {
-                    double[] coord = world.GetCoord(coId);
+                    double[] coord = world.GetCoord(quantityId, coId);
                     UVArray[coId * 2 + 0] = coord[0] * TexScale;
                     UVArray[coId * 2 + 1] = coord[1] * TexScale;
                 }
@@ -363,17 +367,16 @@ namespace IvyFEM
             {
                 uint ptCnt = VertexArray.PointCount;
                 UVArray = new double[ptCnt * 2];
-                /*
                 if (!world.IsFieldValueId(ValueId))
                 {
                     return;
                 }
                 FieldValue fv = world.GetFieldValue(ValueId);
-                */
-                uint coCnt = world.GetCoordCount();
+                uint quantityId = fv.QuantityId;
+                uint coCnt = world.GetCoordCount(quantityId);
                 for (int coId = 0; coId < coCnt; coId++)
                 {
-                    double[] c = world.GetCoord(coId);
+                    double[] c = world.GetCoord(quantityId, coId);
                     UVArray[coId * 2 + 0] = c[0] * TexScale;
                     UVArray[coId * 2 + 1] = c[1] * TexScale;
                 }
@@ -390,17 +393,16 @@ namespace IvyFEM
 
             if (UVArray != null)
             {
-                /*
                 if (!world.IsFieldValueId(ValueId))
                 {
                     return;
                 }
                 FieldValue fv = world.GetFieldValue(ValueId);
-                */
-                uint coCnt = world.GetCoordCount();
+                uint quantityId = fv.QuantityId;
+                uint coCnt = world.GetCoordCount(quantityId);
                 for (int coId = 0; coId < coCnt; coId++)
                 {
-                    double[] c = world.GetCoord(coId);
+                    double[] c = world.GetCoord(quantityId, coId);
                     UVArray[coId * 2 + 0] = c[0] * TexScale;
                     UVArray[coId * 2 + 1] = c[1] * TexScale;
                 }

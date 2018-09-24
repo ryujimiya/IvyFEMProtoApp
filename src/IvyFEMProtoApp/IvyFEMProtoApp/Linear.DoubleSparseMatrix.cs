@@ -254,13 +254,18 @@ namespace IvyFEM.Linear
                     int col = pair.Key;
                     if (col >= row + 1 && col < n)
                     {
-                        double diff = this[row, col] - this[col, row];
+                        //double diff = this[row, col] - this[col, row];
+                        double diff = pair.Value - this[col, row];
                         if (Math.Abs(diff) >= IvyFEM.Constants.PrecisionLowerLimit)
                         {
                             isSymmetric = false;
                             break;
                         }
                     }
+                }
+                if (!isSymmetric)
+                {
+                    break;
                 }
             }
             return isSymmetric;

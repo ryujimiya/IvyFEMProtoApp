@@ -169,7 +169,9 @@ namespace IvyFEM
                     return 1;
                 }
             }
-            return 0;
+
+            throw new InvalidOperationException();
+            //return 0;
         }
 
         public static bool CheckTri(IList<MeshPoint2D> pts, IList<MeshTri2D> tris)
@@ -715,7 +717,9 @@ namespace IvyFEM
                     iCurTriNo = iNexTriNo;
                 }
             }
-            return true;
+
+            throw new InvalidOperationException();
+            //return true;
         }
 
         public static bool FlipEdge(uint iTri0, uint iEd0, IList<MeshPoint2D> points, IList<MeshTri2D> tris)

@@ -41,6 +41,17 @@ namespace IvyFEM.Native
             return Z;
         }
 
+        public static bool DoubleSolveNoPreconCG(out double[] X,
+            int n, int[] APtrs, int[] AIndexs, double[] AValues, double[] B,
+            double convRatioTolerance)
+        {
+            X = new double[n];
+            bool success = IvyFEM.Native.ImportedFunctions.DoubleSolveNoPreconCG(
+                X, n, AIndexs.Length, APtrs, AIndexs, AValues, B,
+                convRatioTolerance);
+            return success;
+        }
+
         public static void DoubleCalcILU(
             out int[] LUPtrs, out int[] LUIndexs, out double[] LUValues,
             int n, int[] APtrs, int[] AIndexs, double[] AValues,
@@ -84,22 +95,124 @@ namespace IvyFEM.Native
 
         public static bool DoubleSolvePreconditionedCG(out double[] X,
             int n, int[] APtrs, int[] AIndexs, double[] AValues, double[] B,
-            int[] LUPtrs, int[] LUIndexs, double[] LUValues)
+            int[] LUPtrs, int[] LUIndexs, double[] LUValues,
+            double convRatioTolerance)
         {
             X = new double[n];
             bool success = IvyFEM.Native.ImportedFunctions.DoubleSolvePreconditionedCG(
                 X,
                 n, AIndexs.Length, APtrs, AIndexs, AValues, B,
-                LUIndexs.Length, LUPtrs, LUIndexs, LUValues);
+                LUIndexs.Length, LUPtrs, LUIndexs, LUValues,
+                convRatioTolerance);
             return success;
         }
 
         public static bool DoubleSolveCG(out double[] X,
-            int n, int[] APtrs, int[] AIndexs, double[] AValues, double[] B, int fillinLevel)
+            int n, int[] APtrs, int[] AIndexs, double[] AValues, double[] B, int fillinLevel,
+            double convRatioTolerance)
         {
             X = new double[n];
             bool success = IvyFEM.Native.ImportedFunctions.DoubleSolveCG(
-                X, n, AIndexs.Length, APtrs, AIndexs, AValues, B, fillinLevel);
+                X, n, AIndexs.Length, APtrs, AIndexs, AValues, B, fillinLevel,
+                convRatioTolerance);
+            return success;
+        }
+
+        public static void DoubleCalcILUWithPivoting(
+            out int[] LUPtrs, out int[] LUIndexs, out double[] LUValues,
+            out int[] pivot,
+            int n, int[] APtrs, int[] AIndexs, double[] AValues,
+            int fillinLevel)
+        {
+            pivot = new int[n];
+            unsafe
+            {
+                int workLUIndexsLength = 0;
+                int* workLUPtrs = null;
+                int* workLUIndexs = null;
+                double* workLUValues = null;
+                IvyFEM.Native.ImportedFunctions.DoubleCalcILUWithPivoting(
+                    &workLUIndexsLength, &workLUPtrs, &workLUIndexs, &workLUValues,
+                    pivot,
+                    n, AIndexs.Length, APtrs, AIndexs, AValues,
+                    fillinLevel);
+
+                LUPtrs = new int[n + 1];
+                LUIndexs = new int[workLUIndexsLength];
+                LUValues = new double[workLUIndexsLength];
+                for (int i = 0; i < LUPtrs.Length; i++)
+                {
+                    LUPtrs[i] = workLUPtrs[i];
+                }
+                for (int i = 0; i < LUIndexs.Length; i++)
+                {
+                    LUIndexs[i] = workLUIndexs[i];
+                    LUValues[i] = workLUValues[i];
+                }
+                IvyFEM.Native.ImportedFunctions.DoubleDeleteCSR(workLUPtrs, workLUIndexs, workLUValues);
+            }
+        }
+
+        public static bool DoubleSolveCGWithPivoting(out double[] X,
+            int n, int[] APtrs, int[] AIndexs, double[] AValues, double[] B, int fillinLevel,
+            double convRatioTolerance)
+        {
+            X = new double[n];
+            bool success = IvyFEM.Native.ImportedFunctions.DoubleSolveCGWithPivoting(
+                X, n, AIndexs.Length, APtrs, AIndexs, AValues, B, fillinLevel,
+                convRatioTolerance);
+            return success;
+        }
+
+        public static void DoubleCalcIC(
+            out int[] LUPtrs, out int[] LUIndexs, out double[] LUValues,
+            int n, int[] APtrs, int[] AIndexs, double[] AValues)
+        {
+            unsafe
+            {
+                int workLUIndexsLength = 0;
+                int* workLUPtrs = null;
+                int* workLUIndexs = null;
+                double* workLUValues = null;
+                IvyFEM.Native.ImportedFunctions.DoubleCalcIC(
+                    &workLUIndexsLength, &workLUPtrs, &workLUIndexs, &workLUValues,
+                    n, AIndexs.Length, APtrs, AIndexs, AValues);
+
+                LUPtrs = new int[n + 1];
+                LUIndexs = new int[workLUIndexsLength];
+                LUValues = new double[workLUIndexsLength];
+                for (int i = 0; i < LUPtrs.Length; i++)
+                {
+                    LUPtrs[i] = workLUPtrs[i];
+                }
+                for (int i = 0; i < LUIndexs.Length; i++)
+                {
+                    LUIndexs[i] = workLUIndexs[i];
+                    LUValues[i] = workLUValues[i];
+                }
+                IvyFEM.Native.ImportedFunctions.DoubleDeleteCSR(workLUPtrs, workLUIndexs, workLUValues);
+            }
+        }
+
+        public static bool DoubleSolveICCG(out double[] X,
+            int n, int[] APtrs, int[] AIndexs, double[] AValues, double[] B,
+            double convRatioTolerance)
+        {
+            X = new double[n];
+            bool success = IvyFEM.Native.ImportedFunctions.DoubleSolveICCG(
+                X, n, AIndexs.Length, APtrs, AIndexs, AValues, B,
+                convRatioTolerance);
+            return success;
+        }
+
+        public static bool DoubleSolveNoPreconBiCGSTAB(out double[] X,
+            int n, int[] APtrs, int[] AIndexs, double[] AValues, double[] B,
+            double convRatioTolerance)
+        {
+            X = new double[n];
+            bool success = IvyFEM.Native.ImportedFunctions.DoubleSolveNoPreconBiCGSTAB(
+                X, n, AIndexs.Length, APtrs, AIndexs, AValues, B,
+                convRatioTolerance);
             return success;
         }
 
@@ -184,6 +297,27 @@ namespace IvyFEM.Native
             return Z;
         }
 
+        public static bool ComplexSolveNoPreconCOCG(out System.Numerics.Complex[] X,
+            int n, int[] APtrs, int[] AIndexs, System.Numerics.Complex[] AValues,
+            System.Numerics.Complex[] B,
+            double convRatioTolerance)
+        {
+            X = new System.Numerics.Complex[n];
+            bool success = false;
+            unsafe
+            {
+                fixed (System.Numerics.Complex* XP = &X[0])
+                fixed (System.Numerics.Complex* AValuesP = &AValues[0])
+                fixed (System.Numerics.Complex* BP = &B[0])
+                {
+                    success = IvyFEM.Native.ImportedFunctions.ComplexSolveNoPreconCOCG(
+                        XP, n, AIndexs.Length, APtrs, AIndexs, AValuesP, BP,
+                        convRatioTolerance);
+                }
+            }
+            return success;
+        }
+
         public static void ComplexCalcILU(
             out int[] LUPtrs, out int[] LUIndexs, out System.Numerics.Complex[] LUValues,
             int n, int[] APtrs, int[] AIndexs, System.Numerics.Complex[] AValues,
@@ -242,7 +376,8 @@ namespace IvyFEM.Native
             out System.Numerics.Complex[] X,
             int n, int[] APtrs, int[] AIndexs, System.Numerics.Complex[] AValues,
             System.Numerics.Complex[] B,
-            int[] LUPtrs, int[] LUIndexs, System.Numerics.Complex[] LUValues)
+            int[] LUPtrs, int[] LUIndexs, System.Numerics.Complex[] LUValues,
+            double convRatioTolerance)
         {
             X = new System.Numerics.Complex[n];
             bool success = false;
@@ -257,7 +392,8 @@ namespace IvyFEM.Native
                         XP,
                         n, AIndexs.Length, APtrs, AIndexs, AValuesP,
                         BP,
-                        LUIndexs.Length, LUPtrs, LUIndexs, LUValuesP);
+                        LUIndexs.Length, LUPtrs, LUIndexs, LUValuesP,
+                        convRatioTolerance);
                 }
             }
             return success;
@@ -265,7 +401,8 @@ namespace IvyFEM.Native
 
         public static bool ComplexSolveCOCG(out System.Numerics.Complex[] X,
             int n, int[] APtrs, int[] AIndexs, System.Numerics.Complex[] AValues,
-            System.Numerics.Complex[] B, int fillinLevel)
+            System.Numerics.Complex[] B, int fillinLevel,
+            double convRatioTolerance)
         {
             X = new System.Numerics.Complex[n];
             bool success = false;
@@ -276,7 +413,83 @@ namespace IvyFEM.Native
                 fixed (System.Numerics.Complex* BP = &B[0])
                 {
                     success = IvyFEM.Native.ImportedFunctions.ComplexSolveCOCG(
-                        XP, n, AIndexs.Length, APtrs, AIndexs, AValuesP, BP, fillinLevel);
+                        XP, n, AIndexs.Length, APtrs, AIndexs, AValuesP, BP, fillinLevel,
+                        convRatioTolerance);
+                }
+            }
+            return success;
+        }
+
+        public static void ComplexCalcIC(
+            out int[] LUPtrs, out int[] LUIndexs, out System.Numerics.Complex[] LUValues,
+            int n, int[] APtrs, int[] AIndexs, System.Numerics.Complex[] AValues)
+        {
+            unsafe
+            {
+                int workLUIndexsLength = 0;
+                int* workLUPtrs = null;
+                int* workLUIndexs = null;
+                System.Numerics.Complex* workLUValues = null;
+                fixed (System.Numerics.Complex* AValuesP = &AValues[0])
+                {
+                    IvyFEM.Native.ImportedFunctions.ComplexCalcIC(
+                        &workLUIndexsLength, &workLUPtrs, &workLUIndexs, &workLUValues,
+                        n, AIndexs.Length, APtrs, AIndexs, AValuesP);
+                }
+
+                LUPtrs = new int[n + 1];
+                LUIndexs = new int[workLUIndexsLength];
+                LUValues = new System.Numerics.Complex[workLUIndexsLength];
+                for (int i = 0; i < LUPtrs.Length; i++)
+                {
+                    LUPtrs[i] = workLUPtrs[i];
+                }
+                for (int i = 0; i < LUIndexs.Length; i++)
+                {
+                    LUIndexs[i] = workLUIndexs[i];
+                    LUValues[i] = workLUValues[i];
+                }
+                IvyFEM.Native.ImportedFunctions.ComplexDeleteCSR(workLUPtrs, workLUIndexs, workLUValues);
+            }
+        }
+
+        public static bool ComplexSolveICCOCG(out System.Numerics.Complex[] X,
+            int n, int[] APtrs, int[] AIndexs, System.Numerics.Complex[] AValues,
+            System.Numerics.Complex[] B,
+            double convRatioTolerance)
+        {
+            X = new System.Numerics.Complex[n];
+            bool success = false;
+            unsafe
+            {
+                fixed (System.Numerics.Complex* XP = &X[0])
+                fixed (System.Numerics.Complex* AValuesP = &AValues[0])
+                fixed (System.Numerics.Complex* BP = &B[0])
+                {
+                    success = IvyFEM.Native.ImportedFunctions.ComplexSolveICCOCG(
+                        XP, n, AIndexs.Length, APtrs, AIndexs, AValuesP, BP,
+                        convRatioTolerance);
+                }
+            }
+            return success;
+        }
+
+        public static bool ComplexSolveNoPreconBiCGSTAB(out System.Numerics.Complex[] X,
+            int n, int[] APtrs, int[] AIndexs, System.Numerics.Complex[] AValues,
+            System.Numerics.Complex[] B,
+            double convRatioTolerance)
+        {
+            X = new System.Numerics.Complex[n];
+            bool success = false;
+            unsafe
+            {
+                fixed (System.Numerics.Complex* XP = &X[0])
+                fixed (System.Numerics.Complex* AValuesP = &AValues[0])
+                fixed (System.Numerics.Complex* BP = &B[0])
+                {
+                    success = IvyFEM.Native.ImportedFunctions.ComplexSolveNoPreconBiCGSTAB(
+                        XP, n, AIndexs.Length, APtrs, AIndexs, AValuesP, BP,
+                        convRatioTolerance);
                 }
             }
             return success;

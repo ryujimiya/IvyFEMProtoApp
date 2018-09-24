@@ -8,7 +8,8 @@ namespace IvyFEM.Linear
 {
     class Constants
     {
-        public const double ConvRatioTolerance = 1.0e-6;
+        public const double ConvRatioTolerance = 1.0e-14;
+        public const int MaxIter = 1000;
     }
 
     enum LapackEquationSolverMethod
@@ -52,7 +53,13 @@ namespace IvyFEM.Linear
     enum IvyFEMEquationSolverMethod
     {
         Default,
+        NoPreconCG,
         CG,
-        COCG
+        CGWithPivoting,
+        ICCG,
+        NoPreconCOCG,
+        COCG,
+        ICCOCG,
+        NoPreconBiCGSTAB
     }
 }

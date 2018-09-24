@@ -6,46 +6,83 @@ using System.Threading.Tasks;
 
 namespace IvyFEM
 {
+    delegate void CalcElementAB(
+        uint feId, IvyFEM.Linear.DoubleSparseMatrix A, double[] B);
+
     abstract class Elastic2DBaseFEM : FEM
     {
+        protected uint[] QuantityIds { get; set; } = null;
+        protected int[] NodeCounts { get; set; } = null;
+        protected int[] Dofs { get; set; } = null;
+        protected int NodeCount
+        {
+            get
+            {
+                if (Dofs == null)
+                {
+                    return 0;
+                }
+                if (NodeCounts == null)
+                {
+                    return 0;
+                }
+                int cnt = 0;
+                for (int iVar = 0; iVar < Dofs.Length; iVar++)
+                {
+                    cnt += NodeCounts[iVar] * Dofs[iVar];
+                }
+                return cnt;
+            }
+        }
+        public double ConvRatioToleranceForNewtonRaphson { get; set; }
+            = 1.0e+2 * IvyFEM.Linear.Constants.ConvRatioTolerance; // 収束しないので収束条件を緩めている
+
+        // Calc Matrix
+        protected IList<CalcElementAB> CalcElementABs { get; set; } = new List<CalcElementAB>();
+
         //Solve
         // Output
         public double[] U { get; protected set; }
 
-        protected abstract void CalcLinearElasticAB(IvyFEM.Linear.DoubleSparseMatrix A, double[] B,
-            int nodeCnt, int dof);
-
-        protected abstract void CalcSaintVenantHyperelasticAB(IvyFEM.Linear.DoubleSparseMatrix A, double[] B,
-            int nodeCnt, int dof);
+        protected void CalcAB(IvyFEM.Linear.DoubleSparseMatrix A, double[] B)
+        {
+            uint quantityId = 0; // Note: 複数変数のときでも要素Idは同じはずなので0指定
+            IList<uint> feIds = World.GetTriangleFEIds(quantityId);
+            foreach (uint feId in feIds)
+            {
+                foreach (var calcElementAB in CalcElementABs)
+                {
+                    calcElementAB(feId, A, B);
+                }
+            }
+        }
 
         public override void Solve()
         {
-            int nodeCnt = (int)World.GetNodeCount();
-            int dof = 2;
+            int nodeCnt = NodeCount;
 
             if (HasNonLinearElasticMaterial())
             {
                 // Newton Raphson
                 double sqNorm = 0;
                 double sqInvNorm0 = 0;
-                double tolerance = IvyFEM.Linear.Constants.ConvRatioTolerance;
-                double convRatio = tolerance;
-                const int maxCnt = 1000;
+                double convRatio = ConvRatioToleranceForNewtonRaphson;
+                double tolerance = convRatio;
+                const int maxIter = IvyFEM.Linear.Constants.MaxIter;
                 int iter = 0;
-                U = new double[nodeCnt * dof];
-                for (iter = 0; iter < maxCnt; iter++)
+                U = new double[nodeCnt];
+                for (iter = 0; iter < maxIter; iter++)
                 {
                     int t;
-                    var A = new IvyFEM.Linear.DoubleSparseMatrix(nodeCnt * dof, nodeCnt * dof);
-                    var B = new double[nodeCnt * dof];
+                    var A = new IvyFEM.Linear.DoubleSparseMatrix(nodeCnt, nodeCnt);
+                    var B = new double[nodeCnt];
 
                     t = System.Environment.TickCount;
-                    CalcLinearElasticAB(A, B, nodeCnt, dof);
-                    CalcSaintVenantHyperelasticAB(A, B, nodeCnt, dof);
+                    CalcAB(A, B);
                     System.Diagnostics.Debug.WriteLine("CalcAB: t = " + (System.Environment.TickCount - t));
 
                     t = System.Environment.TickCount;
-                    SetFixedCadsCondtion(World, A, B, nodeCnt, dof);
+                    SetFixedCadsCondtion(World, A, B, NodeCounts, Dofs);
                     System.Diagnostics.Debug.WriteLine("Condition: t = " + (System.Environment.TickCount - t));
 
                     t = System.Environment.TickCount;
@@ -80,20 +117,20 @@ namespace IvyFEM
                     System.Diagnostics.Debug.WriteLine("Solve: t = " + (System.Environment.TickCount - t));
                 }
                 System.Diagnostics.Debug.WriteLine("Newton Raphson iter = " + iter + " norm = " + convRatio);
-                System.Diagnostics.Debug.Assert(iter < maxCnt);
+                System.Diagnostics.Debug.Assert(iter < maxIter);
             }
             else
             {
                 int t;
-                var A = new IvyFEM.Linear.DoubleSparseMatrix(nodeCnt * dof, nodeCnt * dof);
-                var B = new double[nodeCnt * dof];
+                var A = new IvyFEM.Linear.DoubleSparseMatrix(nodeCnt, nodeCnt);
+                var B = new double[nodeCnt];
 
                 t = System.Environment.TickCount;
-                CalcLinearElasticAB(A, B, nodeCnt, dof);
+                CalcAB(A, B);
                 System.Diagnostics.Debug.WriteLine("CalcAB: t = " + (System.Environment.TickCount - t));
 
                 t = System.Environment.TickCount;
-                SetFixedCadsCondtion(World, A, B, nodeCnt, dof);
+                SetFixedCadsCondtion(World, A, B, NodeCounts, Dofs);
                 System.Diagnostics.Debug.WriteLine("Condtion: t = " + (System.Environment.TickCount - t));
 
                 t = System.Environment.TickCount;
@@ -110,31 +147,31 @@ namespace IvyFEM
         protected bool HasNonLinearElasticMaterial()
         {
             bool hasNonlinear = false;
-            IList<uint> feIds = World.GetTriangleFEIds();
+            uint quantityId = 0; // Note: 複数変数のときでも要素Idは同じはずなので0指定
+            IList<uint> feIds = World.GetTriangleFEIds(quantityId);
             foreach (uint feId in feIds)
             {
-                TriangleFE triFE = World.GetTriangleFE(feId);
+                TriangleFE triFE = World.GetTriangleFE(quantityId, feId);
                 Material ma = World.GetMaterial(triFE.MaterialId);
-                switch (ma.MaterialType)
+                if (ma is LinearElasticMaterial)
                 {
-                    case MaterialType.Elastic:
-                        break;
-                    case MaterialType.SaintVenantHyperelastic:
-                        hasNonlinear = true;
-                        break;
-                    default:
-                        System.Diagnostics.Debug.Assert(false);
-                        throw new NotImplementedException("MaterialType is not supported: " + ma.MaterialType);
-                        //break;
+                    // linear
+                }
+                else
+                {
+                    hasNonlinear = true;
+                    break;
                 }
             }
             return hasNonlinear;
         }
 
-        public static void SetStressValue(uint displacementValueId, uint stressValueId, uint equivStressValueId, FEWorld world)
+        public static void SetStressValue(
+            uint displacementValueId, uint stressValueId, uint equivStressValueId, FEWorld world)
         {
             System.Diagnostics.Debug.Assert(world.IsFieldValueId(displacementValueId));
             FieldValue uFV = world.GetFieldValue(displacementValueId);
+            uint uQuantityId = uFV.QuantityId;
 
             FieldValue sigmaFV = null;
             if (stressValueId != 0)
@@ -153,21 +190,21 @@ namespace IvyFEM
                 System.Diagnostics.Debug.Assert(eqSigmaFV.Dof == 1);
             }
 
-            IList<uint> feIds = world.GetTriangleFEIds();
+            IList<uint> feIds = world.GetTriangleFEIds(uQuantityId);
             foreach (uint feId in feIds)
             {
-                TriangleFE triFE = world.GetTriangleFE(feId);
-                int[] coIds = triFE.CoordIds;
+                TriangleFE triFE = world.GetTriangleFE(uQuantityId, feId);
+                int[] coIds = triFE.NodeCoordIds;
                 Material ma = world.GetMaterial(triFE.MaterialId);
                 double lambda = 0;
                 double mu = 0;
-                if (ma.MaterialType == MaterialType.Elastic)
+                if (ma is LinearElasticMaterial)
                 {
-                    var ma1 = ma as ElasticMaterial;
+                    var ma1 = ma as LinearElasticMaterial;
                     lambda = ma1.LameLambda;
                     mu = ma1.LameMu;
                 }
-                else if (ma.MaterialType == MaterialType.SaintVenantHyperelastic)
+                else if (ma is SaintVenantHyperelasticMaterial)
                 {
                     var ma1 = ma as SaintVenantHyperelasticMaterial;
                     lambda = ma1.LameLambda;
@@ -176,9 +213,13 @@ namespace IvyFEM
                 else
                 {
                     System.Diagnostics.Debug.Assert(false);
+                    throw new NotImplementedException();
                 }
 
-                double[][] Nu = triFE.CalcNu();
+                var ip = triFE.GetIntegrationPoints(TriangleIntegrationPointCount.Point1);
+                System.Diagnostics.Debug.Assert(ip.PointCount == 1);
+                double[] L = ip.Ls[0];
+                double[][] Nu = triFE.CalcNu(L);
                 double[] Nx = Nu[0];
                 double[] Ny = Nu[1];
                 double[] uu = new double[4]; // 00, 10, 01, 11 (dux/dx duy/dx dux/dy duy/duy)
@@ -194,14 +235,14 @@ namespace IvyFEM
 
                 //ε strain
                 double[] eps = new double[4];
-                if (ma.MaterialType == MaterialType.Elastic)
+                if (ma is LinearElasticMaterial)
                 {
                     eps[0] = 0.5 * (uu[0] + uu[0]);
                     eps[1] = 0.5 * (uu[1] + uu[2]);
                     eps[2] = 0.5 * (uu[2] + uu[1]);
                     eps[3] = 0.5 * (uu[3] + uu[3]);
                 }
-                else if (ma.MaterialType == MaterialType.SaintVenantHyperelastic)
+                else if (ma is SaintVenantHyperelasticMaterial)
                 {
                     eps[0] = 0.5 * (uu[0] + uu[0] + uu[0] * uu[0] + uu[1] * uu[1]);
                     eps[1] = 0.5 * (uu[1] + uu[2] + uu[2] * uu[0] + uu[1] * uu[3]);

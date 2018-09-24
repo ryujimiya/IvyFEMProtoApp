@@ -8,6 +8,7 @@ namespace IvyFEM
 {
     class EMWaveguide1DEigenFEM : FEM
     {
+        public uint QuantityId { get; private set; } = 0;
         public uint PortId { get; private set; } = 0;
         public IvyFEM.Lapack.DoubleMatrix Txx { get; private set; } = null;
         public IvyFEM.Lapack.DoubleMatrix Ryy { get; private set; } = null;
@@ -20,22 +21,18 @@ namespace IvyFEM
         public System.Numerics.Complex[] Betas { get; private set; }
         public System.Numerics.Complex[][] EzEVecs { get; private set; }
 
-        public EMWaveguide1DEigenFEM() : base()
-        {
-
-        }
-
-        public EMWaveguide1DEigenFEM(FEWorld world, uint portId)
+        public EMWaveguide1DEigenFEM(FEWorld world, uint quantityId, uint portId)
         {
             World = world;
+            QuantityId = quantityId;
             PortId = portId;
             CalcMatrixs();
         }
 
         private void CalcMatrixs()
         {
-            int nodeCnt = (int)World.GetPortNodeCount(PortId);
-            IList<uint> feIds = World.GetPortLineFEIds(PortId);
+            int nodeCnt = (int)World.GetPortNodeCount(QuantityId, PortId);
+            IList<uint> feIds = World.GetPortLineFEIds(QuantityId, PortId);
 
             Txx = new IvyFEM.Lapack.DoubleMatrix(nodeCnt, nodeCnt);
             Ryy = new IvyFEM.Lapack.DoubleMatrix(nodeCnt, nodeCnt);
@@ -43,22 +40,22 @@ namespace IvyFEM
 
             foreach (uint feId in feIds)
             {
-                LineFE lineFE = World.GetPortLineFE(PortId, feId);
+                LineFE lineFE = World.GetLineFE(QuantityId, feId);
                 uint elemNodeCnt = lineFE.NodeCount;
                 int[] nodes = new int[elemNodeCnt];
                 for (int iNode = 0; iNode < elemNodeCnt; iNode++)
                 {
-                    int coId = lineFE.CoordIds[iNode];
-                    int nodeId = World.PortCoord2Node(PortId, coId);
+                    int coId = lineFE.NodeCoordIds[iNode];
+                    int nodeId = World.PortCoord2Node(QuantityId, PortId, coId);
                     nodes[iNode] = nodeId;
                 }
 
                 Material ma0 = World.GetMaterial(lineFE.MaterialId);
-                System.Diagnostics.Debug.Assert(ma0.MaterialType == MaterialType.Dielectric);
+                System.Diagnostics.Debug.Assert(ma0 is DielectricMaterial);
                 var ma = ma0 as DielectricMaterial;
 
-                double[] sNN = lineFE.CalcSNN();
-                double[] sNyNy = lineFE.CalcSNxNx();
+                double[,] sNN = lineFE.CalcSNN();
+                double[,] sNyNy = lineFE.CalcSNxNx();
                 for (int row = 0; row < elemNodeCnt; row++)
                 {
                     int rowNodeId = nodes[row];
@@ -73,9 +70,9 @@ namespace IvyFEM
                         {
                             continue;
                         }
-                        double txxVal = (1.0 / ma.Muxx) * sNyNy[col * elemNodeCnt + row];
-                        double ryyVal = (1.0 / ma.Muyy) * sNN[col * elemNodeCnt + row];
-                        double uzzVal = ma.Epzz * sNN[col * elemNodeCnt + row];
+                        double txxVal = (1.0 / ma.Muxx) * sNyNy[row, col];
+                        double ryyVal = (1.0 / ma.Muyy) * sNN[row, col];
+                        double uzzVal = ma.Epzz * sNN[row, col];
 
                         Txx[rowNodeId, colNodeId] += txxVal;
                         Ryy[rowNodeId, colNodeId] += ryyVal;
@@ -95,7 +92,7 @@ namespace IvyFEM
             // 角周波数
             double omega = k0 * Constants.C0;
 
-            int nodeCnt = (int)World.GetPortNodeCount(PortId);
+            int nodeCnt = (int)World.GetPortNodeCount(QuantityId, PortId);
             var A = new IvyFEM.Lapack.DoubleMatrix(nodeCnt, nodeCnt);
             var B = new IvyFEM.Lapack.DoubleMatrix(nodeCnt, nodeCnt);
             for (int col = 0; col < nodeCnt; col++)

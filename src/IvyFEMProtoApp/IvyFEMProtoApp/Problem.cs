@@ -356,43 +356,55 @@ namespace IvyFEMProtoApp
 
             FEWorld world = new FEWorld();
             world.Mesh = mesher2D;
-
-            world.ClearMaterial();
-            DielectricMaterial vacuumMa = new DielectricMaterial
+            uint quantityId;
             {
-                Epxx = 1.0,
-                Epyy = 1.0,
-                Epzz = 1.0,
-                Muxx = 1.0,
-                Muyy = 1.0,
-                Muzz = 1.0
-            };
-            uint maId = world.AddMaterial(vacuumMa);
+                uint dof = 2; // 複素数
+                uint feOrder = 1;
+                quantityId = world.AddQuantity(dof, feOrder);
+            }
 
             uint eId1 = 1;
             uint eId2 = 4;
             uint lId = 1;
-            world.SetCadEdgeMaterial(eId1, maId);
-            world.SetCadEdgeMaterial(eId2, maId);
-            world.SetCadLoopMaterial(lId, maId);
+            {
+                world.ClearMaterial();
+                DielectricMaterial vacuumMa = new DielectricMaterial
+                {
+                    Epxx = 1.0,
+                    Epyy = 1.0,
+                    Epzz = 1.0,
+                    Muxx = 1.0,
+                    Muyy = 1.0,
+                    Muzz = 1.0
+                };
+                uint maId = world.AddMaterial(vacuumMa);
 
-            world.IncidentPortId = 0;
-            world.IncidentModeId = 0;
-            IList<uint> port1EIds = new List<uint>();
-            IList<uint> port2EIds = new List<uint>();
-            port1EIds.Add(eId1);
-            port2EIds.Add(eId2);
-            var portEIdss = world.PortEIdss;
-            portEIdss.Clear();
-            portEIdss.Add(port1EIds);
-            portEIdss.Add(port2EIds);
-
+                world.SetCadEdgeMaterial(eId1, maId);
+                world.SetCadEdgeMaterial(eId2, maId);
+                world.SetCadLoopMaterial(lId, maId);
+            }
+            {
+                world.IncidentPortId = 0;
+                world.IncidentModeId = 0;
+                IList<uint> port1EIds = new List<uint>();
+                IList<uint> port2EIds = new List<uint>();
+                port1EIds.Add(eId1);
+                port2EIds.Add(eId2);
+                var portEIdss = world.PortEIdss;
+                portEIdss.Clear();
+                portEIdss.Add(port1EIds);
+                portEIdss.Add(port2EIds);
+            }
             uint[] zeroEIds = { 2, 3, 5, 6 };
-            IList<uint> zeroECadIds = world.ZeroECadIds;
-            zeroECadIds.Clear();
+            var zeroFixedCads = world.ZeroFieldFixedCads;
+            zeroFixedCads.Clear();
             foreach (uint eId in zeroEIds)
             {
-                zeroECadIds.Add(eId);
+                uint dof = 2; // 複素数
+                double value = 0;
+                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.ZScalar,
+                    quantityId, dof, value);
+                zeroFixedCads.Add(fixedCad);
             }
 
             world.MakeElements();
@@ -437,23 +449,26 @@ namespace IvyFEMProtoApp
             model.InvalidatePlot(true);
             WPFUtils.DoEvents();
 
-            const int dof = 2; // 複素数
-            world.ClearFieldValue();
-            uint valueId = world.AddFieldValue(FieldValueType.ZScalar, FieldDerivationType.Value,
-                dof, false, FieldShowType.Abs);
-            mainWindow.IsFieldDraw = true;
+            uint valueId = 0;
             var fieldDrawerArray = mainWindow.FieldDrawerArray;
-            fieldDrawerArray.Clear();
-            IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivationType.Value, true, world,
-                valueId, FieldDerivationType.Value);
-            fieldDrawerArray.Add(faceDrawer);
-            //IFieldDrawer edgeDrawer = new EdgeFieldDrawer(valueId, FieldDerivationType.VALUE, true, world);
-            //fieldDrawerArray.Add(edgeDrawer);
-            mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-            mainWindow.glControl_ResizeProc();
-            //mainWindow.glControl.Invalidate();
-            //mainWindow.glControl.Update();
-            //WPFUtils.DoEvents();
+            {
+                uint dof = 2; // 複素数
+                world.ClearFieldValue();
+                valueId = world.AddFieldValue(FieldValueType.ZScalar, FieldDerivationType.Value,
+                    quantityId, dof, false, FieldShowType.Abs);
+                mainWindow.IsFieldDraw = true;
+                fieldDrawerArray.Clear();
+                IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivationType.Value, true, world,
+                    valueId, FieldDerivationType.Value);
+                fieldDrawerArray.Add(faceDrawer);
+                //IFieldDrawer edgeDrawer = new EdgeFieldDrawer(valueId, FieldDerivationType.VALUE, true, world);
+                //fieldDrawerArray.Add(edgeDrawer);
+                mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
+                mainWindow.glControl_ResizeProc();
+                //mainWindow.glControl.Invalidate();
+                //mainWindow.glControl.Update();
+                //WPFUtils.DoEvents();
+            }
 
             for (int iFreq = 0; iFreq < freqDiv + 1; iFreq++)
             {
@@ -479,7 +494,10 @@ namespace IvyFEMProtoApp
                 }
                 {
                     var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
-                    solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.COCG;
+                    solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCOCG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.COCG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCOCG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
                     FEM.Solver = solver;
                 }
                 FEM.WaveLength = waveLength;
@@ -527,122 +545,122 @@ namespace IvyFEMProtoApp
                 var res = cad2D.AddPolygon(pts);
             }
 
-            /*
-            mainWindow.IsFieldDraw = false;
-            var drawerArray = mainWindow.DrawerArray;
-            drawerArray.Clear();
-            IDrawer drawer = new CadObject2DDrawer(cad2D);
-            mainWindow.DrawerArray.Add(drawer);
-            mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-            mainWindow.glControl_ResizeProc();
-            mainWindow.glControl.Invalidate();
-            mainWindow.glControl.Update();
-            */
-
             double eLen = 0.1;
             Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
 
             FEWorld world = new FEWorld();
             world.Mesh = mesher2D;
-
-            world.ClearMaterial();
-            uint maId = 0;
-            if (isSaintVenant)
+            uint quantityId;
             {
-                var ma = new SaintVenantHyperelasticMaterial();
-                ma.SetYoungPoisson(10.0, 0.3);
-                ma.GravityX = 0;
-                ma.GravityY = 0;
-                maId = world.AddMaterial(ma);
-            }
-            else
-            {
-                var ma = new ElasticMaterial();
-                ma.SetYoungPoisson(10.0, 0.3);
-                ma.GravityX = 0;
-                ma.GravityY = 0;
-                maId = world.AddMaterial(ma);
+                uint dof = 2; // Vector2
+                uint feOrder = 1;
+                quantityId = world.AddQuantity(dof, feOrder);
             }
 
-            uint lId = 1;
-            world.SetCadLoopMaterial(lId, maId);
+            {
+                world.ClearMaterial();
+                uint maId = 0;
+                if (isSaintVenant)
+                {
+                    var ma = new SaintVenantHyperelasticMaterial();
+                    ma.SetYoungPoisson(10.0, 0.3);
+                    ma.GravityX = 0;
+                    ma.GravityY = 0;
+                    ma.MassDensity = 1;
+                    maId = world.AddMaterial(ma);
+                }
+                else
+                {
+                    var ma = new LinearElasticMaterial();
+                    ma.SetYoungPoisson(10.0, 0.3);
+                    ma.GravityX = 0;
+                    ma.GravityY = 0;
+                    ma.MassDensity = 1;
+                    maId = world.AddMaterial(ma);
+                }
+
+                uint lId = 1;
+                world.SetCadLoopMaterial(lId, maId);
+            }
 
             uint[] zeroEIds = { 4 };
-            IList<uint> zeroECadIds = world.ZeroECadIds;
-            zeroECadIds.Clear();
+            var zeroFixedCads = world.ZeroFieldFixedCads;
+            zeroFixedCads.Clear();
             foreach (uint eId in zeroEIds)
             {
-                zeroECadIds.Add(eId);
+                uint dof = 2; // Vector2
+                double value = 0;
+                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.ZScalar,
+                    quantityId, dof, value);
+                zeroFixedCads.Add(fixedCad);
             }
 
-            uint[] fixedCadIds = { 2, 2 };
-            CadElementType[] fixedCadElemType = { CadElementType.Edge, CadElementType.Edge };
-            int[] fixedDofIndexs = new int[] { 0, 1 };  // 0: X, 1: Y
-            double[] fixedValues = new double[] { 0, 0 };
-            System.Diagnostics.Debug.Assert(fixedCadIds.Length == fixedCadElemType.Length);
-            System.Diagnostics.Debug.Assert(fixedCadIds.Length == fixedDofIndexs.Length);
-            System.Diagnostics.Debug.Assert(fixedCadIds.Length == fixedValues.Length);
-
-            IList<FieldFixedCad> fixedCads = world.FieldFixedCads;
-            fixedCads.Clear();
-            for (int iCad = 0; iCad < fixedCadIds.Length; iCad++)
+            FieldFixedCad fixedCadX;
+            FieldFixedCad fixedCadY;
             {
-                uint cadId = fixedCadIds[iCad];
-                CadElementType cadElemType = fixedCadElemType[iCad];
-                int dofIndex = fixedDofIndexs[iCad];
-                double value = fixedValues[iCad];
-                var fixedCad = new FieldFixedCad(cadId, cadElemType,
-                    FieldValueType.Vector2, dofIndex, value);
-                fixedCads.Add(fixedCad);
+                // DofIndex 0: X 1: Y
+                var fixedCadDatas = new[]
+                {
+                    new { CadId = (uint)2, CadElemType = CadElementType.Edge, DofIndex = (uint)0, Value = 0.0 },
+                    new { CadId = (uint)2, CadElemType = CadElementType.Edge, DofIndex = (uint)1, Value = 0.0 }
+                };
+                IList<FieldFixedCad> fixedCads = world.FieldFixedCads;
+                fixedCads.Clear();
+                foreach (var data in fixedCadDatas)
+                {
+                    var fixedCad = new FieldFixedCad(data.CadId, data.CadElemType,
+                        FieldValueType.Vector2, quantityId, data.DofIndex, data.Value);
+                    fixedCads.Add(fixedCad);
+                }
+                fixedCadX = world.FieldFixedCads[0];
+                fixedCadY = world.FieldFixedCads[1];
             }
-            /*
-            var fixedCadY = world.FieldFixedCads[0];
-            */
-            var fixedCadX = world.FieldFixedCads[0];
-            var fixedCadY = world.FieldFixedCads[1];
 
             world.MakeElements();
 
-            const int dof = 2; // VECTOR2
-            world.ClearFieldValue();
-            uint valueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivationType.Value,
-                dof, false, FieldShowType.Real);
+            uint valueId = 0;
             uint eqStressValueId = 0;
             uint stressValueId = 0;
-            if (isCalcStress)
-            {
-                const int eqStressDof = 1;
-                eqStressValueId = world.AddFieldValue(FieldValueType.Scalar, FieldDerivationType.Value,
-                    eqStressDof, true, FieldShowType.Real);
-                const int stressDof = 3;
-                stressValueId = world.AddFieldValue(FieldValueType.SymmetricTensor2, FieldDerivationType.Value,
-                    stressDof, true, FieldShowType.Real);
-            }
-            mainWindow.IsFieldDraw = true;
             var fieldDrawerArray = mainWindow.FieldDrawerArray;
-            fieldDrawerArray.Clear();
-            if (isCalcStress)
             {
-                IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivationType.Value, false, world,
-                    eqStressValueId, FieldDerivationType.Value, 0, 0.5);
-                fieldDrawerArray.Add(faceDrawer);
-                IFieldDrawer vectorDrawer = new VectorFieldDrawer(stressValueId, FieldDerivationType.Value, world);
-                fieldDrawerArray.Add(vectorDrawer);
+                uint dof = 2; // Vector2
+                world.ClearFieldValue();
+                valueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivationType.Value,
+                    quantityId, dof, false, FieldShowType.Real);
+                if (isCalcStress)
+                {
+                    const int eqStressDof = 1;
+                    eqStressValueId = world.AddFieldValue(FieldValueType.Scalar, FieldDerivationType.Value,
+                        quantityId, eqStressDof, true, FieldShowType.Real);
+                    const int stressDof = 3;
+                    stressValueId = world.AddFieldValue(FieldValueType.SymmetricTensor2, FieldDerivationType.Value,
+                        quantityId, stressDof, true, FieldShowType.Real);
+                }
+                mainWindow.IsFieldDraw = true;
+                fieldDrawerArray.Clear();
+                if (isCalcStress)
+                {
+                    IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivationType.Value, false, world,
+                        eqStressValueId, FieldDerivationType.Value, 0, 0.5);
+                    fieldDrawerArray.Add(faceDrawer);
+                    IFieldDrawer vectorDrawer = new VectorFieldDrawer(stressValueId, FieldDerivationType.Value, world);
+                    fieldDrawerArray.Add(vectorDrawer);
+                }
+                else
+                {
+                    IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivationType.Value, false, world);
+                    fieldDrawerArray.Add(faceDrawer);
+                }
+                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(valueId, FieldDerivationType.Value, false, world);
+                fieldDrawerArray.Add(edgeDrawer);
+                IFieldDrawer edgeDrawer2 = new EdgeFieldDrawer(valueId, FieldDerivationType.Value, true, world);
+                fieldDrawerArray.Add(edgeDrawer2);
+                mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
+                mainWindow.glControl_ResizeProc();
+                //mainWindow.glControl.Invalidate();
+                //mainWindow.glControl.Update();
+                //WPFUtils.DoEvents();
             }
-            else
-            {
-                IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivationType.Value, false, world);
-                fieldDrawerArray.Add(faceDrawer);
-            }
-            IFieldDrawer edgeDrawer = new EdgeFieldDrawer(valueId, FieldDerivationType.Value, false, world);
-            fieldDrawerArray.Add(edgeDrawer);
-            IFieldDrawer edgeDrawer2 = new EdgeFieldDrawer(valueId, FieldDerivationType.Value, true, world);
-            fieldDrawerArray.Add(edgeDrawer2);
-            mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-            mainWindow.glControl_ResizeProc();
-            //mainWindow.glControl.Invalidate();
-            //mainWindow.glControl.Update();
-            //WPFUtils.DoEvents();
 
             double t = 0;
             double dt = 0.05;
@@ -666,8 +684,10 @@ namespace IvyFEMProtoApp
                 }
                 {
                     var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
-                    solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
-                    solver.ILUFillinLevel = isSaintVenant ? 2 : 1;
+                    solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
                     FEM.Solver = solver;
                 }
                 FEM.Solve();
@@ -699,101 +719,107 @@ namespace IvyFEMProtoApp
                 var res = cad2D.AddPolygon(pts);
             }
 
-            /*
-            mainWindow.IsFieldDraw = false;
-            var drawerArray = mainWindow.DrawerArray;
-            drawerArray.Clear();
-            IDrawer drawer = new CadObject2DDrawer(cad2D);
-            mainWindow.DrawerArray.Add(drawer);
-            mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-            mainWindow.glControl_ResizeProc();
-            mainWindow.glControl.Invalidate();
-            mainWindow.glControl.Update();
-            */
-
             double eLen = 0.1;
             Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
 
             FEWorld world = new FEWorld();
             world.Mesh = mesher2D;
-
-            world.ClearMaterial();
-            uint maId = 0;
-            if (isSaintVenant)
+            uint quantityId;
             {
-                var ma = new SaintVenantHyperelasticMaterial();
-                ma.SetYoungPoisson(10.0, 0.3);
-                ma.GravityX = 0;
-                ma.GravityY = 0;
-                maId = world.AddMaterial(ma);
-            }
-            else
-            {
-                var ma = new ElasticMaterial();
-                ma.SetYoungPoisson(10.0, 0.3);
-                ma.GravityX = 0;
-                ma.GravityY = 0;
-                maId = world.AddMaterial(ma);
+                uint dof = 2; // Vector2
+                uint feOrder = 1;
+                quantityId = world.AddQuantity(dof, feOrder);
             }
 
-            uint lId = 1;
-            world.SetCadLoopMaterial(lId, maId);
+            {
+                world.ClearMaterial();
+                uint maId = 0;
+                if (isSaintVenant)
+                {
+                    var ma = new SaintVenantHyperelasticMaterial();
+                    //ma.SetYoungPoisson(10.0, 0.3);
+                    ma.SetYoungPoisson(50.0, 0.3);
+                    ma.GravityX = 0;
+                    ma.GravityY = 0;
+                    ma.MassDensity = 1;
+                    maId = world.AddMaterial(ma);
+                }
+                else
+                {
+                    var ma = new LinearElasticMaterial();
+                    //ma.SetYoungPoisson(10.0, 0.3);
+                    ma.SetYoungPoisson(50.0, 0.3);
+                    ma.GravityX = 0;
+                    ma.GravityY = 0;
+                    ma.MassDensity = 1;
+                    maId = world.AddMaterial(ma);
+                }
+
+                uint lId = 1;
+                world.SetCadLoopMaterial(lId, maId);
+            }
 
             uint[] zeroEIds = { 4 };
-            IList<uint> zeroECadIds = world.ZeroECadIds;
-            zeroECadIds.Clear();
+            var zeroFixedCads = world.ZeroFieldFixedCads;
+            zeroFixedCads.Clear();
             foreach (uint eId in zeroEIds)
             {
-                zeroECadIds.Add(eId);
+                uint dof = 2; // Vector2
+                double value = 0;
+                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.ZScalar,
+                    quantityId, dof, value);
+                zeroFixedCads.Add(fixedCad);
             }
 
-            uint[] fixedCadIds = { 2, 2 };
-            CadElementType[] fixedCadElemType = { CadElementType.Edge, CadElementType.Edge };
-            int[] fixedDofIndexs = new int[] { 0, 1 };  // 0: X, 1: Y
-            double[] fixedValues = new double[] { 0, 0 };
-            System.Diagnostics.Debug.Assert(fixedCadIds.Length == fixedCadElemType.Length);
-            System.Diagnostics.Debug.Assert(fixedCadIds.Length == fixedDofIndexs.Length);
-            System.Diagnostics.Debug.Assert(fixedCadIds.Length == fixedValues.Length);
-
-            IList<FieldFixedCad> fixedCads = world.FieldFixedCads;
-            fixedCads.Clear();
-            for (int iCad = 0; iCad < fixedCadIds.Length; iCad++)
+            FieldFixedCad fixedCadX;
+            FieldFixedCad fixedCadY;
             {
-                uint cadId = fixedCadIds[iCad];
-                CadElementType cadElemType = fixedCadElemType[iCad];
-                int dofIndex = fixedDofIndexs[iCad];
-                double value = fixedValues[iCad];
-                var fixedCad = new FieldFixedCad(cadId, cadElemType,
-                    FieldValueType.Vector2, dofIndex, value);
-                fixedCads.Add(fixedCad);
+                // DofIndex 0: X 1: Y
+                var fixedCadDatas = new[]
+                {
+                    new { CadId = (uint)2, CadElemType = CadElementType.Edge, DofIndex = (uint)0, Value = 0.0 },
+                    new { CadId = (uint)2, CadElemType = CadElementType.Edge, DofIndex = (uint)1, Value = 0.0 }
+                };
+                IList<FieldFixedCad> fixedCads = world.FieldFixedCads;
+                fixedCads.Clear();
+                foreach (var data in fixedCadDatas)
+                {
+                    var fixedCad = new FieldFixedCad(data.CadId, data.CadElemType,
+                        FieldValueType.Vector2, quantityId, data.DofIndex, data.Value);
+                    fixedCads.Add(fixedCad);
+                }
+                fixedCadX = world.FieldFixedCads[0];
+                fixedCadY = world.FieldFixedCads[1];
             }
-            var fixedCadX = world.FieldFixedCads[0];
-            var fixedCadY = world.FieldFixedCads[1];
 
             world.MakeElements();
 
-            const int dof = 2; // Vector2
-            world.ClearFieldValue();
-            uint valueId = world.AddFieldValue(FieldValueType.Vector2,
-                FieldDerivationType.Value | FieldDerivationType.Velocity | FieldDerivationType.Acceleration,
-                dof, false, FieldShowType.Real);
-            uint prevValueId = world.AddFieldValue(FieldValueType.Vector2,
-                FieldDerivationType.Value | FieldDerivationType.Velocity | FieldDerivationType.Acceleration,
-                dof, false, FieldShowType.Real);
-            mainWindow.IsFieldDraw = true;
+            uint valueId = 0;
+            uint prevValueId = 0;
             var fieldDrawerArray = mainWindow.FieldDrawerArray;
-            fieldDrawerArray.Clear();
-            IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivationType.Value, false, world);
-            fieldDrawerArray.Add(faceDrawer);
-            IFieldDrawer edgeDrawer = new EdgeFieldDrawer(valueId, FieldDerivationType.Value, false, world);
-            fieldDrawerArray.Add(edgeDrawer);
-            IFieldDrawer edgeDrawer2 = new EdgeFieldDrawer(valueId, FieldDerivationType.Value, true, world);
-            fieldDrawerArray.Add(edgeDrawer2);
-            mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-            mainWindow.glControl_ResizeProc();
-            //mainWindow.glControl.Invalidate();
-            //mainWindow.glControl.Update();
-            //WPFUtils.DoEvents();
+            {
+                uint dof = 2; // Vector2
+                world.ClearFieldValue();
+                valueId = world.AddFieldValue(FieldValueType.Vector2,
+                    FieldDerivationType.Value | FieldDerivationType.Velocity | FieldDerivationType.Acceleration,
+                    quantityId, dof, false, FieldShowType.Real);
+                prevValueId = world.AddFieldValue(FieldValueType.Vector2,
+                    FieldDerivationType.Value | FieldDerivationType.Velocity | FieldDerivationType.Acceleration,
+                    quantityId, dof, false, FieldShowType.Real);
+                mainWindow.IsFieldDraw = true;
+                fieldDrawerArray.Clear();
+                IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivationType.Value, false, world);
+                fieldDrawerArray.Add(faceDrawer);
+                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(valueId, FieldDerivationType.Value, false, world);
+                fieldDrawerArray.Add(edgeDrawer);
+                IFieldDrawer edgeDrawer2 = new EdgeFieldDrawer(valueId, FieldDerivationType.Value, true, world);
+                fieldDrawerArray.Add(edgeDrawer2);
+                mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
+                mainWindow.glControl_ResizeProc();
+                //mainWindow.glControl.Invalidate();
+                //mainWindow.glControl.Update();
+                //WPFUtils.DoEvents();
+            }
 
             double t = 0;
             double dt = 0.05;
@@ -821,8 +847,10 @@ namespace IvyFEMProtoApp
                 }
                 {
                     var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
-                    solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
-                    solver.ILUFillinLevel = isSaintVenant ? 2 : 1;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
                     FEM.Solver = solver;
                 }
                 FEM.Solve();
@@ -838,5 +866,313 @@ namespace IvyFEMProtoApp
             }
         }
 
+        public void MooneyRivlinHyperelasticProblem(MainWindow mainWindow)
+        {
+            CadObject2D cad2D = new CadObject2D();
+            {
+                IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
+                pts.Add(new OpenTK.Vector2d(0.0, 0.0));
+                pts.Add(new OpenTK.Vector2d(5.0, 0.0));
+                pts.Add(new OpenTK.Vector2d(5.0, 1.0));
+                pts.Add(new OpenTK.Vector2d(0.0, 1.0));
+                var res = cad2D.AddPolygon(pts);
+            }
+
+            double eLen = 0.1;
+            Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
+
+            FEWorld world = new FEWorld();
+            world.Mesh = mesher2D;
+            uint uQuantityId;
+            uint lQuantityId;
+            {
+                uint uDof = 2; // Vector2
+                uint lDof = 1; // Scalar
+                uint uFEOrder = 1;
+                uint lFEOrder = 1;
+                uQuantityId = world.AddQuantity(uDof, uFEOrder);
+                lQuantityId = world.AddQuantity(lDof, lFEOrder);
+            }
+
+            {
+                world.ClearMaterial();
+                uint maId = 0;
+                var ma = new MooneyRivlinHyperelasticMaterial();
+                ma.C1 = 200;
+                ma.C2 = 200;
+                ma.GravityX = 0;
+                ma.GravityY = 0;
+                ma.MassDensity = 1.0;
+                maId = world.AddMaterial(ma);
+
+                uint lId = 1;
+                world.SetCadLoopMaterial(lId, maId);
+            }
+
+            uint[] zeroEIds = { 4 };
+            var zeroFixedCads = world.ZeroFieldFixedCads;
+            zeroFixedCads.Clear();
+            foreach (uint eId in zeroEIds)
+            {
+                uint dof = 2; // Vector2
+                double value = 0;
+                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.ZScalar,
+                    uQuantityId, dof, value);
+                zeroFixedCads.Add(fixedCad);
+            }
+
+            FieldFixedCad fixedCadX;
+            FieldFixedCad fixedCadY;
+            {
+                // DofIndex 0: X 1: Y
+                var fixedCadDatas = new[]
+                {
+                    new { CadId = (uint)2, CadElemType = CadElementType.Edge, DofIndex = (uint)0, Value = 0.0 },
+                    new { CadId = (uint)2, CadElemType = CadElementType.Edge, DofIndex = (uint)1, Value = 0.0 }
+                };
+                IList<FieldFixedCad> fixedCads = world.FieldFixedCads;
+                fixedCads.Clear();
+                foreach (var data in fixedCadDatas)
+                {
+                    var fixedCad = new FieldFixedCad(data.CadId, data.CadElemType,
+                        FieldValueType.Vector2, uQuantityId, data.DofIndex, data.Value);
+                    fixedCads.Add(fixedCad);
+                }
+                fixedCadX = world.FieldFixedCads[0];
+                fixedCadY = world.FieldFixedCads[1];
+            }
+
+            world.MakeElements();
+
+            uint uValueId = 0;
+            uint lValueId = 0;
+            var fieldDrawerArray = mainWindow.FieldDrawerArray;
+            {
+                uint uDof = 2; // Vector2
+                uint lDof = 1; // Scalar
+                world.ClearFieldValue();
+                uValueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivationType.Value,
+                    uQuantityId, uDof, false, FieldShowType.Real);
+                lValueId = world.AddFieldValue(FieldValueType.Scalar, FieldDerivationType.Value,
+                    lQuantityId, lDof, false, FieldShowType.Real);
+                mainWindow.IsFieldDraw = true;
+                fieldDrawerArray.Clear();
+                IFieldDrawer faceDrawer = new FaceFieldDrawer(uValueId, FieldDerivationType.Value, false, world);
+                // Lagrange未定乗数のサーモグラフィ表示
+                //IFieldDrawer faceDrawer = new FaceFieldDrawer(uValueId, FieldDerivationType.Value, false, world,
+                //    lValueId, FieldDerivationType.Value);
+                fieldDrawerArray.Add(faceDrawer);
+                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(uValueId, FieldDerivationType.Value, false, world);
+                fieldDrawerArray.Add(edgeDrawer);
+                IFieldDrawer edgeDrawer2 = new EdgeFieldDrawer(uValueId, FieldDerivationType.Value, true, world);
+                fieldDrawerArray.Add(edgeDrawer2);
+                mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
+                mainWindow.glControl_ResizeProc();
+                //mainWindow.glControl.Invalidate();
+                //mainWindow.glControl.Update();
+                //WPFUtils.DoEvents();
+            }
+
+            double t = 0;
+            double dt = 0.05;
+            for (int iTime = 0; iTime <= 200; iTime++)
+            {
+                fixedCadX.Value = 0;
+                fixedCadY.Value = Math.Sin(t * 2.0 * Math.PI * 0.1);
+
+                var FEM = new MooneyRivlinHyperelastic2DFEM(world);
+                {
+                    //var solver = new IvyFEM.Linear.LapackEquationSolver();
+                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
+                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
+                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
+                    //FEM.Solver = solver;
+                }
+                {
+                    //var solver = new IvyFEM.Linear.LisEquationSolver();
+                    //solver.Method = IvyFEM.Linear.LisEquationSolverMethod.Default;
+                    //FEM.Solver = solver;
+                }
+                {
+                    var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
+                    solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
+                    //solver.ConvRatioTolerance = 1.0e-14;
+                    FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-10;
+                    FEM.Solver = solver;
+                }
+                FEM.Solve();
+                double[] U = FEM.U;
+
+                world.UpdateFieldValueValuesFromNodeValues(uValueId, FieldDerivationType.Value, U);
+                world.UpdateFieldValueValuesFromNodeValues(lValueId, FieldDerivationType.Value, U);
+                fieldDrawerArray.Update(world);
+                mainWindow.glControl.Invalidate();
+                mainWindow.glControl.Update();
+                WPFUtils.DoEvents();
+                t += dt;
+            }
+        }
+
+        public void MooneyRivlinHyperelasticTDProblem(MainWindow mainWindow)
+        {
+            CadObject2D cad2D = new CadObject2D();
+            {
+                IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
+                pts.Add(new OpenTK.Vector2d(0.0, 0.0));
+                pts.Add(new OpenTK.Vector2d(5.0, 0.0));
+                pts.Add(new OpenTK.Vector2d(5.0, 1.0));
+                pts.Add(new OpenTK.Vector2d(0.0, 1.0));
+                var res = cad2D.AddPolygon(pts);
+            }
+
+            double eLen = 0.1;
+            Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
+
+            FEWorld world = new FEWorld();
+            world.Mesh = mesher2D;
+            uint uQuantityId;
+            uint lQuantityId;
+            {
+                uint uDof = 2; // Vector2
+                uint lDof = 1; // Scalar
+                uint uFEOrder = 1;
+                uint lFEOrder = 1;
+                uQuantityId = world.AddQuantity(uDof, uFEOrder);
+                lQuantityId = world.AddQuantity(lDof, lFEOrder);
+            }
+
+            {
+                world.ClearMaterial();
+                uint maId = 0;
+                var ma = new MooneyRivlinHyperelasticMaterial();
+                ma.C1 = 200;
+                ma.C2 = 200;
+                ma.GravityX = 0;
+                ma.GravityY = 0;
+                ma.MassDensity = 1.0;
+                maId = world.AddMaterial(ma);
+
+                uint lId = 1;
+                world.SetCadLoopMaterial(lId, maId);
+            }
+
+            uint[] zeroEIds = { 4 };
+            var zeroFixedCads = world.ZeroFieldFixedCads;
+            zeroFixedCads.Clear();
+            foreach (uint eId in zeroEIds)
+            {
+                uint dof = 2; // Vector2
+                double value = 0;
+                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.ZScalar,
+                    uQuantityId, dof, value);
+                zeroFixedCads.Add(fixedCad);
+            }
+
+            FieldFixedCad fixedCadX;
+            FieldFixedCad fixedCadY;
+            {
+                // DofIndex 0: X 1: Y
+                var fixedCadDatas = new[]
+                {
+                    new { CadId = (uint)2, CadElemType = CadElementType.Edge, DofIndex = (uint)0, Value = 0.0 },
+                    new { CadId = (uint)2, CadElemType = CadElementType.Edge, DofIndex = (uint)1, Value = 0.0 }
+                };
+                IList<FieldFixedCad> fixedCads = world.FieldFixedCads;
+                fixedCads.Clear();
+                foreach (var data in fixedCadDatas)
+                {
+                    var fixedCad = new FieldFixedCad(data.CadId, data.CadElemType,
+                        FieldValueType.Vector2, uQuantityId, data.DofIndex, data.Value);
+                    fixedCads.Add(fixedCad);
+                }
+                fixedCadX = world.FieldFixedCads[0];
+                fixedCadY = world.FieldFixedCads[1];
+            }
+
+            world.MakeElements();
+
+            uint uValueId = 0;
+            uint prevUValueId = 0;
+            uint lValueId = 0;
+            var fieldDrawerArray = mainWindow.FieldDrawerArray;
+            {
+                uint uDof = 2; // Vector2
+                uint lDof = 1; // Scalar
+                world.ClearFieldValue();
+                uValueId = world.AddFieldValue(FieldValueType.Vector2,
+                    FieldDerivationType.Value | FieldDerivationType.Velocity | FieldDerivationType.Acceleration,
+                    uQuantityId, uDof, false, FieldShowType.Real);
+                prevUValueId = world.AddFieldValue(FieldValueType.Vector2,
+                    FieldDerivationType.Value | FieldDerivationType.Velocity | FieldDerivationType.Acceleration,
+                    uQuantityId, uDof, false, FieldShowType.Real);
+                lValueId = world.AddFieldValue(FieldValueType.Scalar, FieldDerivationType.Value,
+                    lQuantityId, lDof, false, FieldShowType.Real);
+                mainWindow.IsFieldDraw = true;
+                fieldDrawerArray.Clear();
+                IFieldDrawer faceDrawer = new FaceFieldDrawer(uValueId, FieldDerivationType.Value, false, world);
+                // Lagrange未定乗数のサーモグラフィ表示
+                //IFieldDrawer faceDrawer = new FaceFieldDrawer(uValueId, FieldDerivationType.Value, false, world,
+                //    lValueId, FieldDerivationType.Value);
+                fieldDrawerArray.Add(faceDrawer);
+                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(uValueId, FieldDerivationType.Value, false, world);
+                fieldDrawerArray.Add(edgeDrawer);
+                IFieldDrawer edgeDrawer2 = new EdgeFieldDrawer(uValueId, FieldDerivationType.Value, true, world);
+                fieldDrawerArray.Add(edgeDrawer2);
+                mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
+                mainWindow.glControl_ResizeProc();
+                //mainWindow.glControl.Invalidate();
+                //mainWindow.glControl.Update();
+                //WPFUtils.DoEvents();
+            }
+
+            double t = 0;
+            double dt = 0.05;
+            double newmarkBeta = 1.0 / 4.0;
+            double newmarkGamma = 1.0 / 2.0;
+            for (int iTime = 0; iTime <= 200; iTime++)
+            {
+                fixedCadX.Value = 0;
+                fixedCadY.Value = Math.Sin(t * 2.0 * Math.PI * 0.1);
+
+                var FEM = new MooneyRivlinHyperelastic2DTDFEM(world, dt,
+                    newmarkBeta, newmarkGamma,
+                    uValueId, prevUValueId, lValueId);
+                {
+                    //var solver = new IvyFEM.Linear.LapackEquationSolver();
+                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
+                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
+                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
+                    //FEM.Solver = solver;
+                }
+                {
+                    //var solver = new IvyFEM.Linear.LisEquationSolver();
+                    //solver.Method = IvyFEM.Linear.LisEquationSolverMethod.Default;
+                    //FEM.Solver = solver;
+                }
+                {
+                    var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
+                    solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
+                    //solver.ConvRatioTolerance = 1.0e-14;
+                    FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-10;
+                    FEM.Solver = solver;
+                }
+                FEM.Solve();
+                //double[] U = FEM.U;
+
+                FEM.UpdateFieldValues();
+
+                fieldDrawerArray.Update(world);
+                mainWindow.glControl.Invalidate();
+                mainWindow.glControl.Update();
+                WPFUtils.DoEvents();
+                t += dt;
+            }
+        }
     }
 }

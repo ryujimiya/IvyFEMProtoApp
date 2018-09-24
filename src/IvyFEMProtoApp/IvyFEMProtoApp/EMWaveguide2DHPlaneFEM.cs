@@ -8,17 +8,14 @@ namespace IvyFEM
 {
     class EMWaveguide2DHPlaneFEM : FEM
     {
+        public uint QuantityId { get; private set; } = 0;
+
         // Solve
         // input
         public double WaveLength { get; set; }
         // output
         public System.Numerics.Complex[] Ez { get; private set; }
         public System.Numerics.Complex[][] S { get; private set; }
-
-        public EMWaveguide2DHPlaneFEM() : base()
-        {
-
-        }
 
         public EMWaveguide2DHPlaneFEM(FEWorld world)
         {
@@ -30,17 +27,17 @@ namespace IvyFEM
             int t;
             Ez = null;
             S = null;
-            
+
             // 波数
             double k0 = 2.0 * Math.PI / WaveLength;
             // 角周波数
             double omega = k0 * Constants.C0;
 
             t = System.Environment.TickCount;
-            int nodeCnt = (int)World.GetNodeCount();
+            int nodeCnt = (int)World.GetNodeCount(QuantityId);
             var A = new IvyFEM.Linear.ComplexSparseMatrix(nodeCnt, nodeCnt);
             var B = new System.Numerics.Complex[nodeCnt];
-            CalcAB(k0, A, B, nodeCnt);
+            CalcAB(k0, A, B);
             System.Diagnostics.Debug.WriteLine("CalcAB t = " + (System.Environment.TickCount - t));
 
             t = System.Environment.TickCount;
@@ -63,23 +60,23 @@ namespace IvyFEM
         }
 
         private void CalcAB(double k0,
-            IvyFEM.Linear.ComplexSparseMatrix A, System.Numerics.Complex[] B, int nodeCnt)
+            IvyFEM.Linear.ComplexSparseMatrix A, System.Numerics.Complex[] B)
         {
-            IList<uint> feIds = World.GetTriangleFEIds();
+            IList<uint> feIds = World.GetTriangleFEIds(QuantityId);
             foreach (uint feId in feIds)
             {
-                TriangleFE triFE = World.GetTriangleFE(feId);
+                TriangleFE triFE = World.GetTriangleFE(QuantityId, feId);
                 uint elemNodeCnt = triFE.NodeCount;
                 int[] nodes = new int[elemNodeCnt];
                 for (int iNode = 0; iNode < elemNodeCnt; iNode++)
                 {
-                    int coId = triFE.CoordIds[iNode];
-                    int nodeId = World.Coord2Node(coId);
+                    int coId = triFE.NodeCoordIds[iNode];
+                    int nodeId = World.Coord2Node(QuantityId, coId);
                     nodes[iNode] = nodeId;
                 }
 
                 Material ma0 = World.GetMaterial(triFE.MaterialId);
-                System.Diagnostics.Debug.Assert(ma0.MaterialType == MaterialType.Dielectric);
+                System.Diagnostics.Debug.Assert(ma0 is DielectricMaterial);
                 var ma = ma0 as DielectricMaterial;
 
                 double[,] sNN = triFE.CalcSNN();
@@ -118,9 +115,9 @@ namespace IvyFEM
             eigenFEMs = new EMWaveguide1DEigenFEM[portCnt];
             for (uint portId = 0; portId < portCnt; portId++)
             {
-                uint portNodeCnt = World.GetPortNodeCount(portId);
+                uint portNodeCnt = World.GetPortNodeCount(QuantityId, portId);
 
-                var eigenFEM = new EMWaveguide1DEigenFEM(World, portId);
+                var eigenFEM = new EMWaveguide1DEigenFEM(World, QuantityId, portId);
                 eigenFEMs[portId] = eigenFEM;
 
                 eigenFEM.WaveLength = WaveLength;
@@ -130,12 +127,12 @@ namespace IvyFEM
                 IvyFEM.Lapack.ComplexMatrix b = eigenFEM.CalcBoundaryMatrix(omega, betas, ezEVecs);
                 for (int col = 0; col < portNodeCnt; col++)
                 {
-                    int colCoId = World.PortNode2Coord(portId, col);
-                    int colNodeId = World.Coord2Node(colCoId);
+                    int colCoId = World.PortNode2Coord(QuantityId, portId, col);
+                    int colNodeId = World.Coord2Node(QuantityId, colCoId);
                     for (int row = 0; row < portNodeCnt; row++)
                     {
-                        int rowCoId = World.PortNode2Coord(portId, row);
-                        int rowNodeId = World.Coord2Node(rowCoId);
+                        int rowCoId = World.PortNode2Coord(QuantityId, portId, row);
+                        int rowNodeId = World.Coord2Node(QuantityId, rowCoId);
 
                         A[rowNodeId, colNodeId] += b[row, col];
                     }
@@ -151,8 +148,8 @@ namespace IvyFEM
                     System.Numerics.Complex[] I = eigenFEM.CalcIncidentVec(beta0, ezEVec0);
                     for (int row = 0; row < portNodeCnt; row++)
                     {
-                        int rowCoId = World.PortNode2Coord(portId, row);
-                        int rowNodeId = World.Coord2Node(rowCoId);
+                        int rowCoId = World.PortNode2Coord(QuantityId, portId, row);
+                        int rowNodeId = World.Coord2Node(QuantityId, rowCoId);
 
                         B[rowNodeId] += I[row];
                     }
@@ -184,12 +181,12 @@ namespace IvyFEM
 
         private System.Numerics.Complex[] GetPortEz(uint portId, System.Numerics.Complex[] Ez)
         {
-            int nodeCnt = (int)World.GetPortNodeCount(portId);
+            int nodeCnt = (int)World.GetPortNodeCount(QuantityId, portId);
             System.Numerics.Complex[] portEz= new System.Numerics.Complex[nodeCnt];
             for (int row = 0; row < nodeCnt; row++)
             {
-                int coId = World.PortNode2Coord(portId, row);
-                int nodeId = World.Coord2Node(coId);
+                int coId = World.PortNode2Coord(QuantityId, portId, row);
+                int nodeId = World.Coord2Node(QuantityId, coId);
                 portEz[row] = Ez[nodeId];
             }
             return portEz;

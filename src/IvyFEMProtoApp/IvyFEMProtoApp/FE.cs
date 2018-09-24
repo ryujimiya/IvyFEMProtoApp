@@ -10,8 +10,11 @@ namespace IvyFEM
     {
         internal FEWorld World { get; set; }
         public ElementType Type { get; protected set; } = ElementType.NotSet;
+        public int Order { get; set; } = -1;
+        public uint VertexCount { get; protected set; } = 0;
         public uint NodeCount { get; protected set; } = 0;
-        public int[] CoordIds { get; protected set; } = null;
+        public int[] VertexCoordIds { get; protected set; } = null;
+        public int[] NodeCoordIds { get; protected set; } = null;
         public uint MaterialId { get; set; } = 0;
         public uint MeshId { get; set; } = 0;
         public int MeshElemId { get; set; } = -1;
@@ -32,20 +35,37 @@ namespace IvyFEM
 
             World = srcFE.World; // shallow copy
             Type = srcFE.Type;
+            Order = srcFE.Order;
             NodeCount = srcFE.NodeCount;
+            VertexCoordIds = null;
+            if (srcFE.VertexCoordIds != null)
+            {
+                VertexCoordIds = new int[srcFE.VertexCoordIds.Length];
+                srcFE.VertexCoordIds.CopyTo(VertexCoordIds, 0);
+            }
+            NodeCoordIds = null;
+            if (srcFE.NodeCoordIds != null)
+            {
+                NodeCoordIds = new int[srcFE.NodeCoordIds.Length];
+                srcFE.NodeCoordIds.CopyTo(NodeCoordIds, 0);
+            }
             MaterialId = srcFE.MaterialId;
             MeshId = srcFE.MeshId;
             MeshElemId = srcFE.MeshElemId;
         }
 
-        public void SetCoordIndexs(int[] coordIndexs)
+        public void SetVertexCoordIds(int[] vertexCoordIds)
         {
-            System.Diagnostics.Debug.Assert(NodeCount == coordIndexs.Length);
-            CoordIds = new int[NodeCount];
-            for (int iNode = 0; iNode < NodeCount; iNode++)
-            {
-                CoordIds[iNode] = coordIndexs[iNode];
-            }
+            System.Diagnostics.Debug.Assert(VertexCount == vertexCoordIds.Length);
+            VertexCoordIds = new int[VertexCount];
+            vertexCoordIds.CopyTo(VertexCoordIds, 0);
+        }
+
+        public void SetNodeCoordIds(int[] nodeCoordIds)
+        {
+            System.Diagnostics.Debug.Assert(NodeCount == nodeCoordIds.Length);
+            NodeCoordIds = new int[NodeCount];
+            nodeCoordIds.CopyTo(NodeCoordIds, 0);
         }
     }
 }

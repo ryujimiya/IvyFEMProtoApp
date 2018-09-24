@@ -24,6 +24,11 @@ namespace IvyFEM.Native
         public static extern void DoubleAxpy(double[] Z, double alpha, int n, double[] X, double[] Y);
 
         [DllImport("IvyFEM.Native.dll")]
+        public static extern bool DoubleSolveNoPreconCG(double[] X,
+            int n, int AIndexsLength, int[] APtrs, int[] AIndexs, double[] AValues, double[] B,
+            double convRatioTolerance);
+
+        [DllImport("IvyFEM.Native.dll")]
         public static extern unsafe void DoubleDeleteCSR(int* APtrs, int* AIndexs, double* AValues);
 
         [DllImport("IvyFEM.Native.dll")]
@@ -39,11 +44,40 @@ namespace IvyFEM.Native
         [DllImport("IvyFEM.Native.dll")]
         public static extern bool DoubleSolvePreconditionedCG(double[] X,
             int n, int AIndexsLength, int[] APtrs, int[] AIndexs, double[] AValues, double[] B,
-            int LUIndexsLength, int[] LUPtrs, int[] LUIndexs, double[] LUValues);
+            int LUIndexsLength, int[] LUPtrs, int[] LUIndexs, double[] LUValues,
+            double convRatioTolerance);
 
         [DllImport("IvyFEM.Native.dll")]
         public static extern bool DoubleSolveCG(double[] X,
-            int n, int AIndexsLength, int[] APtrs, int[] AIndexs, double[] AValues, double[] B, int fillinLevel);
+            int n, int AIndexsLength, int[] APtrs, int[] AIndexs, double[] AValues, double[] B, int fillinLevel,
+            double convRatioTolerance);
+
+        [DllImport("IvyFEM.Native.dll")]
+        public static extern unsafe void DoubleCalcILUWithPivoting(
+            int* LUIndexsLengthP, int** LUPtrsP, int** LUIndexsP, double** LUValuesP,
+            int[] pivot,
+            int n, int AIndexsLength, int[] APtrs, int[] AIndexs, double[] AValues,
+            int fillinLevel);
+
+        [DllImport("IvyFEM.Native.dll")]
+        public static extern bool DoubleSolveCGWithPivoting(double[] X,
+            int n, int AIndexsLength, int[] APtrs, int[] AIndexs, double[] AValues, double[] B, int fillinLevel,
+            double convRatioTolerance);
+
+        [DllImport("IvyFEM.Native.dll")]
+        public static extern unsafe void DoubleCalcIC(
+            int* LUIndexsLengthP, int** LUPtrsP, int** LUIndexsP, double** LUValuesP,
+            int n, int AIndexsLength, int[] APtrs, int[] AIndexs, double[] AValues);
+
+        [DllImport("IvyFEM.Native.dll")]
+        public static extern bool DoubleSolveICCG(double[] X,
+            int n, int AIndexsLength, int[] APtrs, int[] AIndexs, double[] AValues, double[] B,
+            double convRatioTolerance);
+
+        [DllImport("IvyFEM.Native.dll")]
+        public static extern bool DoubleSolveNoPreconBiCGSTAB(double[] X,
+            int n, int AIndexsLength, int[] APtrs, int[] AIndexs, double[] AValues, double[] B,
+            double convRatioTolerance);
 
         ///////////////////////////////////////////////////////////////////
         // ComplexLinear
@@ -71,6 +105,12 @@ namespace IvyFEM.Native
             System.Numerics.Complex alpha, int n, System.Numerics.Complex* X, System.Numerics.Complex* Y);
 
         [DllImport("IvyFEM.Native.dll")]
+        public static extern unsafe bool ComplexSolveNoPreconCOCG(System.Numerics.Complex* X,
+            int n, int AIndexsLength, int[] APtrs, int[] AIndexs, System.Numerics.Complex* AValues,
+            System.Numerics.Complex* B,
+            double convRatioTolerance);
+
+        [DllImport("IvyFEM.Native.dll")]
         public static extern unsafe void ComplexDeleteCSR(
             int* APtrs, int* AIndexs, System.Numerics.Complex* AValues);
 
@@ -91,12 +131,30 @@ namespace IvyFEM.Native
             System.Numerics.Complex* X,
             int n, int AIndexsLength, int[] APtrs, int[] AIndexs, System.Numerics.Complex* AValues,
             System.Numerics.Complex* B,
-            int LUIndexsLength, int[] LUPtrs, int[] LUIndexs, System.Numerics.Complex* LUValues);
+            int LUIndexsLength, int[] LUPtrs, int[] LUIndexs, System.Numerics.Complex* LUValues,
+            double convRatioTolerance);
 
         [DllImport("IvyFEM.Native.dll")]
         public static extern unsafe bool ComplexSolveCOCG(System.Numerics.Complex* X,
             int n, int AIndexsLength, int[] APtrs, int[] AIndexs, System.Numerics.Complex* AValues,
-            System.Numerics.Complex* B, int fillinLevel);
+            System.Numerics.Complex* B, int fillinLevel,
+            double convRatioTolerance);
 
+        [DllImport("IvyFEM.Native.dll")]
+        public static extern unsafe void ComplexCalcIC(
+            int* LUIndexsLengthP, int** LUPtrsP, int** LUIndexsP, System.Numerics.Complex** LUValuesP,
+            int n, int AIndexsLength, int[] APtrs, int[] AIndexs, System.Numerics.Complex* AValues);
+
+        [DllImport("IvyFEM.Native.dll")]
+        public static extern unsafe bool ComplexSolveICCOCG(System.Numerics.Complex* X,
+            int n, int AIndexsLength, int[] APtrs, int[] AIndexs, System.Numerics.Complex* AValues,
+            System.Numerics.Complex* B,
+            double convRatioTolerance);
+
+        [DllImport("IvyFEM.Native.dll")]
+        public static extern unsafe bool ComplexSolveNoPreconBiCGSTAB(System.Numerics.Complex* X,
+            int n, int AIndexsLength, int[] APtrs, int[] AIndexs, System.Numerics.Complex* AValues,
+            System.Numerics.Complex* B,
+            double convRatioTolerance);
     }
 }

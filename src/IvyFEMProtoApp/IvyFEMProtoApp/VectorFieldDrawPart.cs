@@ -138,7 +138,7 @@ namespace IvyFEM
                 for (int iPt = 0; iPt < elemPtCount; iPt++)
                 {
                     int coId = vertexs[iTri * elemPtCount + iPt];
-                    double[] coord = world.GetCoord(coId);
+                    double[] coord = world.GetVertexCoord(coId);
                     for (int iDimTmp = 0; iDimTmp < dim; iDimTmp++)
                     {
                         bubbleCoord[iDimTmp] += coord[iDimTmp];
@@ -189,6 +189,7 @@ namespace IvyFEM
             ValueDof = 2;
 
             FieldValue fv = world.GetFieldValue(valueId);
+            uint quantityId = fv.QuantityId;
             uint dof = fv.Dof;
             System.Diagnostics.Debug.Assert(fv.IsBubble == true);
             var mesh = world.Mesh;
@@ -202,7 +203,7 @@ namespace IvyFEM
                 for (int iTri = 0; iTri < ElemCount; iTri++)
                 {
                     // Bubble
-                    uint feId = world.GetTriangleFEIdFromMesh(MeshId, (uint)iTri);
+                    uint feId = world.GetTriangleFEIdFromMesh(quantityId, MeshId, (uint)iTri);
                     System.Diagnostics.Debug.Assert(feId != 0);
                     System.Diagnostics.Debug.Assert(dof >= ValueDof);
                     for (int iDof = 0; iDof < ValueDof; iDof++)
@@ -224,6 +225,7 @@ namespace IvyFEM
             ValueDof = 6;
 
             FieldValue fv = world.GetFieldValue(valueId);
+            uint quantityId = fv.QuantityId;
             uint dof = fv.Dof;
             System.Diagnostics.Debug.Assert(fv.IsBubble == true);
             var mesh = world.Mesh;
@@ -237,7 +239,7 @@ namespace IvyFEM
                 for (int iTri = 0; iTri < ElemCount; iTri++)
                 {
                     // Bubble
-                    uint feId = world.GetTriangleFEIdFromMesh(MeshId, (uint)iTri);
+                    uint feId = world.GetTriangleFEIdFromMesh(quantityId, MeshId, (uint)iTri);
                     System.Diagnostics.Debug.Assert(feId != 0);
                     double[] sigma = new double[dof];
                     for (int iDof = 0; iDof < dof; iDof++)

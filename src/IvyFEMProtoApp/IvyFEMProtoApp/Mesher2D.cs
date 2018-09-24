@@ -6,6 +6,25 @@ using System.Threading.Tasks;
 
 namespace IvyFEM
 {
+    class MeshTypeLoc
+    {
+        public int Type { get; set; } = 0;
+        public int Loc { get; set; } = -1;
+        public IList<uint> IncludeRelations { get; set; } = new List<uint>();
+
+        public MeshTypeLoc()
+        {
+
+        }
+
+        public MeshTypeLoc(MeshTypeLoc src)
+        {
+            Type = src.Type;
+            Loc = src.Loc;
+            IncludeRelations = new List<uint>(src.IncludeRelations);
+        }
+    }
+
     class Mesher2D
     {
         private HashSet<uint> CutMeshLCadIdSet = new HashSet<uint>();
@@ -13,9 +32,7 @@ namespace IvyFEM
         private double ELen;
         private uint ESize;
 
-        private IList<int> Types = new List<int>();
-        private IList<int> Locs = new List<int>();
-        private IList<IList<uint>> IncludeRelations = new List<IList<uint>>();
+        private IList<MeshTypeLoc> TypeLocs = new List<MeshTypeLoc>(); 
 
         private IList<MeshVertex> Vertexs = new List<MeshVertex>();
         private IList<MeshBarArray> BarArrays = new List<MeshBarArray>();
@@ -68,12 +85,10 @@ namespace IvyFEM
             ELen = src.ELen;
             ESize = src.ESize;
 
-            Types = new List<int>(src.Types);
-            Locs = new List<int>(src.Locs);
-            IncludeRelations = new List<IList<uint>>();
-            for (int i = 0; i < src.IncludeRelations.Count; i++)
+            TypeLocs = new List<MeshTypeLoc>();
+            foreach (var srcTypeLoc in src.TypeLocs)
             {
-                IncludeRelations.Add(new List<uint>(src.IncludeRelations[i]));
+                TypeLocs.Add(new MeshTypeLoc(srcTypeLoc));
             }
 
             Vertexs = new List<MeshVertex>(src.Vertexs);
@@ -95,9 +110,7 @@ namespace IvyFEM
 
         private void ClearMeshData()
         {
-            Types.Clear();
-            Locs.Clear();
-            IncludeRelations.Clear();
+            TypeLocs.Clear();
 
             Vertexs.Clear();
             BarArrays.Clear();
@@ -152,9 +165,9 @@ namespace IvyFEM
         public IList<uint> GetIds()
         {
             IList<uint> ids = new List<uint>();
-            for (uint id = 1; id < Locs.Count; id++)
+            for (uint id = 1; id < TypeLocs.Count; id++)
             {
-                if (Locs[(int)id] == -1)
+                if (TypeLocs[(int)id].Loc == -1)
                 {
                     continue;
                 }
@@ -165,18 +178,16 @@ namespace IvyFEM
 
         public bool IsId(uint id)
         {
-            if (Locs.Count <= id)
+            if (TypeLocs.Count <= id)
             {
                 return false;
             }
-            int loc = Locs[(int)id];
+            int loc = TypeLocs[(int)id].Loc;
             if (loc == -1)
             {
                 return false;
             }
-
-            System.Diagnostics.Debug.Assert(Types.Count > id);
-            int type = Types[(int)id];
+            int type = TypeLocs[(int)id].Type;
             System.Diagnostics.Debug.Assert(type >= 0);
             System.Diagnostics.Debug.Assert(loc >= 0);
             if (type == 0)
@@ -205,19 +216,15 @@ namespace IvyFEM
         public IList<uint> GetIncludeElementIds(uint id)
         {
             IList<uint> ids = new List<uint>();
-            if (id >= Locs.Count)
+            if (id >= TypeLocs.Count)
             {
                 return ids;
             }
-            if (Locs[(int)id] == -1)
+            if (TypeLocs[(int)id].Loc == -1)
             {
                 return ids;
             }
-            if (id >= IncludeRelations.Count)
-            {
-                return ids;
-            }
-            return IncludeRelations[(int)id];
+            return TypeLocs[(int)id].IncludeRelations;
         }
 
         public void GetInfo(uint id, out uint cadId, out int layer)
@@ -225,8 +232,8 @@ namespace IvyFEM
             cadId = 0;
             layer = 0;
 
-            int type = Types[(int)id];
-            int loc = Locs[(int)id];
+            int type = TypeLocs[(int)id].Type;
+            int loc = TypeLocs[(int)id].Loc;
             if (type == 0)
             {
                 cadId = Vertexs[loc].VCadId;
@@ -261,8 +268,8 @@ namespace IvyFEM
             System.Diagnostics.Debug.Assert(IsId(id));
             uint elemNodeCnt;
             uint elemCnt;
-            int type = Types[(int)id];
-            int loc = Locs[(int)id];
+            int type = TypeLocs[(int)id].Type;
+            int loc = TypeLocs[(int)id].Loc;
             System.Diagnostics.Debug.Assert(type != -1 && loc != -1);
             if (type == 0)
             {
@@ -332,10 +339,9 @@ namespace IvyFEM
             {
                 return false;
             }
-            System.Diagnostics.Debug.Assert(id < Locs.Count);
-            System.Diagnostics.Debug.Assert(id < Types.Count);
-            int type = Types[(int)id];
-            loc = Locs[(int)id];
+            System.Diagnostics.Debug.Assert(id < TypeLocs.Count);
+            int type = TypeLocs[(int)id].Type;
+            loc = TypeLocs[(int)id].Loc;
             System.Diagnostics.Debug.Assert(type >= 0);
             switch (type)
             {
@@ -449,16 +455,14 @@ namespace IvyFEM
                         Vertexs.Add(tmpVer);
                     }
                     {
-                        for (int i = Locs.Count; i < addId + 1; i++)
+                        int typeLocCnt = TypeLocs.Count;
+                        for (int i = typeLocCnt; i < addId + 1; i++)
                         {
-                            Locs.Add(-1);
+                            var typeLoc = new MeshTypeLoc { Type = 0, Loc = -1 };
+                            TypeLocs.Add(typeLoc);
                         }
-                        for (int i = Types.Count; i < addId + 1; i++)
-                        {
-                            Types.Add(0);
-                        }
-                        Locs[(int)addId] = Vertexs.Count - 1;
-                        Types[(int)addId] = 0;
+                        TypeLocs[(int)addId].Loc = Vertexs.Count - 1;
+                        TypeLocs[(int)addId].Type = 0; // VERTEX
                     }
                     System.Diagnostics.Debug.Assert(CheckMesh() == 0);
                 }
@@ -531,18 +535,14 @@ namespace IvyFEM
             uint newElemArrayId = GetFreeObjectId();
             uint ibarArary0 = (uint)BarArrays.Count;
             {
-                int locCnt = Locs.Count;
-                for (int i = locCnt; i < newElemArrayId + 1; i++)
+                int typeLocCnt = TypeLocs.Count;
+                for (int i = typeLocCnt; i < newElemArrayId + 1; i++)
                 {
-                    Locs.Add(-1);
+                    var typeLoc = new MeshTypeLoc { Type = 0, Loc = -1 };
+                    TypeLocs.Add(typeLoc);
                 }
-                int typeCnt = Types.Count;
-                for (int i = typeCnt; i < newElemArrayId + 1; i++)
-                {
-                    Types.Add(-1);
-                }
-                Locs[(int)newElemArrayId] = (int)ibarArary0;
-                Types[(int)newElemArrayId] = 1;
+                TypeLocs[(int)newElemArrayId].Loc = (int)ibarArary0;
+                TypeLocs[(int)newElemArrayId].Type = 1; // BAR
             }
             int barArrayCnt = BarArrays.Count;
             for (int i = barArrayCnt; i < barArrayCnt + 1; i++)
@@ -1540,18 +1540,14 @@ namespace IvyFEM
                 TriArrays[(int)iTriArray].Id = newTriId;
                 TriArrays[(int)iTriArray].Layer = cad2D.GetLayer(CadElementType.Loop, lId);
 
-                int typeCnt = Types.Count;
-                for (int i = typeCnt; i < newTriId + 1; i++)
+                int typeLocCnt = TypeLocs.Count;
+                for (int i = typeLocCnt; i < newTriId + 1; i++)
                 {
-                    Types.Add(-1);
+                    var typeLoc = new MeshTypeLoc { Type = 0, Loc = -1 };
+                    TypeLocs.Add(typeLoc);
                 }
-                int locCnt = Locs.Count;
-                for (int i = locCnt; i < newTriId + 1; i++)
-                {
-                    Locs.Add(0);
-                }
-                Types[(int)newTriId] = 2;   // TRI
-                Locs[(int)newTriId] = (int)iTriArray;
+                TypeLocs[(int)newTriId].Type = 2;   // TRI
+                TypeLocs[(int)newTriId].Loc = (int)iTriArray;
             }
 
             System.Diagnostics.Debug.Assert(CheckMesh() == 0);
@@ -1649,8 +1645,8 @@ namespace IvyFEM
                         if (Vertexs[(int)iVer].VCadId == cadId)
                         {
                             uint meshId = Vertexs[(int)iVer].Id;
-                            System.Diagnostics.Debug.Assert(Locs[(int)meshId] == iVer);
-                            System.Diagnostics.Debug.Assert(Types[(int)meshId] == 0);
+                            System.Diagnostics.Debug.Assert(TypeLocs[(int)meshId].Loc == iVer);
+                            System.Diagnostics.Debug.Assert(TypeLocs[(int)meshId].Type == 0); // VERTEX
                             return meshId;
                         }
                     }
@@ -1662,8 +1658,8 @@ namespace IvyFEM
                         if (BarArrays[(int)iBar].ECadId == cadId)
                         {
                             uint meshId = BarArrays[(int)iBar].Id;
-                            System.Diagnostics.Debug.Assert(Locs[(int)meshId] == iBar);
-                            System.Diagnostics.Debug.Assert(Types[(int)meshId] == 1);
+                            System.Diagnostics.Debug.Assert(TypeLocs[(int)meshId].Loc == iBar);
+                            System.Diagnostics.Debug.Assert(TypeLocs[(int)meshId].Type == 1); // BAR
                             return meshId;
                         }
                     }
@@ -1675,8 +1671,8 @@ namespace IvyFEM
                         if (TriArrays[(int)iTri].LCadId == cadId)
                         {
                             uint meshId = TriArrays[(int)iTri].Id;
-                            System.Diagnostics.Debug.Assert(Locs[(int)meshId] == iTri);
-                            System.Diagnostics.Debug.Assert(Types[(int)meshId] == 2);
+                            System.Diagnostics.Debug.Assert(TypeLocs[(int)meshId].Loc == iTri);
+                            System.Diagnostics.Debug.Assert(TypeLocs[(int)meshId].Type == 2); // TRI
                             return meshId;
                         }
                     }
@@ -1685,8 +1681,8 @@ namespace IvyFEM
                         if (QuadArrays[(int)iQuad].LCadId == cadId)
                         {
                             uint meshId = TriArrays[(int)iQuad].Id;
-                            System.Diagnostics.Debug.Assert(Locs[(int)meshId] == iQuad);
-                            System.Diagnostics.Debug.Assert(Types[(int)meshId] == 3);
+                            System.Diagnostics.Debug.Assert(TypeLocs[(int)meshId].Loc == iQuad);
+                            System.Diagnostics.Debug.Assert(TypeLocs[(int)meshId].Type == 3); // QUAD
                             return meshId;
                         }
                     }
@@ -1711,10 +1707,10 @@ namespace IvyFEM
                         if (Vertexs[(int)iVer].VCadId == cadId)
                         {
                             loc = iVer;
-                            type = 0;
+                            type = 0; // VERTEX
                             uint meshId = Vertexs[(int)iVer].Id;
-                            System.Diagnostics.Debug.Assert(Locs[(int)meshId] == loc);
-                            System.Diagnostics.Debug.Assert(Types[(int)meshId] == type);
+                            System.Diagnostics.Debug.Assert(TypeLocs[(int)meshId].Loc == loc);
+                            System.Diagnostics.Debug.Assert(TypeLocs[(int)meshId].Type == type);
                             return true;
                         }
                     }
@@ -1726,10 +1722,10 @@ namespace IvyFEM
                         if (BarArrays[(int)iBar].ECadId == cadId)
                         {
                             loc = iBar;
-                            type = 1;
+                            type = 1; // BAR
                             uint meshId = BarArrays[(int)iBar].Id;
-                            System.Diagnostics.Debug.Assert(Locs[(int)meshId] == loc);
-                            System.Diagnostics.Debug.Assert(Types[(int)meshId] == type);
+                            System.Diagnostics.Debug.Assert(TypeLocs[(int)meshId].Loc == loc);
+                            System.Diagnostics.Debug.Assert(TypeLocs[(int)meshId].Type == type);
                             return true;
                         }
                     }
@@ -1741,10 +1737,10 @@ namespace IvyFEM
                         if (TriArrays[(int)iTri].LCadId == cadId)
                         {
                             loc = iTri;
-                            type = 2;
+                            type = 2; // TRI
                             uint meshId = TriArrays[(int)iTri].Id;
-                            System.Diagnostics.Debug.Assert(Locs[(int)meshId] == loc);
-                            System.Diagnostics.Debug.Assert(Types[(int)meshId] == type);
+                            System.Diagnostics.Debug.Assert(TypeLocs[(int)meshId].Loc == loc);
+                            System.Diagnostics.Debug.Assert(TypeLocs[(int)meshId].Type == type);
                             return true;
                         }
                     }
@@ -1753,10 +1749,10 @@ namespace IvyFEM
                         if (QuadArrays[(int)iQuad].LCadId == cadId)
                         {
                             loc = iQuad;
-                            type = 3;
+                            type = 3; // QUAD
                             uint meshId = QuadArrays[(int)iQuad].Id;
-                            System.Diagnostics.Debug.Assert(Locs[(int)meshId] == loc);
-                            System.Diagnostics.Debug.Assert(Types[(int)meshId] == type);
+                            System.Diagnostics.Debug.Assert(TypeLocs[(int)meshId].Loc == loc);
+                            System.Diagnostics.Debug.Assert(TypeLocs[(int)meshId].Type == type);
                             return true;
                         }
                     }
@@ -1780,10 +1776,9 @@ namespace IvyFEM
                     {
                         maxId = id0;
                     }
-                    System.Diagnostics.Debug.Assert(Types.Count > id0);
-                    System.Diagnostics.Debug.Assert(Types[(int)id0] == 0);
-                    System.Diagnostics.Debug.Assert(Locs.Count > id0);
-                    int loc0 = Locs[(int)id0];
+                    System.Diagnostics.Debug.Assert(TypeLocs.Count > id0);
+                    System.Diagnostics.Debug.Assert(TypeLocs[(int)id0].Type == 0); // VERTEX
+                    int loc0 = TypeLocs[(int)id0].Loc;
                     System.Diagnostics.Debug.Assert(loc0 == (int)iVer);
                     System.Diagnostics.Debug.Assert(Vertexs.Count > loc0);
                     MeshVertex ver0 = Vertexs[(int)loc0];
@@ -1796,10 +1791,9 @@ namespace IvyFEM
                     {
                         maxId = id0;
                     }
-                    System.Diagnostics.Debug.Assert(Types.Count > id0);
-                    System.Diagnostics.Debug.Assert(Types[(int)id0] == 1);
-                    System.Diagnostics.Debug.Assert(Locs.Count > id0);
-                    int loc0 = Locs[(int)id0];
+                    System.Diagnostics.Debug.Assert(TypeLocs.Count > id0);
+                    System.Diagnostics.Debug.Assert(TypeLocs[(int)id0].Type == 1); // BAR
+                    int loc0 = TypeLocs[(int)id0].Loc;
                     System.Diagnostics.Debug.Assert(loc0 == (int)iBarArray);
                     System.Diagnostics.Debug.Assert(BarArrays.Count > loc0);
                     MeshBarArray bar0 = BarArrays[(int)loc0];
@@ -1812,10 +1806,9 @@ namespace IvyFEM
                     {
                         maxId = id0;
                     }
-                    System.Diagnostics.Debug.Assert(Types.Count > id0);
-                    System.Diagnostics.Debug.Assert(Types[(int)id0] == 2);
-                    System.Diagnostics.Debug.Assert(Locs.Count > id0);
-                    int loc0 = Locs[(int)id0];
+                    System.Diagnostics.Debug.Assert(TypeLocs.Count > id0);
+                    System.Diagnostics.Debug.Assert(TypeLocs[(int)id0].Type == 2); // TRI
+                    int loc0 = TypeLocs[(int)id0].Loc;
                     System.Diagnostics.Debug.Assert(loc0 == (int)iTriArray);
                     System.Diagnostics.Debug.Assert(TriArrays.Count > loc0);
                     MeshTriArray2D tri0 = TriArrays[(int)loc0];
@@ -1828,10 +1821,9 @@ namespace IvyFEM
                     {
                         maxId = id0;
                     }
-                    System.Diagnostics.Debug.Assert(Types.Count > id0);
-                    System.Diagnostics.Debug.Assert(Types[(int)id0] == 3);
-                    System.Diagnostics.Debug.Assert(Locs.Count > id0);
-                    int loc0 = Locs[(int)id0];
+                    System.Diagnostics.Debug.Assert(TypeLocs.Count > id0);
+                    System.Diagnostics.Debug.Assert(TypeLocs[(int)id0].Type == 3); // QUAD
+                    int loc0 = TypeLocs[(int)id0].Loc;
                     System.Diagnostics.Debug.Assert(loc0 == (int)iQuadArray);
                     System.Diagnostics.Debug.Assert(QuadArrays.Count > loc0);
                     MeshQuadArray2D quad0 = QuadArrays[loc0];
@@ -1873,13 +1865,13 @@ namespace IvyFEM
                 System.Diagnostics.Debug.Assert(IsId(TriArrays[(int)iTriArray].Id));
             }
             {
-                for (uint index = 0; index < Locs.Count; index++)
+                for (uint index = 0; index < TypeLocs.Count; index++)
                 {
-                    if (Locs[(int)index] == -1)
+                    if (TypeLocs[(int)index].Loc == -1)
                     {
                         continue;
                     }
-                    System.Diagnostics.Debug.Assert(Locs[(int)index] >= 0);
+                    System.Diagnostics.Debug.Assert(TypeLocs[(int)index].Loc >= 0);
                     System.Diagnostics.Debug.Assert(IsId(index));
                 }
             }
@@ -1887,7 +1879,7 @@ namespace IvyFEM
             for (uint iBarArray = 0; iBarArray < BarArrays.Count; iBarArray++)
             {
                 uint barMeshId = BarArrays[(int)iBarArray].Id;
-                int barLoc = Locs[(int)barMeshId];
+                int barLoc = TypeLocs[(int)barMeshId].Loc;
                 IList<MeshBar> bars = BarArrays[barLoc].Bars;
                 for (uint iSideBar = 0; iSideBar < 2; iSideBar++)
                 {
@@ -1896,9 +1888,9 @@ namespace IvyFEM
                     {
                         continue;  // 外部と接している場合
                     }
-                    System.Diagnostics.Debug.Assert(meshAdjId < Locs.Count);
-                    int adjLoc = Locs[meshAdjId];
-                    if (Types[meshAdjId] == 2)
+                    System.Diagnostics.Debug.Assert(meshAdjId < TypeLocs.Count);
+                    int adjLoc = TypeLocs[meshAdjId].Loc;
+                    if (TypeLocs[meshAdjId].Type == 2)
                     {
                         // 三角形と接している場合
                         IList<MeshTri2D> tris = TriArrays[adjLoc].Tris;
@@ -1918,18 +1910,17 @@ namespace IvyFEM
 
         private void MakeIncludeRelation(CadObject2D cad2D)
         {
-            IncludeRelations.Clear();
-
-            if (Locs.Count == 0 || Types.Count == 0)
+            if (TypeLocs.Count == 0)
             {
                 return;
             }
 
-            uint maxId = FindMaxId();
-            for (int i = 0; i < maxId + 1; i++)
+            System.Diagnostics.Debug.Assert(FindMaxId() + 1 == TypeLocs.Count);
+            foreach (var typeLoc in TypeLocs)
             {
-                IncludeRelations.Add(new List<uint>());
+                typeLoc.IncludeRelations.Clear();
             }
+
             IList<uint> lIds = cad2D.GetElemIds(CadElementType.Loop);
             for (uint iLId = 0; iLId < lIds.Count; iLId++)
             {
@@ -1946,7 +1937,7 @@ namespace IvyFEM
                     {
                         uint vCadId = itrL.GetVertexId();
                         uint meshVId = GetIdFromCadId(vCadId, CadElementType.Vertex);
-                        IncludeRelations[(int)triId].Add(meshVId);
+                        TypeLocs[(int)triId].IncludeRelations.Add(meshVId);
                         System.Diagnostics.Debug.Assert(IsId(meshVId));
 
                         uint eId;
@@ -1957,7 +1948,7 @@ namespace IvyFEM
                         }
                         uint barId = GetIdFromCadId(eId, CadElementType.Edge);
                         System.Diagnostics.Debug.Assert(IsId(barId));
-                        IncludeRelations[(int)triId].Add(barId);
+                        TypeLocs[(int)triId].IncludeRelations.Add(barId);
                     }
                     if (!itrL.ShiftChildLoop())
                     {
@@ -1987,8 +1978,8 @@ namespace IvyFEM
                 uint meshEVId = GetIdFromCadId(eVId, CadElementType.Vertex);
                 System.Diagnostics.Debug.Assert(IsId(meshSVId));
                 System.Diagnostics.Debug.Assert(IsId(meshEVId));
-                IncludeRelations[(int)barId].Add(meshSVId);
-                IncludeRelations[(int)barId].Add(meshEVId);
+                TypeLocs[(int)barId].IncludeRelations.Add(meshSVId);
+                TypeLocs[(int)barId].IncludeRelations.Add(meshEVId);
             }
         }
 
@@ -2063,18 +2054,14 @@ namespace IvyFEM
 
                     }
                     {
-                        int locCnt = Locs.Count;
-                        for (int iTmp = locCnt; iTmp < addId + 1; iTmp++)
+                        int typeLocCnt = TypeLocs.Count;
+                        for (int iTmp = typeLocCnt; iTmp < addId + 1; iTmp++)
                         {
-                            Locs.Add(-1);
+                            var typeLoc = new MeshTypeLoc { Type = 0, Loc = -1 };
+                            TypeLocs.Add(typeLoc);
                         }
-                        int typeCnt = Types.Count;
-                        for (int iTmp = typeCnt; iTmp < addId + 1; iTmp++)
-                        {
-                            Types.Add(0);
-                        }
-                        Locs[(int)addId] = Vertexs.Count - 1;
-                        Types[(int)addId] = 0;
+                        TypeLocs[(int)addId].Loc = Vertexs.Count - 1;
+                        TypeLocs[(int)addId].Type = 0; // VERTEX
                     }
                 }
                 System.Diagnostics.Debug.Assert(CheckMesh() == 0);
@@ -2170,18 +2157,14 @@ namespace IvyFEM
                 BarArrays.Add(new MeshBarArray());
             }
             {
-                int locCnt = Locs.Count;
-                for (int i = locCnt; i < newElemId + 1; i++)
+                int typeLocCnt = TypeLocs.Count;
+                for (int i = typeLocCnt; i < newElemId + 1; i++)
                 {
-                    Locs.Add(-1);
+                    var typeLoc = new MeshTypeLoc { Type = 0, Loc = -1 };
+                    TypeLocs.Add(typeLoc);
                 }
-                int typeCnt = Types.Count;
-                for (int i = typeCnt; i < newElemId + 1; i++)
-                {
-                    Types.Add(0);
-                }
-                Locs[(int)newElemId] = (int)iBarArray0;
-                Types[(int)newElemId] = 1;
+                TypeLocs[(int)newElemId].Loc = (int)iBarArray0;
+                TypeLocs[(int)newElemId].Type = 1; // BAR
             }
             MeshBarArray barArray = BarArrays[(int)iBarArray0];
             IList<OpenTK.Vector2d> pts;
@@ -2499,10 +2482,9 @@ namespace IvyFEM
                         }
                         uint id0 = (uint)tris[(int)iTri].G2[iFaTri];
                         uint ele0 = tris[(int)iTri].S2[iFaTri];
-                        System.Diagnostics.Debug.Assert(id0 < Types.Count);
-                        uint type0 = (uint)Types[(int)id0];
-                        System.Diagnostics.Debug.Assert(id0 < Locs.Count);
-                        int loc0 = Locs[(int)id0];
+                        System.Diagnostics.Debug.Assert(id0 < TypeLocs.Count);
+                        uint type0 = (uint)TypeLocs[(int)id0].Type;
+                        int loc0 = TypeLocs[(int)id0].Loc;
                         if (type0 == 1)
                         {
                             System.Diagnostics.Debug.Assert(loc0 < BarArrays.Count);

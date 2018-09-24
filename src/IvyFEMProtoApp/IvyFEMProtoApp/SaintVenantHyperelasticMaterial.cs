@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace IvyFEM
 {
-    class SaintVenantHyperelasticMaterial : ElasticBaseMaterial
+    class SaintVenantHyperelasticMaterial : ElasticLameBaseMaterial
     {
         public SaintVenantHyperelasticMaterial() : base()
         {
-            MaterialType = MaterialType.SaintVenantHyperelastic;
+
         }
     }
 }

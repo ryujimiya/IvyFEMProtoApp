@@ -10,6 +10,7 @@ namespace IvyFEM
     {
         public FieldValueType Type { get; set; } = FieldValueType.NoValue;
         public FieldDerivationType DerivationType { get; set; } = 0;
+        public uint QuantityId { get; set; } = 0;
         public uint Dof { get; set; } = 1;
         public bool IsBubble { get; set; } = false;
         public FieldShowType ShowType { get; set; } = FieldShowType.Real;
@@ -32,6 +33,7 @@ namespace IvyFEM
             FieldValue srcFV = src as FieldValue;
             Type = srcFV.Type;
             DerivationType = srcFV.DerivationType;
+            QuantityId = srcFV.QuantityId;
             Dof = srcFV.Dof;
             IsBubble = srcFV.IsBubble;
             ShowType = srcFV.ShowType;
