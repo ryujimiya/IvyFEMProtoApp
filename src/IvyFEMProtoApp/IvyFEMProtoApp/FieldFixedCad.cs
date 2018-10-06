@@ -13,7 +13,15 @@ namespace IvyFEM
         public FieldValueType ValueType { get; private set; } = FieldValueType.NoValue;
         public uint QuantityId { get; set; } = 0;
         public uint DofIndex { get; private set; } = 0;
-        public double Value { get; set; } = 0;
+        public double DoubleValue
+        {
+            get => ComplexValue.Real;
+            set
+            {
+                ComplexValue = value;
+            }
+        }
+        public System.Numerics.Complex ComplexValue { get; set; } = 0;
 
         public FieldFixedCad()
         {
@@ -21,14 +29,14 @@ namespace IvyFEM
         }
 
         public FieldFixedCad(uint cadId, CadElementType cadElemType,
-            FieldValueType valueType, uint quantityId, uint iDof, double value)
+            FieldValueType valueType, uint quantityId, uint iDof, System.Numerics.Complex value)
         {
             CadId = cadId;
             CadElemType = cadElemType;
             ValueType = valueType;
             QuantityId = quantityId;
             DofIndex = iDof;
-            Value = value;
+            ComplexValue = value;
         }
 
         public FieldFixedCad(FieldFixedCad src)
@@ -38,7 +46,7 @@ namespace IvyFEM
             ValueType = src.ValueType;
             QuantityId = src.QuantityId;
             DofIndex = src.DofIndex;
-            Value = src.Value;
+            ComplexValue = src.ComplexValue;
         }
 
         public IList<int> GetCoordIds(FEWorld world)

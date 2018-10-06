@@ -145,47 +145,11 @@ namespace IvyFEM.Lapack
             // subdia長さ、superdia長さを取得する
             int subdiaLength = 0;
             int superdiaLength = 0;
-            for (int c = 0; c < rowColLength; c++)
             {
-                if (c < rowColLength - 1)
-                {
-                    int cnt = 0;
-                    for (int r = rowColLength - 1; r >= c + 1; r--)
-                    {
-                        // 非０要素が見つかったら抜ける
-                        // Note: Magnitue >= 0
-                        if (sparseM[r, c].Magnitude >= IvyFEM.Constants.PrecisionLowerLimit)
-                        {
-                            cnt = r - c;
-                            break;
-                        }
-                    }
-                    if (cnt > subdiaLength)
-                    {
-                        subdiaLength = cnt;
-                    }
-                }
-                if (c > 0)
-                {
-                    int cnt = 0;
-                    for (int r = 0; r <= c - 1; r++)
-                    {
-                        // 非０要素が見つかったら抜ける
-                        // Note: Magnitue >= 0
-                        if (sparseM[r, c].Magnitude >= IvyFEM.Constants.PrecisionLowerLimit)
-                        {
-                            cnt = c - r;
-                            break;
-                        }
-                    }
-                    if (cnt > superdiaLength)
-                    {
-                        superdiaLength = cnt;
-                    }
-                }
+                int tmpRowColLength = 0;
+                IvyFEM.Linear.Utils.GetComplexSparseMatrixSubDiaSuperDia(
+                    sparseM, out tmpRowColLength, out subdiaLength, out superdiaLength);
             }
-            System.Diagnostics.Debug.WriteLine("rowcolLength: {0} subdiaLength: {1} superdiaLength: {2}",
-                rowColLength, subdiaLength, superdiaLength);
 
             // バッファの確保
             m.Resize(rowColLength, subdiaLength, superdiaLength);
@@ -212,6 +176,8 @@ namespace IvyFEM.Lapack
                     }
                 }
             }
+            System.Diagnostics.Debug.WriteLine("cast to band matrix: rowcolLength: {0} subdiaLength: {1} superdiaLength: {2}",
+                rowColLength, subdiaLength, superdiaLength);
             return m;
         }
 
@@ -345,7 +311,7 @@ namespace IvyFEM.Lapack
         public void Zero()
         {
             int size = Buffer.Length;
-            for (int i = 0; i < size; ++i)
+            for (int i = 0; i < size; i++)
             {
                 Buffer[i] = (System.Numerics.Complex)0;
             }
@@ -354,7 +320,7 @@ namespace IvyFEM.Lapack
         public void Identity()
         {
             Zero();
-            for (int i = 0; i < RowLength; ++i)
+            for (int i = 0; i < RowLength; i++)
             {
                 this[i, i] = (System.Numerics.Complex)1;
             }

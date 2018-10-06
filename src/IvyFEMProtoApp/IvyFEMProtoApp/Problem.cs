@@ -358,7 +358,7 @@ namespace IvyFEMProtoApp
             world.Mesh = mesher2D;
             uint quantityId;
             {
-                uint dof = 2; // 複素数
+                uint dof = 1; // 複素数
                 uint feOrder = 1;
                 quantityId = world.AddQuantity(dof, feOrder);
             }
@@ -400,7 +400,7 @@ namespace IvyFEMProtoApp
             zeroFixedCads.Clear();
             foreach (uint eId in zeroEIds)
             {
-                uint dof = 2; // 複素数
+                uint dof = 1; // 複素数
                 double value = 0;
                 var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.ZScalar,
                     quantityId, dof, value);
@@ -452,10 +452,10 @@ namespace IvyFEMProtoApp
             uint valueId = 0;
             var fieldDrawerArray = mainWindow.FieldDrawerArray;
             {
-                uint dof = 2; // 複素数
+                uint dof = 1; // 複素数
                 world.ClearFieldValue();
                 valueId = world.AddFieldValue(FieldValueType.ZScalar, FieldDerivationType.Value,
-                    quantityId, dof, false, FieldShowType.Abs);
+                    quantityId, dof, false, FieldShowType.ZAbs);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
                 IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivationType.Value, true, world,
@@ -590,7 +590,7 @@ namespace IvyFEMProtoApp
             {
                 uint dof = 2; // Vector2
                 double value = 0;
-                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.ZScalar,
+                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Vector2,
                     quantityId, dof, value);
                 zeroFixedCads.Add(fixedCad);
             }
@@ -666,8 +666,8 @@ namespace IvyFEMProtoApp
             double dt = 0.05;
             for (int iTime = 0; iTime <= 200; iTime++)
             {
-                fixedCadX.Value = 0;
-                fixedCadY.Value = Math.Sin(t * 2.0 * Math.PI * 0.1);
+                fixedCadX.DoubleValue = 0;
+                fixedCadY.DoubleValue = Math.Sin(t * 2.0 * Math.PI * 0.1);
 
                 var FEM = new Elastic2DFEM(world);
                 {
@@ -766,7 +766,7 @@ namespace IvyFEMProtoApp
             {
                 uint dof = 2; // Vector2
                 double value = 0;
-                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.ZScalar,
+                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Vector2,
                     quantityId, dof, value);
                 zeroFixedCads.Add(fixedCad);
             }
@@ -827,8 +827,8 @@ namespace IvyFEMProtoApp
             double newmarkGamma = 1.0 / 2.0;
             for (int iTime = 0; iTime <= 400; iTime++)
             {
-                fixedCadX.Value = 0;
-                fixedCadY.Value = Math.Sin(t * 2.0 * Math.PI * 0.1);
+                fixedCadX.DoubleValue = 0;
+                fixedCadY.DoubleValue = Math.Sin(t * 2.0 * Math.PI * 0.1);
 
                 var FEM = new Elastic2DTDFEM(world, dt,
                     newmarkBeta, newmarkGamma,
@@ -866,7 +866,7 @@ namespace IvyFEMProtoApp
             }
         }
 
-        public void MooneyRivlinHyperelasticProblem(MainWindow mainWindow)
+        public void HyperelasticProblem(MainWindow mainWindow, bool isMooney)
         {
             CadObject2D cad2D = new CadObject2D();
             {
@@ -894,12 +894,40 @@ namespace IvyFEMProtoApp
                 lQuantityId = world.AddQuantity(lDof, lFEOrder);
             }
 
+            if (isMooney)
             {
+                // Mooney-Rivlin
                 world.ClearMaterial();
                 uint maId = 0;
                 var ma = new MooneyRivlinHyperelasticMaterial();
+                ma.IsCompressible = false;
+                //ma.IsCompressible = true;
+                //ma.D1 = 1.0; // 非圧縮性のときは必要なし
                 ma.C1 = 200;
                 ma.C2 = 200;
+                ma.GravityX = 0;
+                ma.GravityY = 0;
+                ma.MassDensity = 1.0;
+                maId = world.AddMaterial(ma);
+
+                uint lId = 1;
+                world.SetCadLoopMaterial(lId, maId);
+            }
+            else
+            {
+                // Odgen
+                world.ClearMaterial();
+                uint maId = 0;
+                var ma = new OgdenHyperelasticMaterial();
+                double[] alphas = { 1.3, 5.0, -2.0 };
+                double[] mus = { 6300e3, 1.2e3, -10e3 };
+                //double[] alphas = { 2.0, -2.0 };
+                //double[] mus = { 400, -400 };
+                System.Diagnostics.Debug.Assert(alphas.Length == mus.Length);
+                ma.IsCompressible = false;
+                //ma.IsCompressible = true;
+                //ma.D1 = 1.0; // 非圧縮性のときは必要なし
+                ma.SetAlphaMu(alphas.Length, alphas, mus);
                 ma.GravityX = 0;
                 ma.GravityY = 0;
                 ma.MassDensity = 1.0;
@@ -916,7 +944,7 @@ namespace IvyFEMProtoApp
             {
                 uint dof = 2; // Vector2
                 double value = 0;
-                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.ZScalar,
+                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Vector2,
                     uQuantityId, dof, value);
                 zeroFixedCads.Add(fixedCad);
             }
@@ -977,31 +1005,64 @@ namespace IvyFEMProtoApp
             double dt = 0.05;
             for (int iTime = 0; iTime <= 200; iTime++)
             {
-                fixedCadX.Value = 0;
-                fixedCadY.Value = Math.Sin(t * 2.0 * Math.PI * 0.1);
+                fixedCadX.DoubleValue = 0;
+                fixedCadY.DoubleValue = Math.Sin(t * 2.0 * Math.PI * 0.1);
 
-                var FEM = new MooneyRivlinHyperelastic2DFEM(world);
+                var FEM = new Hyperelastic2DFEM(world);
+                if (isMooney)
                 {
-                    //var solver = new IvyFEM.Linear.LapackEquationSolver();
-                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
-                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
-                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
-                    //FEM.Solver = solver;
+                    // Mooney-Rivlin
+                    {
+                        //var solver = new IvyFEM.Linear.LapackEquationSolver();
+                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
+                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
+                        //solver.IsOrderingToBandMatrix = true;
+                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
+                        //FEM.Solver = solver;
+                    }
+                    {
+                        //var solver = new IvyFEM.Linear.LisEquationSolver();
+                        //solver.Method = IvyFEM.Linear.LisEquationSolverMethod.Default;
+                        //FEM.Solver = solver;
+                    }
+                    {
+                        var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
+                        solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
+                        //solver.ConvRatioTolerance = 1.0e-14;
+                        FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-10;
+                        FEM.Solver = solver;
+                    }
                 }
+                else
                 {
-                    //var solver = new IvyFEM.Linear.LisEquationSolver();
-                    //solver.Method = IvyFEM.Linear.LisEquationSolverMethod.Default;
-                    //FEM.Solver = solver;
-                }
-                {
-                    var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
-                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
-                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
-                    solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
-                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
-                    //solver.ConvRatioTolerance = 1.0e-14;
-                    FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-10;
-                    FEM.Solver = solver;
+                    // Ogden
+                    {
+                        var solver = new IvyFEM.Linear.LapackEquationSolver();
+                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
+                        solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
+                        solver.IsOrderingToBandMatrix = true;
+                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
+                        FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-10;
+                        FEM.Solver = solver;
+                    }
+                    {
+                        //var solver = new IvyFEM.Linear.LisEquationSolver();
+                        //solver.Method = IvyFEM.Linear.LisEquationSolverMethod.Default;
+                        //FEM.Solver = solver;
+                    }
+                    {
+                        //var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
+                        //solver.ConvRatioTolerance = 1.0e-14;
+                        //FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-10;
+                        //FEM.Solver = solver;
+                    }
                 }
                 FEM.Solve();
                 double[] U = FEM.U;
@@ -1016,7 +1077,7 @@ namespace IvyFEMProtoApp
             }
         }
 
-        public void MooneyRivlinHyperelasticTDProblem(MainWindow mainWindow)
+        public void HyperelasticTDProblem(MainWindow mainWindow, bool isMooney)
         {
             CadObject2D cad2D = new CadObject2D();
             {
@@ -1044,12 +1105,40 @@ namespace IvyFEMProtoApp
                 lQuantityId = world.AddQuantity(lDof, lFEOrder);
             }
 
+            if (isMooney)
             {
+                // Mooney-Rivlin
                 world.ClearMaterial();
                 uint maId = 0;
                 var ma = new MooneyRivlinHyperelasticMaterial();
+                ma.IsCompressible = false;
+                //ma.IsCompressible = true;
+                //ma.D1 = 1.0; // 非圧縮性のときは必要なし
                 ma.C1 = 200;
                 ma.C2 = 200;
+                ma.GravityX = 0;
+                ma.GravityY = 0;
+                ma.MassDensity = 1.0;
+                maId = world.AddMaterial(ma);
+
+                uint lId = 1;
+                world.SetCadLoopMaterial(lId, maId);
+            }
+            else
+            {
+                // Odgen
+                world.ClearMaterial();
+                uint maId = 0;
+                var ma = new OgdenHyperelasticMaterial();
+                double[] alphas = { 1.3, 5.0, -2.0 };
+                double[] mus = { 6300e3, 1.2e3, -10e3 };
+                //double[] alphas = { 2.0, -2.0 };
+                //double[] mus = { 400, -400 };
+                System.Diagnostics.Debug.Assert(alphas.Length == mus.Length);
+                ma.IsCompressible = false;
+                //ma.IsCompressible = true;
+                //ma.D1 = 1.0; // 非圧縮性のときは必要なし
+                ma.SetAlphaMu(alphas.Length, alphas, mus);
                 ma.GravityX = 0;
                 ma.GravityY = 0;
                 ma.MassDensity = 1.0;
@@ -1066,7 +1155,7 @@ namespace IvyFEMProtoApp
             {
                 uint dof = 2; // Vector2
                 double value = 0;
-                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.ZScalar,
+                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Vector2,
                     uQuantityId, dof, value);
                 zeroFixedCads.Add(fixedCad);
             }
@@ -1134,33 +1223,66 @@ namespace IvyFEMProtoApp
             double newmarkGamma = 1.0 / 2.0;
             for (int iTime = 0; iTime <= 200; iTime++)
             {
-                fixedCadX.Value = 0;
-                fixedCadY.Value = Math.Sin(t * 2.0 * Math.PI * 0.1);
+                fixedCadX.DoubleValue = 0;
+                fixedCadY.DoubleValue = Math.Sin(t * 2.0 * Math.PI * 0.1);
 
-                var FEM = new MooneyRivlinHyperelastic2DTDFEM(world, dt,
+                var FEM = new Hyperelastic2DTDFEM(world, dt,
                     newmarkBeta, newmarkGamma,
                     uValueId, prevUValueId, lValueId);
+                if (isMooney)
                 {
-                    //var solver = new IvyFEM.Linear.LapackEquationSolver();
-                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
-                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
-                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
-                    //FEM.Solver = solver;
+                    // Mooney-Rivlin
+                    {
+                        //var solver = new IvyFEM.Linear.LapackEquationSolver();
+                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
+                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
+                        //solver.IsOrderingToBandMatrix = true;
+                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
+                        //FEM.Solver = solver;
+                    }
+                    {
+                        //var solver = new IvyFEM.Linear.LisEquationSolver();
+                        //solver.Method = IvyFEM.Linear.LisEquationSolverMethod.Default;
+                        //FEM.Solver = solver;
+                    }
+                    {
+                        var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
+                        solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
+                        //solver.ConvRatioTolerance = 1.0e-14;
+                        FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-10;
+                        FEM.Solver = solver;
+                    }
                 }
+                else
                 {
-                    //var solver = new IvyFEM.Linear.LisEquationSolver();
-                    //solver.Method = IvyFEM.Linear.LisEquationSolverMethod.Default;
-                    //FEM.Solver = solver;
-                }
-                {
-                    var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
-                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
-                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
-                    solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
-                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
-                    //solver.ConvRatioTolerance = 1.0e-14;
-                    FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-10;
-                    FEM.Solver = solver;
+                    // Ogden
+                    {
+                        var solver = new IvyFEM.Linear.LapackEquationSolver();
+                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
+                        solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
+                        solver.IsOrderingToBandMatrix = true;
+                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
+                        FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-10;
+                        FEM.Solver = solver;
+                    }
+                    {
+                        //var solver = new IvyFEM.Linear.LisEquationSolver();
+                        //solver.Method = IvyFEM.Linear.LisEquationSolverMethod.Default;
+                        //FEM.Solver = solver;
+                    }
+                    {
+                        //var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
+                        //solver.ConvRatioTolerance = 1.0e-14;
+                        //FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-10;
+                        //FEM.Solver = solver;
+                    }
                 }
                 FEM.Solve();
                 //double[] U = FEM.U;

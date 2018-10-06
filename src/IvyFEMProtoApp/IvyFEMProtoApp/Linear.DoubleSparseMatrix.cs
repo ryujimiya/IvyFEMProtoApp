@@ -137,7 +137,7 @@ namespace IvyFEM.Linear
         public void Identity()
         {
             Zero();
-            for (int i = 0; i < RowLength; ++i)
+            for (int i = 0; i < RowLength; i++)
             {
                 this[i, i] = 1;
             }

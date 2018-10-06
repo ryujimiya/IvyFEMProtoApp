@@ -321,12 +321,26 @@ namespace IvyFEMProtoApp
 
         private void mooneyRivlinHyperelasticBtn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.MooneyRivlinHyperelasticProblem(this);
+            bool isMooney = true;
+            Problem.HyperelasticProblem(this, isMooney);
         }
 
         private void mooneyRivlinHyperelasticTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.MooneyRivlinHyperelasticTDProblem(this);
+            bool isMooney = true;
+            Problem.HyperelasticTDProblem(this, isMooney);
+        }
+
+        private void ogdenHyperelasticBtn_Click(object sender, RoutedEventArgs e)
+        {
+            bool isMooney = false; // Ogden
+            Problem.HyperelasticProblem(this, isMooney);
+        }
+
+        private void ogdenHyperelasticTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            bool isMooney = false; // Ogden
+            Problem.HyperelasticTDProblem(this, isMooney);
         }
     }
 }

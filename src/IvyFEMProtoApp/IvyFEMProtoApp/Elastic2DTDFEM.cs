@@ -58,12 +58,12 @@ namespace IvyFEM
 
             World.UpdateFieldValueValuesFromNodeValues(ValueId, FieldDerivationType.Value, U);
 
-            double[] u = FV.GetValues(FieldDerivationType.Value);
-            double[] vel = FV.GetValues(FieldDerivationType.Velocity);
-            double[] acc = FV.GetValues(FieldDerivationType.Acceleration);
-            double[] prevU = prevFV.GetValues(FieldDerivationType.Value);
-            double[] prevVel = prevFV.GetValues(FieldDerivationType.Velocity);
-            double[] prevAcc = prevFV.GetValues(FieldDerivationType.Acceleration);
+            double[] u = FV.GetDoubleValues(FieldDerivationType.Value);
+            double[] vel = FV.GetDoubleValues(FieldDerivationType.Velocity);
+            double[] acc = FV.GetDoubleValues(FieldDerivationType.Acceleration);
+            double[] prevU = prevFV.GetDoubleValues(FieldDerivationType.Value);
+            double[] prevVel = prevFV.GetDoubleValues(FieldDerivationType.Velocity);
+            double[] prevAcc = prevFV.GetDoubleValues(FieldDerivationType.Acceleration);
 
             uint coCnt = FV.GetPointCount();
             uint quantityId = FV.QuantityId;

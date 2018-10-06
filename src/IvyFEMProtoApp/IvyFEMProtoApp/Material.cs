@@ -9,6 +9,7 @@ namespace IvyFEM
     class Material : IObject
     {
         public double[] Values { get; protected set; } = null;
+        public int[] IntValues { get; protected set; } = null;
 
         public Material()
         {
@@ -28,6 +29,12 @@ namespace IvyFEM
             {
                 Values = new double[srcMa.Values.Length];
                 srcMa.Values.CopyTo(Values, 0);
+            }
+            IntValues = null;
+            if (srcMa.IntValues != null)
+            {
+                IntValues = new int[srcMa.IntValues.Length];
+                srcMa.IntValues.CopyTo(IntValues, 0);
             }
         }
 

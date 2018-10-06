@@ -27,6 +27,8 @@
                     <MenuItem Header="Saint Venant Time Domain" Click="saintVenantHyperelasticTimeDomainBtn_Click"/>
                     <MenuItem Header="Mooney-Rivlin" Click="mooneyRivlinHyperelasticBtn_Click"/>
                     <MenuItem Header="Mooney-Rivlin Time Domain" Click="mooneyRivlinHyperelasticTDBtn_Click"/>
+                    <MenuItem Header="Ogden" Click="ogdenHyperelasticBtn_Click"/>
+                    <MenuItem Header="Ogden Time Domain" Click="ogdenHyperelasticTDBtn_Click"/>
                 </MenuItem>
             </Menu>
             <Grid>

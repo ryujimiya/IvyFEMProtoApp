@@ -9,6 +9,7 @@ namespace IvyFEM.Linear
     class LapackEquationSolver : IEquationSolver
     {
         public LapackEquationSolverMethod Method { get; set; } = LapackEquationSolverMethod.Default;
+        public bool IsOrderingToBandMatrix { get; set; } = false;
 
         public bool DoubleSolve(out double[] X, DoubleSparseMatrix A, double[] B)
         {
@@ -105,6 +106,46 @@ namespace IvyFEM.Linear
         // band
         private bool DoubleBandSolve(out double[] X, DoubleSparseMatrix A, double[] B)
         {
+            X = null;
+            DoubleSparseMatrix AToSolve;
+            double[] BToSolve;
+            int[] indexs;
+            if (IsOrderingToBandMatrix)
+            {
+                bool successOrder = IvyFEM.Linear.Utils.OrderToDoubleBandMatrix(
+                    out AToSolve, out BToSolve, out indexs, A, B);
+                System.Diagnostics.Debug.Assert(successOrder);
+                if (!successOrder)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                AToSolve = A;
+                BToSolve = B;
+                indexs = null;
+            }
+
+            double[] XToSolve;
+            bool success = __DoubleBandSolve(out XToSolve, AToSolve, BToSolve);
+            if (IsOrderingToBandMatrix)
+            {
+                X = new double[XToSolve.Length];
+                for (int row = 0; row < XToSolve.Length; row++)
+                {
+                    X[indexs[row]] = XToSolve[row];
+                }
+            }
+            else
+            {
+                X = XToSolve;
+            }
+            return success;
+        }
+
+        private bool __DoubleBandSolve(out double[] X, DoubleSparseMatrix A, double[] B)
+        {
             bool success = false;
             IvyFEM.Lapack.DoubleBandMatrix bandA = (IvyFEM.Lapack.DoubleBandMatrix)A;
             A = null;
@@ -119,7 +160,49 @@ namespace IvyFEM.Linear
             return success;
         }
 
+
         private bool ComplexBandSolve(
+            out System.Numerics.Complex[] X, ComplexSparseMatrix A, System.Numerics.Complex[] B)
+        {
+            X = null;
+            ComplexSparseMatrix AToSolve;
+            System.Numerics.Complex[] BToSolve;
+            int[] indexs;
+            if (IsOrderingToBandMatrix)
+            {
+                bool successOrder = IvyFEM.Linear.Utils.OrderToComplexBandMatrix(
+                    out AToSolve, out BToSolve, out indexs, A, B);
+                System.Diagnostics.Debug.Assert(successOrder);
+                if (!successOrder)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                AToSolve = A;
+                BToSolve = B;
+                indexs = null;
+            }
+
+            System.Numerics.Complex[] XToSolve;
+            bool success = __ComplexBandSolve(out XToSolve, AToSolve, BToSolve);
+            if (IsOrderingToBandMatrix)
+            {
+                X = new System.Numerics.Complex[XToSolve.Length];
+                for (int row = 0; row < XToSolve.Length; row++)
+                {
+                    X[indexs[row]] = XToSolve[row];
+                }
+            }
+            else
+            {
+                X = XToSolve;
+            }
+            return success;
+        }
+
+        private bool __ComplexBandSolve(
             out System.Numerics.Complex[] X, ComplexSparseMatrix A, System.Numerics.Complex[] B)
         {
             bool success = false;

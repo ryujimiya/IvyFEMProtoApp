@@ -137,7 +137,7 @@ namespace IvyFEM.Linear
         public void Identity()
         {
             Zero();
-            for (int i = 0; i < RowLength; ++i)
+            for (int i = 0; i < RowLength; i++)
             {
                 this[i, i] = 1;
             }
@@ -188,6 +188,22 @@ namespace IvyFEM.Linear
         }
 
         public static System.Numerics.Complex[] operator *(ComplexSparseMatrix A, System.Numerics.Complex[] b)
+        {
+            System.Numerics.Complex[] c = new System.Numerics.Complex[A.RowLength];
+            for (int row = 0; row < A.RowLength; row++)
+            {
+                var colIndexValues = A.RowColIndexValues[row];
+                foreach (var pair in colIndexValues)
+                {
+                    int col = pair.Key;
+                    System.Numerics.Complex value = pair.Value;
+                    c[row] += value * b[col];
+                }
+            }
+            return c;
+        }
+
+        public static System.Numerics.Complex[] operator *(ComplexSparseMatrix A, double[] b)
         {
             System.Numerics.Complex[] c = new System.Numerics.Complex[A.RowLength];
             for (int row = 0; row < A.RowLength; row++)

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IvyFEM
 {
-    delegate void CalcElementAB(
+    delegate void CalcElementDoubleAB(
         uint feId, IvyFEM.Linear.DoubleSparseMatrix A, double[] B);
 
     abstract class Elastic2DBaseFEM : FEM
@@ -38,7 +38,7 @@ namespace IvyFEM
             = 1.0e+2 * IvyFEM.Linear.Constants.ConvRatioTolerance; // 収束しないので収束条件を緩めている
 
         // Calc Matrix
-        protected IList<CalcElementAB> CalcElementABs { get; set; } = new List<CalcElementAB>();
+        protected IList<CalcElementDoubleAB> CalcElementABs { get; set; } = new List<CalcElementDoubleAB>();
 
         //Solve
         // Output
@@ -226,7 +226,7 @@ namespace IvyFEM
                 for (int iNode = 0; iNode < coIds.Length; iNode++)
                 {
                     int coId = coIds[iNode];
-                    double[] u = uFV.GetValue(coId, FieldDerivationType.Value);
+                    double[] u = uFV.GetDoubleValue(coId, FieldDerivationType.Value);
                     uu[0] += u[0] * Nx[iNode];
                     uu[1] += u[1] * Nx[iNode];
                     uu[2] += u[0] * Ny[iNode];
@@ -269,7 +269,7 @@ namespace IvyFEM
 
                 if (stressValueId != 0)
                 {
-                    double[] Sigma = sigmaFV.GetValues(FieldDerivationType.Value);
+                    double[] Sigma = sigmaFV.GetDoubleValues(FieldDerivationType.Value);
                     uint dof = sigmaFV.Dof;
                     Sigma[(feId - 1) * dof + 0] = sigma[0]; // σxx
                     Sigma[(feId - 1) * dof + 1] = sigma[3]; // σyy
@@ -277,11 +277,10 @@ namespace IvyFEM
                 }
                 if (equivStressValueId != 0)
                 {
-                    double[] EqSigma = eqSigmaFV.GetValues(FieldDerivationType.Value);
+                    double[] EqSigma = eqSigmaFV.GetDoubleValues(FieldDerivationType.Value);
                     EqSigma[feId - 1] = misesStress;
                 }
             }
         }
-
     }
 }

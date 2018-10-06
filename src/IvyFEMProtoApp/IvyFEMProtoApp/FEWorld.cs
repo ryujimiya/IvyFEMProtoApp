@@ -385,7 +385,7 @@ namespace IvyFEM
             uint quantityId = fv.QuantityId;
             uint dof = fv.Dof;
             System.Diagnostics.Debug.Assert(fv.Dof == GetDof(quantityId));
-            double[] values = fv.GetValues(dt);
+            double[] values = fv.GetDoubleValues(dt);
             uint coCnt = GetCoordCount(quantityId);
             uint offsetNode = 0;
             for (uint qId = 0; qId < quantityId; qId++)
@@ -421,13 +421,12 @@ namespace IvyFEM
             uint quantityId = fv.QuantityId;
             uint dof = fv.Dof;
             System.Diagnostics.Debug.Assert(fv.Dof == GetDof(quantityId));
-            System.Diagnostics.Debug.Assert(dof == 2);
-            double[] values = fv.GetValues(dt);
+            System.Numerics.Complex[] values = fv.GetComplexValues(dt);
             uint coCnt = GetCoordCount(quantityId);
-            uint offset = 0;
+            uint offsetNode = 0;
             for (uint qId = 0; qId < quantityId; qId++)
             {
-                offset += GetCoordCount(qId) * GetDof(qId);
+                offsetNode += GetNodeCount(qId) * GetDof(qId);
             }
             for (int coId = 0; coId < coCnt; coId++)
             {
@@ -436,14 +435,15 @@ namespace IvyFEM
                 {
                     for (int iDof = 0; iDof < dof; iDof++)
                     {
-                        values[offset + coId * dof + iDof] = 0;
+                        values[coId * dof + iDof] = 0;
                     }
                 }
                 else
                 {
-                    System.Numerics.Complex cValue = nodeValues[nodeId];
-                    values[coId * dof + 0] = cValue.Real;
-                    values[coId * dof + 1] = cValue.Imaginary;
+                    for (int iDof = 0; iDof < dof; iDof++)
+                    {
+                        values[coId * dof + iDof] = nodeValues[offsetNode + nodeId * dof + iDof];
+                    }
                 }
             }
         }

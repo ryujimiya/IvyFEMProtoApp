@@ -285,7 +285,7 @@ namespace IvyFEM.Lapack
         public void Zero()
         {
             int size = Buffer.Length;
-            for (int i = 0; i < size; ++i)
+            for (int i = 0; i < size; i++)
             {
                 Buffer[i] = 0;
             }
@@ -294,7 +294,7 @@ namespace IvyFEM.Lapack
         public void Identity()
         {
             Zero();
-            for (int i = 0; i < RowLength; ++i)
+            for (int i = 0; i < RowLength; i++)
             {
                 this[i, i] = 1;
             }

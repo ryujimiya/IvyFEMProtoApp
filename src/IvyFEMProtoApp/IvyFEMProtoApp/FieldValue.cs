@@ -14,9 +14,12 @@ namespace IvyFEM
         public uint Dof { get; set; } = 1;
         public bool IsBubble { get; set; } = false;
         public FieldShowType ShowType { get; set; } = FieldShowType.Real;
-        public double[] Values { get; set; } = null;
-        public double[] VelocityValues { get; set; } = null;
-        public double[] AccelerationValues { get; set; } = null;
+        public double[] DoubleValues { get; set; } = null;
+        public double[] DoubleVelocityValues { get; set; } = null;
+        public double[] DoubleAccelerationValues { get; set; } = null;
+        public System.Numerics.Complex[] ComplexValues { get; set; } = null;
+        public System.Numerics.Complex[] ComplexVelocityValues { get; set; } = null;
+        public System.Numerics.Complex[] ComplexAccelerationValues { get; set; } = null;
 
         public FieldValue()
         {
@@ -42,66 +45,117 @@ namespace IvyFEM
 
         public void CopyValues(FieldValue src)
         {
-            Values = null;
-            if (src.Values != null)
+            DoubleValues = null;
+            if (src.DoubleValues != null)
             {
-                Values = new double[src.Values.Length];
-                src.Values.CopyTo(Values, 0);
+                DoubleValues = new double[src.DoubleValues.Length];
+                src.DoubleValues.CopyTo(DoubleValues, 0);
             }
-            VelocityValues = null;
-            if (src.VelocityValues != null)
+            DoubleVelocityValues = null;
+            if (src.DoubleVelocityValues != null)
             {
-                VelocityValues = new double[src.VelocityValues.Length];
-                src.VelocityValues.CopyTo(VelocityValues, 0);
+                DoubleVelocityValues = new double[src.DoubleVelocityValues.Length];
+                src.DoubleVelocityValues.CopyTo(DoubleVelocityValues, 0);
             }
-            AccelerationValues = null;
-            if (src.AccelerationValues != null)
+            DoubleAccelerationValues = null;
+            if (src.DoubleAccelerationValues != null)
             {
-                AccelerationValues = new double[src.AccelerationValues.Length];
-                src.AccelerationValues.CopyTo(AccelerationValues, 0);
+                DoubleAccelerationValues = new double[src.DoubleAccelerationValues.Length];
+                src.DoubleAccelerationValues.CopyTo(DoubleAccelerationValues, 0);
+            }
+
+            ComplexValues = null;
+            if (src.ComplexValues != null)
+            {
+                ComplexValues = new System.Numerics.Complex[src.ComplexValues.Length];
+                src.ComplexValues.CopyTo(ComplexValues, 0);
+            }
+            ComplexVelocityValues = null;
+            if (src.ComplexVelocityValues != null)
+            {
+                ComplexVelocityValues = new System.Numerics.Complex[src.ComplexVelocityValues.Length];
+                src.ComplexVelocityValues.CopyTo(ComplexVelocityValues, 0);
+            }
+            ComplexAccelerationValues = null;
+            if (src.ComplexAccelerationValues != null)
+            {
+                ComplexAccelerationValues = new System.Numerics.Complex[src.ComplexAccelerationValues.Length];
+                src.ComplexAccelerationValues.CopyTo(ComplexAccelerationValues, 0);
             }
         }
 
         public void AllocValues(uint dof, uint pointCnt)
         {
             Dof = dof;
-            if (DerivationType.HasFlag(FieldDerivationType.Value))
+            if (Type == FieldValueType.ZScalar)
             {
-                Values = new double[pointCnt * Dof];
+                // complex
+                if (DerivationType.HasFlag(FieldDerivationType.Value))
+                {
+                    ComplexValues = new System.Numerics.Complex[pointCnt * Dof];
+                }
+                if (DerivationType.HasFlag(FieldDerivationType.Velocity))
+                {
+                    ComplexVelocityValues = new System.Numerics.Complex[pointCnt * Dof];
+                }
+                if (DerivationType.HasFlag(FieldDerivationType.Acceleration))
+                {
+                    ComplexAccelerationValues = new System.Numerics.Complex[pointCnt * Dof];
+                }
             }
-            if (DerivationType.HasFlag(FieldDerivationType.Velocity))
+            else
             {
-                VelocityValues = new double[pointCnt * Dof];
-            }
-            if (DerivationType.HasFlag(FieldDerivationType.Acceleration))
-            {
-                AccelerationValues = new double[pointCnt * Dof];
+                // double
+                if (DerivationType.HasFlag(FieldDerivationType.Value))
+                {
+                    DoubleValues = new double[pointCnt * Dof];
+                }
+                if (DerivationType.HasFlag(FieldDerivationType.Velocity))
+                {
+                    DoubleVelocityValues = new double[pointCnt * Dof];
+                }
+                if (DerivationType.HasFlag(FieldDerivationType.Acceleration))
+                {
+                    DoubleAccelerationValues = new double[pointCnt * Dof];
+                }
             }
         }
 
         public uint GetPointCount()
         {
-            if (Values == null)
+            if (Type == FieldValueType.ZScalar)
             {
-                return 0;
+                if (ComplexValues == null)
+                {
+                    return 0;
+                }
+                return (uint)(ComplexValues.Length / Dof);
             }
-            return (uint)(Values.Length / Dof);
+            else
+            {
+                if (DoubleValues == null)
+                {
+                    return 0;
+                }
+                return (uint)(DoubleValues.Length / Dof);
+            }
+            throw new InvalidOperationException();
         }
 
-        public double[] GetValues(FieldDerivationType dt)
+        public double[] GetDoubleValues(FieldDerivationType dt)
         {
             double[] values = null;
-            if (dt.HasFlag(FieldDerivationType.Value) && Values != null)
+            if (dt.HasFlag(FieldDerivationType.Value) && DoubleValues != null)
             {
-                values = Values;
+                values = DoubleValues;
             }
-            else if (dt.HasFlag(FieldDerivationType.Velocity) && VelocityValues != null)
+            else if (dt.HasFlag(FieldDerivationType.Velocity) && DoubleVelocityValues != null)
             {
-                values = VelocityValues;
+                values = DoubleVelocityValues;
             }
-            else if (dt.HasFlag(FieldDerivationType.Acceleration) && AccelerationValues != null)
+            else if (dt.HasFlag(FieldDerivationType.Acceleration) && DoubleAccelerationValues != null)
             {
-                values = AccelerationValues;
+                values = DoubleAccelerationValues;
             }
             else
             {
@@ -110,10 +164,43 @@ namespace IvyFEM
             return values;
         }
 
-        public double[] GetValue(int coId, FieldDerivationType dt)
+        public System.Numerics.Complex[] GetComplexValues(FieldDerivationType dt)
         {
-            double[] values = GetValues(dt);
+            System.Numerics.Complex[] values = null;
+            if (dt.HasFlag(FieldDerivationType.Value) && ComplexValues != null)
+            {
+                values = ComplexValues;
+            }
+            else if (dt.HasFlag(FieldDerivationType.Velocity) && ComplexVelocityValues != null)
+            {
+                values = ComplexVelocityValues;
+            }
+            else if (dt.HasFlag(FieldDerivationType.Acceleration) && ComplexAccelerationValues != null)
+            {
+                values = ComplexAccelerationValues;
+            }
+            else
+            {
+                System.Diagnostics.Debug.Assert(false);
+            }
+            return values;
+        }
+
+        public double[] GetDoubleValue(int coId, FieldDerivationType dt)
+        {
+            double[] values = GetDoubleValues(dt);
             double[] value = new double[Dof];
+            for (int iDof = 0; iDof < Dof; iDof++)
+            {
+                value[iDof] = values[coId * Dof + iDof];
+            }
+            return value;
+        }
+
+        public System.Numerics.Complex[] GetComplexValue(int coId, FieldDerivationType dt)
+        {
+            System.Numerics.Complex[] values = GetComplexValues(dt);
+            System.Numerics.Complex[] value = new System.Numerics.Complex[Dof];
             for (int iDof = 0; iDof < Dof; iDof++)
             {
                 value[iDof] = values[coId * Dof + iDof];
@@ -123,26 +210,38 @@ namespace IvyFEM
 
         public double GetShowValue(int coId, int iDof, FieldDerivationType dt)
         {
-            double[] values = GetValues(dt);
             double value = 0;
             switch(ShowType)
             {
                 case FieldShowType.Real:
-                    value = values[coId * Dof + iDof];
+                    {
+                        double[] values = GetDoubleValues(dt);
+                        value = values[coId * Dof + iDof];
+                    }
                     break;
                 case FieldShowType.Abs:
-                    value = Math.Abs(values[coId * Dof + iDof]);
+                    {
+                        double[] values = GetDoubleValues(dt);
+                        value = Math.Abs(values[coId * Dof + iDof]);
+                    }
                     break;
                 case FieldShowType.ZReal:
-                    value = values[coId * Dof];
+                    {
+                        System.Numerics.Complex[] values = GetComplexValues(dt);
+                        value = values[coId * Dof].Real;
+                    }
                     break;
                 case FieldShowType.ZImaginary:
-                    value = values[coId * Dof + 1];
+                    {
+                        System.Numerics.Complex[] values = GetComplexValues(dt);
+                        value = values[coId * Dof].Imaginary;
+                    }
                     break;
                 case FieldShowType.ZAbs:
-                    System.Numerics.Complex cValue = new System.Numerics.Complex(
-                        values[coId * Dof], Values[coId * Dof + 1]);
-                    value = cValue.Magnitude;
+                    {
+                        System.Numerics.Complex[] values = GetComplexValues(dt);
+                        value = values[coId * Dof].Magnitude;
+                    }
                     break;
             }
             return value;
