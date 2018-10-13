@@ -14,21 +14,37 @@
         </Grid.ColumnDefinitions>
         <DockPanel>
             <Menu RenderTransformOrigin="0.501,-2.5" DockPanel.Dock="Top">
-                <MenuItem Header="Examples">
+                <MenuItem Header="Cad">
                     <MenuItem Header="Cad2D" Click="cad2DBtn_Click"/>
                     <MenuItem Header="Coare Mesh2D" Click="coarseMesh2DBtn_Click"/>
                     <MenuItem Header="Mesh2D" Click="mesh2DBtn_Click"/>
+                </MenuItem>
+                <MenuItem Header="Solver">
                     <MenuItem Header="LAPACK" Click="lapackBtn_Click"/>
                     <MenuItem Header="Lis" Click="lisBtn_Click"/>
+                </MenuItem>
+                <MenuItem Header="ElectroMagnetic">
                     <MenuItem Header="Waveguide" Click="waveguideBtn_Click"/>
+                </MenuItem>
+                <MenuItem Header="Elastic">
                     <MenuItem Header="Elastic" Click="elasticBtn_Click"/>
                     <MenuItem Header="Elastic Time Domain" Click="elasticTDBtn_Click"/>
                     <MenuItem Header="Saint Venant" Click="saintVenantHyperelasticBtn_Click"/>
-                    <MenuItem Header="Saint Venant Time Domain" Click="saintVenantHyperelasticTimeDomainBtn_Click"/>
+                    <MenuItem Header="Saint Venant Time Domain" Click="saintVenantHyperelasticTDBtn_Click"/>
                     <MenuItem Header="Mooney-Rivlin" Click="mooneyRivlinHyperelasticBtn_Click"/>
                     <MenuItem Header="Mooney-Rivlin Time Domain" Click="mooneyRivlinHyperelasticTDBtn_Click"/>
                     <MenuItem Header="Ogden" Click="ogdenHyperelasticBtn_Click"/>
                     <MenuItem Header="Ogden Time Domain" Click="ogdenHyperelasticTDBtn_Click"/>
+                </MenuItem>
+                <MenuItem Header="Elastic(MPC)">
+                    <MenuItem Header="Elastic(MPC)" Click="elasticMultipointConstraintBtn_Click"/>
+                    <MenuItem Header="Elastic(MPC) Time Domain" Click="elasticMultipointConstraintTDBtn_Click"/>
+                    <MenuItem Header="Saint Venant(MPC)" Click="saintVenantHyperelasticMultipointConstraintBtn_Click"/>
+                    <MenuItem Header="Saint Venant(MPC) Time Domain" Click="saintVenantHyperelasticMultipointConstraintTDBtn_Click"/>
+                    <MenuItem Header="Mooney-Rivlin(MPC)" Click="mooneyRivlinHyperelasticMultipointConstraintBtn_Click"/>
+                    <MenuItem Header="Mooney-Rivlin(MPC) Time Domain" Click="mooneyRivlinHyperelasticMultipointConstraintTDBtn_Click"/>
+                    <MenuItem Header="Ogden(MPC)" Click="ogdenHyperelasticMultipointConstraintBtn_Click"/>
+                    <MenuItem Header="Ogden(MPC) Time Domain" Click="ogdenHyperelasticMultipointConstraintTDBtn_Click"/>
                 </MenuItem>
             </Menu>
             <Grid>

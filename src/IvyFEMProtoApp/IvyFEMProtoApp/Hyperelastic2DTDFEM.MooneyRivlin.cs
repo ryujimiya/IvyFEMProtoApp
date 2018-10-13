@@ -11,14 +11,15 @@ namespace IvyFEM
         protected void CalcMooneyRivlinHyperelasticElementAB(
             uint feId, IvyFEM.Linear.DoubleSparseMatrix A, double[] B)
         {
-            uint uQuantityId = QuantityIds[0];
-            uint lQuantityId = QuantityIds[1];
-            int uDof = Dofs[0];
-            int lDof = Dofs[1];
-            int uNodeCnt = NodeCounts[0];
-            int lNodeCnt = NodeCounts[1];
-            System.Diagnostics.Debug.Assert(uNodeCnt * uDof + lNodeCnt * lDof == A.RowLength);
-            int offset = uNodeCnt * uDof;
+            uint uQuantityId = 0;
+            uint lQuantityId = 1;
+            int uDof = Dofs[uQuantityId];
+            int lDof = Dofs[lQuantityId];
+            int uNodeCnt = NodeCounts[uQuantityId];
+            int lNodeCnt = NodeCounts[lQuantityId];
+            //System.Diagnostics.Debug.Assert(uNodeCnt * uDof + lNodeCnt * lDof == A.RowLength);
+            int offset = GetOffset(lQuantityId);
+            System.Diagnostics.Debug.Assert(offset == uNodeCnt * uDof);
 
             double dt = TimeStep;
             double beta = NewmarkBeta;
@@ -68,8 +69,9 @@ namespace IvyFEM
             double[] uSN = uTriFE.CalcSN();
             double[,] uSNN = uTriFE.CalcSNN();
             double[,] lSNN = lTriFE.CalcSNN();
-            IntegrationPoints ip = uTriFE.GetIntegrationPoints(TriangleIntegrationPointCount.Point3);
-            System.Diagnostics.Debug.Assert(ip.Ls.Length == 3);
+            System.Diagnostics.Debug.Assert((int)World.TriIntegrationPointCount >= 3);
+            IntegrationPoints ip = uTriFE.GetIntegrationPoints(World.TriIntegrationPointCount);
+            System.Diagnostics.Debug.Assert(ip.Ls.Length == (int)World.TriIntegrationPointCount);
 
             double[,] qu = new double[uElemNodeCnt, uDof];
             double[] ql = new double[lElemNodeCnt];

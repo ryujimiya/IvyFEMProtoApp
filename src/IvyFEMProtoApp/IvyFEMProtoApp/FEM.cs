@@ -16,8 +16,6 @@ namespace IvyFEM
         protected static void SetFixedCadsCondtion(FEWorld world, IvyFEM.Linear.DoubleSparseMatrix A, double[]B,
             int[] nodeCnts, int[] dofs)
         {
-            var fixedCoIdFixedCad = world.GetFixedCoordIdFixedCad();
-
             // A21の右辺移行
             // Note:速度改善のためcolを先にしている
             for (uint colQuantityId = 0; colQuantityId < dofs.Length; colQuantityId++)
@@ -33,64 +31,55 @@ namespace IvyFEM
                 {
                     // fixed節点、自由度
                     int colCoId = world.Node2Coord(colQuantityId, colNodeId);
-                    if (!fixedCoIdFixedCad.ContainsKey(colCoId))
+                    var colFixedCads = world.GetFixedCadsFromCoord(colQuantityId, colCoId);
+                    if (colFixedCads.Count == 0)
                     {
                         continue;
                     }
-                    IList<FieldFixedCad> fixedCads = fixedCoIdFixedCad[colCoId];
-                    foreach (var fixedCad in fixedCads)
+                    foreach (var colFixedCad in colFixedCads)
                     {
-                        uint iColQuantity = fixedCad.QuantityId;                        
-                        uint iColDof = fixedCad.DofIndex;
-                        double value = fixedCad.DoubleValue;
-                        if (iColQuantity != colQuantityId)
+                        foreach (uint colFixedDofIndex in colFixedCad.FixedDofIndexs)
                         {
-                            continue;
-                        }
-
-                        for (uint rowQuantityId = 0; rowQuantityId < dofs.Length; rowQuantityId++)
-                        {
-                            int rowNodeCnt = nodeCnts[rowQuantityId];
-                            int rowDofCnt = dofs[rowQuantityId];
-                            int rowOffset = 0;
-                            for (int i = 0; i < rowQuantityId; i++)
+                            double value = colFixedCad.DoubleValues[colFixedDofIndex];
+                            for (uint rowQuantityId = 0; rowQuantityId < dofs.Length; rowQuantityId++)
                             {
-                                rowOffset += nodeCnts[i] * dofs[i];
-                            }
-                            for (int rowNodeId = 0; rowNodeId < rowNodeCnt; rowNodeId++)
-                            {
-                                int rowCoId = world.Node2Coord(rowQuantityId, rowNodeId);
-                                IList<FieldFixedCad> rowfixedCads = new List<FieldFixedCad>();
-                                if (fixedCoIdFixedCad.ContainsKey(rowCoId))
+                                int rowNodeCnt = nodeCnts[rowQuantityId];
+                                int rowDofCnt = dofs[rowQuantityId];
+                                int rowOffset = 0;
+                                for (int i = 0; i < rowQuantityId; i++)
                                 {
-                                    rowfixedCads = fixedCoIdFixedCad[rowCoId];
+                                    rowOffset += nodeCnts[i] * dofs[i];
                                 }
-                                // fixedでない節点、自由度
-                                IList<uint> rowDofs = new List<uint>();
-                                for (uint rowDof = 0; rowDof < rowDofCnt; rowDof++)
+                                for (int rowNodeId = 0; rowNodeId < rowNodeCnt; rowNodeId++)
                                 {
-                                    rowDofs.Add(rowDof);
-                                }
-                                foreach (var rowfixedCad in rowfixedCads)
-                                {
-                                    uint iRowQuantity = rowfixedCad.QuantityId;
-                                    if (iRowQuantity == rowQuantityId)
+                                    int rowCoId = world.Node2Coord(rowQuantityId, rowNodeId);
+                                    IList<FieldFixedCad> rowFixedCads = world.GetFixedCadsFromCoord(rowQuantityId, rowCoId);
+                                    // fixedでない節点、自由度
+                                    IList<uint> rowDofs = new List<uint>();
+                                    for (uint rowDof = 0; rowDof < rowDofCnt; rowDof++)
                                     {
-                                        rowDofs.Remove(rowfixedCad.DofIndex);
+                                        rowDofs.Add(rowDof);
                                     }
-                                }
-                                if (rowDofs.Count == 0)
-                                {
-                                    continue;
-                                }
+                                    foreach (var rowfixedCad in rowFixedCads)
+                                    {
+                                        foreach (uint rowFixedDof in rowfixedCad.FixedDofIndexs)
+                                        {
+                                            rowDofs.Remove(rowFixedDof);
+                                        }
+                                    }
+                                    if (rowDofs.Count == 0)
+                                    {
+                                        continue;
+                                    }
 
-                                foreach (int rowDof in rowDofs)
-                                {
-                                    double a = A[rowOffset + rowNodeId * rowDofCnt + rowDof,
-                                        colOffset + colNodeId * colDofCnt + (int)iColDof];
-                                    B[rowOffset + rowNodeId * rowDofCnt + rowDof] -= a * value;
-                                    A[rowOffset + rowNodeId * rowDofCnt + rowDof,
-                                        colOffset + colNodeId * colDofCnt + (int)iColDof] = 0;
+                                    foreach (int rowDof in rowDofs)
+                                    {
+                                        double a = A[rowOffset + rowNodeId * rowDofCnt + rowDof,
+                                            colOffset + colNodeId * colDofCnt + (int)colFixedDofIndex];
+                                        B[rowOffset + rowNodeId * rowDofCnt + rowDof] -= a * value;
+                                        A[rowOffset + rowNodeId * rowDofCnt + rowDof,
+                                            colOffset + colNodeId * colDofCnt + (int)colFixedDofIndex] = 0;
+                                    }
                                 }
                             }
                         }
@@ -111,181 +100,38 @@ namespace IvyFEM
                 for (int rowNodeId = 0; rowNodeId < rowNodeCnt; rowNodeId++)
                 {
                     int rowCoId = world.Node2Coord(rowQuantityId, rowNodeId);
-                    if (!fixedCoIdFixedCad.ContainsKey(rowCoId))
+                    var rowFixedCads = world.GetFixedCadsFromCoord(rowQuantityId, rowCoId);
+                    if (rowFixedCads.Count == 0)
                     {
                         continue;
                     }
-                    IList<FieldFixedCad> fixedCads = fixedCoIdFixedCad[rowCoId];
-                    foreach (var fixedCad in fixedCads)
+                    foreach (var rowFixedCad in rowFixedCads)
                     {
-                        uint iRowQuantity = fixedCad.QuantityId;
-                        if (iRowQuantity != rowQuantityId)
+                        foreach (uint rowFixedDof in rowFixedCad.FixedDofIndexs)
                         {
-                            continue;
-                        }
-                        uint iRowDof = fixedCad.DofIndex;
-                        double value = fixedCad.DoubleValue;
-                        for (int colQuantityId = 0; colQuantityId < dofs.Length; colQuantityId++)
-                        {
-                            int colNodeCnt = nodeCnts[colQuantityId];
-                            int colDofCnt = dofs[colQuantityId];
-                            int colOffset = 0;
-                            for (int i = 0; i < colQuantityId; i++)
+                            double value = rowFixedCad.DoubleValues[rowFixedDof];
+                            for (int colQuantityId = 0; colQuantityId < dofs.Length; colQuantityId++)
                             {
-                                colOffset += nodeCnts[i] * dofs[i];
-                            }
-                            for (int colNodeId = 0; colNodeId < colNodeCnt; colNodeId++)
-                            {
-                                for (int colDof = 0; colDof < colDofCnt; colDof++)
+                                int colNodeCnt = nodeCnts[colQuantityId];
+                                int colDofCnt = dofs[colQuantityId];
+                                int colOffset = 0;
+                                for (int i = 0; i < colQuantityId; i++)
                                 {
-                                    double a = (colQuantityId == rowQuantityId &&
-                                        colNodeId == rowNodeId &&
-                                        colDof == iRowDof) ? 1 : 0;
-                                    A[rowOffset + rowNodeId * rowDofCnt + (int)iRowDof,
-                                        colOffset + colNodeId * colDofCnt + colDof] = a;
+                                    colOffset += nodeCnts[i] * dofs[i];
                                 }
-                            }
-                            B[rowOffset + rowNodeId * rowDofCnt + iRowDof] = value;
-                        }
-                    }
-                }
-            }
-        }
-
-        protected static void SetFixedCadsCondtion(
-            FEWorld world, IvyFEM.Linear.ComplexSparseMatrix A, System.Numerics.Complex[] B,
-            int[] nodeCnts, int[] dofs)
-        {
-            var fixedCoIdFixedCad = world.GetFixedCoordIdFixedCad();
-
-            // A21の右辺移行
-            // Note:速度改善のためcolを先にしている
-            for (uint colQuantityId = 0; colQuantityId < dofs.Length; colQuantityId++)
-            {
-                int colNodeCnt = nodeCnts[colQuantityId];
-                int colDofCnt = dofs[colQuantityId];
-                int colOffset = 0;
-                for (int i = 0; i < colQuantityId; i++)
-                {
-                    colOffset += nodeCnts[i] * dofs[i];
-                }
-                for (int colNodeId = 0; colNodeId < colNodeCnt; colNodeId++)
-                {
-                    // fixed節点、自由度
-                    int colCoId = world.Node2Coord(colQuantityId, colNodeId);
-                    if (!fixedCoIdFixedCad.ContainsKey(colCoId))
-                    {
-                        continue;
-                    }
-                    IList<FieldFixedCad> fixedCads = fixedCoIdFixedCad[colCoId];
-                    foreach (var fixedCad in fixedCads)
-                    {
-                        uint iColQuantity = fixedCad.QuantityId;
-                        uint iColDof = fixedCad.DofIndex;
-                        System.Numerics.Complex value = fixedCad.ComplexValue;
-                        if (iColQuantity != colQuantityId)
-                        {
-                            continue;
-                        }
-
-                        for (uint rowQuantityId = 0; rowQuantityId < dofs.Length; rowQuantityId++)
-                        {
-                            int rowNodeCnt = nodeCnts[rowQuantityId];
-                            int rowDofCnt = dofs[rowQuantityId];
-                            int rowOffset = 0;
-                            for (int i = 0; i < rowQuantityId; i++)
-                            {
-                                rowOffset += nodeCnts[i] * dofs[i];
-                            }
-                            for (int rowNodeId = 0; rowNodeId < rowNodeCnt; rowNodeId++)
-                            {
-                                int rowCoId = world.Node2Coord(rowQuantityId, rowNodeId);
-                                IList<FieldFixedCad> rowfixedCads = new List<FieldFixedCad>();
-                                if (fixedCoIdFixedCad.ContainsKey(rowCoId))
+                                for (int colNodeId = 0; colNodeId < colNodeCnt; colNodeId++)
                                 {
-                                    rowfixedCads = fixedCoIdFixedCad[rowCoId];
-                                }
-                                // fixedでない節点、自由度
-                                IList<uint> rowDofs = new List<uint>();
-                                for (uint rowDof = 0; rowDof < rowDofCnt; rowDof++)
-                                {
-                                    rowDofs.Add(rowDof);
-                                }
-                                foreach (var rowfixedCad in rowfixedCads)
-                                {
-                                    uint iRowQuantity = rowfixedCad.QuantityId;
-                                    if (iRowQuantity == rowQuantityId)
+                                    for (int colDof = 0; colDof < colDofCnt; colDof++)
                                     {
-                                        rowDofs.Remove(rowfixedCad.DofIndex);
+                                        double a = (colQuantityId == rowQuantityId &&
+                                            colNodeId == rowNodeId &&
+                                            colDof == rowFixedDof) ? 1 : 0;
+                                        A[rowOffset + rowNodeId * rowDofCnt + (int)rowFixedDof,
+                                            colOffset + colNodeId * colDofCnt + colDof] = a;
                                     }
                                 }
-                                if (rowDofs.Count == 0)
-                                {
-                                    continue;
-                                }
-
-                                foreach (int rowDof in rowDofs)
-                                {
-                                    System.Numerics.Complex a = A[rowOffset + rowNodeId * rowDofCnt + rowDof,
-                                        colOffset + colNodeId * colDofCnt + (int)iColDof];
-                                    B[rowOffset + rowNodeId * rowDofCnt + rowDof] -= a * value;
-                                    A[rowOffset + rowNodeId * rowDofCnt + rowDof,
-                                        colOffset + colNodeId * colDofCnt + (int)iColDof] = 0;
-                                }
+                                B[rowOffset + rowNodeId * rowDofCnt + rowFixedDof] = value;
                             }
-                        }
-                    }
-                }
-            }
-
-            // A11, A12
-            for (uint rowQuantityId = 0; rowQuantityId < dofs.Length; rowQuantityId++)
-            {
-                int rowNodeCnt = nodeCnts[rowQuantityId];
-                int rowDofCnt = dofs[rowQuantityId];
-                int rowOffset = 0;
-                for (int i = 0; i < rowQuantityId; i++)
-                {
-                    rowOffset += nodeCnts[i] * dofs[i];
-                }
-                for (int rowNodeId = 0; rowNodeId < rowNodeCnt; rowNodeId++)
-                {
-                    int rowCoId = world.Node2Coord(rowQuantityId, rowNodeId);
-                    if (!fixedCoIdFixedCad.ContainsKey(rowCoId))
-                    {
-                        continue;
-                    }
-                    IList<FieldFixedCad> fixedCads = fixedCoIdFixedCad[rowCoId];
-                    foreach (var fixedCad in fixedCads)
-                    {
-                        uint iRowQuantity = fixedCad.QuantityId;
-                        if (iRowQuantity != rowQuantityId)
-                        {
-                            continue;
-                        }
-                        uint iRowDof = fixedCad.DofIndex;
-                        double value = fixedCad.DoubleValue;
-                        for (int colQuantityId = 0; colQuantityId < dofs.Length; colQuantityId++)
-                        {
-                            int colNodeCnt = nodeCnts[colQuantityId];
-                            int colDofCnt = dofs[colQuantityId];
-                            int colOffset = 0;
-                            for (int i = 0; i < colQuantityId; i++)
-                            {
-                                colOffset += nodeCnts[i] * dofs[i];
-                            }
-                            for (int colNodeId = 0; colNodeId < colNodeCnt; colNodeId++)
-                            {
-                                for (int colDof = 0; colDof < colDofCnt; colDof++)
-                                {
-                                    double a = (colQuantityId == rowQuantityId &&
-                                        colNodeId == rowNodeId &&
-                                        colDof == iRowDof) ? 1 : 0;
-                                    A[rowOffset + rowNodeId * rowDofCnt + (int)iRowDof,
-                                        colOffset + colNodeId * colDofCnt + colDof] = a;
-                                }
-                            }
-                            B[rowOffset + rowNodeId * rowDofCnt + iRowDof] = value;
                         }
                     }
                 }

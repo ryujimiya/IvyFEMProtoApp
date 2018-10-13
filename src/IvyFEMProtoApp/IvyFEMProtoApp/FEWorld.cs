@@ -10,18 +10,17 @@ namespace IvyFEM
     {
         public Mesher2D Mesh { get; set; } = null;
         public uint Dimension { get; private set; } = 2;
-        internal IList<double> VertexCoords = new List<double>();
-        internal ObjectArray<Material> MaterialArray = new ObjectArray<Material>();
-        internal Dictionary<uint, uint> CadEdge2Material = new Dictionary<uint, uint>();
-        internal Dictionary<uint, uint> CadLoop2Material = new Dictionary<uint, uint>();
+        private IList<double> VertexCoords = new List<double>();
+        private ObjectArray<Material> MaterialArray = new ObjectArray<Material>();
+        private Dictionary<uint, uint> CadEdge2Material = new Dictionary<uint, uint>();
+        private Dictionary<uint, uint> CadLoop2Material = new Dictionary<uint, uint>();
 
-        public IList<FieldFixedCad> ZeroFieldFixedCads { get; private set; } = new List<FieldFixedCad>();
-        public IList<FieldFixedCad> FieldFixedCads { get; private set; } = new List<FieldFixedCad>();
         public int IncidentPortId { get; set; } = -1;
         public int IncidentModeId { get; set; } = -1;
         public IList<IList<uint>> PortEIdss { get; } = new List<IList<uint>>();
-        internal ObjectArray<FieldValue> FieldValueArray = new ObjectArray<FieldValue>();
+        private ObjectArray<FieldValue> FieldValueArray = new ObjectArray<FieldValue>();
 
+        public TriangleIntegrationPointCount TriIntegrationPointCount { get; set; } = TriangleIntegrationPointCount.Point3;
         private IList<FEWorldQuantity> Quantitys = new List<FEWorldQuantity>();
 
         public FEWorld()
@@ -42,7 +41,7 @@ namespace IvyFEM
             Quantitys.Clear();
         }
 
-        public int QuantityCount()
+        public int GetQuantityCount()
         {
             return Quantitys.Count;
         }
@@ -53,7 +52,6 @@ namespace IvyFEM
             MaterialArray.Clear();
             CadEdge2Material.Clear();
             CadLoop2Material.Clear();
-            ZeroFieldFixedCads.Clear();
             IncidentPortId = -1;
             IncidentModeId = -1;
             foreach (var portEIds in PortEIdss)
@@ -96,6 +94,37 @@ namespace IvyFEM
         public uint GetFEOrder(uint quantityId)
         {
             return Quantitys[(int)quantityId].FEOrder;
+        }
+
+        public IList<FieldFixedCad> GetZeroFieldFixedCads(uint quantityId)
+        {
+            return Quantitys[(int)quantityId].ZeroFieldFixedCads;
+        }
+
+        public IList<FieldFixedCad> GetFieldFixedCads(uint quantityId)
+        {
+            return Quantitys[(int)quantityId].FieldFixedCads;
+        }
+
+        public int GetMultipointConstraintCount(uint quantityId)
+        {
+            return Quantitys[(int)quantityId].GetMultipointConstraintCount();
+        }
+
+        public int AddMultipointConstraint(uint quantityId, MultipointConstraint mpc)
+        {
+            int index = Quantitys[(int)quantityId].AddMultipointConstraint(mpc);
+            return index;
+        }
+
+        public MultipointConstraint GetMultipointConstraint(uint quantityId, int index)
+        {
+            return Quantitys[(int)quantityId].GetMultipointConstraint(index);
+        }
+
+        public void ClearMultipointConstraint(uint quantityId)
+        {
+            Quantitys[(int)quantityId].ClearMultipointConstraint();
         }
 
         public uint GetCoordCount(uint quantityId)
@@ -211,31 +240,14 @@ namespace IvyFEM
             return Quantitys[(int)quantityId].GetCoordIdsFromCadId(this, cadId, cadElemType);
         }
 
-        public Dictionary<int, IList<FieldFixedCad>> GetFixedCoordIdFixedCad()
+        public IList<FieldFixedCad> GetFixedCadsFromCoord(uint quantityId, int coId)
         {
-            var fixedCoIdFixedCad = new Dictionary<int, IList<FieldFixedCad>>();
-            foreach (var fixedCad in FieldFixedCads)
-            {
-                IList<int> coIds = fixedCad.GetCoordIds(this);
-                foreach (int coId in coIds)
-                {
-                    IList<FieldFixedCad> fixedCads = null;
-                    if (!fixedCoIdFixedCad.ContainsKey(coId))
-                    {
-                        fixedCads = new List<FieldFixedCad>();
-                        fixedCoIdFixedCad[coId] = fixedCads;
-                    }
-                    else
-                    {
-                        fixedCads = fixedCoIdFixedCad[coId];
-                    }
-                    if (fixedCads.IndexOf(fixedCad) == -1)
-                    {
-                        fixedCads.Add(fixedCad);
-                    }
-                }
-            }
-            return fixedCoIdFixedCad;
+            return Quantitys[(int)quantityId].GetFixedCadsFromCoord(coId);
+        }
+
+        public IList<MultipointConstraint> GetMultipointConstraintFromCoord(uint quantityId, int coId)
+        {
+            return Quantitys[(int)quantityId].GetMultipointConstraintFromCoord(coId);
         }
 
         public uint GetLineFEIdFromMesh(uint quantityId, uint meshId, uint iElem)
@@ -283,51 +295,8 @@ namespace IvyFEM
 
             foreach (var quantity in Quantitys)
             {
-                quantity.MakeElements(this);
+                quantity.MakeElements(this, VertexCoords, CadLoop2Material, CadEdge2Material);
             }
-        }
-
-        private IList<TriangleFE> GetCoordIncludeTriFEs(TriangleFE fe, IList<TriangleFE> triFEs,
-            Dictionary<TriangleFE, IList<int>> triFECoIds)
-        {
-            IList<int> coIds = triFECoIds[fe];
-            IList<TriangleFE> includeTriFEs = new List<TriangleFE>();
-            foreach (TriangleFE tmpFE in triFEs)
-            {
-                bool isInclude = false;
-                IList<int> tmpCoIds = triFECoIds[tmpFE];
-                foreach (int tmpCoId in tmpCoIds)
-                {
-                    foreach (int coId in coIds)
-                    {
-                        if (tmpCoId == coId)
-                        {
-                            isInclude = true;
-                            break;
-                        }
-                    }
-                }
-                if (isInclude)
-                {
-                    includeTriFEs.Add(tmpFE);
-                }
-            }
-            return includeTriFEs;
-        }
-
-        internal IList<int> GetZeroCoordIds(uint quantityId)
-        {
-            IList<int> zeroCoIds = new List<int>();
-
-            foreach (var fixedCad in ZeroFieldFixedCads)
-            {
-                IList<int> coIds = fixedCad.GetCoordIds(this);
-                foreach (int coId in coIds)
-                {
-                    zeroCoIds.Add(coId);
-                }
-            }
-            return zeroCoIds;
         }
 
         public bool IsFieldValueId(uint valueId)

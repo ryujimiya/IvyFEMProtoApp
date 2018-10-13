@@ -222,6 +222,275 @@ namespace IvyFEM
             return res;
         }
 
+        public bool SetCurveLine(uint eId)
+        {
+            if (!EdgeArray.IsObjectId(eId))
+            {
+                System.Diagnostics.Debug.Assert(false);
+                return false;
+            }
+            System.Diagnostics.Debug.Assert(EdgeArray.IsObjectId(eId));
+            Edge2D e = EdgeArray.GetObject(eId);
+            Edge2D oldE = new Edge2D(e);
+            ////////////////
+            e.SetCurveLine();
+            ////////////////
+            IList<uint> loopIds = LoopArray.GetObjectIds();
+            for (int iLId = 0; iLId < loopIds.Count; iLId++)
+            {
+                uint id_l = loopIds[iLId];
+                if (CheckLoop(id_l) != 0)
+                {
+                    e = oldE;
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public bool SetCurveArc(uint eId, bool isLeftSide, double rdist)
+        {
+            if (!EdgeArray.IsObjectId(eId))
+            {
+                System.Diagnostics.Debug.Assert(false);
+                return false;
+            }
+            System.Diagnostics.Debug.Assert(EdgeArray.IsObjectId(eId));
+            Edge2D e = GetEdge(eId);
+            Edge2D oldE = new Edge2D(e);
+            ////////////////////////////////
+            // ここからを現在のCurveTypeによって決める,次の設定は直線の場合
+            e.SetCurveArc(isLeftSide, rdist);
+            // ここまで
+            ////////////////////////////////
+            IList<uint> loopIds = LoopArray.GetObjectIds();
+            for (int iLId = 0; iLId < loopIds.Count; iLId++)
+            {
+                uint lId = loopIds[iLId];
+                if (CheckLoop(lId) != 0)
+                {
+                    e = oldE;
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public bool SetCurvePolyline(uint eId)
+        {
+            if (!EdgeArray.IsObjectId(eId))
+            {
+                System.Diagnostics.Debug.Assert(false);
+                return false;
+            }
+            System.Diagnostics.Debug.Assert(EdgeArray.IsObjectId(eId));
+            Edge2D e = GetEdge(eId);
+            Edge2D oldE = new Edge2D(e);
+            ////////////////////////////////
+            // ここからを現在のCurveTypeによって決める,次の設定は直線の場合
+            OpenTK.Vector2d sPt = oldE.GetVertex(true);
+            OpenTK.Vector2d ePt = oldE.GetVertex(false);
+            IList<OpenTK.Vector2d> pts;
+            oldE.GetCurveAsPolyline(out pts, 20);
+            double sqLen = CadUtils.SquareLength(ePt - sPt);
+            OpenTK.Vector2d hE = (ePt - sPt) * (1 / sqLen);
+            OpenTK.Vector2d vE = new OpenTK.Vector2d(-hE.Y, hE.X);
+            {
+                IList<double> relCos = new List<double>();
+                for (int ico = 0; ico < pts.Count; ico++)
+                {
+                    double x1 = OpenTK.Vector2d.Dot(pts[ico] - sPt, hE);
+                    double y1 = OpenTK.Vector2d.Dot(pts[ico] - sPt, vE);
+                    relCos.Add(x1);
+                    relCos.Add(y1);
+                }
+                e.SetCurvePolyline(relCos);
+            }
+            // ここまで
+            ////////////////////////////////
+            IList<uint> loopIds = LoopArray.GetObjectIds();
+            for (int iLId = 0; iLId < loopIds.Count; iLId++)
+            {
+                uint lId = loopIds[iLId];
+                if (CheckLoop(lId) != 0)
+                {
+                    e = oldE;
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public bool SetCurvePolyline(uint eId, IList<OpenTK.Vector2d> points)
+        {
+            if (!EdgeArray.IsObjectId(eId))
+            {
+                System.Diagnostics.Debug.Assert(false);
+                return false;
+            }
+            System.Diagnostics.Debug.Assert(EdgeArray.IsObjectId(eId));
+            Edge2D e = GetEdge(eId);
+            Edge2D oldE = new Edge2D(e);
+            ////////////////
+            {
+                // 相対座標を作る    
+                int n = points.Count;
+                IList<double> relCos = new List<double>();
+                OpenTK.Vector2d sPt = e.GetVertex(true);
+                OpenTK.Vector2d ePt = e.GetVertex(false);
+                double sqlen = CadUtils.SquareLength(ePt - sPt);
+                OpenTK.Vector2d hE = (ePt - sPt) * (1 / sqlen);
+                OpenTK.Vector2d vE = new OpenTK.Vector2d(-hE.Y, hE.X);
+                for (int i = 0; i < n; i++)
+                {
+                    double x0 = OpenTK.Vector2d.Dot(points[i] - sPt, hE);
+                    double y0 = OpenTK.Vector2d.Dot(points[i] - sPt, vE);
+                    relCos.Add(x0);
+                    relCos.Add(y0);
+                }
+                System.Diagnostics.Debug.Assert(relCos.Count == n * 2);
+                e.SetCurvePolyline(relCos);
+            }
+            ////////////////
+            IList<uint> loopIds = LoopArray.GetObjectIds();
+            for (int iLId = 0; iLId < loopIds.Count; iLId++)
+            {
+                uint lId = loopIds[iLId];
+                if (CheckLoop(lId) != 0)
+                {
+                    e = oldE;
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public bool SetCurve_Bezier(uint eId, double cx0, double cy0, double cx1, double cy1)
+        {
+            if (!EdgeArray.IsObjectId(eId))
+            {
+                return false;
+            }
+            System.Diagnostics.Debug.Assert(EdgeArray.IsObjectId(eId));
+            Edge2D e = EdgeArray.GetObject(eId);
+            Edge2D oldE = new Edge2D(e);
+            ////////////////
+            e.SetCurveBezier(cx0, cy0, cx1, cy1);
+            ////////////////
+            IList<uint> loopIds = LoopArray.GetObjectIds();
+            for (int iLId = 0; iLId < loopIds.Count; iLId++)
+            {
+                uint lId = loopIds[iLId];
+                if (CheckLoop(lId) != 0)
+                {
+                    e = oldE;
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /*
+        public ResAddPolygon AddLoop(IList<KeyValuePair<CurveType, IList<double>>> points,  uint lId, double scale)
+        {
+            ResAddPolygon res = new ResAddPolygon();
+
+            try
+            {
+                int ptCnt = points.Count;
+                IList<OpenTK.Vector2d> vecs = new List<OpenTK.Vector2d>();
+                //for (int iPt = 0; iPt < ptCnt - 1; iPt++)
+                for (int iPt = 0; iPt < ptCnt; iPt++)
+                {
+                    IList<double> point = points[iPt].Value;
+                    OpenTK.Vector2d vec = new OpenTK.Vector2d(
+                        point[point.Count - 2] * scale, point[point.Count - 1] * scale);
+                    vecs.Add(vec);
+                    uint vId0 = AddVertex(CadElementType.Loop, lId, vec).AddVId;
+                    if (vId0 == 0)
+                    {
+                        throw new InvalidOperationException("FAIL_ADD_POLYGON_INSIDE_LOOP");
+                    }
+                    res.VIds.Add(vId0);
+                }
+                System.Diagnostics.Debug.Assert(res.VIds.Count == ptCnt);
+                //for (int iEdge = 0; iEdge < ptCnt - 1; iEdge++)
+                for (int iEdge = 0; iEdge < ptCnt; iEdge++)
+                {
+                    int isPt = iEdge;
+                    //int iePt = (iEdge != ptCnt - 2) ? iEdge + 1 : 0;
+                    int iePt = (iEdge != ptCnt - 1) ? iEdge + 1 : 0;
+                    Edge2D e = new Edge2D(res.VIds[isPt], res.VIds[iePt]);
+                    //System.Diagnostics.Debug.WriteLine(
+                    //    iEdge + " " + ptCnt + "    " + res.VIds[isPt] + " " + res.VIds[iePt] + "  ");
+                    if (iEdge != ptCnt - 1)
+                    {
+                        CurveType type = points[iEdge + 1].Key;
+                        if (type == CurveType.CurveBezier)
+                        {
+                            IList<double> point = points[iEdge + 1].Value;
+                            OpenTK.Vector2d vs = vecs[isPt];
+                            OpenTK.Vector2d ve = vecs[iePt];
+                            OpenTK.Vector2d vsc = new OpenTK.Vector2d(point[0] * scale, point[1] * scale);
+                            OpenTK.Vector2d vec = new OpenTK.Vector2d(point[2] * scale, point[3] * scale);
+                            OpenTK.Vector2d vh = ve - vs;
+                            {
+                                double len = vh.Length;
+                                vh *= 1.0 / (len * len);
+                            }
+                            OpenTK.Vector2d vv = new OpenTK.Vector2d(-vh.Y, vh.X);
+                            double t0 = OpenTK.Vector2d.Dot(vsc - vs, vh);
+                            double t1 = OpenTK.Vector2d.Dot(vsc - vs, vv);
+                            double t2 = OpenTK.Vector2d.Dot(vec - vs, vh);
+                            double t3 = OpenTK.Vector2d.Dot(vec - vs, vv);
+                            //System.Diagnostics.Debug.WriteLine(t0 + " " + t1 + " " + t2 + " " + t3);
+                            e.SetCurveBezier(t0, t1, t2, t3);
+                        }
+                    }
+                    uint eId0 = ConnectVertex(e).AddEId;
+                    //System.Diagnostics.Debug.WriteLine("edge add " + eId0);
+                    if (eId0 == 0)
+                    {
+                        throw new InvalidOperationException("FAIL_ADD_POLYGON_INSIDE_LOOP");
+                    }
+                    res.EIds.Add(eId0);
+                }
+                System.Diagnostics.Debug.Assert(res.EIds.Count == ptCnt);
+                System.Diagnostics.Debug.Assert(AssertValid() == 0);
+                // 新しく出来たループのIDを取得  
+                {
+                    // 辺の両側のループを調べる
+                    uint eId0 = res.EIds[ptCnt - 1];
+                    uint lId0;
+                    uint lId1;
+                    BRep.GetEdgeLoopId(eId0, out lId0, out lId1);
+                    res.AddLId = (lId0 == lId) ? lId1 : lId0;
+                }
+
+            }
+            catch (InvalidOperationException exception)
+            {
+                for (int iie = 0; iie < res.EIds.Count; iie++)
+                {
+                    uint id_e0 = res.EIds[iie];
+
+                    RemoveElement(CadElementType.Edge, id_e0);
+
+                }
+                for (int iiv = 0; iiv < res.VIds.Count; iiv++)
+                {
+                    uint id_v0 = res.VIds[iiv];
+
+                    RemoveElement(CadElementType.Vertex, id_v0);
+
+                }
+                System.Diagnostics.Debug.Assert(AssertValid() == 0);
+                return new ResAddPolygon();
+            }
+            return res;
+        }
+        */
+
         public ResAddPolygon AddPolygon(IList<OpenTK.Vector2d> points, uint lId = 0)
         {
             ResAddPolygon res = new ResAddPolygon();
@@ -311,6 +580,27 @@ namespace IvyFEM
             //　失敗したとき
             return new ResAddPolygon();
 
+        }
+
+        public ResAddPolygon AddCircle(OpenTK.Vector2d cPt, double r, uint lId)
+        {
+            ResAddPolygon res = new ResAddPolygon();
+            OpenTK.Vector2d v1 = new OpenTK.Vector2d(cPt.X, cPt.Y - r);
+            OpenTK.Vector2d v2 = new OpenTK.Vector2d(cPt.X, cPt.Y + r);
+            var resV1 = AddVertex(CadElementType.Loop, lId, v1);
+            var resV2 = AddVertex(CadElementType.Loop, lId, v2);
+            var resE1 = ConnectVertexLine(resV1.AddVId, resV2.AddVId);
+            bool success1 = SetCurveArc(resE1.AddEId, false, 0);
+            //System.Diagnostics.Debug.Assert(success1);
+            var resE2 = ConnectVertexLine(resV2.AddVId, resV1.AddVId);
+            bool success2 = SetCurveArc(resE2.AddEId, false, 0);
+            //System.Diagnostics.Debug.Assert(success2); // アサートにひっかかる
+            res.AddLId = resE2.AddLId;
+            res.EIds.Add(resE1.AddEId);
+            res.EIds.Add(resE2.AddEId);
+            res.VIds.Add(resV1.AddVId);
+            res.VIds.Add(resV2.AddVId);
+            return res;
         }
 
         public bool IsElemId(CadElementType type, uint id)
@@ -1338,7 +1628,10 @@ namespace IvyFEM
                 ItrLoop pItrl = BRep.GetItrLoop(lId);
                 for (ItrLoop cItrl = BRep.GetItrLoop(lId); !cItrl.IsChildEnd; cItrl.ShiftChildLoop())
                 {
-                    if (cItrl.IsParent()) continue;
+                    if (cItrl.IsParent())
+                    {
+                        continue;
+                    }
                     if (CheckInOutItrLoopPointItrLoop(cItrl, pItrl) != 0)
                     {
                         return 3;

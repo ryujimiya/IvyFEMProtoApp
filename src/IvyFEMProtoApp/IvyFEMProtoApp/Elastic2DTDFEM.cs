@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IvyFEM
 {
-    partial class Elastic2DTDFEM : Elastic2DBaseFEM
+    partial class Elastic2DTDFEM : Elastic2DDerivedBaseFEM
     {
         public double TimeStep { get; private set; } = 0;
         public double NewmarkBeta { get; private set; } = 1.0 / 4.0;
@@ -19,18 +19,6 @@ namespace IvyFEM
             uint valueId, uint prevValueId)
         {
             World = world;
-
-            int quantityCnt = world.QuantityCount();
-            QuantityIds = new uint[quantityCnt];
-            Dofs = new int[quantityCnt];
-            NodeCounts = new int[quantityCnt];
-            for (uint quantityId = 0; quantityId < quantityCnt; quantityId++)
-            {
-                QuantityIds[quantityId] = quantityId;
-                Dofs[quantityId] = (int)World.GetDof(quantityId);
-                NodeCounts[quantityId] = (int)World.GetNodeCount(quantityId);
-            }
-
             TimeStep = timeStep;
             NewmarkBeta = newmarkBeta;
             NewmarkGamma = newmarkGamma;

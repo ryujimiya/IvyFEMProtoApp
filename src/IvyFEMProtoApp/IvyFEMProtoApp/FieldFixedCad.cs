@@ -11,32 +11,59 @@ namespace IvyFEM
         public uint CadId { get; set; } = 0;
         public CadElementType CadElemType { get; private set; } = CadElementType.NotSet;
         public FieldValueType ValueType { get; private set; } = FieldValueType.NoValue;
-        public uint QuantityId { get; set; } = 0;
-        public uint DofIndex { get; private set; } = 0;
-        public double DoubleValue
-        {
-            get => ComplexValue.Real;
-            set
-            {
-                ComplexValue = value;
-            }
-        }
-        public System.Numerics.Complex ComplexValue { get; set; } = 0;
+        public uint Dof { get; set; } = 0;
+        public IList<uint> FixedDofIndexs { get; private set; } = new List<uint>();
+        public double[] DoubleValues { get; set; } = null;
+        public System.Numerics.Complex[] ComplexValues { get; set; } = null;
 
         public FieldFixedCad()
         {
 
         }
 
+        // Zero
         public FieldFixedCad(uint cadId, CadElementType cadElemType,
-            FieldValueType valueType, uint quantityId, uint iDof, System.Numerics.Complex value)
+            FieldValueType valueType, uint dof)
         {
             CadId = cadId;
             CadElemType = cadElemType;
             ValueType = valueType;
-            QuantityId = quantityId;
-            DofIndex = iDof;
-            ComplexValue = value;
+            Dof = dof;
+            FixedDofIndexs = new List<uint>();
+            for (uint iDof = 0; iDof < dof; iDof++)
+            {
+                FixedDofIndexs.Add(iDof);
+            }
+            DoubleValues = null;
+            ComplexValues = null;
+        }
+
+        public FieldFixedCad(uint cadId, CadElementType cadElemType,
+            FieldValueType valueType, uint dof,
+            IList<uint> fixedDofIndexs, double[] values)
+        {
+            CadId = cadId;
+            CadElemType = cadElemType;
+            ValueType = valueType;
+            Dof = dof;
+            FixedDofIndexs = new List<uint>(fixedDofIndexs);
+            DoubleValues = new double[Dof];
+            values.CopyTo(DoubleValues, 0);
+            ComplexValues = null;
+        }
+
+        public FieldFixedCad(uint cadId, CadElementType cadElemType,
+            FieldValueType valueType, uint dof,
+            IList<uint> fixedDofIndexs, System.Numerics.Complex[] values)
+        {
+            CadId = cadId;
+            CadElemType = cadElemType;
+            ValueType = valueType;
+            Dof = dof;
+            FixedDofIndexs = new List<uint>(fixedDofIndexs);
+            DoubleValues = null;
+            ComplexValues = new System.Numerics.Complex[dof];
+            values.CopyTo(ComplexValues, 0);
         }
 
         public FieldFixedCad(FieldFixedCad src)
@@ -44,15 +71,20 @@ namespace IvyFEM
             CadId = src.CadId;
             CadElemType = src.CadElemType;
             ValueType = src.ValueType;
-            QuantityId = src.QuantityId;
-            DofIndex = src.DofIndex;
-            ComplexValue = src.ComplexValue;
-        }
-
-        public IList<int> GetCoordIds(FEWorld world)
-        {
-            IList<int>coIds = world.GetCoordIdsFromCadId(QuantityId, (uint)CadId, CadElemType);
-            return coIds;
+            Dof = src.Dof;
+            FixedDofIndexs = new List<uint>(src.FixedDofIndexs);
+            DoubleValues = null;
+            if (src.DoubleValues != null)
+            {
+                DoubleValues = new double[src.DoubleValues.Length];
+                src.DoubleValues.CopyTo(DoubleValues, 0);
+            }
+            ComplexValues = null;
+            if (src.ComplexValues != null)
+            {
+                ComplexValues = new System.Numerics.Complex[src.ComplexValues.Length];
+                src.ComplexValues.CopyTo(ComplexValues, 0);
+            }
         }
     }
 }

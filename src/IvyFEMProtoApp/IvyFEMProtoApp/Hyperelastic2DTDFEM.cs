@@ -6,33 +6,22 @@ using System.Threading.Tasks;
 
 namespace IvyFEM
 {
-    partial class Hyperelastic2DTDFEM : Hyperelastic2DBaseFEM
+    partial class Hyperelastic2DTDFEM : Hyperelastic2DDerivedBaseFEM
     {
         public double TimeStep { get; private set; } = 0;
         public double NewmarkBeta { get; private set; } = 1.0 / 4.0;
         public double NewmarkGamma { get; private set; } = 1.0 / 2.0;
-        uint UValueId { get; set; } = 0;
-        uint PrevUValueId { get; set; } = 0;
-        uint LValueId { get; set; } = 0;
+        public uint UValueId { get; set; } = 0;
+        public uint PrevUValueId { get; set; } = 0;
+        public uint LValueId { get; set; } = 0;
 
-        public Hyperelastic2DTDFEM(FEWorld world, double timeStep,
+        public Hyperelastic2DTDFEM(FEWorld world,
+            double timeStep,
             double newmarkBeta, double newmarkGamma,
             uint uValueId, uint prevUValueId,
             uint lValueId)
         {
             World = world;
-
-            int quantityCnt = world.QuantityCount();
-            QuantityIds = new uint[quantityCnt];
-            Dofs = new int[quantityCnt];
-            NodeCounts = new int[quantityCnt];
-            for (uint quantityId = 0; quantityId < quantityCnt; quantityId++)
-            {
-                QuantityIds[quantityId] = quantityId;
-                Dofs[quantityId] = (int)World.GetDof(quantityId);
-                NodeCounts[quantityId] = (int)World.GetNodeCount(quantityId);
-            }
-
             TimeStep = timeStep;
             NewmarkBeta = newmarkBeta;
             NewmarkGamma = newmarkGamma;

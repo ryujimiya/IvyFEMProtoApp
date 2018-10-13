@@ -12,16 +12,22 @@ namespace IvyFEM
         public uint Dimension { get; set; } = 0;
         public uint Dof { get; set; } = 1;
         public uint FEOrder { get; set; } = 1;
-        internal IList<double> Coords = new List<double>();
-        internal IList<Dictionary<int, int>> PortCo2Nodes = new List<Dictionary<int, int>>();
-        internal IList<Dictionary<int, int>> PortNode2Cos = new List<Dictionary<int, int>>();
-        internal IList<IList<uint>> PortLineFEIdss = new List<IList<uint>>();
-        internal Dictionary<int, int> Co2Node = new Dictionary<int, int>();
-        internal Dictionary<int, int> Node2Co = new Dictionary<int, int>();
-        internal Dictionary<string, uint> Mesh2LineFE = new Dictionary<string, uint>();
-        internal Dictionary<string, uint> Mesh2TriangleFE = new Dictionary<string, uint>();
-        internal ObjectArray<LineFE> LineFEArray = new ObjectArray<LineFE>();
-        internal ObjectArray<TriangleFE> TriangleFEArray = new ObjectArray<TriangleFE>();
+        public IList<FieldFixedCad> ZeroFieldFixedCads { get; private set; } = new List<FieldFixedCad>();
+        public IList<FieldFixedCad> FieldFixedCads { get; private set; } = new List<FieldFixedCad>();
+        private Dictionary<int, IList<FieldFixedCad>> Co2FixedCads = new Dictionary<int, IList<FieldFixedCad>>();
+        private IList<double> Coords = new List<double>();
+        private IList<MultipointConstraint> MultipointConstraints = new List<MultipointConstraint>();
+        private Dictionary<int, IList<MultipointConstraint>> Co2MultipointConstraints =
+            new Dictionary<int, IList<MultipointConstraint>>(); 
+        private IList<Dictionary<int, int>> PortCo2Nodes = new List<Dictionary<int, int>>();
+        private IList<Dictionary<int, int>> PortNode2Cos = new List<Dictionary<int, int>>();
+        private IList<IList<uint>> PortLineFEIdss = new List<IList<uint>>();
+        private Dictionary<int, int> Co2Node = new Dictionary<int, int>();
+        private Dictionary<int, int> Node2Co = new Dictionary<int, int>();
+        private Dictionary<string, uint> Mesh2LineFE = new Dictionary<string, uint>();
+        private Dictionary<string, uint> Mesh2TriangleFE = new Dictionary<string, uint>();
+        private ObjectArray<LineFE> LineFEArray = new ObjectArray<LineFE>();
+        private ObjectArray<TriangleFE> TriangleFEArray = new ObjectArray<TriangleFE>();
 
         public FEWorldQuantity(uint id, uint dimension, uint dof, uint feOrder)
         {
@@ -34,6 +40,8 @@ namespace IvyFEM
         public void ClearElements()
         {
             Coords.Clear();
+            Co2FixedCads.Clear();
+            Co2MultipointConstraints.Clear();
             foreach (var portCo2Node in PortCo2Nodes)
             {
                 portCo2Node.Clear();
@@ -55,6 +63,28 @@ namespace IvyFEM
             }
             PortLineFEIdss.Clear();
             TriangleFEArray.Clear();
+        }
+
+        public int GetMultipointConstraintCount()
+        {
+            return MultipointConstraints.Count;
+        }
+
+        public int AddMultipointConstraint(MultipointConstraint mpc)
+        {
+            MultipointConstraints.Add(mpc);
+            int index = MultipointConstraints.Count - 1;
+            return index;
+        }
+
+        public MultipointConstraint GetMultipointConstraint(int index)
+        {
+            return MultipointConstraints[index];
+        }
+
+        public void ClearMultipointConstraint()
+        {
+            MultipointConstraints.Clear();
         }
 
         internal uint GetCoordCount()
@@ -205,6 +235,24 @@ namespace IvyFEM
             return coIds;
         }
 
+        public IList<FieldFixedCad> GetFixedCadsFromCoord(int coId)
+        {
+            if (!Co2FixedCads.ContainsKey(coId))
+            {
+                return new List<FieldFixedCad>();
+            }
+            return Co2FixedCads[coId];
+        }
+
+        public IList<MultipointConstraint> GetMultipointConstraintFromCoord(int coId)
+        {
+            if (!Co2MultipointConstraints.ContainsKey(coId))
+            {
+                return null;
+            }
+            return Co2MultipointConstraints[coId];
+        }
+
         public uint GetLineFEIdFromMesh(uint meshId, uint iElem)
         {
             string key = meshId + "_" + iElem;
@@ -255,15 +303,65 @@ namespace IvyFEM
             return TriangleFEArray.GetObject(feId);
         }
 
-        public void MakeElements(FEWorld world)
+        public void MakeElements(
+            FEWorld world,
+            IList<double> vertexCoords,
+            Dictionary<uint, uint> cadLoop2Material,
+            Dictionary<uint, uint> cadEdge2Material)
         {
             ClearElements();
 
-            Mesher2D mesh = world.Mesh;
+            // 座標、三角形要素と線要素を生成する
+            IList<TriangleFE> triFEs;
+            MakeCoordsAndElements(
+                world, vertexCoords, cadLoop2Material, cadEdge2Material,
+                out triFEs);
 
+            // 多点拘束の座標生成
+            MakeCo2MultipointConstraints(world);
+
+            // Note: 線要素生成後でないと点を特定できない
+            IList<int> zeroCoordIds = GetZeroCoordIds(world);
+
+            // 多点拘束の対象外の節点を除外する
+            if (Co2MultipointConstraints.Count > 0)
+            {
+                for (int coId = 0; coId < Coords.Count; coId++)
+                {
+                    if (!Co2MultipointConstraints.ContainsKey(coId))
+                    {
+                        if (zeroCoordIds.IndexOf(coId) == -1)
+                        {
+                            zeroCoordIds.Add(coId);
+                        }
+                    }
+                }
+            }
+
+            // Note: 三角形要素生成後でないと特定できない
+            MakeCo2FixedCads(world);
+
+            // ポート上の線要素の節点ナンバリング
+            NumberPortNodes(world, zeroCoordIds);
+
+            // 三角形要素の要素順番と節点ナンバリング
+            NumberTriangleElementsAndNodes(world, triFEs, zeroCoordIds);
+
+            // 節点→座標のマップ作成
+            MakeNode2CoFromCo2Node();
+        }
+
+        // 座標、三角形要素と線要素を生成する
+        private void MakeCoordsAndElements(
+            FEWorld world,
+            IList<double> vertexCoords,
+            Dictionary<uint, uint> cadLoop2Material,
+            Dictionary<uint, uint> cadEdge2Material,
+            out IList<TriangleFE> triFEs)
+        {
+            Mesher2D mesh = world.Mesh;
             System.Diagnostics.Debug.Assert(mesh != null);
 
-            IList<double> vertexCoords = world.VertexCoords;
             if (FEOrder == 1)
             {
                 Coords = new List<double>(vertexCoords);
@@ -283,7 +381,7 @@ namespace IvyFEM
             // 領域の三角形要素
             // まず要素を作る
             // この順番で生成した要素は隣接していない
-            IList<TriangleFE> triFEs = new List<TriangleFE>();
+            triFEs = new List<TriangleFE>();
             Dictionary<string, IList<int>> edge2MidPt = new Dictionary<string, IList<int>>();
             foreach (uint meshId in meshIds)
             {
@@ -297,11 +395,11 @@ namespace IvyFEM
                     continue;
                 }
 
-                if (!world.CadLoop2Material.ContainsKey(cadId))
+                if (!cadLoop2Material.ContainsKey(cadId))
                 {
                     throw new IndexOutOfRangeException();
                 }
-                uint maId = world.CadLoop2Material[cadId];
+                uint maId = cadLoop2Material[cadId];
 
                 int elemVertexCnt = 3;
                 int elemNodeCnt = 0;
@@ -431,7 +529,7 @@ namespace IvyFEM
                 //    throw new IndexOutOfRangeException();
                 //}
                 // 未指定のマテリアルも許容する
-                uint maId = world.CadEdge2Material.ContainsKey(cadId) ? world.CadEdge2Material[cadId] : 0;
+                uint maId = cadEdge2Material.ContainsKey(cadId) ? cadEdge2Material[cadId] : 0;
 
                 for (int iElem = 0; iElem < elemCnt; iElem++)
                 {
@@ -490,9 +588,12 @@ namespace IvyFEM
                     Mesh2LineFE.Add(key, feId);
                 }
             }
+        }
 
-            // Note: 線要素生成後でないと点を特定できない
-            IList<int> zeroCoordIds = world.GetZeroCoordIds(Id);
+        // ポート上の線要素の節点ナンバリング
+        private void NumberPortNodes(FEWorld world, IList<int> zeroCoordIds)
+        {
+            Mesher2D mesh = world.Mesh;
 
             // ポート上の線要素の抽出と節点ナンバリング
             foreach (var portEIds in world.PortEIdss)
@@ -536,9 +637,16 @@ namespace IvyFEM
                     }
                 }
             }
+        }
 
-            ////////////////////////////////////////
+        // 三角形要素の要素順番と節点ナンバリング
+        private void NumberTriangleElementsAndNodes(FEWorld world, IList<TriangleFE> triFEs, IList<int> zeroCoordIds)
+        {
+            Mesher2D mesh = world.Mesh;
+
             Dictionary<TriangleFE, IList<int>> triFECoIds = new Dictionary<TriangleFE, IList<int>>();
+
+            // ポート上の節点を探す
             IList<IList<int>> portCoIdss = new List<IList<int>>();
             uint portCnt = world.GetPortCount();
             for (uint portId = 0; portId < portCnt; portId++)
@@ -660,26 +768,6 @@ namespace IvyFEM
                 string key = string.Format(meshId + "_" + iElem);
                 Mesh2TriangleFE.Add(key, feId);
             }
-
-            //////////////////////////////////////////////////////
-            // 逆参照
-            foreach (var portCo2Node in PortCo2Nodes)
-            {
-                var portNode2Co = new Dictionary<int, int>();
-                PortNode2Cos.Add(portNode2Co);
-                foreach (var pair in portCo2Node)
-                {
-                    int tmpPortCoId = pair.Key;
-                    int tmpPortNodeId = pair.Value;
-                    portNode2Co[tmpPortNodeId] = tmpPortCoId;
-                }
-            }
-            foreach (var pair in Co2Node)
-            {
-                int tmpCoId = pair.Key;
-                int tmpNodeId = pair.Value;
-                Node2Co[tmpNodeId] = tmpCoId;
-            }
         }
 
         private IList<TriangleFE> GetCoordIncludeTriFEs(TriangleFE fe, IList<TriangleFE> triFEs,
@@ -708,6 +796,91 @@ namespace IvyFEM
                 }
             }
             return includeTriFEs;
+        }
+
+        private IList<int> GetZeroCoordIds(FEWorld world)
+        {
+            IList<int> zeroCoIds = new List<int>();
+
+            foreach (var fixedCad in ZeroFieldFixedCads)
+            {
+                IList<int> coIds = GetCoordIdsFromCadId(world, fixedCad.CadId, fixedCad.CadElemType);
+                foreach (int coId in coIds)
+                {
+                    zeroCoIds.Add(coId);
+                }
+            }
+            return zeroCoIds;
+        }
+
+        private void MakeCo2FixedCads(FEWorld world)
+        {
+            Co2FixedCads.Clear();
+            foreach (var fixedCad in FieldFixedCads)
+            {
+                IList<int> coIds = this.GetCoordIdsFromCadId(world, fixedCad.CadId, fixedCad.CadElemType);
+                foreach (int coId in coIds)
+                {
+                    IList<FieldFixedCad> fixedCads = null;
+                    if (!Co2FixedCads.ContainsKey(coId))
+                    {
+                        fixedCads = new List<FieldFixedCad>();
+                        Co2FixedCads[coId] = fixedCads;
+                    }
+                    else
+                    {
+                        fixedCads = Co2FixedCads[coId];
+                    }
+                    if (fixedCads.IndexOf(fixedCad) == -1)
+                    {
+                        fixedCads.Add(fixedCad);
+                    }
+                }
+            }
+        }
+
+        private void MakeCo2MultipointConstraints(FEWorld world)
+        {
+            foreach (MultipointConstraint mpConstraint in MultipointConstraints)
+            {
+                var fixedCad = mpConstraint.FixedCad;
+                IList<int> coIds = GetCoordIdsFromCadId(world, fixedCad.CadId, fixedCad.CadElemType);
+                foreach (int coId in coIds)
+                {
+                    IList<MultipointConstraint> mpConstraints = null;
+                    if (!Co2MultipointConstraints.ContainsKey(coId))
+                    {
+                        Co2MultipointConstraints[coId] = new List<MultipointConstraint>();
+                    }
+                    mpConstraints = Co2MultipointConstraints[coId];
+                    if (mpConstraints.IndexOf(mpConstraint) == -1)
+                    {
+                        mpConstraints.Add(mpConstraint);
+                    }
+                }
+            }
+        }
+
+        private void MakeNode2CoFromCo2Node()
+        {
+            // 逆参照
+            foreach (var portCo2Node in PortCo2Nodes)
+            {
+                var portNode2Co = new Dictionary<int, int>();
+                PortNode2Cos.Add(portNode2Co);
+                foreach (var pair in portCo2Node)
+                {
+                    int tmpPortCoId = pair.Key;
+                    int tmpPortNodeId = pair.Value;
+                    portNode2Co[tmpPortNodeId] = tmpPortCoId;
+                }
+            }
+            foreach (var pair in Co2Node)
+            {
+                int tmpCoId = pair.Key;
+                int tmpNodeId = pair.Value;
+                Node2Co[tmpNodeId] = tmpCoId;
+            }
         }
 
         public IList<LineFE> MakeBoundOfElements(FEWorld world)

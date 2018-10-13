@@ -9,40 +9,66 @@ namespace IvyFEM
     delegate void CalcElementDoubleAB(
         uint feId, IvyFEM.Linear.DoubleSparseMatrix A, double[] B);
 
-    abstract class Elastic2DBaseFEM : FEM
+    abstract partial class Elastic2DBaseFEM : FEM
     {
-        protected uint[] QuantityIds { get; set; } = null;
         protected int[] NodeCounts { get; set; } = null;
         protected int[] Dofs { get; set; } = null;
-        protected int NodeCount
-        {
-            get
-            {
-                if (Dofs == null)
-                {
-                    return 0;
-                }
-                if (NodeCounts == null)
-                {
-                    return 0;
-                }
-                int cnt = 0;
-                for (int iVar = 0; iVar < Dofs.Length; iVar++)
-                {
-                    cnt += NodeCounts[iVar] * Dofs[iVar];
-                }
-                return cnt;
-            }
-        }
         public double ConvRatioToleranceForNewtonRaphson { get; set; }
             = 1.0e+2 * IvyFEM.Linear.Constants.ConvRatioTolerance; // 収束しないので収束条件を緩めている
-
         // Calc Matrix
         protected IList<CalcElementDoubleAB> CalcElementABs { get; set; } = new List<CalcElementDoubleAB>();
 
         //Solve
         // Output
         public double[] U { get; protected set; }
+
+        protected void SetupNodeCount()
+        {
+            int quantityCnt = World.GetQuantityCount();
+            Dofs = new int[quantityCnt];
+            NodeCounts = new int[quantityCnt];
+            for (uint quantityId = 0; quantityId < quantityCnt; quantityId++)
+            {
+                Dofs[quantityId] = (int)World.GetDof(quantityId);
+                NodeCounts[quantityId] = (int)World.GetNodeCount(quantityId);
+            }
+        }
+
+        protected int GetNodeCount()
+        {
+            if (Dofs == null)
+            {
+                return 0;
+            }
+            if (NodeCounts == null)
+            {
+                return 0;
+            }
+            int cnt = 0;
+            for (int i = 0; i < Dofs.Length; i++)
+            {
+                cnt += NodeCounts[i] * Dofs[i];
+            }
+            return cnt;
+        }
+
+        protected int GetOffset(uint quantityIdIndex)
+        {
+            if (Dofs == null)
+            {
+                return 0;
+            }
+            if (NodeCounts == null)
+            {
+                return 0;
+            }
+            int cnt = 0;
+            for (int i = 0; i < quantityIdIndex; i++)
+            {
+                cnt += NodeCounts[i] * Dofs[i];
+            }
+            return cnt;
+        }
 
         protected void CalcAB(IvyFEM.Linear.DoubleSparseMatrix A, double[] B)
         {
@@ -55,13 +81,16 @@ namespace IvyFEM
                     calcElementAB(feId, A, B);
                 }
             }
+            CalcMultipointConstraintAB(A, B);
         }
 
         public override void Solve()
         {
-            int nodeCnt = NodeCount;
+            SetupNodeCount();
 
-            if (HasNonLinearElasticMaterial())
+            int nodeCnt = GetNodeCount();
+
+            if (MustUseNewtonRaphson())
             {
                 // Newton Raphson
                 double sqNorm = 0;
@@ -144,7 +173,20 @@ namespace IvyFEM
 
         }
 
-        protected bool HasNonLinearElasticMaterial()
+        protected bool MustUseNewtonRaphson()
+        {
+            if (HasMultipointConstraints())
+            {
+                return true;
+            }
+            if (HasNonLinearElasticMaterial())
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private bool HasNonLinearElasticMaterial()
         {
             bool hasNonlinear = false;
             uint quantityId = 0; // Note: 複数変数のときでも要素Idは同じはずなので0指定
@@ -166,121 +208,19 @@ namespace IvyFEM
             return hasNonlinear;
         }
 
-        public static void SetStressValue(
-            uint displacementValueId, uint stressValueId, uint equivStressValueId, FEWorld world)
+        private bool HasMultipointConstraints()
         {
-            System.Diagnostics.Debug.Assert(world.IsFieldValueId(displacementValueId));
-            FieldValue uFV = world.GetFieldValue(displacementValueId);
-            uint uQuantityId = uFV.QuantityId;
-
-            FieldValue sigmaFV = null;
-            if (stressValueId != 0)
+            bool hasMPC = false;
+            for (uint quantityId = 0; quantityId < World.GetQuantityCount(); quantityId++)
             {
-                System.Diagnostics.Debug.Assert(world.IsFieldValueId(stressValueId));
-                sigmaFV = world.GetFieldValue(stressValueId);
-                System.Diagnostics.Debug.Assert(sigmaFV.Type == FieldValueType.SymmetricTensor2);
-                System.Diagnostics.Debug.Assert(sigmaFV.Dof == 3);
-            }
-            FieldValue eqSigmaFV = null;
-            if (equivStressValueId != 0)
-            {
-                System.Diagnostics.Debug.Assert(world.IsFieldValueId(equivStressValueId));
-                eqSigmaFV = world.GetFieldValue(equivStressValueId);
-                System.Diagnostics.Debug.Assert(eqSigmaFV.Type == FieldValueType.Scalar);
-                System.Diagnostics.Debug.Assert(eqSigmaFV.Dof == 1);
-            }
-
-            IList<uint> feIds = world.GetTriangleFEIds(uQuantityId);
-            foreach (uint feId in feIds)
-            {
-                TriangleFE triFE = world.GetTriangleFE(uQuantityId, feId);
-                int[] coIds = triFE.NodeCoordIds;
-                Material ma = world.GetMaterial(triFE.MaterialId);
-                double lambda = 0;
-                double mu = 0;
-                if (ma is LinearElasticMaterial)
+                int cnt = World.GetMultipointConstraintCount(quantityId);
+                if (cnt > 0)
                 {
-                    var ma1 = ma as LinearElasticMaterial;
-                    lambda = ma1.LameLambda;
-                    mu = ma1.LameMu;
-                }
-                else if (ma is SaintVenantHyperelasticMaterial)
-                {
-                    var ma1 = ma as SaintVenantHyperelasticMaterial;
-                    lambda = ma1.LameLambda;
-                    mu = ma1.LameMu;
-                }
-                else
-                {
-                    System.Diagnostics.Debug.Assert(false);
-                    throw new NotImplementedException();
-                }
-
-                var ip = triFE.GetIntegrationPoints(TriangleIntegrationPointCount.Point1);
-                System.Diagnostics.Debug.Assert(ip.PointCount == 1);
-                double[] L = ip.Ls[0];
-                double[][] Nu = triFE.CalcNu(L);
-                double[] Nx = Nu[0];
-                double[] Ny = Nu[1];
-                double[] uu = new double[4]; // 00, 10, 01, 11 (dux/dx duy/dx dux/dy duy/duy)
-                for (int iNode = 0; iNode < coIds.Length; iNode++)
-                {
-                    int coId = coIds[iNode];
-                    double[] u = uFV.GetDoubleValue(coId, FieldDerivationType.Value);
-                    uu[0] += u[0] * Nx[iNode];
-                    uu[1] += u[1] * Nx[iNode];
-                    uu[2] += u[0] * Ny[iNode];
-                    uu[3] += u[1] * Ny[iNode];
-                }
-
-                //ε strain
-                double[] eps = new double[4];
-                if (ma is LinearElasticMaterial)
-                {
-                    eps[0] = 0.5 * (uu[0] + uu[0]);
-                    eps[1] = 0.5 * (uu[1] + uu[2]);
-                    eps[2] = 0.5 * (uu[2] + uu[1]);
-                    eps[3] = 0.5 * (uu[3] + uu[3]);
-                }
-                else if (ma is SaintVenantHyperelasticMaterial)
-                {
-                    eps[0] = 0.5 * (uu[0] + uu[0] + uu[0] * uu[0] + uu[1] * uu[1]);
-                    eps[1] = 0.5 * (uu[1] + uu[2] + uu[2] * uu[0] + uu[1] * uu[3]);
-                    eps[2] = 0.5 * (uu[2] + uu[1] + uu[0] * uu[2] + uu[3] * uu[1]);
-                    eps[3] = 0.5 * (uu[3] + uu[3] + uu[2] * uu[2] + uu[3] * uu[3]);
-                }
-                else
-                {
-                    System.Diagnostics.Debug.Assert(false);
-                }
-
-                // σ stress
-                double[] sigma = new double[4];
-                sigma[0] = mu * eps[0] + lambda * (eps[0] + eps[3]);
-                sigma[1] = mu * eps[1];
-                sigma[2] = mu * eps[2];
-                sigma[3] = mu * eps[3] + lambda * (eps[0] + eps[3]);
-
-                double misesStress = Math.Sqrt(
-                    0.5 * (sigma[0] - sigma[3]) * (sigma[0] - sigma[3]) +
-                    0.5 * sigma[3] * sigma[3] +
-                    0.5 * sigma[0] * sigma[0] +
-                    3 * sigma[2] * sigma[2]);
-
-                if (stressValueId != 0)
-                {
-                    double[] Sigma = sigmaFV.GetDoubleValues(FieldDerivationType.Value);
-                    uint dof = sigmaFV.Dof;
-                    Sigma[(feId - 1) * dof + 0] = sigma[0]; // σxx
-                    Sigma[(feId - 1) * dof + 1] = sigma[3]; // σyy
-                    Sigma[(feId - 1) * dof + 2] = sigma[2]; // τxy
-                }
-                if (equivStressValueId != 0)
-                {
-                    double[] EqSigma = eqSigmaFV.GetDoubleValues(FieldDerivationType.Value);
-                    EqSigma[feId - 1] = misesStress;
+                    hasMPC = true;
+                    break;
                 }
             }
+            return hasMPC;
         }
     }
 }

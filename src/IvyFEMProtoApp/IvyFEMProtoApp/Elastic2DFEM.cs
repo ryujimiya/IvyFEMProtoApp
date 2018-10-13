@@ -7,23 +7,11 @@ using IvyFEM.Linear;
 
 namespace IvyFEM
 {
-    partial class Elastic2DFEM : Elastic2DBaseFEM
+    partial class Elastic2DFEM : Elastic2DDerivedBaseFEM
     {
         public Elastic2DFEM(FEWorld world)
         {
             World = world;
-
-            int quantityCnt = world.QuantityCount();
-            QuantityIds = new uint[quantityCnt];
-            Dofs = new int[quantityCnt];
-            NodeCounts = new int[quantityCnt];
-            for (uint quantityId = 0; quantityId < quantityCnt; quantityId++)
-            {
-                QuantityIds[quantityId] = quantityId;
-                Dofs[quantityId] = (int)World.GetDof(quantityId);
-                NodeCounts[quantityId] = (int)World.GetNodeCount(quantityId);
-            }
-
             SetupCalcABs();
         }
 

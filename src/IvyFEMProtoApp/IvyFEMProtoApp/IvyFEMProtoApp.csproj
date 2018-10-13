@@ -120,18 +120,25 @@
       <DependentUpon>ChartWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ColorLegend.cs" />
+    <Compile Include="Constraint.cs" />
+    <Compile Include="ConstraintDrawer.cs" />
+    <Compile Include="ConstraintDrawerArray.cs" />
+    <Compile Include="Elastic2DBaseFEM.MultipointConstraint.cs" />
+    <Compile Include="Elastic2DDerivedBaseFEM.cs" />
     <Compile Include="Elastic2DFEM.LinearElastic.cs" />
     <Compile Include="Elastic2DFEM.SaintVenantHyperelastic.cs" />
     <Compile Include="FEWorldQuantity.cs" />
-    <Compile Include="Hyperelastic2DBaseFEM.cs" />
+    <Compile Include="Hyperelastic2DDerivedBaseFEM.cs" />
     <Compile Include="Hyperelastic2DFEM.cs" />
     <Compile Include="Hyperelastic2DFEM.Ogden.Original.cs" />
     <Compile Include="Hyperelastic2DTDFEM.cs" />
     <Compile Include="Hyperelastic2DTDFEM.Ogden.Original.cs" />
     <Compile Include="Hyperelastic2DTDFEM.Ogden.cs" />
     <Compile Include="Linear.Utils.cs" />
+    <Compile Include="LineConstraint.cs" />
     <Compile Include="LineFE.2nd.cs" />
     <Compile Include="LineFE.1st.cs" />
+    <Compile Include="MultipointConstraint.cs" />
     <Compile Include="OgdenHyperelasticMaterial.cs" />
     <Compile Include="Hyperelastic2DFEM.Ogden.cs" />
     <Compile Include="Hyperelastic2DFEM.MooneyRivlin.cs" />
@@ -212,6 +219,13 @@
     <Compile Include="ColorMap.cs" />
     <Compile Include="PickedObject.cs" />
     <Compile Include="MeshPoint2D.cs" />
+    <Compile Include="Problem .HyperelasticMPC.cs" />
+    <Compile Include="Problem .Hyperelastic.cs" />
+    <Compile Include="Problem .ElasticMPC.cs" />
+    <Compile Include="Problem .Elastic.cs" />
+    <Compile Include="Problem .EMWaveguide.cs" />
+    <Compile Include="Problem .Solver.cs" />
+    <Compile Include="Problem .Cad.cs" />
     <Compile Include="Problem.cs" />
     <Compile Include="MeshQuad2D.cs" />
     <Compile Include="MeshQuadArray2D.cs" />

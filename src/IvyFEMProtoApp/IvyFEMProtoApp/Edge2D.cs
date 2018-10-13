@@ -1182,7 +1182,7 @@ namespace IvyFEM
                     OpenTK.Vector2d lx;
                     OpenTK.Vector2d ly;
                     GetCenterRadiusThetaLXY(out cPt, out radius, out theta, out lx, out ly);
-                    uint div1 = (uint)(theta * 360 / (5.0 * 6.28) + 1);
+                    uint div1 = (uint)(theta * 360 / (5.0 * 2.0 * Math.PI) + 1);
                     return GetCurveAsPolyline(out pts, (int)div1);
                 }
                 else if (CurveType == CurveType.CurvePolyline)
@@ -1405,10 +1405,9 @@ namespace IvyFEM
             double x = OpenTK.Vector2d.Dot(reV, lx);
             double y = OpenTK.Vector2d.Dot(reV, ly);
             theta = Math.Atan2(y, x);
-            const double PI = Math.PI;
             if (theta < 0.0)
             {
-                theta += 2.0 * PI;
+                theta += 2.0 * Math.PI;
             }
             return true;
         }

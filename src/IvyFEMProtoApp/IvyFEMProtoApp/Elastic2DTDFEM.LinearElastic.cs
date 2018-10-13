@@ -11,9 +11,9 @@ namespace IvyFEM
         protected void CalcLinearElasticElementAB(
             uint feId, IvyFEM.Linear.DoubleSparseMatrix A, double[] B)
         {
-            uint quantityId = QuantityIds[0];
-            int nodeCnt = NodeCounts[0];
-            int dof = Dofs[0];
+            uint quantityId = 0;
+            int nodeCnt = NodeCounts[quantityId];
+            int dof = Dofs[quantityId];
 
             double dt = TimeStep;
             double beta = NewmarkBeta;
