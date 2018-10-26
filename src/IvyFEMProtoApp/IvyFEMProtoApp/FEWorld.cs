@@ -320,7 +320,7 @@ namespace IvyFEM
             FieldValueArray.Clear();
         }
 
-        public uint AddFieldValue(FieldValueType fieldType, FieldDerivationType derivationType,
+        public uint AddFieldValue(FieldValueType fieldType, FieldDerivativeType derivativeType,
             uint quantityId, uint dof, bool isBubble, FieldShowType showType)
         {
             uint pointCnt = 0;
@@ -334,7 +334,7 @@ namespace IvyFEM
             }
             FieldValue fv = new FieldValue();
             fv.Type = fieldType;
-            fv.DerivationType = derivationType;
+            fv.DerivativeType = derivativeType;
             fv.IsBubble = isBubble;
             fv.ShowType = showType;
             fv.QuantityId = quantityId;
@@ -347,7 +347,7 @@ namespace IvyFEM
         }
 
         public void UpdateFieldValueValuesFromNodeValues(
-            uint valueId, FieldDerivationType dt, double[] nodeValues)
+            uint valueId, FieldDerivativeType dt, double[] nodeValues)
         {
             System.Diagnostics.Debug.Assert(FieldValueArray.IsObjectId(valueId));
             FieldValue fv = FieldValueArray.GetObject(valueId);
@@ -383,7 +383,7 @@ namespace IvyFEM
         }
 
         public void UpdateFieldValueValuesFromNodeValues(
-            uint valueId, FieldDerivationType dt, System.Numerics.Complex[] nodeValues)
+            uint valueId, FieldDerivativeType dt, System.Numerics.Complex[] nodeValues)
         {
             System.Diagnostics.Debug.Assert(FieldValueArray.IsObjectId(valueId));
             FieldValue fv = FieldValueArray.GetObject(valueId);

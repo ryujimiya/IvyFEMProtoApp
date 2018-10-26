@@ -209,7 +209,7 @@ namespace IvyFEMProtoApp
                 {
                     Camera.MouseRotation(MovBeginX, MovBeginY, movEndX, movEndY);
                 }
-                else if (Modifiers.HasFlag(System.Windows.Forms.Keys.Shift))
+                else/* if (Modifiers.HasFlag(System.Windows.Forms.Keys.Shift))*/
                 {
                     Camera.MousePan(MovBeginX, MovBeginY, movEndX, movEndY);
                 }
@@ -303,16 +303,16 @@ namespace IvyFEMProtoApp
             Problem.ElasticProblem(this, true, isSaintVenant);
         }
 
-        private void saintVenantHyperelasticBtn_Click(object sender, RoutedEventArgs e)
-        {
-            bool isSaintVenant = true;
-            Problem.ElasticProblem(this, false, isSaintVenant);
-        }
-
         private void elasticTDBtn_Click(object sender, RoutedEventArgs e)
         {
             bool isSaintVenant = false;
             Problem.ElasticTDProblem(this, isSaintVenant);
+        }
+
+        private void saintVenantHyperelasticBtn_Click(object sender, RoutedEventArgs e)
+        {
+            bool isSaintVenant = true;
+            Problem.ElasticProblem(this, false, isSaintVenant);
         }
 
         private void saintVenantHyperelasticTDBtn_Click(object sender, RoutedEventArgs e)
@@ -345,19 +345,6 @@ namespace IvyFEMProtoApp
             Problem.HyperelasticTDProblem(this, isMooney);
         }
 
-        private void elasticMultipointConstraintBtn_Click(object sender, RoutedEventArgs e)
-        {
-            bool isSaintVenant = false;
-            Problem.ElasticMultipointConstraintProblem(this, false, isSaintVenant);
-            //Problem.ElasticMultipointConstraintProblem(this, true, isSaintVenant);
-        }
-
-        private void saintVenantHyperelasticMultipointConstraintBtn_Click(object sender, RoutedEventArgs e)
-        {
-            bool isSaintVenant = true;
-            Problem.ElasticMultipointConstraintProblem(this, false, isSaintVenant);
-        }
-
         private void elasticMultipointConstraintTDBtn_Click(object sender, RoutedEventArgs e)
         {
             bool isSaintVenant = false;
@@ -370,28 +357,66 @@ namespace IvyFEMProtoApp
             Problem.ElasticMultipointConstraintTDProblem(this, isSaintVenant);
         }
 
-        private void mooneyRivlinHyperelasticMultipointConstraintBtn_Click(object sender, RoutedEventArgs e)
-        {
-            bool isMooney = true;
-            Problem.HyperelasticMultipointConstraintProblem(this, isMooney);
-        }
-
         private void mooneyRivlinHyperelasticMultipointConstraintTDBtn_Click(object sender, RoutedEventArgs e)
         {
             bool isMooney = true;
             Problem.HyperelasticMultipointConstraintTDProblem(this, isMooney);
         }
 
-        private void ogdenHyperelasticMultipointConstraintBtn_Click(object sender, RoutedEventArgs e)
-        {
-            bool isMooney = false; // Ogden
-            Problem.HyperelasticMultipointConstraintProblem(this, isMooney);
-        }
-
         private void ogdenHyperelasticMultipointConstraintTDBtn_Click(object sender, RoutedEventArgs e)
         {
             bool isMooney = false; // Ogden
             Problem.HyperelasticMultipointConstraintTDProblem(this, isMooney);
+        }
+
+        private void elasticContactTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            bool isSaintVenant = false;
+            Problem.ElasticContactTDProblem(this, isSaintVenant);
+        }
+
+        private void saintVenantHyperelasticContactTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            bool isSaintVenant = true;
+            Problem.ElasticContactTDProblem(this, isSaintVenant);
+        }
+
+        private void mooneyRivlinHyperelasticContactTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            bool isMooney = true;
+            Problem.HyperelasticContactTDProblem(this, isMooney);
+        }
+
+        private void ogdenHyperelasticContactTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            // Ogden
+            bool isMooney = false;
+            Problem.HyperelasticContactTDProblem(this, isMooney);
+        }
+
+        private void elasticCircleContactTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            bool isSaintVenant = false;
+            Problem.ElasticCircleContactTDProblem(this, isSaintVenant);
+        }
+
+        private void saintVenantHyperelasticCircleContactTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            bool isSaintVenant = true;
+            Problem.ElasticCircleContactTDProblem(this, isSaintVenant);
+        }
+
+        private void mooneyRivlinHyperelasticCircleContactTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            bool isMooney = true;
+            Problem.HyperelasticCircleContactTDProblem(this, isMooney);
+        }
+
+        private void ogdenHyperelasticCircleContactTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            // Ogden
+            bool isMooney = false;
+            Problem.HyperelasticCircleContactTDProblem(this, isMooney);
         }
     }
 }

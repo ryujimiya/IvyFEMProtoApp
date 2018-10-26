@@ -14,6 +14,8 @@ namespace IvyFEMProtoApp
     {
         public void WaveguideProblem(MainWindow mainWindow)
         {
+            double WaveguideWidth = 1.0;
+            double InputWGLength = 1.0 * WaveguideWidth;
             CadObject2D cad2D = new CadObject2D();
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
@@ -150,14 +152,14 @@ namespace IvyFEMProtoApp
             {
                 uint dof = 1; // 複素数
                 world.ClearFieldValue();
-                valueId = world.AddFieldValue(FieldValueType.ZScalar, FieldDerivationType.Value,
+                valueId = world.AddFieldValue(FieldValueType.ZScalar, FieldDerivativeType.Value,
                     quantityId, dof, false, FieldShowType.ZAbs);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
-                IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivationType.Value, true, world,
-                    valueId, FieldDerivationType.Value);
+                IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, true, world,
+                    valueId, FieldDerivativeType.Value);
                 fieldDrawerArray.Add(faceDrawer);
-                //IFieldDrawer edgeDrawer = new EdgeFieldDrawer(valueId, FieldDerivationType.VALUE, true, world);
+                //IFieldDrawer edgeDrawer = new EdgeFieldDrawer(valueId, FieldDerivativeType.VALUE, true, world);
                 //fieldDrawerArray.Add(edgeDrawer);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
                 mainWindow.glControl_ResizeProc();
@@ -220,7 +222,7 @@ namespace IvyFEMProtoApp
                 model.InvalidatePlot(true);
                 WPFUtils.DoEvents();
 
-                world.UpdateFieldValueValuesFromNodeValues(valueId, FieldDerivationType.Value, Ez);
+                world.UpdateFieldValueValuesFromNodeValues(valueId, FieldDerivativeType.Value, Ez);
 
                 fieldDrawerArray.Update(world);
                 mainWindow.glControl.Invalidate();

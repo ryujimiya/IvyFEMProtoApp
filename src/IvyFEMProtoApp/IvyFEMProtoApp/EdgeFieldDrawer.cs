@@ -15,7 +15,7 @@ namespace IvyFEM
         private uint LineCount => (uint)LineFEs.Count;
         private uint LinePtCount = 0;
         private uint ValueId = 0;
-        private FieldDerivationType ValueDt = FieldDerivationType.Value;
+        private FieldDerivativeType ValueDt = FieldDerivativeType.Value;
         private bool IsntDisplacementValue = false;
         public RotMode SutableRotMode { get; private set; } = RotMode.RotModeNotSet;
         public bool IsAntiAliasing { get; set; } = false;
@@ -25,13 +25,13 @@ namespace IvyFEM
 
         }
 
-        public EdgeFieldDrawer(uint valueId, FieldDerivationType valueDt, bool isntDisplacementValue,
+        public EdgeFieldDrawer(uint valueId, FieldDerivativeType valueDt, bool isntDisplacementValue,
             FEWorld world)
         {
             Set(valueId, valueDt, isntDisplacementValue, world);
         }
 
-        private void Set(uint valueId, FieldDerivationType valueDt, bool isntDisplacementValue, FEWorld world)
+        private void Set(uint valueId, FieldDerivativeType valueDt, bool isntDisplacementValue, FEWorld world)
         {
             var mesh = world.Mesh;
 
@@ -120,7 +120,7 @@ namespace IvyFEM
                         {
                             int coId = lineFE.NodeCoordIds[iPt];
                             double[] coord = world.GetCoord(quantityId, coId);
-                            FieldDerivationType dt = ValueDt;
+                            FieldDerivativeType dt = ValueDt;
                             double value = fv.GetShowValue(coId, 0, dt);
                             VertexArray.VertexCoordArray[(iEdge * LinePtCount + iPt) * drawDim + 0] = coord[0];
                             VertexArray.VertexCoordArray[(iEdge * LinePtCount + iPt) * drawDim + 1] = coord[1];
@@ -138,7 +138,7 @@ namespace IvyFEM
                         {
                             int coId = lineFE.NodeCoordIds[iPt];
                             double[] coord = world.GetCoord(quantityId, coId);
-                            FieldDerivationType dt = ValueDt;
+                            FieldDerivativeType dt = ValueDt;
                             for (int iDim = 0; iDim < drawDim; iDim++)
                             {
                                 double value = fv.GetShowValue(coId, iDim, dt);

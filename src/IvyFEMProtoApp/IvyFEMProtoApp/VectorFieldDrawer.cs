@@ -11,7 +11,7 @@ namespace IvyFEM
     {
         private IList<VectorFieldDrawPart> DrawParts = new List<VectorFieldDrawPart>();
         private uint ValueId = 0;
-        private FieldDerivationType ValueDt = FieldDerivationType.Value;
+        private FieldDerivativeType ValueDt = FieldDerivativeType.Value;
 
         public RotMode SutableRotMode { get; private set; } = RotMode.RotModeNotSet;
         public bool IsAntiAliasing { get; set; } = false;
@@ -23,12 +23,12 @@ namespace IvyFEM
 
         }
 
-        public VectorFieldDrawer(uint valueId, FieldDerivationType valueDt, FEWorld world)
+        public VectorFieldDrawer(uint valueId, FieldDerivativeType valueDt, FEWorld world)
         {
             Set(valueId, valueDt, world);
         }
 
-        private void Set(uint valueId, FieldDerivationType valueDt, FEWorld world)
+        private void Set(uint valueId, FieldDerivativeType valueDt, FEWorld world)
         {
             System.Diagnostics.Debug.Assert(world.IsFieldValueId(valueId));
             ValueId = valueId;

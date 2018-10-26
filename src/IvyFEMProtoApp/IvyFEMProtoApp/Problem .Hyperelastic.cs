@@ -99,7 +99,7 @@ namespace IvyFEMProtoApp
                 // FixedDofIndex 0: X 1: Y
                 var fixedCadDatas = new[]
                 {
-                    new { CadId = (uint)2, CadElemType = CadElementType.Edge, Dof = 2,
+                    new { CadId = (uint)2, CadElemType = CadElementType.Edge,
                         FixedDofIndexs = new List<uint> { 0, 1 }, Values = new double[] { 0.0, 0.0 } }
                 };
                 IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(uQuantityId);
@@ -123,20 +123,20 @@ namespace IvyFEMProtoApp
                 uint uDof = 2; // Vector2
                 uint lDof = 1; // Scalar
                 world.ClearFieldValue();
-                uValueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivationType.Value,
+                uValueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivativeType.Value,
                     uQuantityId, uDof, false, FieldShowType.Real);
-                lValueId = world.AddFieldValue(FieldValueType.Scalar, FieldDerivationType.Value,
+                lValueId = world.AddFieldValue(FieldValueType.Scalar, FieldDerivativeType.Value,
                     lQuantityId, lDof, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
-                IFieldDrawer faceDrawer = new FaceFieldDrawer(uValueId, FieldDerivationType.Value, false, world);
+                IFieldDrawer faceDrawer = new FaceFieldDrawer(uValueId, FieldDerivativeType.Value, false, world);
                 // Lagrange未定乗数のサーモグラフィ表示
-                //IFieldDrawer faceDrawer = new FaceFieldDrawer(uValueId, FieldDerivationType.Value, false, world,
-                //    lValueId, FieldDerivationType.Value);
+                //IFieldDrawer faceDrawer = new FaceFieldDrawer(uValueId, FieldDerivativeType.Value, false, world,
+                //    lValueId, FieldDerivativeType.Value);
                 fieldDrawerArray.Add(faceDrawer);
-                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(uValueId, FieldDerivationType.Value, false, world);
+                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(uValueId, FieldDerivativeType.Value, false, world);
                 fieldDrawerArray.Add(edgeDrawer);
-                IFieldDrawer edgeDrawer2 = new EdgeFieldDrawer(uValueId, FieldDerivationType.Value, true, world);
+                IFieldDrawer edgeDrawer2 = new EdgeFieldDrawer(uValueId, FieldDerivativeType.Value, true, world);
                 fieldDrawerArray.Add(edgeDrawer2);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
                 mainWindow.glControl_ResizeProc();
@@ -211,8 +211,8 @@ namespace IvyFEMProtoApp
                 FEM.Solve();
                 double[] U = FEM.U;
 
-                world.UpdateFieldValueValuesFromNodeValues(uValueId, FieldDerivationType.Value, U);
-                world.UpdateFieldValueValuesFromNodeValues(lValueId, FieldDerivationType.Value, U);
+                world.UpdateFieldValueValuesFromNodeValues(uValueId, FieldDerivativeType.Value, U);
+                world.UpdateFieldValueValuesFromNodeValues(lValueId, FieldDerivativeType.Value, U);
                 fieldDrawerArray.Update(world);
                 mainWindow.glControl.Invalidate();
                 mainWindow.glControl.Update();
@@ -308,7 +308,7 @@ namespace IvyFEMProtoApp
                 // FixedDofIndex 0: X 1: Y
                 var fixedCadDatas = new[]
                 {
-                    new { CadId = (uint)2, CadElemType = CadElementType.Edge, Dof = 2,
+                    new { CadId = (uint)2, CadElemType = CadElementType.Edge,
                         FixedDofIndexs = new List<uint> { 0, 1 }, Values = new double[] { 0.0, 0.0 } }
                 };
                 IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(uQuantityId);
@@ -334,23 +334,23 @@ namespace IvyFEMProtoApp
                 uint lDof = 1; // Scalar
                 world.ClearFieldValue();
                 uValueId = world.AddFieldValue(FieldValueType.Vector2,
-                    FieldDerivationType.Value | FieldDerivationType.Velocity | FieldDerivationType.Acceleration,
+                    FieldDerivativeType.Value | FieldDerivativeType.Velocity | FieldDerivativeType.Acceleration,
                     uQuantityId, uDof, false, FieldShowType.Real);
                 prevUValueId = world.AddFieldValue(FieldValueType.Vector2,
-                    FieldDerivationType.Value | FieldDerivationType.Velocity | FieldDerivationType.Acceleration,
+                    FieldDerivativeType.Value | FieldDerivativeType.Velocity | FieldDerivativeType.Acceleration,
                     uQuantityId, uDof, false, FieldShowType.Real);
-                lValueId = world.AddFieldValue(FieldValueType.Scalar, FieldDerivationType.Value,
+                lValueId = world.AddFieldValue(FieldValueType.Scalar, FieldDerivativeType.Value,
                     lQuantityId, lDof, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
-                IFieldDrawer faceDrawer = new FaceFieldDrawer(uValueId, FieldDerivationType.Value, false, world);
+                IFieldDrawer faceDrawer = new FaceFieldDrawer(uValueId, FieldDerivativeType.Value, false, world);
                 // Lagrange未定乗数のサーモグラフィ表示
-                //IFieldDrawer faceDrawer = new FaceFieldDrawer(uValueId, FieldDerivationType.Value, false, world,
-                //    lValueId, FieldDerivationType.Value);
+                //IFieldDrawer faceDrawer = new FaceFieldDrawer(uValueId, FieldDerivativeType.Value, false, world,
+                //    lValueId, FieldDerivativeType.Value);
                 fieldDrawerArray.Add(faceDrawer);
-                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(uValueId, FieldDerivationType.Value, false, world);
+                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(uValueId, FieldDerivativeType.Value, false, world);
                 fieldDrawerArray.Add(edgeDrawer);
-                IFieldDrawer edgeDrawer2 = new EdgeFieldDrawer(uValueId, FieldDerivationType.Value, true, world);
+                IFieldDrawer edgeDrawer2 = new EdgeFieldDrawer(uValueId, FieldDerivativeType.Value, true, world);
                 fieldDrawerArray.Add(edgeDrawer2);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
                 mainWindow.glControl_ResizeProc();

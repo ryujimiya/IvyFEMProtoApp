@@ -8,7 +8,7 @@ namespace IvyFEM
 {
     class MultipointConstraint
     {
-        public FieldFixedCad FixedCad { get; set; } = null;
+        public IList<FieldFixedCad >FixedCads { get; private set; } = new List<FieldFixedCad>();
         public Constraint Constraint { get; set; } = null;
 
         public MultipointConstraint()
@@ -16,11 +16,19 @@ namespace IvyFEM
 
         }
 
-        public MultipointConstraint(uint cadId, CadElementType cadElemType, Constraint constraint)
+        public MultipointConstraint(
+            IList<KeyValuePair<uint, CadElementType>> cadIdTypes, Constraint constraint)
         {
-            uint dof = 1;
-            FixedCad = new FieldFixedCad(cadId, cadElemType, FieldValueType.Scalar, dof);
             Constraint = constraint;
+
+            foreach (var pair in cadIdTypes)
+            {
+                uint cadId = pair.Key;
+                CadElementType cadElemType = pair.Value;
+                uint dof = 1; // Lagrangeの未定乗数は常に1自由度
+                var fixedCad = new FieldFixedCad(cadId, cadElemType, FieldValueType.Scalar, dof);
+                FixedCads.Add(fixedCad);
+            }
         }
     }
 }

@@ -37,14 +37,20 @@
                     <MenuItem Header="Ogden Time Domain" Click="ogdenHyperelasticTDBtn_Click"/>
                 </MenuItem>
                 <MenuItem Header="Elastic(MPC)">
-                    <MenuItem Header="Elastic(MPC)" Click="elasticMultipointConstraintBtn_Click"/>
                     <MenuItem Header="Elastic(MPC) Time Domain" Click="elasticMultipointConstraintTDBtn_Click"/>
-                    <MenuItem Header="Saint Venant(MPC)" Click="saintVenantHyperelasticMultipointConstraintBtn_Click"/>
                     <MenuItem Header="Saint Venant(MPC) Time Domain" Click="saintVenantHyperelasticMultipointConstraintTDBtn_Click"/>
-                    <MenuItem Header="Mooney-Rivlin(MPC)" Click="mooneyRivlinHyperelasticMultipointConstraintBtn_Click"/>
                     <MenuItem Header="Mooney-Rivlin(MPC) Time Domain" Click="mooneyRivlinHyperelasticMultipointConstraintTDBtn_Click"/>
-                    <MenuItem Header="Ogden(MPC)" Click="ogdenHyperelasticMultipointConstraintBtn_Click"/>
                     <MenuItem Header="Ogden(MPC) Time Domain" Click="ogdenHyperelasticMultipointConstraintTDBtn_Click"/>
+                </MenuItem>
+                <MenuItem Header="Elastic(Contact)">
+                    <MenuItem Header="Elastic(Contact) Time Domain" Click="elasticContactTDBtn_Click"/>
+                    <MenuItem Header="Saint Venant(Contact) Time Domain" Click="saintVenantHyperelasticContactTDBtn_Click"/>
+                    <MenuItem Header="Mooney-Rivlin(Contact) Time Domain" Click="mooneyRivlinHyperelasticContactTDBtn_Click"/>
+                    <MenuItem Header="Ogden(Contact) Time Domain" Click="ogdenHyperelasticContactTDBtn_Click"/>
+                    <MenuItem Header="Elastic(Circle Contact) Time Domain" Click="elasticCircleContactTDBtn_Click"/>
+                    <MenuItem Header="Saint Venant(Circle Contact) Time Domain" Click="saintVenantHyperelasticCircleContactTDBtn_Click"/>
+                    <MenuItem Header="Mooney-Rivlin(Circle Contact) Time Domain" Click="mooneyRivlinHyperelasticCircleContactTDBtn_Click"/>
+                    <MenuItem Header="Ogden(Circle Contact) Time Domain" Click="ogdenHyperelasticCircleContactTDBtn_Click"/>
                 </MenuItem>
             </Menu>
             <Grid>

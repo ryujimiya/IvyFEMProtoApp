@@ -72,8 +72,8 @@ namespace IvyFEM
 
             {
                 // 2軸は直交している
-                System.Numerics.Complex dot = IvyFEM.Lapack.Functions.zdotc(cNormals[1], cNormals[0]);
-                System.Diagnostics.Debug.Assert(dot.Magnitude < IvyFEM.Constants.PrecisionLowerLimit);
+                //System.Numerics.Complex dot = IvyFEM.Lapack.Functions.zdotc(cNormals[1], cNormals[0]);
+                //System.Diagnostics.Debug.Assert(dot.Magnitude < IvyFEM.Constants.PrecisionLowerLimit);
                 // 右手系の固有ベクトルにする
                 System.Numerics.Complex[] newVec = {
                     -System.Numerics.Complex.Conjugate(cNormals[0][1]),

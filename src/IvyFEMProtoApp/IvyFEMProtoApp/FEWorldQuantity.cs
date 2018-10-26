@@ -312,10 +312,8 @@ namespace IvyFEM
             ClearElements();
 
             // 座標、三角形要素と線要素を生成する
-            IList<TriangleFE> triFEs;
             MakeCoordsAndElements(
-                world, vertexCoords, cadLoop2Material, cadEdge2Material,
-                out triFEs);
+                world, vertexCoords, cadLoop2Material, cadEdge2Material);
 
             // 多点拘束の座標生成
             MakeCo2MultipointConstraints(world);
@@ -345,7 +343,7 @@ namespace IvyFEM
             NumberPortNodes(world, zeroCoordIds);
 
             // 三角形要素の要素順番と節点ナンバリング
-            NumberTriangleElementsAndNodes(world, triFEs, zeroCoordIds);
+            NumberTriangleElementsAndNodes(world, zeroCoordIds);
 
             // 節点→座標のマップ作成
             MakeNode2CoFromCo2Node();
@@ -356,8 +354,7 @@ namespace IvyFEM
             FEWorld world,
             IList<double> vertexCoords,
             Dictionary<uint, uint> cadLoop2Material,
-            Dictionary<uint, uint> cadEdge2Material,
-            out IList<TriangleFE> triFEs)
+            Dictionary<uint, uint> cadEdge2Material)
         {
             Mesher2D mesh = world.Mesh;
             System.Diagnostics.Debug.Assert(mesh != null);
@@ -381,7 +378,6 @@ namespace IvyFEM
             // 領域の三角形要素
             // まず要素を作る
             // この順番で生成した要素は隣接していない
-            triFEs = new List<TriangleFE>();
             Dictionary<string, IList<int>> edge2MidPt = new Dictionary<string, IList<int>>();
             foreach (uint meshId in meshIds)
             {
@@ -485,7 +481,10 @@ namespace IvyFEM
                     fe.MaterialId = maId;
                     fe.MeshId = meshId;
                     fe.MeshElemId = iElem;
-                    triFEs.Add(fe);
+                    // 仮登録
+                    uint freeId = TriangleFEArray.GetFreeObjectId();
+                    uint feId = TriangleFEArray.AddObject(new KeyValuePair<uint, TriangleFE>(freeId, fe));
+                    System.Diagnostics.Debug.Assert(feId == freeId);
                 }
             }
 
@@ -640,11 +639,22 @@ namespace IvyFEM
         }
 
         // 三角形要素の要素順番と節点ナンバリング
-        private void NumberTriangleElementsAndNodes(FEWorld world, IList<TriangleFE> triFEs, IList<int> zeroCoordIds)
+        private void NumberTriangleElementsAndNodes(FEWorld world, IList<int> zeroCoordIds)
         {
             Mesher2D mesh = world.Mesh;
-
             Dictionary<TriangleFE, IList<int>> triFECoIds = new Dictionary<TriangleFE, IList<int>>();
+            IList<TriangleFE> triFEs = new List<TriangleFE>();
+            // 要素を退避(ソートされていない)
+            {
+                IList<uint> feIds = TriangleFEArray.GetObjectIds();
+                foreach (uint feId in feIds)
+                {
+                    TriangleFE triFE = TriangleFEArray.GetObject(feId);
+                    triFEs.Add(triFE);
+                }
+                TriangleFEArray.Clear();
+            }
+
 
             // ポート上の節点を探す
             IList<IList<int>> portCoIdss = new List<IList<int>>();
@@ -843,19 +853,22 @@ namespace IvyFEM
         {
             foreach (MultipointConstraint mpConstraint in MultipointConstraints)
             {
-                var fixedCad = mpConstraint.FixedCad;
-                IList<int> coIds = GetCoordIdsFromCadId(world, fixedCad.CadId, fixedCad.CadElemType);
-                foreach (int coId in coIds)
+                var fixedCads = mpConstraint.FixedCads;
+                foreach (var fixedCad in fixedCads)
                 {
-                    IList<MultipointConstraint> mpConstraints = null;
-                    if (!Co2MultipointConstraints.ContainsKey(coId))
+                    IList<int> coIds = GetCoordIdsFromCadId(world, fixedCad.CadId, fixedCad.CadElemType);
+                    foreach (int coId in coIds)
                     {
-                        Co2MultipointConstraints[coId] = new List<MultipointConstraint>();
-                    }
-                    mpConstraints = Co2MultipointConstraints[coId];
-                    if (mpConstraints.IndexOf(mpConstraint) == -1)
-                    {
-                        mpConstraints.Add(mpConstraint);
+                        IList<MultipointConstraint> mpConstraints = null;
+                        if (!Co2MultipointConstraints.ContainsKey(coId))
+                        {
+                            Co2MultipointConstraints[coId] = new List<MultipointConstraint>();
+                        }
+                        mpConstraints = Co2MultipointConstraints[coId];
+                        if (mpConstraints.IndexOf(mpConstraint) == -1)
+                        {
+                            mpConstraints.Add(mpConstraint);
+                        }
                     }
                 }
             }

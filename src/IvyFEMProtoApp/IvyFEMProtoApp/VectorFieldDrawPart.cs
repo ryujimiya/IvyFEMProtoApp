@@ -166,7 +166,7 @@ namespace IvyFEM
             //throw new NotImplementedException();
         }
 
-        public void Update(uint valueId, FieldDerivationType dt, VectorFieldDrawerType drawerType, FEWorld world)
+        public void Update(uint valueId, FieldDerivativeType dt, VectorFieldDrawerType drawerType, FEWorld world)
         {
             DrawerType = drawerType;
 
@@ -184,7 +184,7 @@ namespace IvyFEM
             }
         }
 
-        private void UpdateVector(uint valueId, FieldDerivationType dt, FEWorld world)
+        private void UpdateVector(uint valueId, FieldDerivativeType dt, FEWorld world)
         {
             ValueDof = 2;
 
@@ -220,7 +220,7 @@ namespace IvyFEM
             }
         }
 
-        private void UpdateSymmetricTensor2(uint valueId, FieldDerivationType dt, FEWorld world)
+        private void UpdateSymmetricTensor2(uint valueId, FieldDerivativeType dt, FEWorld world)
         {
             ValueDof = 6;
 

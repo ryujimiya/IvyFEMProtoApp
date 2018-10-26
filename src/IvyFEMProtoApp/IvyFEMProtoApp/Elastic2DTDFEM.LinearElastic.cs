@@ -68,9 +68,9 @@ namespace IvyFEM
                     }
 
                     int colCoId = coIds[col];
-                    double[] u = FV.GetDoubleValue(colCoId, FieldDerivationType.Value);
-                    double[] vel = FV.GetDoubleValue(colCoId, FieldDerivationType.Velocity);
-                    double[] acc = FV.GetDoubleValue(colCoId, FieldDerivationType.Acceleration);
+                    double[] u = FV.GetDoubleValue(colCoId, FieldDerivativeType.Value);
+                    double[] vel = FV.GetDoubleValue(colCoId, FieldDerivativeType.Velocity);
+                    double[] acc = FV.GetDoubleValue(colCoId, FieldDerivativeType.Acceleration);
 
                     double[,] k = new double[dof, dof];
                     double[,] m = new double[dof, dof];

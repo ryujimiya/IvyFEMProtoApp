@@ -12,7 +12,7 @@ namespace IvyFEM
         private double[] Color = new double[3];
 
         private bool IsLeftSide;
-        private double Dist;
+        private double DistanceRatio;
         private IList<double> RelCos = new List<double>();
         private uint SVId = 0;
         private uint EVId = 0;
@@ -49,7 +49,7 @@ namespace IvyFEM
             Edge2D srcEdge = src as Edge2D;
             CurveType = srcEdge.CurveType;
             IsLeftSide = srcEdge.IsLeftSide;
-            Dist = srcEdge.Dist;
+            DistanceRatio = srcEdge.DistanceRatio;
             RelCos.Clear();
             foreach (var relco in srcEdge.RelCos)
             {
@@ -79,7 +79,7 @@ namespace IvyFEM
             ret += "■Edge2D" + CRLF;
             ret += "Type = " + CurveType + CRLF;
             ret += "IsLeftSide = " + IsLeftSide + CRLF;
-            ret += "Dist = " + Dist + CRLF;
+            ret += "Dist = " + DistanceRatio + CRLF;
             ret += "RelCos" + CRLF;
             for (int i = 0; i < RelCos.Count; i++)
             {
@@ -112,10 +112,10 @@ namespace IvyFEM
             CurveType = CurveType.CurveLine;
         }
 
-        public void SetCurveArc(bool isLeftSide, double dist)
+        public void SetCurveArc(bool isLeftSide, double distanceRatio)
         {
             CurveType = CurveType.CurveArc;
-            Dist = dist;
+            DistanceRatio = distanceRatio;
             IsLeftSide = isLeftSide;
         }
 
@@ -150,7 +150,7 @@ namespace IvyFEM
         public void GetCurveArc(out bool isLeftSide, out double dist)
         {
             isLeftSide = IsLeftSide;
-            dist = Dist;
+            dist = DistanceRatio;
         }
 
         public IList<double> GetCurveRelPoint()
@@ -1300,8 +1300,8 @@ namespace IvyFEM
             double vvLen = vv.Length;
             vv.X /= vvLen;
             vv.Y /= vvLen;
-            cPt.X = hPt.X + vv.X * (this.Dist * edgeLen);
-            cPt.Y = hPt.Y + vv.Y * (this.Dist * edgeLen);
+            cPt.X = hPt.X + vv.X * (this.DistanceRatio * edgeLen);
+            cPt.Y = hPt.Y + vv.Y * (this.DistanceRatio * edgeLen);
             OpenTK.Vector2d vcs = new OpenTK.Vector2d(SPt.X - cPt.X, SPt.Y - cPt.Y);
             radius = vcs.Length;
             return true;
@@ -1571,10 +1571,10 @@ namespace IvyFEM
                 OpenTK.Vector2d cPt;
                 double r;
                 GetCenterRadius(out cPt, out r);
-                Dist = CadUtils.TriHeight(cPt, sPt, addPt) / OpenTK.Vector2d.Distance(sPt, addPt);
+                DistanceRatio = CadUtils.TriHeight(cPt, sPt, addPt) / OpenTK.Vector2d.Distance(sPt, addPt);
                 addEdge.CurveType = CurveType.CurveArc;
                 addEdge.IsLeftSide = IsLeftSide;
-                addEdge.Dist = CadUtils.TriHeight(cPt, addPt, ePt) / OpenTK.Vector2d.Distance(addPt, ePt);
+                addEdge.DistanceRatio = CadUtils.TriHeight(cPt, addPt, ePt) / OpenTK.Vector2d.Distance(addPt, ePt);
             }
             else if (CurveType == CurveType.CurvePolyline)
             {

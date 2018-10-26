@@ -62,72 +62,119 @@ namespace IvyFEM
                     double[] dG = new double[uDof];
                     for (int iDof = 0; iDof < uDof; iDof++)
                     {
-                        dG[iDof] = constraint.GetDerivation(iDof, curCoord);
+                        dG[iDof] = constraint.GetDerivative(iDof, curCoord);
                     }
                     double[,] d2G = new double[uDof, uDof];
                     for (int iDof = 0; iDof < uDof; iDof++)
                     {
                         for (int jDof = 0; jDof < uDof; jDof++)
                         {
-                            d2G[iDof, jDof] = constraint.Get2ndDerivation(iDof, jDof, curCoord);
+                            d2G[iDof, jDof] = constraint.Get2ndDerivative(iDof, jDof, curCoord);
                         }
                     }
 
+                    if (constraint.Equality == EqualityType.Eq)
                     {
-                        double[,] kuu = new double[uDof, uDof];
-                        for (int iDof = 0; iDof < uDof; iDof++)
-                        {
-                            for (int jDof = 0; jDof < uDof; jDof++)
-                            {
-                                kuu[iDof, jDof] = c * d2G[iDof, jDof];
-                            }
-                        }
-                        for (int rowDof = 0; rowDof < uDof; rowDof++)
-                        {
-                            for (int colDof = 0; colDof < uDof; colDof++)
-                            {
-                                A[uNodeId * uDof + rowDof, uNodeId * uDof + colDof] +=
-                                    kuu[rowDof, colDof];
-                                B[uNodeId * uDof + rowDof] +=
-                                    kuu[rowDof, colDof] * U[uNodeId * uDof + colDof];
-                            }
-                        }
+                        CalcEqConstraitsAB(c, G, dG, d2G,
+                            uDof, uNodeId, offset, cNodeId,
+                            A, B);
                     }
-
+                    else
                     {
-                        double[,] kuc = new double[uDof, 1];
-                        double[,] kcu = new double[1, uDof];
-                        for (int iDof = 0; iDof < uDof; iDof++)
-                        {
-                            kuc[iDof, 0] = dG[iDof];
-                            kcu[0, iDof] = dG[iDof];
-                        }
-                        for (int rowDof = 0; rowDof < uDof; rowDof++)
-                        {
-                            A[uNodeId * uDof + rowDof, offset + cNodeId] += kuc[rowDof, 0];
-                            A[offset + cNodeId, uNodeId * uDof + rowDof] += kcu[0, rowDof];
-                            B[uNodeId * uDof + rowDof] +=
-                                kuc[rowDof, 0] * U[offset + cNodeId];
-                            B[offset + cNodeId] +=
-                                kcu[0, rowDof] * U[uNodeId * uDof + rowDof];
-                        }
-                    }
-
-                    {
-                        double[] qu = new double[uDof];
-                        for (int iDof = 0; iDof < uDof; iDof++)
-                        {
-                            qu[iDof] = c * dG[iDof];
-                        }
-                        double qc = G;
-
-                        for (int iDof = 0; iDof < uDof; iDof++)
-                        {
-                            B[uNodeId * uDof + iDof] += -qu[iDof];
-                        }
-                        B[offset + cNodeId] += -qc;
+                        CalcLessEqualConstraitsAB(c, G, dG, d2G,
+                            uDof, uNodeId, offset, cNodeId,
+                            A, B);
                     }
                 }
+            }
+        }
+
+        private void CalcEqConstraitsAB(double c, double G, double[] dG, double[,] d2G,
+            int uDof, int uNodeId, int offset, int cNodeId,
+            IvyFEM.Linear.DoubleSparseMatrix A, double[] B)
+        {
+            {
+                double[,] kuu = new double[uDof, uDof];
+                for (int iDof = 0; iDof < uDof; iDof++)
+                {
+                    for (int jDof = 0; jDof < uDof; jDof++)
+                    {
+                        kuu[iDof, jDof] = c * d2G[iDof, jDof];
+                    }
+                }
+                for (int rowDof = 0; rowDof < uDof; rowDof++)
+                {
+                    for (int colDof = 0; colDof < uDof; colDof++)
+                    {
+                        A[uNodeId * uDof + rowDof, uNodeId * uDof + colDof] +=
+                            kuu[rowDof, colDof];
+                        B[uNodeId * uDof + rowDof] +=
+                            kuu[rowDof, colDof] * U[uNodeId * uDof + colDof];
+                    }
+                }
+            }
+
+            {
+                double[,] kuc = new double[uDof, 1];
+                double[,] kcu = new double[1, uDof];
+                for (int iDof = 0; iDof < uDof; iDof++)
+                {
+                    kuc[iDof, 0] = dG[iDof];
+                    kcu[0, iDof] = dG[iDof];
+                }
+                for (int rowDof = 0; rowDof < uDof; rowDof++)
+                {
+                    A[uNodeId * uDof + rowDof, offset + cNodeId] += kuc[rowDof, 0];
+                    A[offset + cNodeId, uNodeId * uDof + rowDof] += kcu[0, rowDof];
+                    B[uNodeId * uDof + rowDof] +=
+                        kuc[rowDof, 0] * U[offset + cNodeId];
+                    B[offset + cNodeId] +=
+                        kcu[0, rowDof] * U[uNodeId * uDof + rowDof];
+                }
+            }
+
+            {
+                double[] qu = new double[uDof];
+                for (int iDof = 0; iDof < uDof; iDof++)
+                {
+                    qu[iDof] = c * dG[iDof];
+                }
+                double qc = G;
+
+                for (int iDof = 0; iDof < uDof; iDof++)
+                {
+                    B[uNodeId * uDof + iDof] += -qu[iDof];
+                }
+                B[offset + cNodeId] += -qc;
+            }
+        }
+
+        private void CalcLessEqualConstraitsAB(double c, double G, double[] dG, double[,] d2G,
+            int uDof, int uNodeId, int offset, int cNodeId,
+            IvyFEM.Linear.DoubleSparseMatrix A, double[] B)
+        {
+            double tolerance = IvyFEM.Linear.Constants.ConvRatioTolerance;
+            if (c <= tolerance &&
+                G <= tolerance)
+            {
+                // unconstrained
+                {
+                    // kcc
+                    double kcc = 1.0;
+                    A[offset + cNodeId, offset + cNodeId] += kcc;
+                    B[offset + cNodeId] += kcc * U[offset + cNodeId];
+                }
+                {
+                    // qc
+                    double qc = c;
+                    B[offset + cNodeId] += -qc;
+                }
+            }
+            else
+            {
+                // constrained
+                CalcEqConstraitsAB(c, G, dG, d2G,
+                    uDof, uNodeId, offset, cNodeId, A, B);
             }
         }
     }

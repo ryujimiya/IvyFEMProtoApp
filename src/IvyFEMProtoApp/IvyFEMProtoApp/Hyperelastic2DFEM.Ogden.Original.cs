@@ -285,10 +285,10 @@ namespace IvyFEM
                                             principalC21st[pDof, qDof] *
                                             cNormals[pDof][gDof] * cNormals[pDof][hDof] *
                                             cNormals[qDof][eDof] * cNormals[qDof][fDof] +
-                                            principalC22nd[pDof, qDof] * (
+                                            principalC22nd[pDof, qDof] *
                                             cNormals[pDof][gDof] * cNormals[qDof][hDof] *
+                                            (
                                             cNormals[pDof][eDof] * cNormals[qDof][fDof] +
-                                            cNormals[pDof][gDof] * cNormals[qDof][hDof] *
                                             cNormals[qDof][eDof] * cNormals[pDof][fDof]
                                             );
                                         c4[gDof, hDof, eDof, fDof] += c4ghef.Real;

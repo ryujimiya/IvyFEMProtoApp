@@ -241,14 +241,15 @@ namespace IvyFEM
                 uint id_l = loopIds[iLId];
                 if (CheckLoop(id_l) != 0)
                 {
-                    e = oldE;
+                    e.Copy(oldE);
                     return false;
                 }
             }
             return true;
         }
 
-        public bool SetCurveArc(uint eId, bool isLeftSide, double rdist)
+        // 円弧の中心は(ePt1 + ePt2) * 0.5 + normal * distanceRatio * edgeLen
+        public bool SetCurveArc(uint eId, bool isLeftSide, double distanceRatio)
         {
             if (!EdgeArray.IsObjectId(eId))
             {
@@ -260,7 +261,7 @@ namespace IvyFEM
             Edge2D oldE = new Edge2D(e);
             ////////////////////////////////
             // ここからを現在のCurveTypeによって決める,次の設定は直線の場合
-            e.SetCurveArc(isLeftSide, rdist);
+            e.SetCurveArc(isLeftSide, distanceRatio);
             // ここまで
             ////////////////////////////////
             IList<uint> loopIds = LoopArray.GetObjectIds();
@@ -269,7 +270,7 @@ namespace IvyFEM
                 uint lId = loopIds[iLId];
                 if (CheckLoop(lId) != 0)
                 {
-                    e = oldE;
+                    e.Copy(oldE);
                     return false;
                 }
             }
@@ -314,7 +315,7 @@ namespace IvyFEM
                 uint lId = loopIds[iLId];
                 if (CheckLoop(lId) != 0)
                 {
-                    e = oldE;
+                    e.Copy(oldE);
                     return false;
                 }
             }
@@ -358,14 +359,14 @@ namespace IvyFEM
                 uint lId = loopIds[iLId];
                 if (CheckLoop(lId) != 0)
                 {
-                    e = oldE;
+                    e.Copy(oldE);
                     return false;
                 }
             }
             return true;
         }
 
-        public bool SetCurve_Bezier(uint eId, double cx0, double cy0, double cx1, double cy1)
+        public bool SetCurveBezier(uint eId, double cx0, double cy0, double cx1, double cy1)
         {
             if (!EdgeArray.IsObjectId(eId))
             {
@@ -383,7 +384,7 @@ namespace IvyFEM
                 uint lId = loopIds[iLId];
                 if (CheckLoop(lId) != 0)
                 {
-                    e = oldE;
+                    e.Copy(oldE);
                     return false;
                 }
             }
@@ -585,21 +586,36 @@ namespace IvyFEM
         public ResAddPolygon AddCircle(OpenTK.Vector2d cPt, double r, uint lId)
         {
             ResAddPolygon res = new ResAddPolygon();
-            OpenTK.Vector2d v1 = new OpenTK.Vector2d(cPt.X, cPt.Y - r);
-            OpenTK.Vector2d v2 = new OpenTK.Vector2d(cPt.X, cPt.Y + r);
+            OpenTK.Vector2d v1 = new OpenTK.Vector2d(cPt.X, cPt.Y + r);
+            OpenTK.Vector2d v2 = new OpenTK.Vector2d(cPt.X - r, cPt.Y);
+            OpenTK.Vector2d v3 = new OpenTK.Vector2d(cPt.X, cPt.Y - r);
+            OpenTK.Vector2d v4 = new OpenTK.Vector2d(cPt.X + r, cPt.Y);
             var resV1 = AddVertex(CadElementType.Loop, lId, v1);
             var resV2 = AddVertex(CadElementType.Loop, lId, v2);
+            var resV3 = AddVertex(CadElementType.Loop, lId, v3);
+            var resV4 = AddVertex(CadElementType.Loop, lId, v4);
             var resE1 = ConnectVertexLine(resV1.AddVId, resV2.AddVId);
-            bool success1 = SetCurveArc(resE1.AddEId, false, 0);
-            //System.Diagnostics.Debug.Assert(success1);
-            var resE2 = ConnectVertexLine(resV2.AddVId, resV1.AddVId);
-            bool success2 = SetCurveArc(resE2.AddEId, false, 0);
-            //System.Diagnostics.Debug.Assert(success2); // アサートにひっかかる
-            res.AddLId = resE2.AddLId;
+            var resE2 = ConnectVertexLine(resV2.AddVId, resV3.AddVId);
+            var resE3 = ConnectVertexLine(resV3.AddVId, resV4.AddVId);
+            var resE4 = ConnectVertexLine(resV4.AddVId, resV1.AddVId);
+            double distanceRatio = 0.5;
+            bool success1 = SetCurveArc(resE1.AddEId, false, distanceRatio);
+            System.Diagnostics.Debug.Assert(success1);
+            bool success2 = SetCurveArc(resE2.AddEId, false, distanceRatio);
+            System.Diagnostics.Debug.Assert(success2);
+            bool success3 = SetCurveArc(resE3.AddEId, false, distanceRatio);
+            System.Diagnostics.Debug.Assert(success3);
+            bool success4 = SetCurveArc(resE4.AddEId, false, distanceRatio);
+            System.Diagnostics.Debug.Assert(success4);
+            res.AddLId = resE4.AddLId;
             res.EIds.Add(resE1.AddEId);
             res.EIds.Add(resE2.AddEId);
+            res.EIds.Add(resE3.AddEId);
+            res.EIds.Add(resE4.AddEId);
             res.VIds.Add(resV1.AddVId);
             res.VIds.Add(resV2.AddVId);
+            res.VIds.Add(resV3.AddVId);
+            res.VIds.Add(resV4.AddVId);
             return res;
         }
 

@@ -73,7 +73,7 @@ namespace IvyFEM
     }
 
     [Flags]
-    enum FieldDerivationType
+    enum FieldDerivativeType
     {
         Value = 1,
         Velocity = 2,
@@ -104,4 +104,10 @@ namespace IvyFEM
         Point7 = 7
     }
 
+    enum EqualityType
+    {
+        Eq,
+        LessEq,
+        GreaterEq
+    }
 }

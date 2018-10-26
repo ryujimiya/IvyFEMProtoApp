@@ -16,41 +16,55 @@ namespace IvyFEM
 
         }
 
-        public LineConstraint(OpenTK.Vector2d point, OpenTK.Vector2d normal)
+        public LineConstraint(OpenTK.Vector2d point, OpenTK.Vector2d normal,
+            EqualityType equality = EqualityType.Eq)
         {
+            Equality = equality;
             Point = new OpenTK.Vector2d(point.X, point.Y);
             Normal = new OpenTK.Vector2d(normal.X, normal.Y);
         }
 
-        public double GetValue(double[] x)
+        public override double GetValue(double[] x)
         {
             System.Diagnostics.Debug.Assert(x.Length == 2);
             OpenTK.Vector2d xVec = new OpenTK.Vector2d(x[0], x[1]);
             OpenTK.Vector2d lineVec = xVec - Point;
-            double value = OpenTK.Vector2d.Dot(lineVec, Normal);
+            double value = -OpenTK.Vector2d.Dot(lineVec, Normal);
+            if (Equality == EqualityType.LessEq)
+            {
+                value *= -1.0;
+            }
             return value;
         }
 
-        public double GetDerivation(int iDof, double[] x)
+        public override double GetDerivative(int iDof, double[] x)
         {
             System.Diagnostics.Debug.Assert(x.Length == 2);
             if (iDof >= 2)
             {
                 throw new InvalidOperationException();
             }
-            double dValue = Normal[iDof];
-            return dValue;
+            double value = -Normal[iDof];
+            if (Equality == EqualityType.LessEq)
+            {
+                value *= -1.0;
+            }
+            return value;
         }
 
-        public double Get2ndDerivation(int iDof, int jDof, double[] x)
+        public override double Get2ndDerivative(int iDof, int jDof, double[] x)
         {
             System.Diagnostics.Debug.Assert(x.Length == 2);
             if (iDof >= 2 || jDof >= 2)
             {
                 throw new InvalidOperationException();
             }
-            double d2Value = 0;
-            return d2Value;
+            double value = 0;
+            if (Equality == EqualityType.LessEq)
+            {
+                value *= -1.0;
+            }
+            return value;
         }
     }
 }

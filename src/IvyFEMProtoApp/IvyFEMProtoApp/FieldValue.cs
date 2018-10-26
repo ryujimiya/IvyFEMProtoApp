@@ -9,7 +9,7 @@ namespace IvyFEM
     class FieldValue : IObject
     {
         public FieldValueType Type { get; set; } = FieldValueType.NoValue;
-        public FieldDerivationType DerivationType { get; set; } = 0;
+        public FieldDerivativeType DerivativeType { get; set; } = 0;
         public uint QuantityId { get; set; } = 0;
         public uint Dof { get; set; } = 1;
         public bool IsBubble { get; set; } = false;
@@ -35,7 +35,7 @@ namespace IvyFEM
         {
             FieldValue srcFV = src as FieldValue;
             Type = srcFV.Type;
-            DerivationType = srcFV.DerivationType;
+            DerivativeType = srcFV.DerivativeType;
             QuantityId = srcFV.QuantityId;
             Dof = srcFV.Dof;
             IsBubble = srcFV.IsBubble;
@@ -90,15 +90,15 @@ namespace IvyFEM
             if (Type == FieldValueType.ZScalar)
             {
                 // complex
-                if (DerivationType.HasFlag(FieldDerivationType.Value))
+                if (DerivativeType.HasFlag(FieldDerivativeType.Value))
                 {
                     ComplexValues = new System.Numerics.Complex[pointCnt * Dof];
                 }
-                if (DerivationType.HasFlag(FieldDerivationType.Velocity))
+                if (DerivativeType.HasFlag(FieldDerivativeType.Velocity))
                 {
                     ComplexVelocityValues = new System.Numerics.Complex[pointCnt * Dof];
                 }
-                if (DerivationType.HasFlag(FieldDerivationType.Acceleration))
+                if (DerivativeType.HasFlag(FieldDerivativeType.Acceleration))
                 {
                     ComplexAccelerationValues = new System.Numerics.Complex[pointCnt * Dof];
                 }
@@ -106,15 +106,15 @@ namespace IvyFEM
             else
             {
                 // double
-                if (DerivationType.HasFlag(FieldDerivationType.Value))
+                if (DerivativeType.HasFlag(FieldDerivativeType.Value))
                 {
                     DoubleValues = new double[pointCnt * Dof];
                 }
-                if (DerivationType.HasFlag(FieldDerivationType.Velocity))
+                if (DerivativeType.HasFlag(FieldDerivativeType.Velocity))
                 {
                     DoubleVelocityValues = new double[pointCnt * Dof];
                 }
-                if (DerivationType.HasFlag(FieldDerivationType.Acceleration))
+                if (DerivativeType.HasFlag(FieldDerivativeType.Acceleration))
                 {
                     DoubleAccelerationValues = new double[pointCnt * Dof];
                 }
@@ -142,18 +142,18 @@ namespace IvyFEM
             throw new InvalidOperationException();
         }
 
-        public double[] GetDoubleValues(FieldDerivationType dt)
+        public double[] GetDoubleValues(FieldDerivativeType dt)
         {
             double[] values = null;
-            if (dt.HasFlag(FieldDerivationType.Value) && DoubleValues != null)
+            if (dt.HasFlag(FieldDerivativeType.Value) && DoubleValues != null)
             {
                 values = DoubleValues;
             }
-            else if (dt.HasFlag(FieldDerivationType.Velocity) && DoubleVelocityValues != null)
+            else if (dt.HasFlag(FieldDerivativeType.Velocity) && DoubleVelocityValues != null)
             {
                 values = DoubleVelocityValues;
             }
-            else if (dt.HasFlag(FieldDerivationType.Acceleration) && DoubleAccelerationValues != null)
+            else if (dt.HasFlag(FieldDerivativeType.Acceleration) && DoubleAccelerationValues != null)
             {
                 values = DoubleAccelerationValues;
             }
@@ -164,18 +164,18 @@ namespace IvyFEM
             return values;
         }
 
-        public System.Numerics.Complex[] GetComplexValues(FieldDerivationType dt)
+        public System.Numerics.Complex[] GetComplexValues(FieldDerivativeType dt)
         {
             System.Numerics.Complex[] values = null;
-            if (dt.HasFlag(FieldDerivationType.Value) && ComplexValues != null)
+            if (dt.HasFlag(FieldDerivativeType.Value) && ComplexValues != null)
             {
                 values = ComplexValues;
             }
-            else if (dt.HasFlag(FieldDerivationType.Velocity) && ComplexVelocityValues != null)
+            else if (dt.HasFlag(FieldDerivativeType.Velocity) && ComplexVelocityValues != null)
             {
                 values = ComplexVelocityValues;
             }
-            else if (dt.HasFlag(FieldDerivationType.Acceleration) && ComplexAccelerationValues != null)
+            else if (dt.HasFlag(FieldDerivativeType.Acceleration) && ComplexAccelerationValues != null)
             {
                 values = ComplexAccelerationValues;
             }
@@ -186,7 +186,7 @@ namespace IvyFEM
             return values;
         }
 
-        public double[] GetDoubleValue(int coId, FieldDerivationType dt)
+        public double[] GetDoubleValue(int coId, FieldDerivativeType dt)
         {
             double[] values = GetDoubleValues(dt);
             double[] value = new double[Dof];
@@ -197,7 +197,7 @@ namespace IvyFEM
             return value;
         }
 
-        public System.Numerics.Complex[] GetComplexValue(int coId, FieldDerivationType dt)
+        public System.Numerics.Complex[] GetComplexValue(int coId, FieldDerivativeType dt)
         {
             System.Numerics.Complex[] values = GetComplexValues(dt);
             System.Numerics.Complex[] value = new System.Numerics.Complex[Dof];
@@ -208,7 +208,7 @@ namespace IvyFEM
             return value;
         }
 
-        public double GetShowValue(int coId, int iDof, FieldDerivationType dt)
+        public double GetShowValue(int coId, int iDof, FieldDerivativeType dt)
         {
             double value = 0;
             switch(ShowType)
@@ -247,7 +247,7 @@ namespace IvyFEM
             return value;
         }
 
-        public void GetMinMaxShowValue(out double min, out double max, int iDof, FieldDerivationType dt)
+        public void GetMinMaxShowValue(out double min, out double max, int iDof, FieldDerivativeType dt)
         {
             min = Double.MaxValue;
             max = Double.MinValue;

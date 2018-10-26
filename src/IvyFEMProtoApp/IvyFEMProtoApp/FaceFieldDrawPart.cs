@@ -185,7 +185,7 @@ namespace IvyFEM
             throw new NotImplementedException();
         }
 
-        public void SetColors(uint bubbleValueId, FieldDerivationType dt, FEWorld world, IColorMap colorMap)
+        public void SetColors(uint bubbleValueId, FieldDerivativeType dt, FEWorld world, IColorMap colorMap)
         {
             FieldValue fv = world.GetFieldValue(bubbleValueId);
             System.Diagnostics.Debug.Assert(fv.IsBubble == true);

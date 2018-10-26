@@ -432,10 +432,10 @@ namespace IvyFEM
                                             principalC21st[pDof, qDof] *
                                             cNormals[pDof][gDof] * cNormals[pDof][hDof] *
                                             cNormals[qDof][eDof] * cNormals[qDof][fDof] +
-                                            principalC22nd[pDof, qDof] * (
+                                            principalC22nd[pDof, qDof] *
                                             cNormals[pDof][gDof] * cNormals[qDof][hDof] *
+                                            (
                                             cNormals[pDof][eDof] * cNormals[qDof][fDof] +
-                                            cNormals[pDof][gDof] * cNormals[qDof][hDof] *
                                             cNormals[qDof][eDof] * cNormals[pDof][fDof]
                                             );
                                         c4[gDof, hDof, eDof, fDof] += c4ghef.Real;
@@ -656,9 +656,9 @@ namespace IvyFEM
                     }
 
                     int colCoId = uCoIds[col];
-                    double[] u = uFV.GetDoubleValue(colCoId, FieldDerivationType.Value);
-                    double[] velU = uFV.GetDoubleValue(colCoId, FieldDerivationType.Velocity);
-                    double[] accU = uFV.GetDoubleValue(colCoId, FieldDerivationType.Acceleration);
+                    double[] u = uFV.GetDoubleValue(colCoId, FieldDerivativeType.Value);
+                    double[] velU = uFV.GetDoubleValue(colCoId, FieldDerivativeType.Velocity);
+                    double[] accU = uFV.GetDoubleValue(colCoId, FieldDerivativeType.Acceleration);
                     double[,] m = new double[2, 2];
 
                     m[0, 0] = rho * uSNN[row, col];

@@ -14,6 +14,8 @@ namespace IvyFEMProtoApp
     {
         public void MakeBluePrint(MainWindow mainWindow)
         {
+            double WaveguideWidth = 1.0;
+            double InputWGLength = 1.0 * WaveguideWidth;
             CadObject2D cad2D = new CadObject2D();
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
@@ -28,11 +30,10 @@ namespace IvyFEMProtoApp
                 //System.Diagnostics.Debug.WriteLine(cad2D.Dump());
                 //AlertWindow.ShowText(res.Dump());
                 //AlertWindow.ShowText(cad2D.Dump());
-                //var resCircle = cad2D.AddCircle(new OpenTK.Vector2d(
-                //    InputWGLength + 0.5 * WaveguideWidth, 0.5 * WaveguideWidth),
-                //    0.25 * WaveguideWidth,
-                //    res.AddLId);
-                //cad2D.SetCurveArc(1, false, 0);
+                var resCircle = cad2D.AddCircle(new OpenTK.Vector2d(
+                    InputWGLength + 0.5 * WaveguideWidth, 0.5 * WaveguideWidth),
+                    0.25 * WaveguideWidth,
+                    res.AddLId);
             }
 
             mainWindow.IsFieldDraw = false;
@@ -48,6 +49,8 @@ namespace IvyFEMProtoApp
 
         public void MakeCoarseMesh(MainWindow mainWindow)
         {
+            double WaveguideWidth = 1.0;
+            double InputWGLength = 1.0 * WaveguideWidth;
             CadObject2D cad2D = new CadObject2D();
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
@@ -75,6 +78,8 @@ namespace IvyFEMProtoApp
 
         public void MakeMesh(MainWindow mainWindow)
         {
+            double WaveguideWidth = 1.0;
+            double InputWGLength = 1.0 * WaveguideWidth;
             CadObject2D cad2D = new CadObject2D();
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();

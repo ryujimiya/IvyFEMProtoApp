@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace IvyFEM
 {
-    interface Constraint
+    abstract class Constraint
     {
-        double GetValue(double[] x);
-        double GetDerivation(int iDof, double[] x);
-        double Get2ndDerivation(int iDof, int jDof, double[] x);
+        public EqualityType Equality { get; set; } = EqualityType.Eq;
+        public abstract double GetValue(double[] x);
+        public abstract double GetDerivative(int iDof, double[] x);
+        public abstract double Get2ndDerivative(int iDof, int jDof, double[] x);
     }
 }

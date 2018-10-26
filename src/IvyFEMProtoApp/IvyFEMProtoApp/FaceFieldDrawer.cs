@@ -12,9 +12,9 @@ namespace IvyFEM
         private IList<FaceFieldDrawPart> DrawParts = new List<FaceFieldDrawPart>();
         private VertexArray VertexArray = new VertexArray();
         private uint ValueId = 0;
-        private FieldDerivationType ValueDt = FieldDerivationType.Value;
+        private FieldDerivativeType ValueDt = FieldDerivativeType.Value;
         private uint ColorValueId = 0;
-        private FieldDerivationType ColorValueDt = FieldDerivationType.Value;
+        private FieldDerivativeType ColorValueDt = FieldDerivativeType.Value;
         private bool IsntDisplacementValue = false;
         private bool IsNsvDraw = false;
         private float[] ColorArray = null;
@@ -33,25 +33,25 @@ namespace IvyFEM
 
         }
 
-        public FaceFieldDrawer(uint valueId, FieldDerivationType valueDt, bool isntDisplacementValue,
+        public FaceFieldDrawer(uint valueId, FieldDerivativeType valueDt, bool isntDisplacementValue,
             FEWorld world, 
-            uint colorValueId = 0, FieldDerivationType colorValueDt = FieldDerivationType.Value)
+            uint colorValueId = 0, FieldDerivativeType colorValueDt = FieldDerivativeType.Value)
         {
             Set(valueId, valueDt, isntDisplacementValue, world, colorValueId, colorValueDt);
         }
 
-        public FaceFieldDrawer(uint valueId, FieldDerivationType valueDt, bool isntDisplacementValue,
+        public FaceFieldDrawer(uint valueId, FieldDerivativeType valueDt, bool isntDisplacementValue,
             FEWorld world,
-            uint colorValueId, FieldDerivationType colorValueDt,
+            uint colorValueId, FieldDerivativeType colorValueDt,
             double min, double max)
         {
             ColorMap = new ColorMap(min, max);
             Set(valueId, valueDt, isntDisplacementValue, world, colorValueId, colorValueDt);
         }
 
-        private void Set(uint valueId, FieldDerivationType valueDt, bool isntDisplacementValue,
+        private void Set(uint valueId, FieldDerivativeType valueDt, bool isntDisplacementValue,
             FEWorld world,
-            uint colorValueId, FieldDerivationType colorValueDt)
+            uint colorValueId, FieldDerivativeType colorValueDt)
         {
             var mesh = world.Mesh;
 
@@ -185,7 +185,7 @@ namespace IvyFEM
                     for (int coId = 0; coId < ptCnt; coId++)
                     {
                         double[] coord = world.GetCoord(quantityId, coId);
-                        FieldDerivationType dt = ValueDt;
+                        FieldDerivativeType dt = ValueDt;
                         double value = fv.GetShowValue(coId, 0, dt);
                         VertexArray.VertexCoordArray[coId * 3 + 0] = coord[0];
                         VertexArray.VertexCoordArray[coId * 3 + 1] = coord[1];
@@ -198,7 +198,7 @@ namespace IvyFEM
                     for (int coId = 0; coId < ptCnt; coId++)
                     {
                         double[] coord = world.GetCoord(quantityId, coId);
-                        FieldDerivationType dt = ValueDt;
+                        FieldDerivativeType dt = ValueDt;
                         for (int iDim = 0; iDim < dim; iDim++)
                         {
                             double value = fv.GetShowValue(coId, iDim, dt);
@@ -223,7 +223,7 @@ namespace IvyFEM
             if (world.IsFieldValueId(ColorValueId))
             {
                 FieldValue colorfv = world.GetFieldValue(ColorValueId);
-                FieldDerivationType dt = ColorValueDt;
+                FieldDerivativeType dt = ColorValueDt;
                 bool isBubble = colorfv.IsBubble;
                 uint colorQuantityId = colorfv.QuantityId;
                 uint colorPtCnt = world.GetCoordCount(colorQuantityId);

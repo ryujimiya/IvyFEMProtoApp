@@ -135,6 +135,7 @@
     <Compile Include="Hyperelastic2DTDFEM.Ogden.Original.cs" />
     <Compile Include="Hyperelastic2DTDFEM.Ogden.cs" />
     <Compile Include="Linear.Utils.cs" />
+    <Compile Include="CircleConstraint.cs" />
     <Compile Include="LineConstraint.cs" />
     <Compile Include="LineFE.2nd.cs" />
     <Compile Include="LineFE.1st.cs" />
@@ -219,6 +220,8 @@
     <Compile Include="ColorMap.cs" />
     <Compile Include="PickedObject.cs" />
     <Compile Include="MeshPoint2D.cs" />
+    <Compile Include="Problem .ElasticContact.cs" />
+    <Compile Include="Problem .HyperelasticContact.cs" />
     <Compile Include="Problem .HyperelasticMPC.cs" />
     <Compile Include="Problem .Hyperelastic.cs" />
     <Compile Include="Problem .ElasticMPC.cs" />
