@@ -23,7 +23,7 @@ C#オンリーでリニューアル実装したライブラリになります。
 　　　　　　　　　　  Ogden (非圧縮、微圧縮)  
 　　　　　　　　　  多点拘束(Multipoint Constraint, MPC)(直線)  
 　　　　　　　　　  剛体との接触(直線、円)  
-　　　　　　　　　  弾性体二体接触（実装中…）
+　　　　　　　　　  弾性体二体接触（実装中…）  
 　　　 これからいろんな問題を解けるようにしていきます。  
 　  
 　[IvyFEMProtoAppアプリ](https://github.com/ryujimiya/IvyFEMProtoApp/blob/master/publish/)  
