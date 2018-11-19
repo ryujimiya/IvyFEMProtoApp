@@ -17,6 +17,8 @@ namespace IvyFEM
         private Dictionary<int, IList<FieldFixedCad>> Co2FixedCads = new Dictionary<int, IList<FieldFixedCad>>();
         private IList<double> Coords = new List<double>();
         private IList<MultipointConstraint> MultipointConstraints = new List<MultipointConstraint>();
+        public IList<uint> ContactSlaveEIds { get; set; } = new List<uint>();
+        public IList<uint> ContactMasterEIds { get; set; } = new List<uint>();
         private Dictionary<int, IList<MultipointConstraint>> Co2MultipointConstraints =
             new Dictionary<int, IList<MultipointConstraint>>(); 
         private IList<Dictionary<int, int>> PortCo2Nodes = new List<Dictionary<int, int>>();
@@ -26,6 +28,8 @@ namespace IvyFEM
         private Dictionary<int, int> Node2Co = new Dictionary<int, int>();
         private Dictionary<string, uint> Mesh2LineFE = new Dictionary<string, uint>();
         private Dictionary<string, uint> Mesh2TriangleFE = new Dictionary<string, uint>();
+        private IList<uint> ContactSlaveLineFEIds = new List<uint>();
+        private IList<uint> ContactMasterLineFEIds = new List<uint>();
         private ObjectArray<LineFE> LineFEArray = new ObjectArray<LineFE>();
         private ObjectArray<TriangleFE> TriangleFEArray = new ObjectArray<TriangleFE>();
 
@@ -56,6 +60,8 @@ namespace IvyFEM
             Node2Co.Clear();
             Mesh2LineFE.Clear();
             Mesh2TriangleFE.Clear();
+            ContactSlaveLineFEIds.Clear();
+            ContactMasterLineFEIds.Clear();
             LineFEArray.Clear();
             foreach (var portLineFEIds in PortLineFEIdss)
             {
@@ -292,6 +298,16 @@ namespace IvyFEM
             return PortLineFEIdss[(int)portId];
         }
 
+        public IList<uint> GetContactSlaveLineFEIds()
+        {
+            return ContactSlaveLineFEIds;
+        }
+
+        public IList<uint> GetContactMasterLineFEIds()
+        {
+            return ContactMasterLineFEIds;
+        }
+
         public IList<uint> GetTriangleFEIds()
         {
             return TriangleFEArray.GetObjectIds();
@@ -344,6 +360,9 @@ namespace IvyFEM
 
             // 三角形要素の要素順番と節点ナンバリング
             NumberTriangleElementsAndNodes(world, zeroCoordIds);
+
+            // 接触解析のMaster/Slave線要素を準備する
+            SetupContactMasterSlaveLineElements(world);
 
             // 節点→座標のマップ作成
             MakeNode2CoFromCo2Node();
@@ -634,6 +653,37 @@ namespace IvyFEM
                             }
                         }
                     }
+                }
+            }
+        }
+
+        // 接触解析のMaster/Slave線要素を準備する
+        private void SetupContactMasterSlaveLineElements(FEWorld world)
+        {
+            Mesher2D mesh = world.Mesh;
+
+            IList<uint> feIds = LineFEArray.GetObjectIds();
+            foreach (var feId in feIds)
+            {
+                LineFE lineFE = LineFEArray.GetObject(feId);
+                uint cadId;
+                {
+                    uint meshId = lineFE.MeshId;
+                    uint elemCnt;
+                    MeshType meshType;
+                    int loc;
+                    mesh.GetMeshInfo(meshId, out elemCnt, out meshType, out loc, out cadId);
+                    System.Diagnostics.Debug.Assert(meshType == MeshType.Bar);
+                }
+                if (ContactSlaveEIds.Contains(cadId))
+                {
+                    // Slave上の線要素
+                    ContactSlaveLineFEIds.Add(feId);
+                }
+                if (ContactMasterEIds.Contains(cadId))
+                {
+                    // Master上の線要素
+                    ContactMasterLineFEIds.Add(feId);
                 }
             }
         }

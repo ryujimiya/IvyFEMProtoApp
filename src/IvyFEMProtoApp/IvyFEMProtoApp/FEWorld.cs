@@ -127,6 +127,16 @@ namespace IvyFEM
             Quantitys[(int)quantityId].ClearMultipointConstraint();
         }
 
+        public IList<uint> GetContactSlaveEIds(uint quantityId)
+        {
+            return Quantitys[(int)quantityId].ContactSlaveEIds;
+        }
+
+        public IList<uint> GetContactMasterEIds(uint quantityId)
+        {
+            return Quantitys[(int)quantityId].ContactMasterEIds;
+        }
+
         public uint GetCoordCount(uint quantityId)
         {
             return Quantitys[(int)quantityId].GetCoordCount();
@@ -273,6 +283,16 @@ namespace IvyFEM
         public IList<uint> GetPortLineFEIds(uint quantityId, uint portId)
         {
             return Quantitys[(int)quantityId].GetPortLineFEIds(portId);
+        }
+
+        public IList<uint> GetContactSlaveLineFEIds(uint quantityId)
+        {
+            return Quantitys[(int)quantityId].GetContactSlaveLineFEIds();
+        }
+
+        public IList<uint> GetContactMasterLineFEIds(uint quantityId)
+        {
+            return Quantitys[(int)quantityId].GetContactMasterLineFEIds();
         }
 
         public IList<uint> GetTriangleFEIds(uint quantityId)

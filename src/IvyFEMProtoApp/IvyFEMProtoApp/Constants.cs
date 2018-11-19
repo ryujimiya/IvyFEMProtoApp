@@ -96,13 +96,22 @@ namespace IvyFEM
         SymmetricTensor2
     }
 
+    enum LineIntegrationPointCount
+    {
+        Point1 = 1,
+        Point2 = 2,
+        Point3 = 3,
+        Point4 = 4,
+        Point5 = 5
+    }
+
     enum TriangleIntegrationPointCount
     {
         Point1 = 1,
         Point3 = 3,
         Point4 = 4,
         Point7 = 7
-    }
+    }    
 
     enum EqualityType
     {

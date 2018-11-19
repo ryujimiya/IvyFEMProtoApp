@@ -39,6 +39,85 @@ namespace IvyFEM
             }
         }
 
+        public static IntegrationPoints[] LineIntegrationPoints =
+        {
+            new IntegrationPoints{
+                PointCount = (int)LineIntegrationPointCount.Point1,
+                Ls = new double[(int)LineIntegrationPointCount.Point1][]
+                {
+                    LineFE.GetLFromXi(0.0)
+                },
+                Weights = new double[(int)LineIntegrationPointCount.Point1]
+                {
+                    2.0
+                }
+            },
+            new IntegrationPoints{
+                PointCount = (int)LineIntegrationPointCount.Point2,
+                Ls = new double[(int)LineIntegrationPointCount.Point2][]
+                {
+                    LineFE.GetLFromXi(-0.57735027),
+                    LineFE.GetLFromXi(0.57735027)
+                },
+                Weights = new double[(int)LineIntegrationPointCount.Point2]
+                {
+                    1.0,
+                    1.0
+                }
+            },
+            new IntegrationPoints{
+                PointCount = (int)LineIntegrationPointCount.Point3,
+                Ls = new double[(int)LineIntegrationPointCount.Point3][]
+                {
+                    LineFE.GetLFromXi(-0.77459667),
+                    LineFE.GetLFromXi(0.0),
+                    LineFE.GetLFromXi(0.77459667)
+                },
+                Weights = new double[(int)LineIntegrationPointCount.Point3]
+                {
+                    0.55555556,
+                    0.88888889,
+                    0.55555556
+                }
+            },
+            new IntegrationPoints{
+                PointCount = (int)LineIntegrationPointCount.Point4,
+                Ls = new double[(int)LineIntegrationPointCount.Point4][]
+                {
+                    LineFE.GetLFromXi(-0.86113631),
+                    LineFE.GetLFromXi(-0.33998104),
+                    LineFE.GetLFromXi(0.33998104),
+                    LineFE.GetLFromXi(0.86113631)
+                },
+                Weights = new double[(int)LineIntegrationPointCount.Point4]
+                {
+                    0.34785485,
+                    0.65214515,
+                    0.65214515,
+                    0.34785485
+                }
+            },
+            new IntegrationPoints{
+                PointCount = (int)LineIntegrationPointCount.Point5,
+                Ls = new double[(int)LineIntegrationPointCount.Point5][]
+                {
+                    LineFE.GetLFromXi(-0.90617985),
+                    LineFE.GetLFromXi(-0.53846931),
+                    LineFE.GetLFromXi(0.0),
+                    LineFE.GetLFromXi(0.53846931),
+                    LineFE.GetLFromXi(0.90617985),
+                },
+                Weights = new double[(int)LineIntegrationPointCount.Point5]
+                {
+                    0.23692689,
+                    0.47862867,
+                    0.56888889,
+                    0.47862867,
+                    0.23692689
+                }
+            }
+        };
+
         // α, β, γ
         private static double[] TriangleIP3Alpha = { 1.0 / 3.0, 0.6, 0.2 };
         // α, β, γ, δ, ε

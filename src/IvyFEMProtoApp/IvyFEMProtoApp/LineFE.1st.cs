@@ -8,6 +8,29 @@ namespace IvyFEM
 {
     partial class LineFE
     {
+        public double[] Calc1stN(double[] L)
+        {
+            double[] N = new double[2];
+
+            // N = L
+            L.CopyTo(N, 0);
+
+            return N;
+        }
+
+        public double[][] Calc1stNu(double[] L)
+        {
+            double[][] Nu = new double[2][];
+            double[] a;
+            double[] b;
+            CalcTransMatrix(out a, out b);
+
+            // dN/dx
+            Nu[0] = b;
+
+            return Nu;
+        }
+
         public double[,] Calc1stSNN()
         {
             double l = GetLineLength();

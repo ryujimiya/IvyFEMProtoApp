@@ -260,7 +260,7 @@ namespace IvyFEM
                             System.Numerics.Complex tmp1 = 0;
                             if (pDof == qDof)
                             {
-                                tmp1 = -(2.0 / fLambdas[qDof]) * (
+                                tmp1 = -2.0 * (
                                     System.Numerics.Complex.Pow(barFLambdas[qDof], alpha) -
                                     (1.0 / 3.0) * (
                                     System.Numerics.Complex.Pow(barFLambdas[0], alpha) +
@@ -274,12 +274,13 @@ namespace IvyFEM
                                 double dmp = mDof == pDof ? 1 : 0;
                                 double dmq = mDof == qDof ? 1 : 0;
                                 tmp2 += alpha *
-                                    (System.Numerics.Complex.Pow(barFLambdas[mDof], alpha) / fLambdas[mDof]) *
-                                    (dmp - (1.0 / 3.0) *  (fLambdas[mDof] / fLambdas[pDof])) *
+                                    System.Numerics.Complex.Pow(barFLambdas[mDof], alpha) *
+                                    (dmp - 1.0 / 3.0) *
                                     (dmq - 1.0 / 3.0);
                             }
                             principalC21st[pDof, qDof] +=
-                                (mu / (fLambdas[pDof] * fLambdas[qDof] * fLambdas[qDof])) * (tmp1 + tmp2);
+                                (mu / (fLambdas[pDof] * fLambdas[pDof] * fLambdas[qDof] * fLambdas[qDof])) *
+                                (tmp1 + tmp2);
                         }
                     }
                 }
@@ -331,6 +332,7 @@ namespace IvyFEM
                     }
                 }
                 */
+                uint dim2 = 2;
                 for (int pDof = 0; pDof < uDof; pDof++)
                 {
                     for (int qDof = 0; qDof < uDof; qDof++)
@@ -342,7 +344,7 @@ namespace IvyFEM
                             System.Numerics.Complex tmp1 = 0;
                             if (pDof == qDof)
                             {
-                                tmp1 = -(2.0 / fLambdas[qDof]) * (
+                                tmp1 = -2.0 * (
                                     System.Numerics.Complex.Pow(barFLambdas[qDof], alpha) -
                                     (1.0 / 3.0) * (
                                     System.Numerics.Complex.Pow(barFLambdas[0], alpha) +
@@ -351,18 +353,19 @@ namespace IvyFEM
                                     ));
                             }
                             System.Numerics.Complex tmp2 = 0;
-                            for (int mDof = 0; mDof < uDof; mDof++)
+                            for (int mDof = 0; mDof < dim2; mDof++)
                             {
                                 double dmp = mDof == pDof ? 1 : 0;
                                 double dmq = mDof == qDof ? 1 : 0;
                                 tmp2 += alpha *
-                                    (System.Numerics.Complex.Pow(barFLambdas[mDof], alpha) / fLambdas[mDof]) *
-                                    (dmp - (1.0 / 3.0) * (fLambdas[mDof] / fLambdas[pDof])) *
+                                    System.Numerics.Complex.Pow(barFLambdas[mDof], alpha) *
+                                    (dmp - 1.0 / 3.0) *
                                     (dmq - 1.0 / 3.0);
                             }
-                            tmp2 += (alpha / (9.0 * fLambdas[pDof])) * Math.Pow(I3, -alpha / 6.0);
+                            tmp2 += (alpha / 9.0) * Math.Pow(I3, -alpha / 6.0);
                             principalC21st[pDof, qDof] +=
-                                (mu / (fLambdas[pDof] * fLambdas[qDof] * fLambdas[qDof])) * (tmp1 + tmp2);
+                                (mu / (fLambdas[pDof] * fLambdas[pDof] * fLambdas[qDof] * fLambdas[qDof])) *
+                                (tmp1 + tmp2);
                         }
                     }
                 }

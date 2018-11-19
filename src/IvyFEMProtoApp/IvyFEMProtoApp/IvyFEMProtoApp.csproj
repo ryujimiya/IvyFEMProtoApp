@@ -123,6 +123,7 @@
     <Compile Include="Constraint.cs" />
     <Compile Include="ConstraintDrawer.cs" />
     <Compile Include="ConstraintDrawerArray.cs" />
+    <Compile Include="Elastic2DBaseFEM.TwoBodyContact.cs" />
     <Compile Include="Elastic2DBaseFEM.MultipointConstraint.cs" />
     <Compile Include="Elastic2DDerivedBaseFEM.cs" />
     <Compile Include="Elastic2DFEM.LinearElastic.cs" />
@@ -220,7 +221,9 @@
     <Compile Include="ColorMap.cs" />
     <Compile Include="PickedObject.cs" />
     <Compile Include="MeshPoint2D.cs" />
+    <Compile Include="Problem .ElasticTwoBodyContact.cs" />
     <Compile Include="Problem .ElasticContact.cs" />
+    <Compile Include="Problem .HyperelasticTwoBodyContact.cs" />
     <Compile Include="Problem .HyperelasticContact.cs" />
     <Compile Include="Problem .HyperelasticMPC.cs" />
     <Compile Include="Problem .Hyperelastic.cs" />

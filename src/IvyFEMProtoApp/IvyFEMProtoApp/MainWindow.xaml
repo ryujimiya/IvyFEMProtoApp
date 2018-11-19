@@ -52,6 +52,14 @@
                     <MenuItem Header="Mooney-Rivlin(Circle Contact) Time Domain" Click="mooneyRivlinHyperelasticCircleContactTDBtn_Click"/>
                     <MenuItem Header="Ogden(Circle Contact) Time Domain" Click="ogdenHyperelasticCircleContactTDBtn_Click"/>
                 </MenuItem>
+                <MenuItem Header="Elastic(2 Body Contact)">
+                    <MenuItem Header="Elastic(2 Body Contact)" Click="elasticTwoBodyContactBtn_Click"/>
+                    <MenuItem Header="Elastic(2 Body Contact) Time Domain" Click="elasticTwoBodyContactTDBtn_Click"/>
+                    <MenuItem Header="Saint Venant(2 Body Contact)" Click="saintVenantHyperelasticTwoBodyContactBtn_Click"/>
+                    <MenuItem Header="Saint Venant(2 Body Contact) Time Domain" Click="saintVenantHyperelasticTwoBodyContactTDBtn_Click"/>
+                    <MenuItem Header="Mooney-Rivlin(2 Body Contact) Time Domain" Click="mooneyRivlinHyperelasticTwoBodyContactTDBtn_Click"/>
+                    <MenuItem Header="Ogden(2 Body Contact) Time Domain" Click="ogdenHyperelasticTwoBodyContactTDBtn_Click"/>
+                </MenuItem>
             </Menu>
             <Grid>
                 <WindowsFormsHost>

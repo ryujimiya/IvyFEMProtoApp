@@ -75,15 +75,15 @@ namespace IvyFEM
             OpenTK.Vector2d v1 = new OpenTK.Vector2d(co1[0], co1[1]);
             OpenTK.Vector2d v2 = new OpenTK.Vector2d(co2[0], co2[1]);
             OpenTK.Vector2d v3 = new OpenTK.Vector2d(co3[0], co3[1]);
-            double area = CadUtils.TriArea(v1, v2, v3);
+            double A = CadUtils.TriArea(v1, v2, v3);
             OpenTK.Vector2d[] v = { v1, v2, v3 };
             for (int k = 0; k < 3; k++)
             {
                 int l = (k + 1) % 3;
                 int m = (k + 2) % 3;
-                a[k] = (1.0 / (2.0 * area)) * (v[l].X * v[m].Y - v[m].X * v[l].Y);
-                b[k] = (1.0 / (2.0 * area)) * (v[l].Y - v[m].Y);
-                c[k] = (1.0 / (2.0 * area)) * (v[m].X - v[l].X);
+                a[k] = (1.0 / (2.0 * A)) * (v[l].X * v[m].Y - v[m].X * v[l].Y);
+                b[k] = (1.0 / (2.0 * A)) * (v[l].Y - v[m].Y);
+                c[k] = (1.0 / (2.0 * A)) * (v[m].X - v[l].X);
             }            
         }
 

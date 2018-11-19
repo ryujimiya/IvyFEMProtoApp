@@ -8,6 +8,37 @@ namespace IvyFEM
 {
     partial class LineFE
     {
+        public double[] Calc2ndN(double[] L)
+        {
+            double[] N = new double[3];
+
+            for (int i = 0; i < 2; i++)
+            {
+                N[i] = L[i] * (2.0 * L[i] - 1.0);
+            }
+            N[2] = 4.0 * L[0] * L[1];
+
+            return N;
+        }
+
+        public double[][] Calc2ndNu(double[] L)
+        {
+            double[][] Nu = new double[1][];
+            double[] a;
+            double[] b;
+            CalcTransMatrix(out a, out b);
+
+            // dN/dx
+            Nu[0] = new double[3];
+            for (int i = 0; i < 2; i++)
+            {
+                Nu[0][i] = b[i] * (4.0 * L[i] - 1.0);
+            }
+            Nu[0][2] = 4.0 * (b[0] * L[1] + b[1] * L[0]);
+
+            return Nu;
+        }
+
         public double[,] Calc2ndSNN()
         {
             double l = GetLineLength();

@@ -418,5 +418,42 @@ namespace IvyFEMProtoApp
             bool isMooney = false;
             Problem.HyperelasticCircleContactTDProblem(this, isMooney);
         }
+
+        private void elasticTwoBodyContactBtn_Click(object sender, RoutedEventArgs e)
+        {
+            bool isSaintVenant = false;
+            Problem.ElasticTwoBodyContactProblem(this, isSaintVenant);
+        }
+
+        private void elasticTwoBodyContactTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            bool isSaintVenant = false;
+            Problem.ElasticTwoBodyContactTDProblem(this, isSaintVenant);
+        }
+
+        private void saintVenantHyperelasticTwoBodyContactBtn_Click(object sender, RoutedEventArgs e)
+        {
+            bool isSaintVenant = true;
+            Problem.ElasticTwoBodyContactProblem(this, isSaintVenant);
+        }
+
+        private void saintVenantHyperelasticTwoBodyContactTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            bool isSaintVenant = true;
+            Problem.ElasticTwoBodyContactTDProblem(this, isSaintVenant);
+        }
+
+        private void mooneyRivlinHyperelasticTwoBodyContactTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            bool isMooney = true;
+            Problem.HyperelasticTwoBodyContactTDProblem(this, isMooney);
+        }
+
+        private void ogdenHyperelasticTwoBodyContactTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            // Ogden
+            bool isMooney = false;
+            Problem.HyperelasticTwoBodyContactTDProblem(this, isMooney);
+        }
     }
 }

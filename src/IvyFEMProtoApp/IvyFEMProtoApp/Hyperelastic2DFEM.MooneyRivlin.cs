@@ -220,10 +220,10 @@ namespace IvyFEM
                                     invC[gDof, fDof] * invC[eDof, hDof] * I1 / 2.0) +
                                     4.0 * c2 * inv23I3 * 2.0 / 3.0 * (
                                     invC[gDof, hDof] * invC[eDof, fDof] * I2 * (2.0 / 3.0) +
-                                    invC[gDof, hDof] * c[eDof, fDof] +
                                     c[gDof, hDof] * invC[eDof, fDof] +
-                                    invC[gDof, eDof] * invC[hDof, fDof] * I2 / 2.0 +
-                                    invC[gDof, fDof] * invC[hDof, eDof] * I2 / 2.0);
+                                    invC[gDof, hDof] * c[eDof, fDof] +
+                                    invC[gDof, eDof] * invC[fDof, hDof] * I2 / 2.0 +
+                                    invC[gDof, fDof] * invC[eDof, hDof] * I2 / 2.0);
                             }
                         }
 

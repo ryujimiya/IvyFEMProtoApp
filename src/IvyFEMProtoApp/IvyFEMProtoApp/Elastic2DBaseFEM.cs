@@ -82,6 +82,7 @@ namespace IvyFEM
                 }
             }
             CalcMultipointConstraintAB(A, B);
+            CalcTwoBodyContactAB(A, B);
         }
 
         public override void Solve()
@@ -130,9 +131,9 @@ namespace IvyFEM
                     }
                     else
                     {
+                        convRatio = Math.Sqrt(sqNorm * sqInvNorm0);
                         if (sqNorm * sqInvNorm0 < tolerance * tolerance)
                         {
-                            convRatio = Math.Sqrt(sqNorm * sqInvNorm0);
                             break;
                         }
                     }
@@ -179,6 +180,10 @@ namespace IvyFEM
             {
                 return true;
             }
+            if (HasTwoBodyContact())
+            {
+                return true;
+            }
             if (HasNonLinearElasticMaterial())
             {
                 return true;
@@ -221,6 +226,22 @@ namespace IvyFEM
                 }
             }
             return hasMPC;
+        }
+
+        private bool HasTwoBodyContact()
+        {
+            bool hasContact = false;
+            for (uint quantityId = 0; quantityId < World.GetQuantityCount(); quantityId++)
+            {
+                int slaveCnt = World.GetContactSlaveEIds(quantityId).Count;
+                int masterCnt = World.GetContactMasterEIds(quantityId).Count;
+                if (slaveCnt > 0 && masterCnt > 0)
+                {
+                    hasContact = true;
+                    break;
+                }
+            }
+            return hasContact;
         }
     }
 }
