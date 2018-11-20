@@ -249,7 +249,7 @@ namespace IvyFEMProtoApp
                 {
                     {
                         var ma = new SaintVenantHyperelasticMaterial();
-                        ma.SetYoungPoisson(100.0, 0.3);
+                        ma.SetYoungPoisson(500.0, 0.3);
                         ma.GravityX = 0;
                         ma.GravityY = -10.0;
                         ma.MassDensity = 1.0;
@@ -258,7 +258,7 @@ namespace IvyFEMProtoApp
                     }
                     {
                         var ma = new SaintVenantHyperelasticMaterial();
-                        ma.SetYoungPoisson(50.0, 0.3);
+                        ma.SetYoungPoisson(500.0, 0.3);
                         ma.GravityX = 0;
                         ma.GravityY = 0;
                         ma.MassDensity = 1.0;
@@ -270,7 +270,7 @@ namespace IvyFEMProtoApp
                 {
                     {
                         var ma = new LinearElasticMaterial();
-                        ma.SetYoungPoisson(100.0, 0.3);
+                        ma.SetYoungPoisson(500.0, 0.3);
                         ma.GravityX = 0;
                         ma.GravityY = -10.0;
                         ma.MassDensity = 1.0;
@@ -279,7 +279,7 @@ namespace IvyFEMProtoApp
                     }
                     {
                         var ma = new LinearElasticMaterial();
-                        ma.SetYoungPoisson(50.0, 0.3);
+                        ma.SetYoungPoisson(500.0, 0.3);
                         ma.GravityX = 0;
                         ma.GravityY = 0;
                         ma.MassDensity = 1.0;
