@@ -64,7 +64,7 @@ namespace IvyFEM
             double[] uSN = uTriFE.CalcSN();
             double[,] lSNN = lTriFE.CalcSNN();
             System.Diagnostics.Debug.Assert((int)World.TriIntegrationPointCount >= 3);
-            IntegrationPoints ip = uTriFE.GetIntegrationPoints(World.TriIntegrationPointCount);
+            IntegrationPoints ip = TriangleFE.GetIntegrationPoints(World.TriIntegrationPointCount);
             System.Diagnostics.Debug.Assert(ip.Ls.Length == (int)World.TriIntegrationPointCount);
 
             double[,] qu = new double[uElemNodeCnt, uDof];

@@ -38,7 +38,7 @@ namespace IvyFEM
             double[] g = { ma.GravityX, ma.GravityY };
 
             double[] sN = triFE.CalcSN();
-            IntegrationPoints ip = triFE.GetIntegrationPoints(TriangleIntegrationPointCount.Point1);
+            IntegrationPoints ip = TriangleFE.GetIntegrationPoints(TriangleIntegrationPointCount.Point1);
             System.Diagnostics.Debug.Assert(ip.Ls.Length == 1);
             double[] L = ip.Ls[0];
             double[][] Nu = triFE.CalcNu(L);

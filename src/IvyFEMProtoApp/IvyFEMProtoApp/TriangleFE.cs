@@ -87,7 +87,7 @@ namespace IvyFEM
             }            
         }
 
-        public IntegrationPoints GetIntegrationPoints(TriangleIntegrationPointCount integrationPointCount)
+        public static IntegrationPoints GetIntegrationPoints(TriangleIntegrationPointCount integrationPointCount)
         {
             foreach (var ip in IntegrationPoints.TriangleIntegrationPoints)
             {

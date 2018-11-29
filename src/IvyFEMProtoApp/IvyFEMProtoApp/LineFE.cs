@@ -124,7 +124,7 @@ namespace IvyFEM
             return new double[2] { (1.0 - xi) / 2.0, (1.0 + xi) / 2.0 };
         }
 
-        public IntegrationPoints GetIntegrationPoints(LineIntegrationPointCount integrationPointCount)
+        public static IntegrationPoints GetIntegrationPoints(LineIntegrationPointCount integrationPointCount)
         {
             foreach (var ip in IntegrationPoints.LineIntegrationPoints)
             {

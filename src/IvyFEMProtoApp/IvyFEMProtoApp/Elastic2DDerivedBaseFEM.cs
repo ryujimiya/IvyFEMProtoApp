@@ -59,7 +59,7 @@ namespace IvyFEM
                     throw new NotImplementedException();
                 }
 
-                var ip = triFE.GetIntegrationPoints(TriangleIntegrationPointCount.Point1);
+                var ip = TriangleFE.GetIntegrationPoints(TriangleIntegrationPointCount.Point1);
                 System.Diagnostics.Debug.Assert(ip.PointCount == 1);
                 double[] L = ip.Ls[0];
                 double[][] Nu = triFE.CalcNu(L);

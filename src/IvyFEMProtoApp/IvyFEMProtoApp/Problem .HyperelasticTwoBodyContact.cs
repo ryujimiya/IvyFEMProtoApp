@@ -192,8 +192,8 @@ namespace IvyFEMProtoApp
                 var FEM = new Hyperelastic2DTDFEM(world, dt,
                     newmarkBeta, newmarkGamma,
                     uValueId, prevUValueId, lValueId);
-                //if (isMooney)
-                if (false)
+                /*
+                if (isMooney)
                 {
                     // Mooney-Rivlin
                     {
@@ -221,6 +221,7 @@ namespace IvyFEMProtoApp
                     }
                 }
                 else
+                */
                 {
                     // Ogden
                     {
