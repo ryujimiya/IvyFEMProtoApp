@@ -43,7 +43,8 @@ namespace IvyFEMProtoApp
             {
                 uint uDof = 2; // Vector2
                 uint lDof = 1; // Scalar
-                uint cDof = 1;
+                //uint cDof = 1; // Scalar
+                uint cDof = 2; // Vector2 for mortar
                 uint uFEOrder = 1;
                 uint lFEOrder = 1;
                 uint cFEOrder = 1;

@@ -42,7 +42,8 @@ namespace IvyFEMProtoApp
             {
                 uint uDof = 2; // Vector2
                 uint uFEOrder = 1;
-                uint cDof = 1; // Scalar
+                //uint cDof = 1; // Scalar
+                uint cDof = 2; // Vector2 for mortar
                 uint cFEOrder = 1;
                 uQuantityId = world.AddQuantity(uDof, uFEOrder);
                 cQuantityId = world.AddQuantity(cDof, cFEOrder);
@@ -236,7 +237,8 @@ namespace IvyFEMProtoApp
             {
                 uint uDof = 2; // Vector2
                 uint uFEOrder = 1;
-                uint cDof = 1; // Scalar
+                //uint cDof = 1; // Scalar
+                uint cDof = 2; // Vector2 for mortar
                 uint cFEOrder = 1;
                 uQuantityId = world.AddQuantity(uDof, uFEOrder);
                 cQuantityId = world.AddQuantity(cDof, cFEOrder);
@@ -249,7 +251,7 @@ namespace IvyFEMProtoApp
                 {
                     {
                         var ma = new SaintVenantHyperelasticMaterial();
-                        ma.SetYoungPoisson(500.0, 0.3);
+                        ma.SetYoungPoisson(2000.0, 0.3);
                         ma.GravityX = 0;
                         ma.GravityY = -10.0;
                         ma.MassDensity = 1.0;
@@ -258,7 +260,7 @@ namespace IvyFEMProtoApp
                     }
                     {
                         var ma = new SaintVenantHyperelasticMaterial();
-                        ma.SetYoungPoisson(500.0, 0.3);
+                        ma.SetYoungPoisson(2000.0, 0.3);
                         ma.GravityX = 0;
                         ma.GravityY = 0;
                         ma.MassDensity = 1.0;

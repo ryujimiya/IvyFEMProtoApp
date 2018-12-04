@@ -16,13 +16,14 @@ namespace IvyFEM
                 int masterCnt = World.GetContactMasterEIds(quantityId).Count;
                 if (slaveCnt > 0 && masterCnt > 0)
                 {
-                    CalcTwoBodyContactQuantityAB(quantityId, A, B);
+                    //CalcTwoBodyContactSimpleQuantityAB(quantityId, A, B);
+                    //CalcTwoBodyContactSegmentationQuantityAB(quantityId, A, B);
+                    CalcTwoBodyContactMortarSegmentationQuantityAB(quantityId, A, B);
                 }
             }
         }
 
-        /*
-        private void CalcTwoBodyContactQuantityAB(
+        private void CalcTwoBodyContactSimpleQuantityAB(
             uint cQuantityId, IvyFEM.Linear.DoubleSparseMatrix A, double[] B)
         {
             uint uQuantityId = 0;
@@ -287,9 +288,9 @@ namespace IvyFEM
                     }
                     for (int iNode = 0; iNode < elemNodeCnt; iNode++)
                     {
-                        for (int jDof = 0; jDof < uDof; jDof++)
+                        for (int iDof = 0; iDof < uDof; iDof++)
                         {
-                            ql[iNode] += detJWeight * lN[iNode] * normal[jDof] * curCoord[jDof];
+                            ql[iNode] += detJWeight * lN[iNode] * normal[iDof] * curCoord[iDof];
                         }
                     }
 
@@ -327,9 +328,9 @@ namespace IvyFEM
                     }
                     for (int iNode = 0; iNode < elemNodeCnt; iNode++)
                     {
-                        for (int jDof = 0; jDof < uDof; jDof++)
+                        for (int iDof = 0; iDof < uDof; iDof++)
                         {
-                            masterQl[iNode] += -detJWeight * lN[iNode] * normal[jDof] * masterCurCoord[jDof];
+                            masterQl[iNode] += -detJWeight * lN[iNode] * normal[iDof] * masterCurCoord[iDof];
                         }
                     }
 
@@ -368,8 +369,8 @@ namespace IvyFEM
                 B[offset + iNodeId] = 0;
             }
         }
-        */
-        private void CalcTwoBodyContactQuantityAB(
+
+        private void CalcTwoBodyContactSegmentationQuantityAB(
             uint cQuantityId, IvyFEM.Linear.DoubleSparseMatrix A, double[] B)
         {
             uint uQuantityId = 0;
@@ -672,9 +673,9 @@ namespace IvyFEM
                         }
                         for (int iNode = 0; iNode < elemNodeCnt; iNode++)
                         {
-                            for (int jDof = 0; jDof < uDof; jDof++)
+                            for (int iDof = 0; iDof < uDof; iDof++)
                             {
-                                ql[iNode] += detJWeight * lN[iNode] * normal[jDof] * curCoord[jDof];
+                                ql[iNode] += detJWeight * lN[iNode] * normal[iDof] * curCoord[iDof];
                             }
                         }
 
@@ -712,9 +713,9 @@ namespace IvyFEM
                         }
                         for (int iNode = 0; iNode < elemNodeCnt; iNode++)
                         {
-                            for (int jDof = 0; jDof < uDof; jDof++)
+                            for (int iDof = 0; iDof < uDof; iDof++)
                             {
-                                masterQl[iNode] += -detJWeight * lN[iNode] * normal[jDof] * masterCurCoord[jDof];
+                                masterQl[iNode] += -detJWeight * lN[iNode] * normal[iDof] * masterCurCoord[iDof];
                             }
                         }
 
