@@ -97,12 +97,12 @@ namespace IvyFEM
             GL.Scale(viewport[2] / deltax, viewport[3] / deltay, 1.0);
         }
 
-        public static int GluProject(float objx, float objy, float objz,
-            float[] modelview, float[] projection,
-            int[] viewport, float[] windowCoordinate)
+        public static int GluProject(double objx, double objy, double objz,
+            double[] modelview, double[] projection,
+            int[] viewport, double[] windowCoordinate)
         {
             // Transformation vectors
-            float[] fTempo = new float[8];
+            double[] fTempo = new double[8];
             // Modelview transform
             fTempo[0] = modelview[0] * objx + modelview[4] * objy + modelview[8] * objz + modelview[12]; // w is always 1
             fTempo[1] = modelview[1] * objx + modelview[5] * objy + modelview[9] * objz + modelview[13];
@@ -248,7 +248,7 @@ namespace IvyFEM
             {
                 return selectedObjs;
             }
-            System.Diagnostics.Debug.WriteLine("Picked Object nHits = " + nHits);
+            //System.Diagnostics.Debug.WriteLine("Picked Object nHits = " + nHits);
 
             IList<PickedObject> pickedObjs = new List<PickedObject>();
             {

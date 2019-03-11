@@ -265,7 +265,8 @@ namespace IvyFEM
                 if (lId == 0)
                 {
                     System.Diagnostics.Debug.Assert(uL.ParentULId == 0);
-                    System.Diagnostics.Debug.Assert(uL.ChildULId == 0);
+                    //2019-03-11 RemoveElement FIX
+                    //System.Diagnostics.Debug.Assert(uL.ChildULId == 0);
                     continue;
                 }
                 System.Diagnostics.Debug.Assert(Loop2UseLoop.ContainsKey(lId));
@@ -379,6 +380,11 @@ namespace IvyFEM
                     return false;
                 }
                 hEId = Edge2HalfEdge[eId];
+            }
+            // 2019-03-11 RemoveElement FIX
+            if (!BRep.IsHalfEdgeId(hEId))
+            {
+                return false;
             }
             System.Diagnostics.Debug.Assert(BRep.IsHalfEdgeId(hEId));
             HalfEdge hE = BRep.GetHalfEdge(hEId);
@@ -1005,6 +1011,11 @@ namespace IvyFEM
                     return false;
                 }
                 hEId0 = Edge2HalfEdge[eId];
+            }
+            //!!! 2019-03-11 RemoveElement FIX
+            if (!BRep.IsHalfEdgeId(hEId0))
+            {
+                return false;
             }
             System.Diagnostics.Debug.Assert(BRep.IsHalfEdgeId(hEId0));
             HalfEdge hE0 = BRep.GetHalfEdge(hEId0);

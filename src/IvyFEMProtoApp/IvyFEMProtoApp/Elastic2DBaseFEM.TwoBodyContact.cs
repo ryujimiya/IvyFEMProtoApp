@@ -27,6 +27,7 @@ namespace IvyFEM
             uint cQuantityId, IvyFEM.Linear.DoubleSparseMatrix A, double[] B)
         {
             uint uQuantityId = 0;
+            System.Diagnostics.Debug.Assert(World.GetFEOrder(uQuantityId) == 1);
             System.Diagnostics.Debug.Assert(World.GetCoordCount(uQuantityId) ==
                 World.GetCoordCount(cQuantityId));
             int uNodeCnt = NodeCounts[uQuantityId];
@@ -374,6 +375,7 @@ namespace IvyFEM
             uint cQuantityId, IvyFEM.Linear.DoubleSparseMatrix A, double[] B)
         {
             uint uQuantityId = 0;
+            System.Diagnostics.Debug.Assert(World.GetFEOrder(uQuantityId) == 1);
             System.Diagnostics.Debug.Assert(World.GetCoordCount(uQuantityId) ==
                 World.GetCoordCount(cQuantityId));
             int uNodeCnt = NodeCounts[uQuantityId];

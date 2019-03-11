@@ -80,6 +80,32 @@ namespace IvyFEM
             n[2] *= invA;
         }
 
+        public static bool CenterCircumcircle(OpenTK.Vector2d p0, OpenTK.Vector2d p1, OpenTK.Vector2d p2,
+            out OpenTK.Vector2d center)
+        {
+            center = new OpenTK.Vector2d();
+
+            double area = TriArea(p0, p1, p2);
+            if (Math.Abs(area) < 1.0e-10 )
+            {
+                return false;
+            }
+            double tmp_val = 1.0 / (area * area * 16.0);
+
+            double dtmp0 = SquareLength(p1, p2);
+            double dtmp1 = SquareLength(p0, p2);
+            double dtmp2 = SquareLength(p0, p1);
+
+            double etmp0 = tmp_val * dtmp0 * (dtmp1 + dtmp2 - dtmp0);
+            double etmp1 = tmp_val * dtmp1 * (dtmp0 + dtmp2 - dtmp1);
+            double etmp2 = tmp_val * dtmp2 * (dtmp0 + dtmp1 - dtmp2);
+
+            center = new OpenTK.Vector2d(
+                etmp0 * p0.X + etmp1 * p1.X + etmp2 * p2.X,
+                etmp0 * p0.Y + etmp1 * p1.Y + etmp2 * p2.Y);
+            return true;
+        }
+
         public static bool IsCrossLineSegLineSeg(
             OpenTK.Vector2d sPt0, OpenTK.Vector2d ePt0, OpenTK.Vector2d sPt1, OpenTK.Vector2d ePt1)
         {

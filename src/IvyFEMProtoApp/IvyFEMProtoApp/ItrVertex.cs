@@ -111,6 +111,18 @@ namespace IvyFEM
             return uL.LId;
         }
 
+        public void Begin()
+        {
+            if (!IsValid)
+            {
+                return;
+            }
+            IsInitial = true;
+            UseVertex uV = BRep2D.BRep.GetUseVertex(UVId);
+            System.Diagnostics.Debug.Assert(uV.Id == UVId);
+            HEId = uV.HEId;
+        }
+
         public bool IsEnd()
         {
             if (IsInitial)
@@ -124,18 +136,6 @@ namespace IvyFEM
                 return true;
             }
             return false;
-        }
-
-        public void Begin()
-        {
-            if (!IsValid)
-            {
-                return;
-            }
-            IsInitial = true;
-            UseVertex uV = BRep2D.BRep.GetUseVertex(UVId);
-            System.Diagnostics.Debug.Assert(uV.Id == UVId);
-            HEId = uV.HEId;
         }
 
         public uint CountEdge()

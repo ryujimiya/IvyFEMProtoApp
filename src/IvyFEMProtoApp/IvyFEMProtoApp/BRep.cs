@@ -1525,7 +1525,8 @@ namespace IvyFEM
                 UseLoop uL = UseLoopArray.GetObject(uLIdl);
                 uL.ChildULId = addULId;
                 System.Diagnostics.Debug.Assert(uL.ParentULId == parentULId);
-                System.Diagnostics.Debug.Assert(uL.HEId == hEId1);
+                // 2019-03-11 RemoveElement FIX
+                //System.Diagnostics.Debug.Assert(uL.HEId == hEId1);
             }
             {
                 uint tmpId = UseLoopArray.AddObject(new UseLoop(addULId, hEId2, childULId, parentULId));
@@ -1734,7 +1735,8 @@ namespace IvyFEM
             }
             else
             {
-                System.Diagnostics.Debug.Assert(parentULId1 == uLId1);
+                // 2019-03-11 RemoveElement FIX
+                //System.Diagnostics.Debug.Assert(parentULId1 == uLId1);
                 { 
                     uint uLId = uLId1;
                     for (;;)

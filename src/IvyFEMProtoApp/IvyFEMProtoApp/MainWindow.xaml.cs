@@ -82,6 +82,16 @@ namespace IvyFEMProtoApp
         }
 
         /// <summary>
+        /// ウィンドウがアクティブになった
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Window_Activated(object sender, EventArgs e)
+        {
+            glControl.MakeCurrent();
+        }
+
+        /// <summary>
         /// glControlの起動時に実行される。
         /// </summary>
         /// <param name="sender"></param>
@@ -454,6 +464,13 @@ namespace IvyFEMProtoApp
             // Ogden
             bool isMooney = false;
             Problem.HyperelasticTwoBodyContactTDProblem(this, isMooney);
+        }
+
+        private void cadEditBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var cadEditWindow = new CadEditWindow();
+            cadEditWindow.Owner = this;
+            cadEditWindow.ShowDialog();
         }
     }
 }

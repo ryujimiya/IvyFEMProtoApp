@@ -71,11 +71,11 @@ namespace IvyFEM
 
     class CadObject2D
     {
-        private ObjectArray<Loop2D> LoopArray = new ObjectArray<Loop2D>();
-        private ObjectArray<Edge2D> EdgeArray = new ObjectArray<Edge2D>();
-        private ObjectArray<Vertex2D> VertexArray = new ObjectArray<Vertex2D>();
-        private BRep2D BRep = new BRep2D();
-        private double MinClearance = 1.0e-3;
+        protected ObjectArray<Loop2D> LoopArray = new ObjectArray<Loop2D>();
+        protected ObjectArray<Edge2D> EdgeArray = new ObjectArray<Edge2D>();
+        protected ObjectArray<Vertex2D> VertexArray = new ObjectArray<Vertex2D>();
+        protected BRep2D BRep = new BRep2D();
+        protected double MinClearance = 1.0e-3;
 
         public CadObject2D()
         {
@@ -874,16 +874,30 @@ namespace IvyFEM
             }
         }
 
-        public bool GetLoopColor(uint id_l, double[] color)
+        public bool GetLoopColor(uint lId, double[] color)
         {
-            if (!LoopArray.IsObjectId(id_l))
+            if (!LoopArray.IsObjectId(lId))
             {
                 return false;
             }
-            Loop2D l = LoopArray.GetObject(id_l);
+            Loop2D l = LoopArray.GetObject(lId);
             for (int i = 0; i < 3; i++)
             {
                 color[i] = l.Color[i];
+            }
+            return true;
+        }
+
+        public bool SetLoopColor(uint lId, double[] color)
+        {
+            if (!LoopArray.IsObjectId(lId))
+            {
+                return false;
+            }
+            Loop2D l = LoopArray.GetObject(lId);
+            for (int i = 0; i < 3; i++)
+            {
+                l.Color[i] = color[i];
             }
             return true;
         }
@@ -1609,7 +1623,7 @@ namespace IvyFEM
             return false;
         }
 
-        private int CheckLoop(uint lId)
+        protected int CheckLoop(uint lId)
         {
             {
                 if (CheckLoopIntersection(lId))
@@ -1956,6 +1970,11 @@ namespace IvyFEM
         public ItrLoop GetItrLoop(uint lId)
         {
             return new ItrLoop(BRep, lId);
+        }
+
+        public ItrVertex GetItrVertex(uint vId)
+        {
+            return new ItrVertex(BRep, vId);
         }
 
     }

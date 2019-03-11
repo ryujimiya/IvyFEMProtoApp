@@ -40,7 +40,7 @@ namespace IvyFEM
 
         public BoundingBox3D GetBoundingBox(OpenTK.Matrix3d rot)
         {
-            if (VertexCoordArray == null)
+            if (VertexCoordArray == null || VertexCoordArray.Length == 0)
             {
                 return new BoundingBox3D();
             }

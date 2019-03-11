@@ -115,6 +115,15 @@
     <Compile Include="AlertWindow.xaml.cs">
       <DependentUpon>AlertWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CalcDraw.cs" />
+    <Compile Include="CadDesign.cs" />
+    <Compile Include="CadDesignBase.cs" />
+    <Compile Include="BackgroundDrawer.cs" />
+    <Compile Include="CadEdge2DPolyline.cs" />
+    <Compile Include="CadEditWindow.xaml.cs">
+      <DependentUpon>CadEditWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CadObject2DMove.cs" />
     <Compile Include="Camera2D.cs" />
     <Compile Include="ChartWindow.xaml.cs">
       <DependentUpon>ChartWindow.xaml</DependentUpon>
@@ -123,6 +132,7 @@
     <Compile Include="Constraint.cs" />
     <Compile Include="ConstraintDrawer.cs" />
     <Compile Include="ConstraintDrawerArray.cs" />
+    <Compile Include="EdgeCollection.cs" />
     <Compile Include="Elastic2DBaseFEM.TwoBodyContactMortar.cs" />
     <Compile Include="Elastic2DBaseFEM.TwoBodyContact.cs" />
     <Compile Include="Elastic2DBaseFEM.MultipointConstraint.cs" />
@@ -233,6 +243,7 @@
     <Compile Include="Problem .EMWaveguide.cs" />
     <Compile Include="Problem .Solver.cs" />
     <Compile Include="Problem .Cad.cs" />
+    <Compile Include="ProblemCadEditCalcSample.cs" />
     <Compile Include="Problem.cs" />
     <Compile Include="MeshQuad2D.cs" />
     <Compile Include="MeshQuadArray2D.cs" />
@@ -244,6 +255,7 @@
     <Compile Include="TriangleFE.2nd.cs" />
     <Compile Include="TriangleFE.1st.cs" />
     <Compile Include="TriangleFE.cs" />
+    <Compile Include="TriDiaMat3.cs" />
     <Compile Include="VectorFieldDrawer.cs" />
     <Compile Include="VectorFieldDrawPart.cs" />
     <Compile Include="WPFUtils.cs" />
@@ -254,6 +266,10 @@
     <Compile Include="Vertex2D.cs" />
     <Compile Include="VertexArray.cs" />
     <Page Include="AlertWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CadEditWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

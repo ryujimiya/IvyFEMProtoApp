@@ -6,7 +6,7 @@
         xmlns:OpenTK="clr-namespace:OpenTK;assembly=OpenTK.GLControl"        
         xmlns:local="clr-namespace:IvyFEM"
         mc:Ignorable="d"
-        Title="IvyFEMProtoApp" Height="389" Width="500" Loaded="Window_Loaded">
+        Title="IvyFEMProtoApp" Height="389" Width="500" Loaded="Window_Loaded" Activated="Window_Activated">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -60,6 +60,7 @@
                     <MenuItem Header="Mooney-Rivlin(2 Body Contact) Time Domain" Click="mooneyRivlinHyperelasticTwoBodyContactTDBtn_Click"/>
                     <MenuItem Header="Ogden(2 Body Contact) Time Domain" Click="ogdenHyperelasticTwoBodyContactTDBtn_Click"/>
                 </MenuItem>
+                <MenuItem Header="CadEdit" Click="cadEditBtn_Click"/>
             </Menu>
             <Grid>
                 <WindowsFormsHost>

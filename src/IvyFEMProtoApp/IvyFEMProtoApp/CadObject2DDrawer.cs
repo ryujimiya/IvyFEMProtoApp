@@ -16,7 +16,7 @@ namespace IvyFEM
         private byte[] Mask = new byte[128];
         private IList<CadObject2DDrawPart> DrawParts = new List<CadObject2DDrawPart>();
         private VertexArray VertexArray = new VertexArray();
-        private uint LineWidth = 3;
+        public uint LineWidth { get; set; } = 3;
         private uint PointSize = 5;
         private double TexCentX = 0;
         private double TexCentY = 0;
@@ -254,6 +254,13 @@ namespace IvyFEM
                     Edge2D edge = cad2D.GetEdge(cadId);
                     dp.CurveType = edge.CurveType;
                     dp.CtrlPoints.Clear();
+                    // 2019-03-11 エッジの色 FIX
+                    double[] color = new double[3];
+                    edge.GetColor(color);
+                    for (int iTmp = 0; iTmp < 3; iTmp++)
+                    {
+                        dp.Color[iTmp] = (float)color[iTmp];
+                    }
                     if (edge.CurveType == CurveType.CurveArc)
                     {
                         OpenTK.Vector2d cPt;
@@ -385,7 +392,9 @@ namespace IvyFEM
                     }
                     else
                     {
-                        GL.Color3(0, 0, 0);
+                        //2019-03-11 エッジの色 FIX
+                        //GL.Color3(0, 0, 0);
+                        GL.Color3(dp.Color);
                     }
 
                     GL.Translate(0.0, 0.0, height);
