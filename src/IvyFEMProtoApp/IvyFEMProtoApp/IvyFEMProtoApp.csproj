@@ -74,6 +74,10 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="IvyFEM, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\IvyFEM\src\IvyFEM\IvyFEM\bin\x64\Debug\IvyFEM.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTK, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.3.0.1\lib\net20\OpenTK.dll</HintPath>
     </Reference>
@@ -119,119 +123,13 @@
     <Compile Include="CadDesign.cs" />
     <Compile Include="CadDesignBase.cs" />
     <Compile Include="BackgroundDrawer.cs" />
-    <Compile Include="CadEdge2DPolyline.cs" />
     <Compile Include="CadEditWindow.xaml.cs">
       <DependentUpon>CadEditWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CadObject2DMove.cs" />
-    <Compile Include="Camera2D.cs" />
     <Compile Include="ChartWindow.xaml.cs">
       <DependentUpon>ChartWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ColorLegend.cs" />
-    <Compile Include="Constraint.cs" />
-    <Compile Include="ConstraintDrawer.cs" />
-    <Compile Include="ConstraintDrawerArray.cs" />
     <Compile Include="EdgeCollection.cs" />
-    <Compile Include="Elastic2DBaseFEM.TwoBodyContactMortar.cs" />
-    <Compile Include="Elastic2DBaseFEM.TwoBodyContact.cs" />
-    <Compile Include="Elastic2DBaseFEM.MultipointConstraint.cs" />
-    <Compile Include="Elastic2DDerivedBaseFEM.cs" />
-    <Compile Include="Elastic2DFEM.LinearElastic.cs" />
-    <Compile Include="Elastic2DFEM.SaintVenantHyperelastic.cs" />
-    <Compile Include="FEWorldQuantity.cs" />
-    <Compile Include="Hyperelastic2DDerivedBaseFEM.cs" />
-    <Compile Include="Hyperelastic2DFEM.cs" />
-    <Compile Include="Hyperelastic2DFEM.Ogden.Original.cs" />
-    <Compile Include="Hyperelastic2DTDFEM.cs" />
-    <Compile Include="Hyperelastic2DTDFEM.Ogden.Original.cs" />
-    <Compile Include="Hyperelastic2DTDFEM.Ogden.cs" />
-    <Compile Include="Linear.Utils.cs" />
-    <Compile Include="CircleConstraint.cs" />
-    <Compile Include="LineConstraint.cs" />
-    <Compile Include="LineFE.2nd.cs" />
-    <Compile Include="LineFE.1st.cs" />
-    <Compile Include="MultipointConstraint.cs" />
-    <Compile Include="OgdenHyperelasticMaterial.cs" />
-    <Compile Include="Hyperelastic2DFEM.Ogden.cs" />
-    <Compile Include="Hyperelastic2DFEM.MooneyRivlin.cs" />
-    <Compile Include="Elastic2DTDFEM.LinearElastic.cs" />
-    <Compile Include="Elastic2DTDFEM.SaintVenantHyperelastic.cs" />
-    <Compile Include="Lapack.ComplexHermitianBandMatrix.cs" />
-    <Compile Include="Lapack.DoubleSymmetricBandMatrix.cs" />
-    <Compile Include="Linear.Constants.cs" />
-    <Compile Include="Linear.Functions.Complex.cs" />
-    <Compile Include="Linear.Functions.Double.cs" />
-    <Compile Include="Linear.LapackEquationSolver.cs" />
-    <Compile Include="Linear.ComplexSparseMatrix.cs" />
-    <Compile Include="Linear.DoubleSparseMatrix.cs" />
-    <Compile Include="EdgeFieldDrawer.cs" />
-    <Compile Include="Elastic2DBaseFEM.cs" />
-    <Compile Include="Elastic2DFEM.cs" />
-    <Compile Include="Elastic2DTDFEM.cs" />
-    <Compile Include="ElasticLameBaseMaterial.cs" />
-    <Compile Include="LinearElasticMaterial.cs" />
-    <Compile Include="FEM.cs" />
-    <Compile Include="FaceFieldDrawPart.cs" />
-    <Compile Include="FieldFixedCad.cs" />
-    <Compile Include="FieldValue.cs" />
-    <Compile Include="IColorMap.cs" />
-    <Compile Include="EMWaveguide2DHPlaneFEM.cs" />
-    <Compile Include="FaceFieldDrawer.cs" />
-    <Compile Include="FieldDrawerArray.cs" />
-    <Compile Include="Linear.IEquationSolver.cs" />
-    <Compile Include="IFieldDrawer.cs" />
-    <Compile Include="IntegrationPoints.cs" />
-    <Compile Include="Lapack.ComplexBandMatrix.cs" />
-    <Compile Include="Lapack.ComplexMatrix.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="DielectricMaterial.cs" />
-    <Compile Include="Lapack.DoubleBandMatrix.cs" />
-    <Compile Include="Lapack.DoubleMatrix.cs" />
-    <Compile Include="EMWaveguide1DEigenFEM.cs" />
-    <Compile Include="FEWorld.cs" />
-    <Compile Include="FE.cs" />
-    <Compile Include="Lapack.Constants.cs" />
-    <Compile Include="Lapack.Functions.cs" />
-    <Compile Include="Lapack.ImportedFunctions.cs" />
-    <Compile Include="Lapack.Utils.cs" />
-    <Compile Include="LineFE.cs" />
-    <Compile Include="Lis.Constants.cs" />
-    <Compile Include="Lis.Functions.cs" />
-    <Compile Include="Lis.ImportedFunctions.cs" />
-    <Compile Include="Lis.LisInitializer.cs" />
-    <Compile Include="Lis.LisMatrix.cs" />
-    <Compile Include="Lis.LisSolver.cs" />
-    <Compile Include="Lis.LisVector.cs" />
-    <Compile Include="Lis.NativeClasses.cs" />
-    <Compile Include="Linear.LisEquationSolver.cs" />
-    <Compile Include="Material.cs" />
-    <Compile Include="MeshBar.cs" />
-    <Compile Include="MeshBarArray.cs" />
-    <Compile Include="BoundingBox2D.cs" />
-    <Compile Include="BoundingBox3D.cs" />
-    <Compile Include="BRep.cs" />
-    <Compile Include="CadObjectArray.cs" />
-    <Compile Include="Camera.cs" />
-    <Compile Include="DrawerArray.cs" />
-    <Compile Include="Hyperelastic2DTDFEM.MooneyRivlin.cs" />
-    <Compile Include="MooneyRivlinHyperelasticMaterial.cs" />
-    <Compile Include="Native.Functions.cs" />
-    <Compile Include="Native.ImportedFunctions.cs" />
-    <Compile Include="OpenGLUtils.cs" />
-    <Compile Include="CadObject2DDrawPart.cs" />
-    <Compile Include="Edge2D.cs" />
-    <Compile Include="HalfEdge.cs" />
-    <Compile Include="IDrawer.cs" />
-    <Compile Include="ItrLoop.cs" />
-    <Compile Include="ItrVertex.cs" />
-    <Compile Include="Loop2D.cs" />
-    <Compile Include="Mesher2DDrawer.cs" />
-    <Compile Include="Mesher2DDrawPart.cs" />
-    <Compile Include="MeshUtils.cs" />
-    <Compile Include="ColorMap.cs" />
-    <Compile Include="PickedObject.cs" />
-    <Compile Include="MeshPoint2D.cs" />
     <Compile Include="Problem .ElasticTwoBodyContact.cs" />
     <Compile Include="Problem .ElasticContact.cs" />
     <Compile Include="Problem .HyperelasticTwoBodyContact.cs" />
@@ -243,28 +141,9 @@
     <Compile Include="Problem .EMWaveguide.cs" />
     <Compile Include="Problem .Solver.cs" />
     <Compile Include="Problem .Cad.cs" />
-    <Compile Include="ProblemCadEditCalcSample.cs" />
+    <Compile Include="ProblemCadEdit.cs" />
     <Compile Include="Problem.cs" />
-    <Compile Include="MeshQuad2D.cs" />
-    <Compile Include="MeshQuadArray2D.cs" />
-    <Compile Include="SelectedObject.cs" />
-    <Compile Include="MeshTri2D.cs" />
-    <Compile Include="MeshTriArray2D.cs" />
-    <Compile Include="SaintVenantHyperelasticMaterial.cs" />
-    <Compile Include="Linear.IvyFEMEquationSolver.cs" />
-    <Compile Include="TriangleFE.2nd.cs" />
-    <Compile Include="TriangleFE.1st.cs" />
-    <Compile Include="TriangleFE.cs" />
-    <Compile Include="TriDiaMat3.cs" />
-    <Compile Include="VectorFieldDrawer.cs" />
-    <Compile Include="VectorFieldDrawPart.cs" />
     <Compile Include="WPFUtils.cs" />
-    <Compile Include="UseLoop.cs" />
-    <Compile Include="UseVertex.cs" />
-    <Compile Include="CadUtils.cs" />
-    <Compile Include="MeshVertex.cs" />
-    <Compile Include="Vertex2D.cs" />
-    <Compile Include="VertexArray.cs" />
     <Page Include="AlertWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -285,17 +164,12 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="BRep2D.cs" />
-    <Compile Include="CadObject2D.cs" />
-    <Compile Include="CadObject2DDrawer.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Mesher2D.cs" />
-    <Compile Include="ObjectArray.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -336,6 +210,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="IvyFEM.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="IvyFEM.Native.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

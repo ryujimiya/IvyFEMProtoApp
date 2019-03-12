@@ -24,7 +24,7 @@ namespace IvyFEMProtoApp
         /// <summary>
         /// Cadデザイン
         /// </summary>
-        private CadDesign CadDesign = null;
+        internal CadDesign CadDesign = null;
 
         /// <summary>
         /// 場を描画する?
@@ -34,7 +34,7 @@ namespace IvyFEMProtoApp
         /// <summary>
         /// 計算サンプル
         /// </summary>
-        private ProblemCadEditCalcSample Problem = new ProblemCadEditCalcSample();
+        private ProblemCadEdit Problem = new ProblemCadEdit();
         /// <summary>
         /// 計算結果表示
         /// </summary>
@@ -206,6 +206,33 @@ namespace IvyFEMProtoApp
         private void CalcSampleBtn_Click(object sender, RoutedEventArgs e)
         {
             Problem.ElasticProblem(CadDesign.Cad2D, CadDesign.Camera, this);
+        }
+
+        private void openBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog();
+            dialog.Title = "ファイルを開く";
+            dialog.Filter = "CADオブジェクトファイル(*.cadobj)|*.cadobj";
+            if (dialog.ShowDialog() != true)
+            {
+                return;
+            }
+            string cadObjFileName = dialog.FileName;
+            Problem.CadLoadFromFile(CadDesign.Cad2D, cadObjFileName, this);
+        }
+
+        private void saveBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.SaveFileDialog();
+            dialog.Title = "ファイルを保存";
+            dialog.Filter = "CADオブジェクトファイル(*.cadobj)|*.cadobj";
+            if (dialog.ShowDialog() != true)
+            {
+                return;
+            }
+            string cadObjFileName = dialog.FileName;
+            Problem.CadSaveToFile(CadDesign.Cad2D, cadObjFileName);
+            MessageBox.Show("保存しました", "");
         }
     }
 }

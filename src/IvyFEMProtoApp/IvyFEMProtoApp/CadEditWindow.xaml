@@ -6,14 +6,14 @@
         xmlns:local="clr-namespace:IvyFEMProtoApp"
         xmlns:OpenTK="clr-namespace:OpenTK;assembly=OpenTK.GLControl" x:Class="IvyFEMProtoApp.CadEditWindow"
         mc:Ignorable="d"
-        Title="CadEditWindow" Height="397" Width="500" Activated="Window_Activated" Loaded="Window_Loaded">
+        Title="CadEditWindow" Height="558.5" Width="500" Activated="Window_Activated" Loaded="Window_Loaded">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="0*"/>
         </Grid.ColumnDefinitions>
 
-        <ToolBar Height="50" VerticalAlignment="Top">
+        <ToolBar Height="50" VerticalAlignment="Top" Margin="0,29,0,0">
             <Button x:Name="NoneBtn" Content="None" VerticalAlignment="Top" Width="53" Click="NoneBtn_Click" Margin="0,0,0,-5" Height="50"/>
             <Button x:Name="PolygonBtn" Content="Polygon" VerticalAlignment="Top" Width="56" Click="PolygonBtn_Click" Margin="0,0,0,-5" Height="50"/>
             <Button x:Name="MoveBtn" Content="Move" VerticalAlignment="Top" Width="56" Click="MoveBtn_Click" Margin="0,0,0,-5" Height="50"/>
@@ -23,13 +23,19 @@
             <Separator Height="45" Margin="0" VerticalAlignment="Top" Width="20"/>
             <Button x:Name="CalcSampleBtn" Content="Calc sample!" VerticalAlignment="Top" Width="75" Margin="0,0,0,-5" Height="50" Click="CalcSampleBtn_Click"/>
         </ToolBar>
-        <WindowsFormsHost Margin="0,50,0,47">
+        <WindowsFormsHost Margin="0,79,0,47">
             <OpenTK:GLControl x:Name="glControl" Load="glControl_Load" Resize="glControl_Resize" Paint="glControl_Paint" MouseClick="glControl_MouseClick" KeyDown="glControl_KeyDown" KeyUp="glControl_KeyUp" MouseMove="glControl_MouseMove" MouseDown="glControl_MouseDown" MouseWheel="glControl_MouseWheel" MouseUp="glControl_MouseUp"/>
         </WindowsFormsHost>
         <StatusBar Height="47" VerticalAlignment="Bottom">
             <Label Content="X,Y: "/>
             <Label x:Name="CoordStatusLabel" Content="(0. 0)" Width="197"/>
         </StatusBar>
+        <Menu Height="29" VerticalAlignment="Top">
+            <MenuItem Header="File">
+                <MenuItem Header="Open" Click="openBtn_Click"/>
+                <MenuItem Header="Save" Click="saveBtn_Click"/>
+            </MenuItem>
+        </Menu>
 
     </Grid>
 </Window>
