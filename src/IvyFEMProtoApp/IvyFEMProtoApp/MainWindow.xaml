@@ -18,6 +18,7 @@
                     <MenuItem Header="Cad2D" Click="cad2DBtn_Click"/>
                     <MenuItem Header="Coare Mesh2D" Click="coarseMesh2DBtn_Click"/>
                     <MenuItem Header="Mesh2D" Click="mesh2DBtn_Click"/>
+                    <MenuItem Header="DrawString" Click="drawStringBtn_Click"/>
                 </MenuItem>
                 <MenuItem Header="Solver">
                     <MenuItem Header="LAPACK" Click="lapackBtn_Click"/>

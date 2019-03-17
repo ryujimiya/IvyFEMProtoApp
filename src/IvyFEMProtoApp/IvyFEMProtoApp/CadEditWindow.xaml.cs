@@ -180,6 +180,7 @@ namespace IvyFEMProtoApp
             ModeBtn_Click(CadDesignBase.CadModeType.Polygon);
             IsFieldDraw = false;
             glControl.Invalidate();
+            glControl.Update();
         }
 
         private void MoveBtn_Click(object sender, RoutedEventArgs e)
@@ -187,6 +188,7 @@ namespace IvyFEMProtoApp
             ModeBtn_Click(CadDesignBase.CadModeType.Move);
             IsFieldDraw = false;
             glControl.Invalidate();
+            glControl.Update();
         }
 
         private void PortBtn_Click(object sender, RoutedEventArgs e)
@@ -194,6 +196,7 @@ namespace IvyFEMProtoApp
             ModeBtn_Click(CadDesignBase.CadModeType.Port);
             IsFieldDraw = false;
             glControl.Invalidate();
+            glControl.Update();
         }
 
         private void EraseBtn_Click(object sender, RoutedEventArgs e)
@@ -201,6 +204,7 @@ namespace IvyFEMProtoApp
             ModeBtn_Click(CadDesignBase.CadModeType.Erase);
             IsFieldDraw = false;
             glControl.Invalidate();
+            glControl.Update();
         }
 
         private void CalcSampleBtn_Click(object sender, RoutedEventArgs e)

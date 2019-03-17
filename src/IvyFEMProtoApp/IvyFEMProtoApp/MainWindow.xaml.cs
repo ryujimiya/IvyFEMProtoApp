@@ -289,6 +289,11 @@ namespace IvyFEMProtoApp
             Problem.MakeMesh(this);
         }
 
+        private void drawStringBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.DrawStringTest(Camera, glControl);
+        }
+
         private void lapackBtn_Click(object sender, RoutedEventArgs e)
         {
             Problem.InterseMatrixExample();

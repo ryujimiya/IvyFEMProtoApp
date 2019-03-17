@@ -16,7 +16,7 @@ namespace IvyFEMProtoApp
         private double Height = 0;
         private double Z = 0;
 
-        public RotMode SutableRotMode => RotMode.RotModeNotSet;
+        public RotMode SutableRotMode => RotMode.RotMode2D;
 
         public bool IsAntiAliasing { get => false; set => throw new NotImplementedException(); }
 

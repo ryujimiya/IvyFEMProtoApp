@@ -140,7 +140,7 @@ namespace IvyFEMProtoApp
                 success = true;
             }
 
-            //Console.WriteLine("addEdgeId end");
+            //System.Diagnostics.Debug.WriteLine("addEdgeId end");
             return success;
         }
 
