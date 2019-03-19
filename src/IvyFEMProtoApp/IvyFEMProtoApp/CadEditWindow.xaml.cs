@@ -45,6 +45,7 @@ namespace IvyFEMProtoApp
             InitializeComponent();
             CadDesign = new CadDesign(glControl, 100, 100);
             CadDesign.Change += CadDesign_Change;
+            CadDesign.ShowProperty += CadDesign_ShowProperty;
             CadDesign.CadMode = CadDesignBase.CadModeType.None;
             CalcDraw = new CalcDraw(glControl, CadDesign.Camera);
         }
@@ -123,22 +124,32 @@ namespace IvyFEMProtoApp
 
         private void glControl_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-
+            CadDesign.CadPanelMouseWheel(e);
         }
 
         private void glControl_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
+            CadDesign.CadPanelKeyDown(e);
+        }
 
+        private void glControl_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+        {
+            CadDesign.CadPanelKeyPress(e);
         }
 
         private void glControl_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
         {
-
+            CadDesign.CadPanelKeyUp(e);
         }
 
         private void CadDesign_Change(object sender, CadDesignBase.CadModeType prevCadMode)
         {
 
+        }
+
+        private void CadDesign_ShowProperty(IvyFEM.CadElementType cadElemType, uint cadId)
+        {
+            MessageBox.Show("プロパティ: " + cadElemType + " Id = " + cadId);
         }
 
         private void ModeBtn_Click(CadDesign.CadModeType cadMode)
@@ -238,5 +249,6 @@ namespace IvyFEMProtoApp
             Problem.CadSaveToFile(CadDesign.Cad2D, cadObjFileName);
             MessageBox.Show("保存しました", "");
         }
+
     }
 }

@@ -129,7 +129,7 @@
     <Compile Include="ChartWindow.xaml.cs">
       <DependentUpon>ChartWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="EdgeCollection.cs" />
+    <Compile Include="PortEdge.cs" />
     <Compile Include="Problem .ElasticTwoBodyContact.cs" />
     <Compile Include="Problem .ElasticContact.cs" />
     <Compile Include="Problem .HyperelasticTwoBodyContact.cs" />

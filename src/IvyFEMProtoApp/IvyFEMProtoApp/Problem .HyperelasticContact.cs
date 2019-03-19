@@ -149,9 +149,9 @@ namespace IvyFEMProtoApp
                 //IFieldDrawer faceDrawer = new FaceFieldDrawer(uValueId, FieldDerivativeType.Value, false, world,
                 //    lValueId, FieldDerivativeType.Value);
                 fieldDrawerArray.Add(faceDrawer);
-                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(uValueId, FieldDerivativeType.Value, false, world);
+                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(uValueId, FieldDerivativeType.Value, false, true, world);
                 fieldDrawerArray.Add(edgeDrawer);
-                IFieldDrawer edgeDrawer2 = new EdgeFieldDrawer(uValueId, FieldDerivativeType.Value, true, world);
+                IFieldDrawer edgeDrawer2 = new EdgeFieldDrawer(uValueId, FieldDerivativeType.Value, true, true, world);
                 fieldDrawerArray.Add(edgeDrawer2);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
                 mainWindow.glControl_ResizeProc();
@@ -361,9 +361,9 @@ namespace IvyFEMProtoApp
                 //IFieldDrawer faceDrawer = new FaceFieldDrawer(uValueId, FieldDerivativeType.Value, false, world,
                 //    lValueId, FieldDerivativeType.Value);
                 fieldDrawerArray.Add(faceDrawer);
-                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(uValueId, FieldDerivativeType.Value, false, world);
+                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(uValueId, FieldDerivativeType.Value, false, true, world);
                 fieldDrawerArray.Add(edgeDrawer);
-                IFieldDrawer edgeDrawer2 = new EdgeFieldDrawer(uValueId, FieldDerivativeType.Value, true, world);
+                IFieldDrawer edgeDrawer2 = new EdgeFieldDrawer(uValueId, FieldDerivativeType.Value, true, true, world);
                 fieldDrawerArray.Add(edgeDrawer2);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
                 mainWindow.glControl_ResizeProc();

@@ -12,9 +12,9 @@ namespace IvyFEMProtoApp
 {
     class BackgroundDrawer : IDrawer
     {
-        private double Width = 0;
-        private double Height = 0;
-        private double Z = 0;
+        protected double Width  = 0;
+        protected double Height = 0;
+        protected double Z = 0;
 
         public RotMode SutableRotMode => RotMode.RotMode2D;
 
@@ -37,7 +37,7 @@ namespace IvyFEMProtoApp
 
         }
 
-        public void Draw()
+        public virtual void Draw()
         {
 
         }
@@ -49,9 +49,7 @@ namespace IvyFEMProtoApp
 
         public BoundingBox3D GetBoundingBox(Matrix3d rot)
         {
-            double hw = Width * 0.5;
-            double hh = Height * 0.5;
-            BoundingBox3D bb = new BoundingBox3D(-hw, hw, -hh, hh, Z, Z);
+            BoundingBox3D bb = new BoundingBox3D(0, Width, 0, Height, Z, Z);
             return bb;
         }
     }

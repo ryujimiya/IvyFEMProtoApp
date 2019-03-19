@@ -24,9 +24,9 @@ namespace IvyFEMProtoApp
         protected IList<uint> LoopIds = new List<uint>();
 
         /// <summary>
-        /// 境界リストのリスト
+        /// 境界のリスト
         /// </summary>
-        protected IList<EdgeCollection> EdgeCollectionList = new List<EdgeCollection>();
+        protected IList<PortEdge> PortEdges = new List<PortEdge>();
 
         ////////////////////////////////////////////////////
         //編集中
@@ -65,7 +65,7 @@ namespace IvyFEMProtoApp
             _CadMode = CadModeType.None;
 
             LoopIds.Clear();
-            EdgeCollectionList.Clear();
+            PortEdges.Clear();
 
             //edit
             EditPts.Clear();

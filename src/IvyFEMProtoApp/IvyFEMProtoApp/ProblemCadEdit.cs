@@ -15,7 +15,7 @@ namespace IvyFEMProtoApp
             {
                 cad2D.Serialize(arch);
             }
-            window.CadDesign.CadPanelResize();
+            window.CadDesign.RefreshDrawerAry();
             window.glControl.Invalidate();
             window.glControl.Update();
         }
@@ -108,9 +108,9 @@ namespace IvyFEMProtoApp
                     IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, false, world);
                     fieldDrawerArray.Add(faceDrawer);
                 }
-                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(valueId, FieldDerivativeType.Value, false, world);
+                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(valueId, FieldDerivativeType.Value, false, true, world);
                 fieldDrawerArray.Add(edgeDrawer);
-                IFieldDrawer edgeDrawer2 = new EdgeFieldDrawer(valueId, FieldDerivativeType.Value, true, world);
+                IFieldDrawer edgeDrawer2 = new EdgeFieldDrawer(valueId, FieldDerivativeType.Value, true, true, world);
                 fieldDrawerArray.Add(edgeDrawer2);
                 //camera.Fit(fieldDrawerArray.GetBoundingBox(camera.RotMatrix33()));
                 window.CalcDraw.CadPanelResize();

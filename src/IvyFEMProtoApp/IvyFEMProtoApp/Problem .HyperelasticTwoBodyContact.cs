@@ -173,7 +173,7 @@ namespace IvyFEMProtoApp
                 //IFieldDrawer faceDrawer = new FaceFieldDrawer(uValueId, FieldDerivativeType.Value, false, world,
                 //    lValueId, FieldDerivativeType.Value);
                 fieldDrawerArray.Add(faceDrawer);
-                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(uValueId, FieldDerivativeType.Value, false, world);
+                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(uValueId, FieldDerivativeType.Value, false, true, world);
                 fieldDrawerArray.Add(edgeDrawer);
                 //IFieldDrawer edgeDrawer2 = new EdgeFieldDrawer(uValueId, FieldDerivativeType.Value, true, world);
                 //fieldDrawerArray.Add(edgeDrawer2);

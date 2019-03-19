@@ -14,17 +14,17 @@
         </Grid.ColumnDefinitions>
 
         <ToolBar Height="50" VerticalAlignment="Top" Margin="0,29,0,0">
-            <Button x:Name="NoneBtn" Content="None" VerticalAlignment="Top" Width="53" Click="NoneBtn_Click" Margin="0,0,0,-5" Height="50"/>
-            <Button x:Name="PolygonBtn" Content="Polygon" VerticalAlignment="Top" Width="56" Click="PolygonBtn_Click" Margin="0,0,0,-5" Height="50"/>
-            <Button x:Name="MoveBtn" Content="Move" VerticalAlignment="Top" Width="56" Click="MoveBtn_Click" Margin="0,0,0,-5" Height="50"/>
-            <Button x:Name="PortBtn" Content="Port" VerticalAlignment="Top" Width="58" Click="PortBtn_Click" Margin="0,0,0,-5" Height="50"/>
+            <Button x:Name="NoneBtn" Content="None" VerticalAlignment="Top" Width="55" Click="NoneBtn_Click" Height="50"/>
+            <Button x:Name="PolygonBtn" Content="Polygon" VerticalAlignment="Top" Width="55" Click="PolygonBtn_Click"  Height="50"/>
+            <Button x:Name="MoveBtn" Content="Move" VerticalAlignment="Top" Width="55" Click="MoveBtn_Click" Height="50"/>
+            <Button x:Name="PortBtn" Content="Port" VerticalAlignment="Top" Width="55" Click="PortBtn_Click" Height="50"/>
             <Separator Height="45" Margin="0" VerticalAlignment="Top" Width="20"/>
-            <Button x:Name="EraseBtn" Content="Erase" VerticalAlignment="Top" Width="53" Click="EraseBtn_Click" Margin="0,0,0,-5" Height="50"/>
+            <Button x:Name="EraseBtn" Content="Erase" VerticalAlignment="Top" Width="55" Click="EraseBtn_Click" Height="50"/>
             <Separator Height="45" Margin="0" VerticalAlignment="Top" Width="20"/>
-            <Button x:Name="CalcSampleBtn" Content="Calc sample!" VerticalAlignment="Top" Width="75" Margin="0,0,0,-5" Height="50" Click="CalcSampleBtn_Click"/>
+            <Button x:Name="CalcSampleBtn" Content="Calc! Sample" VerticalAlignment="Top" Width="75" Height="50" Click="CalcSampleBtn_Click"/>
         </ToolBar>
         <WindowsFormsHost Margin="0,79,0,47">
-            <OpenTK:GLControl x:Name="glControl" Load="glControl_Load" Resize="glControl_Resize" Paint="glControl_Paint" MouseClick="glControl_MouseClick" KeyDown="glControl_KeyDown" KeyUp="glControl_KeyUp" MouseMove="glControl_MouseMove" MouseDown="glControl_MouseDown" MouseWheel="glControl_MouseWheel" MouseUp="glControl_MouseUp"/>
+            <OpenTK:GLControl x:Name="glControl" Load="glControl_Load" Resize="glControl_Resize" Paint="glControl_Paint" MouseClick="glControl_MouseClick" KeyDown="glControl_KeyDown" KeyUp="glControl_KeyUp" MouseMove="glControl_MouseMove" MouseDown="glControl_MouseDown" MouseWheel="glControl_MouseWheel" MouseUp="glControl_MouseUp" KeyPress="glControl_KeyPress"/>
         </WindowsFormsHost>
         <StatusBar Height="47" VerticalAlignment="Bottom">
             <Label Content="X,Y: "/>
