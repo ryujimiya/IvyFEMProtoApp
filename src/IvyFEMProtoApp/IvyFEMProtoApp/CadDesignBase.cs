@@ -7,7 +7,7 @@ using IvyFEM;
 
 namespace IvyFEMProtoApp
 {
-    class CadDesignBase
+    public class CadDesignBase
     {
         public enum CadModeType
         {

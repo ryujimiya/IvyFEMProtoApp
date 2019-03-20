@@ -9,7 +9,7 @@ using IvyFEM;
 
 namespace IvyFEMProtoApp
 {
-    class CalcDraw
+    public class CalcDraw
     {
         private OpenTK.GLControl glControl;
         private Camera2D Camera = null;

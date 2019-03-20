@@ -10,7 +10,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace IvyFEMProtoApp
 {
-    class BackgroundDrawer : IDrawer
+    public class BackgroundDrawer : IDrawer
     {
         protected double Width  = 0;
         protected double Height = 0;

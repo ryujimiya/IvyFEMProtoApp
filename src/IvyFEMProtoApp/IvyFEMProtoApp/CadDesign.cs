@@ -10,7 +10,7 @@ using IvyFEM;
 
 namespace IvyFEMProtoApp
 {
-    class CadDesign : CadDesignBase
+    public class CadDesign : CadDesignBase
     {
         ////////////////////////////////////////////////////////////////////////
         // 型
@@ -411,6 +411,7 @@ namespace IvyFEMProtoApp
             MouseMovePt = pt;
             EndPt = e.Location;
 
+            bool hitTestFlg = false;
             if (CadMode == CadModeType.None)
             {
                 if (DragFlg)
@@ -438,14 +439,16 @@ namespace IvyFEMProtoApp
                 }
                 else
                 {
-                    CadElementType partElemType;
-                    uint partId;
-                    bool hit = hitTest(pt, out partElemType, out partId);
-                    executed = true; // 常に実行される
+                    hitTestFlg = true;
                 }
 
             }
             else if (CadMode != CadModeType.None)
+            {
+                hitTestFlg = true;
+            }
+
+            if(hitTestFlg)
             {
                 CadElementType partElemType;
                 uint partId;
@@ -455,8 +458,11 @@ namespace IvyFEMProtoApp
 
             if (executed)
             {
-                // 描画オブジェクトアレイを更新する
-                RefreshDrawerAry();
+                if (!hitTestFlg)
+                {
+                    // 描画オブジェクトアレイを更新する
+                    RefreshDrawerAry();
+                }
                 // Cadパネルの再描画
                 glControl.Invalidate();
                 glControl.Update();
@@ -739,7 +745,7 @@ namespace IvyFEMProtoApp
                 uint eId = edge.EdgeId;
                 Point pt = drawPts[iPort];
                 double drawX = asp - (pt.X / (double)winW) * (2.0 * asp);
-                double drawY = pt.Y / (double)winH * 2.0 - 1.0;
+                double drawY = (pt.Y / (double)winH) * 2.0 - 1.0;
                 OpenTK.Vector2d drawpp = new OpenTK.Vector2d(drawX, drawY);
 
                 string text = string.Format("{0}", edge.No);
@@ -2039,15 +2045,14 @@ namespace IvyFEMProtoApp
                         ((!IsEditing && partElemType == CadElementType.Loop) ||
                         partElemType == CadElementType.Edge ||
                         partElemType == CadElementType.Vertex)) ||
-                    (CadMode == CadModeType.Erase &&
-                        (partElemType == CadElementType.Loop ||
-                        partElemType == CadElementType.Edge ||
-                        partElemType == CadElementType.Vertex)) ||
                     (CadMode == CadModeType.Move &&
                         (partElemType == CadElementType.Loop ||
                         partElemType == CadElementType.Edge ||
-                        partElemType == CadElementType.Vertex))
-                    )
+                        partElemType == CadElementType.Vertex)) ||
+                    (CadMode == CadModeType.Erase &&
+                        (partElemType == CadElementType.Loop ||
+                        partElemType == CadElementType.Edge ||
+                        partElemType == CadElementType.Vertex)))
                 {
                     // 選択表示設定に追加する
                     DrawerArray.AddSelected(selecObjs[0].Name);
@@ -2693,8 +2698,8 @@ namespace IvyFEMProtoApp
         /// <returns></returns>
         private static Color GetLoopLineColor(Color loopColor)
         {
-            //Color loopLineColor = Color.DarkGray;
-            Color loopLineColor = Color.FromArgb(0xff & (loopColor.R - 0x20), 0xff & (loopColor.G - 0x20), 0xff & (loopColor.B - 0x20));
+            //Color loopLineColor = Color.FromArgb(0xff & (loopColor.R - 0x20), 0xff & (loopColor.G - 0x20), 0xff & (loopColor.B - 0x20));
+            Color loopLineColor = Color.Gray;
             return loopLineColor;
         }
 

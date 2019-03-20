@@ -10,7 +10,7 @@ namespace IvyFEMProtoApp
     /// <summary>
     /// ポート-エッジ対応
     /// </summary>
-    class PortEdge
+    public class PortEdge
     {
         /// <summary>
         /// ポート番号
