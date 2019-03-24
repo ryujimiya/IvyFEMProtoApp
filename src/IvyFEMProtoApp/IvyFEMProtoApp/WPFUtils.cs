@@ -7,7 +7,7 @@ using System.Windows.Threading;
 
 namespace IvyFEMProtoApp
 {
-    class WPFUtils
+    public class WPFUtils
     {
         /// <summary>
         /// 現在メッセージ待ちのUIメッセージを処理します。

@@ -129,6 +129,10 @@
     <Compile Include="ChartWindow.xaml.cs">
       <DependentUpon>ChartWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MeshDraw.cs" />
+    <Compile Include="MeshWindow.xaml.cs">
+      <DependentUpon>MeshWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PortEdge.cs" />
     <Compile Include="Problem .ElasticTwoBodyContact.cs" />
     <Compile Include="Problem .ElasticContact.cs" />
@@ -168,6 +172,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="MeshWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

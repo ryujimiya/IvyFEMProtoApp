@@ -20,7 +20,8 @@
             <Button x:Name="PortBtn" Content="Port" VerticalAlignment="Top" Width="55" Click="PortBtn_Click" Height="50"/>
             <Separator Height="45" Margin="0" VerticalAlignment="Top" Width="20"/>
             <Button x:Name="EraseBtn" Content="Erase" VerticalAlignment="Top" Width="55" Click="EraseBtn_Click" Height="50"/>
-            <Separator Height="45" Margin="0" VerticalAlignment="Top" Width="20"/>
+            <Separator Height="45" Margin="0" VerticalAlignment="Top" Width="35"/>
+            <Button x:Name="MeshBtn" Content="Mesh" VerticalAlignment="Top" Width="55" Height="50" Click="MeshBtn_Click"/>
             <Button x:Name="CalcSampleBtn" Content="Calc! Sample" VerticalAlignment="Top" Width="75" Height="50" Click="CalcSampleBtn_Click"/>
         </ToolBar>
         <WindowsFormsHost Margin="0,79,0,47">

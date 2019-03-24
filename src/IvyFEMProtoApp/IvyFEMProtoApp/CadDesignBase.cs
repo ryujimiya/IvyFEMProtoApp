@@ -9,6 +9,17 @@ namespace IvyFEMProtoApp
 {
     public class CadDesignBase
     {
+        ////////////////////////////////////////////////////////////////////////
+        // 型
+        ////////////////////////////////////////////////////////////////////////
+        /// <summary>
+        /// Cadモード
+        ///   None 操作なし
+        ///   Move 物体の移動
+        ///   Polygon 多角形作成
+        ///   Port ポート境界選択
+        ///   Erase 消しゴム
+        /// </summary>
         public enum CadModeType
         {
             None,
@@ -17,6 +28,11 @@ namespace IvyFEMProtoApp
             Port,
             Erase
         }
+
+        /// <summary>
+        /// Cad
+        /// </summary>
+        public CadObject2DMove Cad2D { get; protected set; } = new CadObject2DMove();
 
         /// <summary>
         /// Cadのループのリスト
@@ -54,16 +70,17 @@ namespace IvyFEMProtoApp
         /// </summary>
         public CadDesignBase()
         {
-            init();
+            Init();
         }
 
         /// <summary>
         /// 初期化処理
         /// </summary>
-        protected void init()
+        public void Init()
         {
             _CadMode = CadModeType.None;
 
+            Cad2D.Clear();
             LoopIds.Clear();
             PortEdges.Clear();
 
@@ -71,6 +88,57 @@ namespace IvyFEMProtoApp
             EditPts.Clear();
             EditVertexIds.Clear();
             EditEdgeIds.Clear();
+        }
+
+        /// <summary>
+        /// Cadデータをコピーする
+        /// </summary>
+        /// <param name="src"></param>
+        public void Copy(CadDesignBase src)
+        {
+            if (src == this)
+            {
+                System.Diagnostics.Debug.WriteLine("Why? another me exists!");
+                //System.Diagnostics.Debug.Assert(false);
+                return;
+            }
+
+            // CadモードもUndo/Redo対象に入れる
+            _CadMode = src._CadMode;
+
+            Cad2D.Copy(src.Cad2D);
+
+            LoopIds.Clear();
+            foreach (uint srcLoopId in src.LoopIds)
+            {
+                uint loopId = srcLoopId;
+                LoopIds.Add(loopId);
+            }
+            PortEdges.Clear();
+            foreach (PortEdge srcEdge in src.PortEdges)
+            {
+                PortEdge edge = new PortEdge(srcEdge);
+                PortEdges.Add(edge);
+            }
+
+            // edit
+            EditPts.Clear();
+            foreach (OpenTK.Vector2d pp in src.EditPts)
+            {
+                EditPts.Add(pp);
+            }
+            // edit
+            EditVertexIds.Clear();
+            foreach (uint id_v in src.EditVertexIds)
+            {
+                EditVertexIds.Add(id_v);
+            }
+            // edit
+            EditEdgeIds.Clear();
+            foreach (uint id_e in src.EditEdgeIds)
+            {
+                EditEdgeIds.Add(id_e);
+            }
         }
     }
 }

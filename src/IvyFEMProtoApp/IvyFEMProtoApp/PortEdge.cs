@@ -30,6 +30,11 @@ namespace IvyFEMProtoApp
             init();
         }
 
+        public PortEdge(PortEdge src)
+        {
+            Copy(src);
+        }
+
         private void init()
         {
             No = 0;
@@ -40,7 +45,7 @@ namespace IvyFEMProtoApp
         /// コピー
         /// </summary>
         /// <param name="src"></param>
-        public void CP(PortEdge src)
+        public void Copy(PortEdge src)
         {
             if (this == src)
             {

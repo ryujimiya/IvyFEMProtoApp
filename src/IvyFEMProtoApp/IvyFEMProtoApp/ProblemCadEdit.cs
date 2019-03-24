@@ -9,7 +9,7 @@ namespace IvyFEMProtoApp
 {
     class ProblemCadEdit
     {
-        public void CadLoadFromFile(CadObject2D cad2D, string cadObjFileName, CadEditWindow window)
+        public void CadObjLoadFromFile(string cadObjFileName, CadObject2D cad2D, CadEditWindow window)
         {
             using (Serializer arch = new Serializer(cadObjFileName, true))
             {
@@ -20,12 +20,39 @@ namespace IvyFEMProtoApp
             window.glControl.Update();
         }
 
-        public void CadSaveToFile(CadObject2D cad2D, string cadObjFileName)
+        public void CadObjSaveToFile(string cadObjFileName, CadObject2D cad2D)
         {
             using (Serializer arch = new Serializer(cadObjFileName, false))
             {
                 cad2D.Serialize(arch);
             }
+        }
+
+        public void MeshObjLoadFromFile(string meshObjFileName, Mesher2D mesher2D)
+        {
+            using (Serializer arch = new Serializer(meshObjFileName, true))
+            {
+                mesher2D.Serialize(arch);
+            }
+        }
+
+        public void MeshObjSaveToFile(string meshObjFileName, Mesher2D mesher2D)
+        {
+            using (Serializer arch = new Serializer(meshObjFileName, false))
+            {
+                mesher2D.Serialize(arch);
+            }
+        }
+
+        public void MeshObjFileTest(string meshObjFileName, CadObject2D cad2D)
+        {
+            double eLen = 2.0;
+            Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
+            MeshObjSaveToFile(meshObjFileName, mesher2D);
+            MeshObjLoadFromFile(meshObjFileName, mesher2D);
+            var meshWindow = new MeshWindow();
+            meshWindow.Set(mesher2D, 100, 100);
+            meshWindow.ShowDialog();
         }
 
         public void ElasticProblem(CadObject2D cad2D, Camera camera, CadEditWindow window)
@@ -96,7 +123,7 @@ namespace IvyFEMProtoApp
             uint valueId = 0;
             uint eqStressValueId = 0;
             uint stressValueId = 0;
-            var fieldDrawerArray = window.CalcDraw.FieldDrawerArray;
+            var fieldDrawerArray = window.CalcDraw.DrawerArray;
             {
                 uint dof = 2; // Vector2
                 world.ClearFieldValue();
@@ -113,7 +140,7 @@ namespace IvyFEMProtoApp
                 IFieldDrawer edgeDrawer2 = new EdgeFieldDrawer(valueId, FieldDerivativeType.Value, true, true, world);
                 fieldDrawerArray.Add(edgeDrawer2);
                 //camera.Fit(fieldDrawerArray.GetBoundingBox(camera.RotMatrix33()));
-                window.CalcDraw.CadPanelResize();
+                window.CalcDraw.PanelResize();
             }
 
             double t = 0;

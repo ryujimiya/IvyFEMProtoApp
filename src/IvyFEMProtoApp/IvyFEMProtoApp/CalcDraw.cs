@@ -11,13 +11,19 @@ namespace IvyFEMProtoApp
 {
     public class CalcDraw
     {
-        private OpenTK.GLControl glControl;
+        /// <summary>
+        /// Cadパネル
+        /// </summary>
+        private OpenTK.GLControl glControl = null;
+        /// <summary>
+        /// カメラ
+        /// </summary>
         private Camera2D Camera = null;
 
         /// <summary>
-        /// 描画アレイ
+        /// 描画オブジェクトアレイインスタンス
         /// </summary>
-        public FieldDrawerArray FieldDrawerArray { get; private set; } = new FieldDrawerArray();
+        public FieldDrawerArray DrawerArray { get; private set; } = new FieldDrawerArray();
 
 
         public CalcDraw(OpenTK.GLControl glControl, Camera2D camera)
@@ -26,7 +32,7 @@ namespace IvyFEMProtoApp
             Camera = camera;
         }
 
-        public void CadPanelPaint()
+        public void PanelPaint()
         {
             GL.ClearColor(Color4.White);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -36,11 +42,11 @@ namespace IvyFEMProtoApp
             GL.LoadIdentity();
             OpenGLUtils.SetModelViewTransform(Camera);
 
-            FieldDrawerArray.Draw();
+            DrawerArray.Draw();
             glControl.SwapBuffers();
         }
 
-        public void CadPanelResize()
+        public void PanelResize()
         {
             int width = glControl.Size.Width;
             int height = glControl.Size.Height;

@@ -16,13 +16,44 @@ namespace IvyFEMProtoApp
         // 型
         ////////////////////////////////////////////////////////////////////////
         /// <summary>
+        /// 変更通知イベント引数
+        /// </summary>
+        public class ChangeEventArgs : EventArgs
+        {
+            public CadModeType PrevCadMode { get; private set; } = CadModeType.None;
+
+            public ChangeEventArgs(CadModeType prevCadMode) : base()
+            {
+                PrevCadMode = prevCadMode;
+            }
+        }
+        /// <summary>
         /// 変更通知デリゲート
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="prevCadMode"></param>
-        public delegate void ChangeDelegate(object sender, CadModeType prevCadMode);
+        /// <param name="e"></param>
+        public delegate void ChangeDelegate(object sender, ChangeEventArgs e);
 
-        public delegate void ShowPropertyDelegate(CadElementType cadElemType, uint cadId);
+        /// <summary>
+        /// プロパティ変更イベント引数
+        /// </summary>
+        public class ShowPropertyEventArgs : EventArgs
+        {
+            public CadElementType CadElemType { get; private set; } = CadElementType.NotSet;
+            public uint CadId { get; private set; }
+
+            public ShowPropertyEventArgs(CadElementType cadElemType, uint cadId) : base()
+            {
+                CadElemType = cadElemType;
+                CadId = cadId;
+            }
+        }
+        /// <summary>
+        /// プロパティ変更イベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public delegate void ShowPropertyDelegate(object sender, ShowPropertyEventArgs e);
 
         ////////////////////////////////////////////////////////////////////////
         // 定数
@@ -130,10 +161,6 @@ namespace IvyFEMProtoApp
             }
         }
         /// <summary>
-        /// 編集図面Cad
-        /// </summary>
-        public CadObject2DMove Cad2D { get; private set; } = null;
-        /// <summary>
         /// 図形を編集中？
         /// </summary>
         public bool IsEditing
@@ -187,27 +214,23 @@ namespace IvyFEMProtoApp
             // 色の設定
             CadDesign.TmpEdgeColor = this.glControl.ForeColor;
 
-            // Cadオブジェクトを生成
-            Cad2D = new CadObject2DMove();
-
             // 図面背景
             BackgroundDrawer = new BackgroundDrawer(BackgroundWidth, BackgroundHeight);
 
             // 領域を決定する
-            SetupRegionSize();
+            setupRegionSize();
 
             // 初期化処理
-            init();
+            Init();
         }
 
         /// <summary>
         /// 初期化処理
         /// </summary>
-        protected new void init()
+        public new void Init()
         {
-            base.init();
+            base.Init();
 
-            Cad2D.Clear();
             CadMode = CadModeType.None;
 
             RefreshDrawerAry();
@@ -224,6 +247,7 @@ namespace IvyFEMProtoApp
             DrawerArray.Clear();
             // 背景を追加する
             DrawerArray.Add(BackgroundDrawer);
+
             // Cad図面
             CadObject2DDrawer drawer = new CadObject2DDrawer(Cad2D);
             uint lineWidth = (uint)(CadDesign.LineWidth * glControl.Width / (double)400);
@@ -234,7 +258,7 @@ namespace IvyFEMProtoApp
         /// <summary>
         /// 領域を決定する
         /// </summary>
-        public void SetupRegionSize(double offsetX = 0, double offsetY = 0, double scale = 1.4)
+        private void setupRegionSize(double offsetX = 0, double offsetY = 0, double scale = 1.4)
         {
             // 描画オブジェクトを更新する
             RefreshDrawerAry();
@@ -242,14 +266,10 @@ namespace IvyFEMProtoApp
             Camera.Fit(DrawerArray.GetBoundingBox(Camera.RotMatrix33()));
             // カメラのスケール調整
             // DrawerArrayのInitTransを実行すると、物体のバウンディングボックス + マージン分(×1.5)がとられる。
-            // マージンを表示上をなくすためスケールを拡大して調整する
+            // マージンを表示上なくすためスケールを拡大して調整する
             Camera.Scale = scale;
             // カメラをパンニングさせ位置を調整
             Camera.MousePan(0.0, 0.0, offsetX, offsetY);
-
-            int w = glControl.Width;
-            int h = glControl.Height;
-            resizeScene(w, h);
         }
 
         /// <summary>
@@ -289,13 +309,13 @@ namespace IvyFEMProtoApp
         private void resizeScene(int w, int h)
         {
             Camera.WindowAspect = (double)w / h;
+            //RefreshDrawerAry();
+            setupRegionSize();
+
             GL.Viewport(0, 0, w, h);
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
             OpenGLUtils.SetProjectionTransform(Camera);
-
-            // 線のサイズを画面に合わせて変更させる為、サイズ変更時にDrawerArrayを更新する
-            RefreshDrawerAry();
         }
 
         /// <summary>
@@ -429,6 +449,10 @@ namespace IvyFEMProtoApp
                         executed = doMousePan(prevpt, pt);
                     }
                 }
+                else
+                {
+                    hitTestFlg = true;
+                }
             }
             else if (CadMode == CadModeType.Move)
             {
@@ -488,6 +512,15 @@ namespace IvyFEMProtoApp
 
             if (executed)
             {
+                if (CadMode != CadModeType.None)
+                {
+                    if (Change != null)
+                    {
+                        ChangeEventArgs eventArgs = new ChangeEventArgs(CadMode);
+                        Change(this, eventArgs);
+                    }
+                }
+
                 // 描画オブジェクトアレイを更新する
                 RefreshDrawerAry();
                 // Cadパネルの再描画
@@ -911,7 +944,8 @@ namespace IvyFEMProtoApp
             bool hit = hitTest(pt, out cadElemType, out cadId);
             if (hit)
             {
-                ShowProperty(cadElemType, cadId);
+                ShowPropertyEventArgs eventArgs = new ShowPropertyEventArgs(cadElemType, cadId);
+                ShowProperty(this, eventArgs);
                 executed = true;
             }
             return executed;
@@ -1007,20 +1041,6 @@ namespace IvyFEMProtoApp
                     startPt,
                     endPt);
                 startPt = endPt;
-                if (executed)
-                {
-                    if (isDragging)
-                    {
-                        // Undo対象にはしない
-                    }
-                    else
-                    {
-                        if (Change != null)
-                        {
-                            Change(this, CadMode);
-                        }
-                    }
-                }
                 if (executed && !IsDirty)
                 {
                     IsDirty = true;
@@ -1214,14 +1234,6 @@ namespace IvyFEMProtoApp
                 EditEdgeIds.Clear();
             }
 
-            if (executed)
-            {
-                if (Change != null)
-                {
-                    Change(this, CadMode);
-                }
-
-            }
             if (executed && !IsDirty)
             {
                 IsDirty = true;
@@ -2041,7 +2053,11 @@ namespace IvyFEMProtoApp
                 //    System.Diagnostics.Debug.WriteLine("selecObjs[0].name[{0}] = {1}", index, ival);
                 //    index++;
                 //}
-                if ((CadMode == CadModeType.Polygon &&
+                if (CadMode == CadModeType.None &&
+                        (partElemType == CadElementType.Loop ||
+                        partElemType == CadElementType.Edge ||
+                        partElemType == CadElementType.Vertex) ||
+                    (CadMode == CadModeType.Polygon &&
                         ((!IsEditing && partElemType == CadElementType.Loop) ||
                         partElemType == CadElementType.Edge ||
                         partElemType == CadElementType.Vertex)) ||
@@ -2091,13 +2107,6 @@ namespace IvyFEMProtoApp
                     uint tagtLoopId = partId;
                     // ループの削除処理
                     executed = delLoop(Cad2D, tagtLoopId, ref LoopIds, ref PortEdges);
-                }
-            }
-            if (executed)
-            {
-                if (Change != null)
-                {
-                    Change(this, CadMode);
                 }
             }
             if (executed && !IsDirty)
@@ -2150,6 +2159,9 @@ namespace IvyFEMProtoApp
                     }
                 }
             }
+
+            // ポート境界があれば削除する
+            delPortBelongToLoop(cad2D, tagtLoopId, ref portEdges);
 
             // エラーチェック用
             Dictionary<uint, IList<uint>> saveLoopEdgesList = null;
@@ -2428,13 +2440,6 @@ namespace IvyFEMProtoApp
                     }
                 }
             }
-            if (executed)
-            {
-                if (Change != null)
-                {
-                    Change(this, CadMode);
-                }
-            }
             if (executed && !IsDirty)
             {
                 IsDirty = true;
@@ -2473,13 +2478,6 @@ namespace IvyFEMProtoApp
 
                         executed = true;
                     }
-                }
-            }
-            if (executed)
-            {
-                if (Change != null)
-                {
-                    Change(this, CadMode);
                 }
             }
             if (executed && !IsDirty)
@@ -2674,13 +2672,6 @@ namespace IvyFEMProtoApp
                         // 全ループの色を再設定する
                         SetupColorOfCadObjectsForAllLoops(Cad2D, LoopIds);
                     }
-                }
-            }
-            if (executed)
-            {
-                if (Change != null)
-                {
-                    Change(this, CadMode);
                 }
             }
             if (executed && !IsDirty)
@@ -2974,10 +2965,14 @@ namespace IvyFEMProtoApp
         /// <summary>
         /// ループの頂点と辺のIDのリストを取得する
         /// </summary>
-        /// <param name="cad2D"></param>
         /// <param name="lId"></param>
         /// <param name="vIdList"></param>
         /// <param name="eIdList"></param>
+        public void GetEdgeVertexListOfLoop(uint lId, out IList<uint> vIdList, out IList<uint> eIdList)
+        {
+            CadDesign.GetEdgeVertexListOfLoop(Cad2D, lId, out vIdList, out eIdList);
+        }
+
         private static void GetEdgeVertexListOfLoop(
             CadObject2D cad2D, uint lId, out IList<uint> vIdList, out IList<uint> eIdList)
         {

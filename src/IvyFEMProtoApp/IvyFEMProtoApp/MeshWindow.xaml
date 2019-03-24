@@ -1,0 +1,15 @@
+﻿<Window x:Class="IvyFEMProtoApp.MeshWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:IvyFEMProtoApp"
+        xmlns:OpenTK="clr-namespace:OpenTK;assembly=OpenTK.GLControl"
+        mc:Ignorable="d"
+        Title="メッシュ" Height="400" Width="400" Loaded="Window_Loaded" GotFocus="Window_GotFocus">
+    <Grid>
+        <WindowsFormsHost>
+            <OpenTK:GLControl x:Name="glControl" Load="glControl_Load" Resize="glControl_Resize" Paint="glControl_Paint" MouseClick="glControl_MouseClick" KeyDown="glControl_KeyDown" KeyUp="glControl_KeyUp" MouseMove="glControl_MouseMove" MouseDown="glControl_MouseDown" MouseWheel="glControl_MouseWheel" MouseUp="glControl_MouseUp" KeyPress="glControl_KeyPress"/>
+        </WindowsFormsHost>
+    </Grid>
+</Window>

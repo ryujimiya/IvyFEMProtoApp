@@ -72,7 +72,7 @@ namespace IvyFEMProtoApp
             {
                 if (IsFieldDraw)
                 {
-                    CalcDraw.CadPanelPaint();
+                    CalcDraw.PanelPaint();
                 }
                 else
                 {
@@ -89,7 +89,7 @@ namespace IvyFEMProtoApp
         {
             if (IsFieldDraw)
             {
-                CalcDraw.CadPanelResize();
+                CalcDraw.PanelResize();
             }
             else
             {
@@ -142,13 +142,16 @@ namespace IvyFEMProtoApp
             CadDesign.CadPanelKeyUp(e);
         }
 
-        private void CadDesign_Change(object sender, CadDesignBase.CadModeType prevCadMode)
+        private void CadDesign_Change(object sender, CadDesign.ChangeEventArgs e)
         {
+            CadDesignBase.CadModeType prevCadMode = e.PrevCadMode;
 
         }
 
-        private void CadDesign_ShowProperty(IvyFEM.CadElementType cadElemType, uint cadId)
+        private void CadDesign_ShowProperty(object sender, CadDesign.ShowPropertyEventArgs e)
         {
+            IvyFEM.CadElementType cadElemType = e.CadElemType;
+            uint cadId = e.CadId;
             MessageBox.Show("プロパティ: " + cadElemType + " Id = " + cadId);
         }
 
@@ -227,28 +230,40 @@ namespace IvyFEMProtoApp
         {
             var dialog = new Microsoft.Win32.OpenFileDialog();
             dialog.Title = "ファイルを開く";
-            dialog.Filter = "CADオブジェクトファイル(*.cadobj)|*.cadobj";
+            dialog.Filter = "CADオブジェクトファイル(*.cadobj2)|*.cadobj2";
             if (dialog.ShowDialog() != true)
             {
                 return;
             }
             string cadObjFileName = dialog.FileName;
-            Problem.CadLoadFromFile(CadDesign.Cad2D, cadObjFileName, this);
+            Problem.CadObjLoadFromFile(cadObjFileName, CadDesign.Cad2D, this);
         }
 
         private void saveBtn_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new Microsoft.Win32.SaveFileDialog();
             dialog.Title = "ファイルを保存";
-            dialog.Filter = "CADオブジェクトファイル(*.cadobj)|*.cadobj";
+            dialog.Filter = "CADオブジェクトファイル(*.cadobj2)|*.cadobj2";
             if (dialog.ShowDialog() != true)
             {
                 return;
             }
             string cadObjFileName = dialog.FileName;
-            Problem.CadSaveToFile(CadDesign.Cad2D, cadObjFileName);
+            Problem.CadObjSaveToFile(cadObjFileName, CadDesign.Cad2D);
             MessageBox.Show("保存しました", "");
         }
 
+        private void MeshBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.SaveFileDialog();
+            dialog.Title = "ファイルを保存";
+            dialog.Filter = "メッシュオブジェクトファイル(*.mshobj2)|*.mshobj2";
+            if (dialog.ShowDialog() != true)
+            {
+                return;
+            }
+            string meshObjFileName = dialog.FileName;
+            Problem.MeshObjFileTest(meshObjFileName, CadDesign.Cad2D);
+        }
     }
 }
