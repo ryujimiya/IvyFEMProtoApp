@@ -37,7 +37,7 @@ namespace IvyFEMProtoApp
             BackgroundDrawer = new BackgroundDrawer(width, height);
 
             // 領域を決定する
-            setupRegionSize();
+            SetupRegionSize();
         }
 
         public void Set(Mesher2D mesher2D)
@@ -49,6 +49,8 @@ namespace IvyFEMProtoApp
                 //drawerArray.Add(BackgroundDrawer);
                 IDrawer mesh2DDrawer = new Mesher2DDrawer(mesher2D);
                 drawerArray.Add(mesh2DDrawer);
+
+                SetupRegionSize();
                 PanelResize();
                 glControl.Invalidate();
                 glControl.Update();
@@ -65,6 +67,7 @@ namespace IvyFEMProtoApp
             BackgroundDrawer = new BackgroundDrawer(width, height);
 
             // 領域を決定する
+            SetupRegionSize();
             PanelResize();
 
             glControl.Invalidate();
@@ -74,7 +77,7 @@ namespace IvyFEMProtoApp
         /// <summary>
         /// 領域を決定する
         /// </summary>
-        private void setupRegionSize(double offsetX = 0, double offsetY = 0, double scale = 1.4)
+        public void SetupRegionSize(double offsetX = 0, double offsetY = 0, double scale = 1.4)
         {
             // 描画オブジェクトのバウンディングボックスを使ってカメラの変換行列を初期化する
             Camera.Fit(DrawerArray.GetBoundingBox(Camera.RotMatrix33()));
@@ -110,8 +113,6 @@ namespace IvyFEMProtoApp
         /// <param name="h"></param>
         private void resizeScene(int w, int h)
         {
-            setupRegionSize();
-
             Camera.WindowAspect = (double)w / h;
             GL.Viewport(0, 0, w, h);
             GL.MatrixMode(MatrixMode.Projection);

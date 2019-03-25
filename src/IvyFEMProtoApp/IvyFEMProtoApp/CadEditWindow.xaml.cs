@@ -157,7 +157,7 @@ namespace IvyFEMProtoApp
 
         private void ModeBtn_Click(CadDesign.CadModeType cadMode)
         {
-            Button[] modeBtns = { NoneBtn, PolygonBtn, MoveBtn, PortBtn, EraseBtn };
+            Button[] modeBtns = { noneBtn, polygonBtn, moveBtn, portBtn, eraseBtn };
             CadDesign.CadModeType[] cadModes = {
                 CadDesignBase.CadModeType.None,
                 CadDesignBase.CadModeType.Polygon,
@@ -182,14 +182,14 @@ namespace IvyFEMProtoApp
             }
         }
 
-        private void NoneBtn_Click(object sender, RoutedEventArgs e)
+        private void noneBtn_Click(object sender, RoutedEventArgs e)
         {
             ModeBtn_Click(CadDesignBase.CadModeType.None);
             IsFieldDraw = false;
             glControl.Invalidate();
         }
 
-        private void PolygonBtn_Click(object sender, RoutedEventArgs e)
+        private void polygonBtn_Click(object sender, RoutedEventArgs e)
         {
             ModeBtn_Click(CadDesignBase.CadModeType.Polygon);
             IsFieldDraw = false;
@@ -197,7 +197,7 @@ namespace IvyFEMProtoApp
             glControl.Update();
         }
 
-        private void MoveBtn_Click(object sender, RoutedEventArgs e)
+        private void moveBtn_Click(object sender, RoutedEventArgs e)
         {
             ModeBtn_Click(CadDesignBase.CadModeType.Move);
             IsFieldDraw = false;
@@ -205,7 +205,7 @@ namespace IvyFEMProtoApp
             glControl.Update();
         }
 
-        private void PortBtn_Click(object sender, RoutedEventArgs e)
+        private void portBtn_Click(object sender, RoutedEventArgs e)
         {
             ModeBtn_Click(CadDesignBase.CadModeType.Port);
             IsFieldDraw = false;
@@ -213,7 +213,7 @@ namespace IvyFEMProtoApp
             glControl.Update();
         }
 
-        private void EraseBtn_Click(object sender, RoutedEventArgs e)
+        private void eraseBtn_Click(object sender, RoutedEventArgs e)
         {
             ModeBtn_Click(CadDesignBase.CadModeType.Erase);
             IsFieldDraw = false;
@@ -221,7 +221,7 @@ namespace IvyFEMProtoApp
             glControl.Update();
         }
 
-        private void CalcSampleBtn_Click(object sender, RoutedEventArgs e)
+        private void calcSampleBtn_Click(object sender, RoutedEventArgs e)
         {
             Problem.ElasticProblem(CadDesign.Cad2D, CadDesign.Camera, this);
         }
@@ -235,6 +235,7 @@ namespace IvyFEMProtoApp
             {
                 return;
             }
+            CadDesign.Init();
             string cadObjFileName = dialog.FileName;
             Problem.CadObjLoadFromFile(cadObjFileName, CadDesign.Cad2D, this);
         }
@@ -250,10 +251,11 @@ namespace IvyFEMProtoApp
             }
             string cadObjFileName = dialog.FileName;
             Problem.CadObjSaveToFile(cadObjFileName, CadDesign.Cad2D);
+            CadDesign.IsDirty = false;
             MessageBox.Show("保存しました", "");
         }
 
-        private void MeshBtn_Click(object sender, RoutedEventArgs e)
+        private void meshBtn_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new Microsoft.Win32.SaveFileDialog();
             dialog.Title = "ファイルを保存";

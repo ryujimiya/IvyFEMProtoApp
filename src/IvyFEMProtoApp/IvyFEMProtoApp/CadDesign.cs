@@ -184,7 +184,7 @@ namespace IvyFEMProtoApp
         /// <summary>
         /// Cad図面が変更された?
         /// </summary>
-        public bool IsDirty { get; private set; } = false;
+        public bool IsDirty { get; set; } = false;
 
         /// <summary>
         /// エラーメッセージ表示
@@ -218,7 +218,7 @@ namespace IvyFEMProtoApp
             BackgroundDrawer = new BackgroundDrawer(BackgroundWidth, BackgroundHeight);
 
             // 領域を決定する
-            setupRegionSize();
+            SetupRegionSize();
 
             // 初期化処理
             Init();
@@ -258,7 +258,7 @@ namespace IvyFEMProtoApp
         /// <summary>
         /// 領域を決定する
         /// </summary>
-        private void setupRegionSize(double offsetX = 0, double offsetY = 0, double scale = 1.4)
+        public void SetupRegionSize(double offsetX = 0, double offsetY = 0, double scale = 1.4)
         {
             // 描画オブジェクトを更新する
             RefreshDrawerAry();
@@ -309,8 +309,7 @@ namespace IvyFEMProtoApp
         private void resizeScene(int w, int h)
         {
             Camera.WindowAspect = (double)w / h;
-            //RefreshDrawerAry();
-            setupRegionSize();
+            RefreshDrawerAry();
 
             GL.Viewport(0, 0, w, h);
             GL.MatrixMode(MatrixMode.Projection);

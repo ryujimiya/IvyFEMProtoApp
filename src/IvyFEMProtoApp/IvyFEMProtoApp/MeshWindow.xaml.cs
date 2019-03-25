@@ -44,18 +44,13 @@ namespace IvyFEMProtoApp
         {
             MeshDraw = new MeshDraw(glControl, BackgroundWidth, BackgroundHeight);
 
-            MeshDraw.Set(Mesher2D);
-
             glControl.MakeCurrent();
-            MeshDraw.PanelResize();
-            glControl.Invalidate();
-            glControl.Update();
+            MeshDraw.Set(Mesher2D);
         }
 
         private void Window_GotFocus(object sender, RoutedEventArgs e)
         {
             glControl.MakeCurrent();
-            MeshDraw.PanelResize();
             glControl.Invalidate();
             glControl.Update();
         }
