@@ -18,14 +18,13 @@
                     <MenuItem Header="Cad2D" Click="cad2DBtn_Click"/>
                     <MenuItem Header="Coare Mesh2D" Click="coarseMesh2DBtn_Click"/>
                     <MenuItem Header="Mesh2D" Click="mesh2DBtn_Click"/>
+                    <MenuItem Header="Mesh2D(Hollow Loop)" Click="mesh2DHollowLoopBtn_Click"/>
+                    <Separator/>
                     <MenuItem Header="DrawString" Click="drawStringBtn_Click"/>
                 </MenuItem>
                 <MenuItem Header="Solver">
                     <MenuItem Header="LAPACK" Click="lapackBtn_Click"/>
                     <MenuItem Header="Lis" Click="lisBtn_Click"/>
-                </MenuItem>
-                <MenuItem Header="ElectroMagnetic">
-                    <MenuItem Header="Waveguide" Click="waveguideBtn_Click"/>
                 </MenuItem>
                 <MenuItem Header="Elastic">
                     <MenuItem Header="Elastic" Click="elasticBtn_Click"/>
@@ -61,7 +60,28 @@
                     <MenuItem Header="Mooney-Rivlin(2 Body Contact) Time Domain" Click="mooneyRivlinHyperelasticTwoBodyContactTDBtn_Click"/>
                     <MenuItem Header="Ogden(2 Body Contact) Time Domain" Click="ogdenHyperelasticTwoBodyContactTDBtn_Click"/>
                 </MenuItem>
-                <MenuItem Header="CadEdit" Click="cadEditBtn_Click"/>
+                <MenuItem Header="Various Equations">
+                    <MenuItem Header="Poisson" Click="poissonBtn_Click"/>
+                    <MenuItem Header="Heat Diffusion(Time Domain)" Click="diffusionTDBtn_Click"/>
+                    <MenuItem Header="Advection Diffusion" Click="advectionDiffusionBtn_Click"/>
+                    <MenuItem Header="Advection Diffusion (Time Domain)" Click="advectionDiffusionTDBtn_Click"/>
+                    <MenuItem Header="Helmholtz" Click="helmholtzBtn_Click"/>
+                </MenuItem>
+                <MenuItem Header="Fluid">
+                    <MenuItem Header="Fluid(1)" Click="fluid1Btn_Click"/>
+                    <MenuItem Header="Fluid(1)(Time Domain)" Click="fluid1TDBtn_Click"/>
+                    <MenuItem Header="Fluid(2)" Click="fluid2Btn_Click"/>
+                    <MenuItem Header="Fluid(2)(Time Domain)" Click="fluid2TDBtn_Click"/>
+                </MenuItem>
+                <MenuItem Header="ElectroMagnetic">
+                    <MenuItem Header="Waveguide" Click="waveguideBtn_Click"/>
+                </MenuItem>
+                <MenuItem Header="Implement">
+                    <MenuItem Header="Sample FEM" Click="sampleFEMBtn_Click"/>
+                </MenuItem>
+                <MenuItem Header="Edit">
+                    <MenuItem Header="CadEdit" Click="cadEditBtn_Click"/>
+                </MenuItem>
             </Menu>
             <Grid>
                 <WindowsFormsHost>

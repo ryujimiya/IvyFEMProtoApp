@@ -13,18 +13,19 @@
             <ColumnDefinition Width="0*"/>
         </Grid.ColumnDefinitions>
 
-        <ToolBar Height="50" VerticalAlignment="Top" Margin="0,29,0,0">
-            <Button x:Name="noneBtn" Content="None" VerticalAlignment="Top" Width="55" Click="noneBtn_Click" Height="50"/>
-            <Button x:Name="polygonBtn" Content="Polygon" VerticalAlignment="Top" Width="55" Click="polygonBtn_Click"  Height="50"/>
-            <Button x:Name="moveBtn" Content="Move" VerticalAlignment="Top" Width="55" Click="moveBtn_Click" Height="50"/>
-            <Button x:Name="portBtn" Content="Port" VerticalAlignment="Top" Width="55" Click="portBtn_Click" Height="50"/>
-            <Separator Height="45" Margin="0" VerticalAlignment="Top" Width="20"/>
-            <Button x:Name="eraseBtn" Content="Erase" VerticalAlignment="Top" Width="55" Click="eraseBtn_Click" Height="50"/>
-            <Separator Height="45" Margin="0" VerticalAlignment="Top" Width="35"/>
-            <Button x:Name="meshBtn" Content="Mesh" VerticalAlignment="Top" Width="55" Height="50" Click="meshBtn_Click"/>
-            <Button x:Name="calcSampleBtn" Content="Calc! Sample" VerticalAlignment="Top" Width="75" Height="50" Click="calcSampleBtn_Click"/>
+        <ToolBar Height="40" VerticalAlignment="Top" Margin="0,29,0,0">
+            <Button x:Name="noneBtn" Content="None" VerticalAlignment="Stretch" Width="40" Margin="0,0,0,-5" Click="noneBtn_Click"/>
+            <Button x:Name="polygonBtn" Content="Polygon" VerticalAlignment="Stretch" Width="40" Margin="0,0,0,-5" Click="polygonBtn_Click"/>
+            <Button x:Name="moveBtn" Content="Move" VerticalAlignment="Stretch" Width="40" Margin="0,0,0,-5" Click="moveBtn_Click"/>
+            <Button x:Name="arcBtn" Content="Arc" VerticalAlignment="Stretch" Width="40" Click="arcBtn_Click" Margin="0,0,0,-5"/>
+            <Button x:Name="portBtn" Content="Port" VerticalAlignment="Stretch" Width="40" Margin="0,0,0,-5" Click="portBtn_Click"/>
+            <Separator VerticalAlignment="Stretch" Width="10" Margin="0,0,0,-5"/>
+            <Button x:Name="eraseBtn" Content="Erase" VerticalAlignment="Stretch" Width="40" Margin="0,0,0,-5" Click="eraseBtn_Click"/>
+            <Separator VerticalAlignment="Stretch" Width="40" Margin="0,0,0,-5"/>
+            <Button x:Name="meshBtn" Content="Mesh" VerticalAlignment="Stretch" Width="40" Margin="0,0,0,-5" Click="meshBtn_Click"/>
+            <Button x:Name="calcSampleBtn" Content="Calc! Sample" VerticalAlignment="Stretch" Width="80" Margin="0,0,0,-5" Click="calcSampleBtn_Click"/>
         </ToolBar>
-        <WindowsFormsHost Margin="0,79,0,47">
+        <WindowsFormsHost Margin="0,69,0,47">
             <OpenTK:GLControl x:Name="glControl" Load="glControl_Load" Resize="glControl_Resize" Paint="glControl_Paint" MouseClick="glControl_MouseClick" KeyDown="glControl_KeyDown" KeyUp="glControl_KeyUp" MouseMove="glControl_MouseMove" MouseDown="glControl_MouseDown" MouseWheel="glControl_MouseWheel" MouseUp="glControl_MouseUp" KeyPress="glControl_KeyPress"/>
         </WindowsFormsHost>
         <StatusBar Height="47" VerticalAlignment="Bottom">

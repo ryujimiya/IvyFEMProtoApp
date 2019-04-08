@@ -289,6 +289,11 @@ namespace IvyFEMProtoApp
             Problem.MakeMesh(this);
         }
 
+        private void mesh2DHollowLoopBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.MakeMeshHollowLoop(this);
+        }
+
         private void drawStringBtn_Click(object sender, RoutedEventArgs e)
         {
             Problem.DrawStringTest(Camera, glControl);
@@ -304,11 +309,6 @@ namespace IvyFEMProtoApp
         private void lisBtn_Click(object sender, RoutedEventArgs e)
         {
             Problem.LisExample();
-        }
-
-        private void waveguideBtn_Click(object sender, RoutedEventArgs e)
-        {
-            Problem.WaveguideProblem(this);
         }
 
         private void elasticBtn_Click(object sender, RoutedEventArgs e)
@@ -469,6 +469,61 @@ namespace IvyFEMProtoApp
             // Ogden
             bool isMooney = false;
             Problem.HyperelasticTwoBodyContactTDProblem(this, isMooney);
+        }
+
+        private void poissonBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.PoissonProblem(this);
+        }
+
+        private void diffusionTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.DiffusionTDProblem(this);
+        }
+
+        private void advectionDiffusionBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.AdvectionDiffusionProblem(this);
+        }
+
+        private void advectionDiffusionTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.AdvectionDiffusionTDProblem(this);
+        }
+
+        private void helmholtzBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.HelmholtzProblem(this);
+        }
+
+        private void fluid1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.FluidProblem1(this);
+        }
+
+        private void fluid1TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.FluidTDProblem1(this);
+        }
+
+        private void fluid2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.FluidProblem2(this);
+        }
+
+        private void fluid2TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.FluidTDProblem2(this);
+        }
+
+        private void waveguideBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.WaveguideProblem(this);
+        }
+
+        private void sampleFEMBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.SampleFEMProblem(this);
         }
 
         private void cadEditBtn_Click(object sender, RoutedEventArgs e)

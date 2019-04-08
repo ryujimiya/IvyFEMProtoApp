@@ -61,6 +61,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>false</Optimize>
     <WarningLevel>2</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -73,6 +75,7 @@
     <Prefer32Bit>true</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
     <Reference Include="IvyFEM, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
@@ -134,19 +137,28 @@
       <DependentUpon>MeshWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="PortEdge.cs" />
-    <Compile Include="Problem .ElasticTwoBodyContact.cs" />
-    <Compile Include="Problem .ElasticContact.cs" />
-    <Compile Include="Problem .HyperelasticTwoBodyContact.cs" />
-    <Compile Include="Problem .HyperelasticContact.cs" />
-    <Compile Include="Problem .HyperelasticMPC.cs" />
-    <Compile Include="Problem .Hyperelastic.cs" />
-    <Compile Include="Problem .ElasticMPC.cs" />
-    <Compile Include="Problem .Elastic.cs" />
-    <Compile Include="Problem .EMWaveguide.cs" />
-    <Compile Include="Problem .Solver.cs" />
-    <Compile Include="Problem .Cad.cs" />
-    <Compile Include="ProblemCadEdit.cs" />
+    <Compile Include="Problem.Fluid2.cs" />
+    <Compile Include="Problem.Fluid1.cs" />
+    <Compile Include="Problem.ElasticTwoBodyContact.cs" />
+    <Compile Include="Problem.ElasticContact.cs" />
+    <Compile Include="Problem.HyperelasticTwoBodyContact.cs" />
+    <Compile Include="Problem.HyperelasticContact.cs" />
+    <Compile Include="Problem.HyperelasticMPC.cs" />
+    <Compile Include="Problem.Hyperelastic.cs" />
+    <Compile Include="Problem.ElasticMPC.cs" />
+    <Compile Include="Problem.Elastic.cs" />
+    <Compile Include="Problem.EMWaveguide.cs" />
+    <Compile Include="Problem.Helmholtz.cs" />
+    <Compile Include="Problem.SampleFEM.cs" />
+    <Compile Include="Problem.Solver.cs" />
+    <Compile Include="Problem.Cad.cs" />
+    <Compile Include="Problem.AdvectionDiffusion.cs" />
+    <Compile Include="Problem.Diffusion.cs" />
+    <Compile Include="Problem.Poisson.cs" />
+    <Compile Include="Problem.CadEdit.cs" />
     <Compile Include="Problem.cs" />
+    <Compile Include="SampleFEM.cs" />
+    <Compile Include="SampleFEMMaterial.cs" />
     <Compile Include="WPFUtils.cs" />
     <Page Include="AlertWindow.xaml">
       <SubType>Designer</SubType>

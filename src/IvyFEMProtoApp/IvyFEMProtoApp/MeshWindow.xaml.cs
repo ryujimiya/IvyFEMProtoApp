@@ -45,7 +45,7 @@ namespace IvyFEMProtoApp
             MeshDraw = new MeshDraw(glControl, BackgroundWidth, BackgroundHeight);
 
             glControl.MakeCurrent();
-            MeshDraw.Set(Mesher2D);
+            MeshDraw.Init(Mesher2D);
         }
 
         private void Window_GotFocus(object sender, RoutedEventArgs e)

@@ -17,6 +17,7 @@ namespace IvyFEMProtoApp
         ///   None 操作なし
         ///   Move 物体の移動
         ///   Polygon 多角形作成
+        ///   Arc 円弧⇔直線変換と円弧中心変更
         ///   Port ポート境界選択
         ///   Erase 消しゴム
         /// </summary>
@@ -25,6 +26,7 @@ namespace IvyFEMProtoApp
             None,
             Move,
             Polygon,
+            Arc,
             Port,
             Erase
         }
@@ -37,12 +39,12 @@ namespace IvyFEMProtoApp
         /// <summary>
         /// Cadのループのリスト
         /// </summary>
-        protected IList<uint> LoopIds = new List<uint>();
+        public IList<uint> LoopIds { get; protected set; } = new List<uint>();
 
         /// <summary>
         /// 境界のリスト
         /// </summary>
-        protected IList<PortEdge> PortEdges = new List<PortEdge>();
+        public IList<PortEdge> PortEdges { get; protected set; } = new List<PortEdge>();
 
         ////////////////////////////////////////////////////
         //編集中

@@ -32,9 +32,9 @@ namespace IvyFEMProtoApp
         internal bool IsFieldDraw { get; set; } = false;
 
         /// <summary>
-        /// 計算サンプル
+        /// サンプル問題
         /// </summary>
-        private ProblemCadEdit Problem = new ProblemCadEdit();
+        private Problem Problem = new Problem();
         /// <summary>
         /// 計算結果表示
         /// </summary>
@@ -157,11 +157,19 @@ namespace IvyFEMProtoApp
 
         private void ModeBtn_Click(CadDesign.CadModeType cadMode)
         {
-            Button[] modeBtns = { noneBtn, polygonBtn, moveBtn, portBtn, eraseBtn };
+            Button[] modeBtns = {
+                noneBtn,
+                polygonBtn,
+                moveBtn,
+                arcBtn,
+                portBtn,
+                eraseBtn
+            };
             CadDesign.CadModeType[] cadModes = {
                 CadDesignBase.CadModeType.None,
                 CadDesignBase.CadModeType.Polygon,
                 CadDesignBase.CadModeType.Move,
+                CadDesignBase.CadModeType.Arc,
                 CadDesignBase.CadModeType.Port,
                 CadDesignBase.CadModeType.Erase
             };
@@ -173,7 +181,7 @@ namespace IvyFEMProtoApp
                 Button btn = modeBtns[i];
                 if (mode == cadMode)
                 {
-                    btn.Background = Brushes.Pink;
+                    btn.Background = Brushes.LightBlue;
                 }
                 else
                 {
@@ -205,6 +213,14 @@ namespace IvyFEMProtoApp
             glControl.Update();
         }
 
+        private void arcBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ModeBtn_Click(CadDesignBase.CadModeType.Arc);
+            IsFieldDraw = false;
+            glControl.Invalidate();
+            glControl.Update();
+        }
+
         private void portBtn_Click(object sender, RoutedEventArgs e)
         {
             ModeBtn_Click(CadDesignBase.CadModeType.Port);
@@ -223,7 +239,16 @@ namespace IvyFEMProtoApp
 
         private void calcSampleBtn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.ElasticProblem(CadDesign.Cad2D, CadDesign.Camera, this);
+            var portEdges = CadDesign.PortEdges;
+            if (portEdges.Count < 2)
+            {
+                MessageBox.Show("ポートを2つ選択してください");
+                return;
+            }
+            uint zeroEId = portEdges[0].EdgeId;
+            uint moveEId = portEdges[1].EdgeId;
+            Problem.CalcSampleProblem(
+                CadDesign.Cad2D, CadDesign.Camera, zeroEId, moveEId, this);
         }
 
         private void openBtn_Click(object sender, RoutedEventArgs e)
