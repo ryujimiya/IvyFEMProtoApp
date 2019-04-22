@@ -48,6 +48,7 @@ namespace IvyFEMProtoApp
                 uint uFEOrder = 1;
                 uint lFEOrder = 1;
                 uint cFEOrder = 1;
+                System.Diagnostics.Debug.Assert(uFEOrder == cFEOrder);
                 uQuantityId = world.AddQuantity(uDof, uFEOrder);
                 lQuantityId = world.AddQuantity(lDof, lFEOrder);
                 cQuantityId = world.AddQuantity(cDof, cFEOrder);
@@ -136,8 +137,8 @@ namespace IvyFEMProtoApp
             zeroFixedCads.Clear();
             foreach (uint eId in zeroEIds)
             {
-                uint dof = 2; // Vector2
-                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Vector2, dof);
+                // Vector2
+                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Vector2);
                 zeroFixedCads.Add(fixedCad);
             }
 
@@ -155,17 +156,17 @@ namespace IvyFEMProtoApp
             uint lValueId = 0;
             var fieldDrawerArray = mainWindow.FieldDrawerArray;
             {
-                uint uDof = 2; // Vector2
-                uint lDof = 1; // Scalar
                 world.ClearFieldValue();
+                // Vector2
                 uValueId = world.AddFieldValue(FieldValueType.Vector2,
                     FieldDerivativeType.Value | FieldDerivativeType.Velocity | FieldDerivativeType.Acceleration,
-                    uQuantityId, uDof, false, FieldShowType.Real);
+                    uQuantityId, false, FieldShowType.Real);
                 prevUValueId = world.AddFieldValue(FieldValueType.Vector2,
                     FieldDerivativeType.Value | FieldDerivativeType.Velocity | FieldDerivativeType.Acceleration,
-                    uQuantityId, uDof, false, FieldShowType.Real);
+                    uQuantityId, false, FieldShowType.Real);
+                // Scalar
                 lValueId = world.AddFieldValue(FieldValueType.Scalar, FieldDerivativeType.Value,
-                    lQuantityId, lDof, false, FieldShowType.Real);
+                    lQuantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
                 IFieldDrawer faceDrawer = new FaceFieldDrawer(uValueId, FieldDerivativeType.Value, false, world);

@@ -39,7 +39,7 @@ namespace IvyFEMProtoApp
                 uQuantityId = world.AddQuantity(uDof, uFEOrder);
                 lQuantityId = world.AddQuantity(lDof, lFEOrder);
             }
-            world.TriIntegrationPointCount = TriangleIntegrationPointCount.Point3;
+            world.TriIntegrationPointCount = TriangleIntegrationPointCount.Point7;
 
             if (isMooney)
             {
@@ -89,8 +89,8 @@ namespace IvyFEMProtoApp
             zeroFixedCads.Clear();
             foreach (uint eId in zeroEIds)
             {
-                uint dof = 2; // Vector2
-                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Vector2, dof);
+                // Vector2
+                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Vector2);
                 zeroFixedCads.Add(fixedCad);
             }
 
@@ -106,9 +106,9 @@ namespace IvyFEMProtoApp
                 fixedCads.Clear();
                 foreach (var data in fixedCadDatas)
                 {
-                    uint dof = 2; // Vector2
+                    // Vector2
                     var fixedCad = new ConstFieldFixedCad(data.CadId, data.CadElemType,
-                        FieldValueType.Vector2, dof, data.FixedDofIndexs, data.Values);
+                        FieldValueType.Vector2, data.FixedDofIndexs, data.Values);
                     fixedCads.Add(fixedCad);
                 }
                 fixedCadXY = world.GetFieldFixedCads(uQuantityId)[0];
@@ -120,13 +120,13 @@ namespace IvyFEMProtoApp
             uint lValueId = 0;
             var fieldDrawerArray = mainWindow.FieldDrawerArray;
             {
-                uint uDof = 2; // Vector2
-                uint lDof = 1; // Scalar
                 world.ClearFieldValue();
+                // Vector2
                 uValueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivativeType.Value,
-                    uQuantityId, uDof, false, FieldShowType.Real);
+                    uQuantityId, false, FieldShowType.Real);
+                // Scalar
                 lValueId = world.AddFieldValue(FieldValueType.Scalar, FieldDerivativeType.Value,
-                    lQuantityId, lDof, false, FieldShowType.Real);
+                    lQuantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
                 IFieldDrawer faceDrawer = new FaceFieldDrawer(uValueId, FieldDerivativeType.Value, false, world);
@@ -251,7 +251,7 @@ namespace IvyFEMProtoApp
                 uQuantityId = world.AddQuantity(uDof, uFEOrder);
                 lQuantityId = world.AddQuantity(lDof, lFEOrder);
             }
-            world.TriIntegrationPointCount = TriangleIntegrationPointCount.Point3;
+            world.TriIntegrationPointCount = TriangleIntegrationPointCount.Point7;
 
             if (isMooney)
             {
@@ -301,8 +301,8 @@ namespace IvyFEMProtoApp
             zeroFixedCads.Clear();
             foreach (uint eId in zeroEIds)
             {
-                uint dof = 2; // Vector2
-                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Vector2, dof);
+                // Vector2
+                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Vector2);
                 zeroFixedCads.Add(fixedCad);
             }
 
@@ -318,9 +318,9 @@ namespace IvyFEMProtoApp
                 fixedCads.Clear();
                 foreach (var data in fixedCadDatas)
                 {
-                    uint dof = 2; // Vector2
+                    // Vector2
                     var fixedCad = new ConstFieldFixedCad(data.CadId, data.CadElemType,
-                        FieldValueType.Vector2, dof, data.FixedDofIndexs, data.Values);
+                        FieldValueType.Vector2, data.FixedDofIndexs, data.Values);
                     fixedCads.Add(fixedCad);
                 }
                 fixedCadXY = world.GetFieldFixedCads(uQuantityId)[0];
@@ -333,17 +333,17 @@ namespace IvyFEMProtoApp
             uint lValueId = 0;
             var fieldDrawerArray = mainWindow.FieldDrawerArray;
             {
-                uint uDof = 2; // Vector2
-                uint lDof = 1; // Scalar
                 world.ClearFieldValue();
+                // Vector2
                 uValueId = world.AddFieldValue(FieldValueType.Vector2,
                     FieldDerivativeType.Value | FieldDerivativeType.Velocity | FieldDerivativeType.Acceleration,
-                    uQuantityId, uDof, false, FieldShowType.Real);
+                    uQuantityId, false, FieldShowType.Real);
                 prevUValueId = world.AddFieldValue(FieldValueType.Vector2,
                     FieldDerivativeType.Value | FieldDerivativeType.Velocity | FieldDerivativeType.Acceleration,
-                    uQuantityId, uDof, false, FieldShowType.Real);
+                    uQuantityId, false, FieldShowType.Real);
+                // Scalar
                 lValueId = world.AddFieldValue(FieldValueType.Scalar, FieldDerivativeType.Value,
-                    lQuantityId, lDof, false, FieldShowType.Real);
+                    lQuantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
                 IFieldDrawer faceDrawer = new FaceFieldDrawer(uValueId, FieldDerivativeType.Value, false, world);

@@ -9,7 +9,7 @@ using IvyFEM;
 
 namespace IvyFEMProtoApp
 {
-    public class CalcDraw
+    public class CalcDraw2D
     {
         /// <summary>
         /// Cadパネル
@@ -26,7 +26,7 @@ namespace IvyFEMProtoApp
         public FieldDrawerArray DrawerArray { get; private set; } = new FieldDrawerArray();
 
 
-        public CalcDraw(OpenTK.GLControl glControl, Camera2D camera)
+        public CalcDraw2D(OpenTK.GLControl glControl, Camera2D camera)
         {
             this.glControl = glControl;
             Camera = camera;

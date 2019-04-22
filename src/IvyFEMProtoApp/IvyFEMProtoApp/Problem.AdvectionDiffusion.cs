@@ -57,6 +57,7 @@ namespace IvyFEMProtoApp
                 uint feOrder = 1;
                 quantityId = world.AddQuantity(dof, feOrder);
             }
+            world.TriIntegrationPointCount = TriangleIntegrationPointCount.Point7;
 
             {
                 world.ClearMaterial();
@@ -92,9 +93,9 @@ namespace IvyFEMProtoApp
                 fixedCads.Clear();
                 foreach (var data in fixedCadDatas)
                 {
-                    uint dof = 1; // Scalar
+                    // Scalar
                     var fixedCad = new ConstFieldFixedCad(data.CadId, data.CadElemType,
-                        FieldValueType.Scalar, dof, data.FixedDofIndexs, data.Values);
+                        FieldValueType.Scalar, data.FixedDofIndexs, data.Values);
                     fixedCads.Add(fixedCad);
                 }
             }
@@ -105,13 +106,13 @@ namespace IvyFEMProtoApp
             uint veloValueId = 0;
             var fieldDrawerArray = mainWindow.FieldDrawerArray;
             {
-                uint dof = 1; // スカラー
-                uint dof2 = 2; // 2次元ベクトル
                 world.ClearFieldValue();
+                // スカラー
                 valueId = world.AddFieldValue(FieldValueType.Scalar, FieldDerivativeType.Value,
-                    quantityId, dof, false, FieldShowType.Real);
+                    quantityId, false, FieldShowType.Real);
+                // 2次元ベクトル
                 veloValueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivativeType.Value,
-                    quantityId, dof2, false, FieldShowType.Real);
+                    quantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
                 IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, true, world,
@@ -224,6 +225,7 @@ namespace IvyFEMProtoApp
                 uint feOrder = 1;
                 quantityId = world.AddQuantity(dof, feOrder);
             }
+            world.TriIntegrationPointCount = TriangleIntegrationPointCount.Point7;
 
             {
                 world.ClearMaterial();
@@ -269,9 +271,9 @@ namespace IvyFEMProtoApp
                 fixedCads.Clear();
                 foreach (var data in fixedCadDatas)
                 {
-                    uint dof = 1; // Scalar
+                    // Scalar
                     var fixedCad = new ConstFieldFixedCad(data.CadId, data.CadElemType,
-                        FieldValueType.Scalar, dof, data.FixedDofIndexs, data.Values);
+                        FieldValueType.Scalar, data.FixedDofIndexs, data.Values);
                     fixedCads.Add(fixedCad);
                 }
             }
@@ -283,17 +285,17 @@ namespace IvyFEMProtoApp
             uint veloValueId = 0;
             var fieldDrawerArray = mainWindow.FieldDrawerArray;
             {
-                uint dof = 1; // スカラー
-                uint dof2 = 2; // 2次元ベクトル
                 world.ClearFieldValue();
+                // スカラー
                 valueId = world.AddFieldValue(FieldValueType.Scalar,
                     FieldDerivativeType.Value | FieldDerivativeType.Velocity | FieldDerivativeType.Acceleration,
-                    quantityId, dof, false, FieldShowType.Real);
+                    quantityId, false, FieldShowType.Real);
                 prevValueId = world.AddFieldValue(FieldValueType.Scalar,
                     FieldDerivativeType.Value | FieldDerivativeType.Velocity | FieldDerivativeType.Acceleration,
-                    quantityId, dof, false, FieldShowType.Real);
+                    quantityId, false, FieldShowType.Real);
+                // 2次元ベクトル
                 veloValueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivativeType.Value,
-                    quantityId, dof2, false, FieldShowType.Real);
+                    quantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
                 IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, true, world,

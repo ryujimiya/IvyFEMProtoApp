@@ -87,9 +87,9 @@ namespace IvyFEMProtoApp
                 fixedCads.Clear();
                 foreach (var data in fixedCadDatas)
                 {
-                    uint dof = 1; // 複素数
+                    // 複素数
                     var fixedCad = new ConstFieldFixedCad(data.CadId, data.CadElemType,
-                        FieldValueType.ZScalar, dof, data.FixedDofIndexs, data.Values);
+                        FieldValueType.ZScalar, data.FixedDofIndexs, data.Values);
                     fixedCads.Add(fixedCad);
                 }
             }
@@ -99,10 +99,10 @@ namespace IvyFEMProtoApp
             uint valueId = 0;
             var fieldDrawerArray = mainWindow.FieldDrawerArray;
             {
-                uint dof = 1; // 複素数
                 world.ClearFieldValue();
+                // 複素数
                 valueId = world.AddFieldValue(FieldValueType.ZScalar, FieldDerivativeType.Value,
-                    quantityId, dof, false, FieldShowType.ZReal);
+                    quantityId, false, FieldShowType.ZReal);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
                 IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, true, world,

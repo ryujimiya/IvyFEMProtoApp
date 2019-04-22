@@ -10,7 +10,7 @@ using System.Drawing;
 
 namespace IvyFEMProtoApp
 {
-    public class MeshDraw
+    public class MeshDraw2D
     {
         /// <summary>
         /// Cadパネル
@@ -30,7 +30,7 @@ namespace IvyFEMProtoApp
         public BackgroundDrawer BackgroundDrawer { get; private set; } = null;
 
 
-        public MeshDraw(OpenTK.GLControl glControl, double width, double height)
+        public MeshDraw2D(OpenTK.GLControl glControl, double width, double height)
         {
             this.glControl = glControl;
 

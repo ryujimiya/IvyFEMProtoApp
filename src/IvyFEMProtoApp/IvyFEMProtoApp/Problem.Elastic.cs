@@ -68,8 +68,8 @@ namespace IvyFEMProtoApp
             zeroFixedCads.Clear();
             foreach (uint eId in zeroEIds)
             {
-                uint dof = 2; // Vector2
-                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Vector2, dof);
+                // Vector2
+                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Vector2);
                 zeroFixedCads.Add(fixedCad);
             }
 
@@ -85,9 +85,9 @@ namespace IvyFEMProtoApp
                 fixedCads.Clear();
                 foreach (var data in fixedCadDatas)
                 {
-                    uint dof = 2; // Vector2
+                    // Vector2
                     var fixedCad = new ConstFieldFixedCad(data.CadId, data.CadElemType,
-                        FieldValueType.Vector2, dof, data.FixedDofIndexs, data.Values);
+                        FieldValueType.Vector2, data.FixedDofIndexs, data.Values);
                     fixedCads.Add(fixedCad);
                 }
                 fixedCadXY = world.GetFieldFixedCads(quantityId)[0];
@@ -100,18 +100,18 @@ namespace IvyFEMProtoApp
             uint stressValueId = 0;
             var fieldDrawerArray = mainWindow.FieldDrawerArray;
             {
-                uint dof = 2; // Vector2
                 world.ClearFieldValue();
+                // Vector2
                 valueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivativeType.Value,
-                    quantityId, dof, false, FieldShowType.Real);
+                    quantityId, false, FieldShowType.Real);
                 if (isCalcStress)
                 {
-                    const int eqStressDof = 1;
+                    // スカラー
                     eqStressValueId = world.AddFieldValue(FieldValueType.Scalar, FieldDerivativeType.Value,
-                        quantityId, eqStressDof, true, FieldShowType.Real);
-                    const int stressDof = 3;
+                        quantityId, true, FieldShowType.Real);
+                    // 対称2次元テンソル
                     stressValueId = world.AddFieldValue(FieldValueType.SymmetricTensor2, FieldDerivativeType.Value,
-                        quantityId, stressDof, true, FieldShowType.Real);
+                        quantityId, true, FieldShowType.Real);
                 }
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
@@ -243,8 +243,8 @@ namespace IvyFEMProtoApp
             zeroFixedCads.Clear();
             foreach (uint eId in zeroEIds)
             {
-                uint dof = 2; // Vector2
-                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Vector2, dof);
+                // Vector2
+                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Vector2);
                 zeroFixedCads.Add(fixedCad);
             }
 
@@ -260,9 +260,9 @@ namespace IvyFEMProtoApp
                 fixedCads.Clear();
                 foreach (var data in fixedCadDatas)
                 {
-                    uint dof = 2; // Vector2
+                    // Vector2
                     var fixedCad = new ConstFieldFixedCad(data.CadId, data.CadElemType,
-                        FieldValueType.Vector2, dof, data.FixedDofIndexs, data.Values);
+                        FieldValueType.Vector2, data.FixedDofIndexs, data.Values);
                     fixedCads.Add(fixedCad);
                 }
                 fixedCadXY = world.GetFieldFixedCads(quantityId)[0];
@@ -274,14 +274,14 @@ namespace IvyFEMProtoApp
             uint prevValueId = 0;
             var fieldDrawerArray = mainWindow.FieldDrawerArray;
             {
-                uint dof = 2; // Vector2
                 world.ClearFieldValue();
+                // Vector2
                 valueId = world.AddFieldValue(FieldValueType.Vector2,
                     FieldDerivativeType.Value | FieldDerivativeType.Velocity | FieldDerivativeType.Acceleration,
-                    quantityId, dof, false, FieldShowType.Real);
+                    quantityId, false, FieldShowType.Real);
                 prevValueId = world.AddFieldValue(FieldValueType.Vector2,
                     FieldDerivativeType.Value | FieldDerivativeType.Velocity | FieldDerivativeType.Acceleration,
-                    quantityId, dof, false, FieldShowType.Real);
+                    quantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
                 IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, false, world);

@@ -122,9 +122,9 @@
     <Compile Include="AlertWindow.xaml.cs">
       <DependentUpon>AlertWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CalcDraw.cs" />
-    <Compile Include="CadDesign.cs" />
-    <Compile Include="CadDesignBase.cs" />
+    <Compile Include="CalcDraw2D.cs" />
+    <Compile Include="CadDesign2D.cs" />
+    <Compile Include="CadDesign2DBase.cs" />
     <Compile Include="BackgroundDrawer.cs" />
     <Compile Include="CadEditWindow.xaml.cs">
       <DependentUpon>CadEditWindow.xaml</DependentUpon>
@@ -132,7 +132,7 @@
     <Compile Include="ChartWindow.xaml.cs">
       <DependentUpon>ChartWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MeshDraw.cs" />
+    <Compile Include="MeshDraw2D.cs" />
     <Compile Include="MeshWindow.xaml.cs">
       <DependentUpon>MeshWindow.xaml</DependentUpon>
     </Compile>

@@ -119,7 +119,7 @@ namespace IvyFEMProtoApp
             //Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
             Mesher2D mesher2D = new Mesher2D();
             mesher2D.SetMeshingModeElemLength(eLen);
-            IList<uint> lIds = cad2D.GetElemIds(CadElementType.Loop);
+            IList<uint> lIds = cad2D.GetElementIds(CadElementType.Loop);
             foreach (uint lId in lIds)
             {
                 if (lId == hollowLoopId)

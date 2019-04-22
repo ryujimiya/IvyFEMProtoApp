@@ -1,12 +1,12 @@
 ﻿IvyFEMProtoApp  
 ==============  
 
-IvyFEMを開発するための作業用アプリです。  
+IvyFEM.dllのサンプルアプリケーションです。  
+　  
+　**バイナリ（2019-04-22更新）**  
+　[IvyFEMProtoAppアプリ](https://github.com/ryujimiya/IvyFEMProtoApp/blob/master/publish/)  
+　　アプリのスクリーンショットがIvyFEMのページにあります。  
 　  
 　**使用しているライブラリ**  
 　[IvyFEM](https://github.com/ryujimiya/IvyFEM/)  
-　  
-　**バイナリ（2019-04-08更新）**  
-　[IvyFEMProtoAppアプリ](https://github.com/ryujimiya/IvyFEMProtoApp/blob/master/publish/)  
-　　アプリのスクリーンショットがIvyFEMのページにあります。  
 　  

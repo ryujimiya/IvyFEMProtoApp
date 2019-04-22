@@ -7,7 +7,7 @@ using IvyFEM;
 
 namespace IvyFEMProtoApp
 {
-    public class CadDesignBase
+    public class CadDesign2DBase
     {
         ////////////////////////////////////////////////////////////////////////
         // 型
@@ -70,7 +70,7 @@ namespace IvyFEMProtoApp
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public CadDesignBase()
+        public CadDesign2DBase()
         {
             Init();
         }
@@ -96,7 +96,7 @@ namespace IvyFEMProtoApp
         /// Cadデータをコピーする
         /// </summary>
         /// <param name="src"></param>
-        public void Copy(CadDesignBase src)
+        public void Copy(CadDesign2DBase src)
         {
             if (src == this)
             {

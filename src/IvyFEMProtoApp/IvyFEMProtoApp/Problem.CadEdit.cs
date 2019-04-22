@@ -93,8 +93,8 @@ namespace IvyFEMProtoApp
             zeroFixedCads.Clear();
             foreach (uint eId in zeroEIds)
             {
-                uint dof = 2; // Vector2
-                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Vector2, dof);
+                // Vector2
+                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Vector2);
                 zeroFixedCads.Add(fixedCad);
             }
 
@@ -110,9 +110,9 @@ namespace IvyFEMProtoApp
                 fixedCads.Clear();
                 foreach (var data in fixedCadDatas)
                 {
-                    uint dof = 2; // Vector2
+                    // Vector2
                     var fixedCad = new ConstFieldFixedCad(data.CadId, data.CadElemType,
-                        FieldValueType.Vector2, dof, data.FixedDofIndexs, data.Values);
+                        FieldValueType.Vector2, data.FixedDofIndexs, data.Values);
                     fixedCads.Add(fixedCad);
                 }
                 fixedCadXY = world.GetFieldFixedCads(quantityId)[0];
@@ -125,10 +125,10 @@ namespace IvyFEMProtoApp
             uint stressValueId = 0;
             var fieldDrawerArray = window.CalcDraw.DrawerArray;
             {
-                uint dof = 2; // Vector2
                 world.ClearFieldValue();
+                // Vector2
                 valueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivativeType.Value,
-                    quantityId, dof, false, FieldShowType.Real);
+                    quantityId, false, FieldShowType.Real);
                 window.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
                 {

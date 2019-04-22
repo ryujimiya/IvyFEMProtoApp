@@ -28,16 +28,33 @@ namespace IvyFEMProtoApp
                 CRLF +
                 "            1  -2  -3  1" + CRLF +
                 "X = A^-1 = ---  2   1  1" + CRLF +
-                "            4  -4  -2  2" + CRLF +
-                CRLF +
-                CRLF +
-                X.Dump();
+                "            4  -4  -2  2" + CRLF;
+            ret +=  "calculated X" + CRLF +
+                X.GetType() + CRLF +
+                "RowLength = " + X.RowLength + CRLF +
+                "ColumnLength = " + X.ColumnLength + CRLF;
+            for (int row = 0; row < X.RowLength; row++)
+            {
+                for (int col = 0; col < X.ColumnLength; col++)
+                {
+                    ret += "[" + row + ", " + col + "] = " + X[row, col] + CRLF;
+                }
+            }
 
             var C = A * X;
             ret += "C = A * X" + CRLF +
-                " will be identity matrix" + CRLF +
-                C.Dump();
-
+                " will be identity matrix" + CRLF;
+            ret += "calculated C" + CRLF + 
+                C.GetType() + CRLF  +
+                "RowLength = " + C.RowLength + CRLF +
+                "ColumnLength = " + C.ColumnLength + CRLF;
+            for (int row = 0; row < C.RowLength; row++)
+            {
+                for (int col = 0; col < C.ColumnLength; col++)
+                {
+                    ret += "[" + row + ", " + col + "] = " + C[row, col] + CRLF;
+                }
+            }
             System.Diagnostics.Debug.WriteLine(ret);
             AlertWindow.ShowDialog(ret);
         }
@@ -109,7 +126,7 @@ namespace IvyFEMProtoApp
             ret += CRLF;
             for (int i = 0; i < eVals.Length; i++)
             {
-                ret += "eVal[" + i + "] = " + eVals[i].ToString() + CRLF;
+                ret += "eVal[" + i + "] = " + eVals[i] + CRLF;
             }
             System.Diagnostics.Debug.WriteLine(ret);
             AlertWindow.ShowDialog(ret);

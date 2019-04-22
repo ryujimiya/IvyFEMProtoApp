@@ -52,12 +52,13 @@ namespace IvyFEMProtoApp
             uint pQuantityId;
             {
                 uint vDof = 2; // 2次元ベクトル
-                uint vFEOrder = 2;
                 uint pDof = 1; // スカラー
+                uint vFEOrder = 2;
                 uint pFEOrder = 1;
                 vQuantityId = world.AddQuantity(vDof, vFEOrder);
                 pQuantityId = world.AddQuantity(pDof, pFEOrder);
             }
+            world.TriIntegrationPointCount = TriangleIntegrationPointCount.Point7;
 
             {
                 world.ClearMaterial();
@@ -73,7 +74,7 @@ namespace IvyFEMProtoApp
                     MassDensity = 1.2,
                     GravityX = 0.0,
                     GravityY = 0.0,
-                    Mu = 0.1
+                    Mu = 0.01
                 };
                 uint maId1 = world.AddMaterial(ma1);
                 uint maId2 = world.AddMaterial(ma2);
@@ -90,8 +91,8 @@ namespace IvyFEMProtoApp
             zeroFixedCads.Clear();
             foreach (uint eId in zeroEIds)
             {
-                uint dof = 2; // Vector2
-                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Vector2, dof);
+                // Vector2
+                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Vector2);
                 zeroFixedCads.Add(fixedCad);
             }
 
@@ -106,10 +107,10 @@ namespace IvyFEMProtoApp
                 fixedCads.Clear();
                 foreach (var data in fixedCadDatas)
                 {
-                    uint dof = 2; // Vector2
+                    // Vector2
                     // Note: 分布速度条件
                     var fixedCad = new DistributedFieldFixedCad(data.CadId, data.CadElemType,
-                        FieldValueType.Vector2, dof, data.FixedDofIndexs);
+                        FieldValueType.Vector2, data.FixedDofIndexs);
                     fixedCads.Add(fixedCad);
                 }
 
@@ -123,15 +124,15 @@ namespace IvyFEMProtoApp
             uint pValueId = 0;
             var fieldDrawerArray = mainWindow.FieldDrawerArray;
             {
-                uint vDof = 2; // Vector2
-                uint pDof = 1; // Scalar
                 world.ClearFieldValue();
+                // Vector2
                 vValueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivativeType.Value,
-                    vQuantityId, vDof, false, FieldShowType.Real);
+                    vQuantityId, false, FieldShowType.Real);
                 bubbleVValueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivativeType.Value,
-                    vQuantityId, vDof, true, FieldShowType.Real);
+                    vQuantityId, true, FieldShowType.Real);
+                // Scalar
                 pValueId = world.AddFieldValue(FieldValueType.Scalar, FieldDerivativeType.Value,
-                    pQuantityId, pDof, false, FieldShowType.Real);
+                    pQuantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
                 IFieldDrawer vectorDrawer = new VectorFieldDrawer(
@@ -242,12 +243,13 @@ namespace IvyFEMProtoApp
             uint pQuantityId;
             {
                 uint vDof = 2; // 2次元ベクトル
-                uint vFEOrder = 2;
                 uint pDof = 1; // スカラー
+                uint vFEOrder = 2;
                 uint pFEOrder = 1;
                 vQuantityId = world.AddQuantity(vDof, vFEOrder);
                 pQuantityId = world.AddQuantity(pDof, pFEOrder);
             }
+            world.TriIntegrationPointCount = TriangleIntegrationPointCount.Point7;
 
             {
                 world.ClearMaterial();
@@ -263,7 +265,7 @@ namespace IvyFEMProtoApp
                     MassDensity = 1.2,
                     GravityX = 0.0,
                     GravityY = 0.0,
-                    Mu = 0.1
+                    Mu = 0.01
                 };
                 uint maId1 = world.AddMaterial(ma1);
                 uint maId2 = world.AddMaterial(ma2);
@@ -280,8 +282,8 @@ namespace IvyFEMProtoApp
             zeroFixedCads.Clear();
             foreach (uint eId in zeroEIds)
             {
-                uint dof = 2; // Vector2
-                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Vector2, dof);
+                // Vector2
+                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Vector2);
                 zeroFixedCads.Add(fixedCad);
             }
 
@@ -296,10 +298,10 @@ namespace IvyFEMProtoApp
                 fixedCads.Clear();
                 foreach (var data in fixedCadDatas)
                 {
-                    uint dof = 2; // Vector2
+                    // Vector2
                     // Note: 分布速度条件
                     var fixedCad = new DistributedFieldFixedCad(data.CadId, data.CadElemType,
-                        FieldValueType.Vector2, dof, data.FixedDofIndexs);
+                        FieldValueType.Vector2, data.FixedDofIndexs);
                     fixedCads.Add(fixedCad);
                 }
 
@@ -314,19 +316,19 @@ namespace IvyFEMProtoApp
             uint pValueId = 0;
             var fieldDrawerArray = mainWindow.FieldDrawerArray;
             {
-                uint vDof = 2; // Vector2
-                uint pDof = 1; // Scalar
                 world.ClearFieldValue();
+                // Vector2
                 vValueId = world.AddFieldValue(FieldValueType.Vector2,
                     FieldDerivativeType.Value | FieldDerivativeType.Velocity | FieldDerivativeType.Acceleration,
-                    vQuantityId, vDof, false, FieldShowType.Real);
+                    vQuantityId, false, FieldShowType.Real);
                 prevVValueId = world.AddFieldValue(FieldValueType.Vector2,
                     FieldDerivativeType.Value | FieldDerivativeType.Velocity | FieldDerivativeType.Acceleration,
-                    vQuantityId, vDof, false, FieldShowType.Real);
+                    vQuantityId, false, FieldShowType.Real);
                 bubbleVValueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivativeType.Value,
-                    vQuantityId, vDof, true, FieldShowType.Real);
+                    vQuantityId, true, FieldShowType.Real);
+                // Scalar
                 pValueId = world.AddFieldValue(FieldValueType.Scalar, FieldDerivativeType.Value,
-                    pQuantityId, pDof, false, FieldShowType.Real);
+                    pQuantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
                 IFieldDrawer vectorDrawer = new VectorFieldDrawer(

@@ -22,7 +22,7 @@ namespace IvyFEMProtoApp
     /// </summary>
     public partial class MeshWindow : Window
     {
-        private MeshDraw MeshDraw = null;
+        private MeshDraw2D MeshDraw = null;
 
         public double BackgroundWidth { get; private set; } = 0;
         public double BackgroundHeight { get; private set; } = 0;
@@ -42,7 +42,7 @@ namespace IvyFEMProtoApp
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            MeshDraw = new MeshDraw(glControl, BackgroundWidth, BackgroundHeight);
+            MeshDraw = new MeshDraw2D(glControl, BackgroundWidth, BackgroundHeight);
 
             glControl.MakeCurrent();
             MeshDraw.Init(Mesher2D);

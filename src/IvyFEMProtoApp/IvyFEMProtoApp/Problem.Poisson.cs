@@ -52,7 +52,7 @@ namespace IvyFEMProtoApp
             Mesher2D mesher2D = new Mesher2D();
             mesher2D.SetMeshingModeElemLength(eLen);
             uint hollowLId = 3;
-            IList<uint> lIds = cad2D.GetElemIds(CadElementType.Loop);
+            IList<uint> lIds = cad2D.GetElementIds(CadElementType.Loop);
             foreach (uint lId in lIds)
             {
                 if (lId == hollowLId)
@@ -102,8 +102,8 @@ namespace IvyFEMProtoApp
             zeroFixedCads.Clear();
             foreach (uint eId in zeroEIds)
             {
-                uint dof = 1; // スカラー
-                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Scalar, dof);
+                // スカラー
+                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Scalar);
                 zeroFixedCads.Add(fixedCad);
             }
 
@@ -112,10 +112,10 @@ namespace IvyFEMProtoApp
             uint valueId = 0;
             var fieldDrawerArray = mainWindow.FieldDrawerArray;
             {
-                uint dof = 1; // スカラー
                 world.ClearFieldValue();
+                // スカラー
                 valueId = world.AddFieldValue(FieldValueType.Scalar, FieldDerivativeType.Value,
-                    quantityId, dof, false, FieldShowType.Real);
+                    quantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
                 IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, true, world,

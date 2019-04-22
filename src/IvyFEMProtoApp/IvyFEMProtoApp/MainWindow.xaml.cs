@@ -476,6 +476,11 @@ namespace IvyFEMProtoApp
             Problem.PoissonProblem(this);
         }
 
+        private void diffusionBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.DiffusionProblem(this);
+        }
+
         private void diffusionTDBtn_Click(object sender, RoutedEventArgs e)
         {
             Problem.DiffusionTDProblem(this);

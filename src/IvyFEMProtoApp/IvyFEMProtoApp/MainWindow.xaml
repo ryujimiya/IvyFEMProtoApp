@@ -62,6 +62,7 @@
                 </MenuItem>
                 <MenuItem Header="Various Equations">
                     <MenuItem Header="Poisson" Click="poissonBtn_Click"/>
+                    <MenuItem Header="Heat Diffusion (Poisson)" Click="diffusionBtn_Click"/>
                     <MenuItem Header="Heat Diffusion(Time Domain)" Click="diffusionTDBtn_Click"/>
                     <MenuItem Header="Advection Diffusion" Click="advectionDiffusionBtn_Click"/>
                     <MenuItem Header="Advection Diffusion (Time Domain)" Click="advectionDiffusionTDBtn_Click"/>

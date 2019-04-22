@@ -24,7 +24,7 @@ namespace IvyFEMProtoApp
         /// <summary>
         /// Cadデザイン
         /// </summary>
-        internal CadDesign CadDesign = null;
+        internal CadDesign2D CadDesign = null;
 
         /// <summary>
         /// 場を描画する?
@@ -38,16 +38,16 @@ namespace IvyFEMProtoApp
         /// <summary>
         /// 計算結果表示
         /// </summary>
-        internal CalcDraw CalcDraw = null;
+        internal CalcDraw2D CalcDraw = null;
 
         public CadEditWindow()
         {
             InitializeComponent();
-            CadDesign = new CadDesign(glControl, 100, 100);
+            CadDesign = new CadDesign2D(glControl, 100, 100);
             CadDesign.Change += CadDesign_Change;
             CadDesign.ShowProperty += CadDesign_ShowProperty;
-            CadDesign.CadMode = CadDesignBase.CadModeType.None;
-            CalcDraw = new CalcDraw(glControl, CadDesign.Camera);
+            CadDesign.CadMode = CadDesign2DBase.CadModeType.None;
+            CalcDraw = new CalcDraw2D(glControl, CadDesign.Camera);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -142,20 +142,20 @@ namespace IvyFEMProtoApp
             CadDesign.CadPanelKeyUp(e);
         }
 
-        private void CadDesign_Change(object sender, CadDesign.ChangeEventArgs e)
+        private void CadDesign_Change(object sender, CadDesign2D.ChangeEventArgs e)
         {
-            CadDesignBase.CadModeType prevCadMode = e.PrevCadMode;
+            CadDesign2DBase.CadModeType prevCadMode = e.PrevCadMode;
 
         }
 
-        private void CadDesign_ShowProperty(object sender, CadDesign.ShowPropertyEventArgs e)
+        private void CadDesign_ShowProperty(object sender, CadDesign2D.ShowPropertyEventArgs e)
         {
             IvyFEM.CadElementType cadElemType = e.CadElemType;
             uint cadId = e.CadId;
             MessageBox.Show("プロパティ: " + cadElemType + " Id = " + cadId);
         }
 
-        private void ModeBtn_Click(CadDesign.CadModeType cadMode)
+        private void ModeBtn_Click(CadDesign2D.CadModeType cadMode)
         {
             Button[] modeBtns = {
                 noneBtn,
@@ -165,19 +165,19 @@ namespace IvyFEMProtoApp
                 portBtn,
                 eraseBtn
             };
-            CadDesign.CadModeType[] cadModes = {
-                CadDesignBase.CadModeType.None,
-                CadDesignBase.CadModeType.Polygon,
-                CadDesignBase.CadModeType.Move,
-                CadDesignBase.CadModeType.Arc,
-                CadDesignBase.CadModeType.Port,
-                CadDesignBase.CadModeType.Erase
+            CadDesign2D.CadModeType[] cadModes = {
+                CadDesign2DBase.CadModeType.None,
+                CadDesign2DBase.CadModeType.Polygon,
+                CadDesign2DBase.CadModeType.Move,
+                CadDesign2DBase.CadModeType.Arc,
+                CadDesign2DBase.CadModeType.Port,
+                CadDesign2DBase.CadModeType.Erase
             };
 
             CadDesign.CadMode = cadMode;
             for (int i = 0; i < cadModes.Length; i++)
             {
-                CadDesignBase.CadModeType mode = cadModes[i];
+                CadDesign2DBase.CadModeType mode = cadModes[i];
                 Button btn = modeBtns[i];
                 if (mode == cadMode)
                 {
@@ -192,14 +192,14 @@ namespace IvyFEMProtoApp
 
         private void noneBtn_Click(object sender, RoutedEventArgs e)
         {
-            ModeBtn_Click(CadDesignBase.CadModeType.None);
+            ModeBtn_Click(CadDesign2DBase.CadModeType.None);
             IsFieldDraw = false;
             glControl.Invalidate();
         }
 
         private void polygonBtn_Click(object sender, RoutedEventArgs e)
         {
-            ModeBtn_Click(CadDesignBase.CadModeType.Polygon);
+            ModeBtn_Click(CadDesign2DBase.CadModeType.Polygon);
             IsFieldDraw = false;
             glControl.Invalidate();
             glControl.Update();
@@ -207,7 +207,7 @@ namespace IvyFEMProtoApp
 
         private void moveBtn_Click(object sender, RoutedEventArgs e)
         {
-            ModeBtn_Click(CadDesignBase.CadModeType.Move);
+            ModeBtn_Click(CadDesign2DBase.CadModeType.Move);
             IsFieldDraw = false;
             glControl.Invalidate();
             glControl.Update();
@@ -215,7 +215,7 @@ namespace IvyFEMProtoApp
 
         private void arcBtn_Click(object sender, RoutedEventArgs e)
         {
-            ModeBtn_Click(CadDesignBase.CadModeType.Arc);
+            ModeBtn_Click(CadDesign2DBase.CadModeType.Arc);
             IsFieldDraw = false;
             glControl.Invalidate();
             glControl.Update();
@@ -223,7 +223,7 @@ namespace IvyFEMProtoApp
 
         private void portBtn_Click(object sender, RoutedEventArgs e)
         {
-            ModeBtn_Click(CadDesignBase.CadModeType.Port);
+            ModeBtn_Click(CadDesign2DBase.CadModeType.Port);
             IsFieldDraw = false;
             glControl.Invalidate();
             glControl.Update();
@@ -231,7 +231,7 @@ namespace IvyFEMProtoApp
 
         private void eraseBtn_Click(object sender, RoutedEventArgs e)
         {
-            ModeBtn_Click(CadDesignBase.CadModeType.Erase);
+            ModeBtn_Click(CadDesign2DBase.CadModeType.Erase);
             IsFieldDraw = false;
             glControl.Invalidate();
             glControl.Update();
