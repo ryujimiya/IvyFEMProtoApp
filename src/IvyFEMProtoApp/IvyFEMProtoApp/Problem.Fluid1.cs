@@ -60,7 +60,7 @@ namespace IvyFEMProtoApp
                     MassDensity = 1.2,
                     GravityX = 0.0,
                     GravityY = 0.0,
-                    Mu = 0.0002
+                    Mu = 0.0002//0.00002
                 };
                 uint maId = world.AddMaterial(ma);
 
@@ -132,12 +132,12 @@ namespace IvyFEMProtoApp
             {
                 var FEM = new Fluid2DFEM(world);
                 {
-                    //var solver = new IvyFEM.Linear.LapackEquationSolver();
+                    var solver = new IvyFEM.Linear.LapackEquationSolver();
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
-                    //solver.IsOrderingToBandMatrix = true;
-                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
+                    solver.IsOrderingToBandMatrix = true;
+                    solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
-                    //FEM.Solver = solver;
+                    FEM.Solver = solver;
                 }
                 {
                     //var solver = new IvyFEM.Linear.LisEquationSolver();
@@ -145,12 +145,12 @@ namespace IvyFEMProtoApp
                     //FEM.Solver = solver;
                 }
                 {
-                    var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
+                    //var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
-                    solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
-                    FEM.Solver = solver;
+                    //FEM.Solver = solver;
                 }
                 FEM.Solve();
                 double[] U = FEM.U;
@@ -217,7 +217,7 @@ namespace IvyFEMProtoApp
                     MassDensity = 1.2,
                     GravityX = 0.0,
                     GravityY = 0.0,
-                    Mu = 0.0002
+                    Mu = 0.0002//0.00002
                 };
                 uint maId = world.AddMaterial(ma);
 
@@ -300,12 +300,12 @@ namespace IvyFEMProtoApp
                 var FEM = new Fluid2DTDFEM(world, dt,
                     newmarkBeta, newmarkGamma, vValueId, prevVValueId);
                 {
-                    //var solver = new IvyFEM.Linear.LapackEquationSolver();
+                    var solver = new IvyFEM.Linear.LapackEquationSolver();
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
-                    //solver.IsOrderingToBandMatrix = true;
-                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
+                    solver.IsOrderingToBandMatrix = true;
+                    solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
-                    //FEM.Solver = solver;
+                    FEM.Solver = solver;
                 }
                 {
                     //var solver = new IvyFEM.Linear.LisEquationSolver();
@@ -313,12 +313,12 @@ namespace IvyFEMProtoApp
                     //FEM.Solver = solver;
                 }
                 {
-                    var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
+                    //var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
-                    solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
-                    FEM.Solver = solver;
+                    //FEM.Solver = solver;
                 }
                 FEM.Solve();
                 double[] U = FEM.U;

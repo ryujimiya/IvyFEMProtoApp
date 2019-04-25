@@ -126,6 +126,7 @@ namespace IvyFEMProtoApp
                 {
                     //var solver = new IvyFEM.Linear.LapackEquationSolver();
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
+                    //solver.IsOrderingToBandMatrix = true;
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
                     //FEM.Solver = solver;
@@ -290,6 +291,7 @@ namespace IvyFEMProtoApp
                 {
                     //var solver = new IvyFEM.Linear.LapackEquationSolver();
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
+                    //solver.IsOrderingToBandMatrix = true;
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
                     //FEM.Solver = solver;

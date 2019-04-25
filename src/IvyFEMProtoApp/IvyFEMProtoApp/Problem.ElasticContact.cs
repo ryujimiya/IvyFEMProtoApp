@@ -156,6 +156,7 @@ namespace IvyFEMProtoApp
                 {
                     //var solver = new IvyFEM.Linear.LapackEquationSolver();
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
+                    //solver.IsOrderingToBandMatrix = true;
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
                     //FEM.Solver = solver;
@@ -171,9 +172,9 @@ namespace IvyFEMProtoApp
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
                     solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
-                    FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-10;
                     FEM.Solver = solver;
                 }
+                FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-10;
                 FEM.Solve();
                 //double[] U = FEM.U;
 
@@ -306,6 +307,7 @@ namespace IvyFEMProtoApp
                 {
                     //var solver = new IvyFEM.Linear.LapackEquationSolver();
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
+                    //solver.IsOrderingToBandMatrix = true;
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
                     //FEM.Solver = solver;
@@ -321,9 +323,9 @@ namespace IvyFEMProtoApp
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
                     solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
-                    FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-10;
                     FEM.Solver = solver;
                 }
+                FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-10;
                 FEM.Solve();
                 //double[] U = FEM.U;
 
