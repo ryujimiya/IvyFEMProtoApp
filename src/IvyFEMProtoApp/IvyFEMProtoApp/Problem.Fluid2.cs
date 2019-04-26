@@ -67,14 +67,14 @@ namespace IvyFEMProtoApp
                     MassDensity = 1.2,
                     GravityX = 0.0,
                     GravityY = 0.0,
-                    Mu = 0.0002//0.00002
+                    Mu = 0.00002
                 };
                 NewtonFluidMaterial ma2 = new NewtonFluidMaterial
                 {
                     MassDensity = 1.2,
                     GravityX = 0.0,
                     GravityY = 0.0,
-                    Mu = 0.001
+                    Mu = 0.0001
                 };
                 uint maId1 = world.AddMaterial(ma1);
                 uint maId2 = world.AddMaterial(ma2);
@@ -258,14 +258,14 @@ namespace IvyFEMProtoApp
                     MassDensity = 1.2,
                     GravityX = 0.0,
                     GravityY = 0.0,
-                    Mu = 0.0002//0.00002
+                    Mu = 0.00002
                 };
                 NewtonFluidMaterial ma2 = new NewtonFluidMaterial
                 {
                     MassDensity = 1.2,
                     GravityX = 0.0,
                     GravityY = 0.0,
-                    Mu = 0.001
+                    Mu = 0.0001
                 };
                 uint maId1 = world.AddMaterial(ma1);
                 uint maId2 = world.AddMaterial(ma2);

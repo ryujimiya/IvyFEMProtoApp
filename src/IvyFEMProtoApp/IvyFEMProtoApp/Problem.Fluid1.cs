@@ -60,7 +60,7 @@ namespace IvyFEMProtoApp
                     MassDensity = 1.2,
                     GravityX = 0.0,
                     GravityY = 0.0,
-                    Mu = 0.0002//0.00002
+                    Mu = 0.00002
                 };
                 uint maId = world.AddMaterial(ma);
 
@@ -217,7 +217,7 @@ namespace IvyFEMProtoApp
                     MassDensity = 1.2,
                     GravityX = 0.0,
                     GravityY = 0.0,
-                    Mu = 0.0002//0.00002
+                    Mu = 0.00002
                 };
                 uint maId = world.AddMaterial(ma);
 
