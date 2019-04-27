@@ -9,7 +9,7 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void FluidProblem1(MainWindow mainWindow)
+        public void FluidProblem1(MainWindow mainWindow, FluidEquationType fluidEquationType)
         {
             CadObject2D cad2D = new CadObject2D();
             {
@@ -60,7 +60,7 @@ namespace IvyFEMProtoApp
                     MassDensity = 1.2,
                     GravityX = 0.0,
                     GravityY = 0.0,
-                    Mu = 0.00002
+                    Mu = 0.02//0.00002
                 };
                 uint maId = world.AddMaterial(ma);
 
@@ -82,7 +82,7 @@ namespace IvyFEMProtoApp
                 var fixedCadDatas = new[]
                 {
                     new { CadId = (uint)3, CadElemType = CadElementType.Edge,
-                        FixedDofIndexs = new List<uint> { 0, 1 }, Values = new double[] { 0.4, 0.0 } }
+                        FixedDofIndexs = new List<uint> { 0, 1 }, Values = new double[] { 0.5, 0.0 } }
                 };
                 IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(vQuantityId);
                 fixedCads.Clear();
@@ -131,6 +131,7 @@ namespace IvyFEMProtoApp
 
             {
                 var FEM = new Fluid2DFEM(world);
+                FEM.EquationType = fluidEquationType;
                 {
                     var solver = new IvyFEM.Linear.LapackEquationSolver();
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
@@ -166,7 +167,7 @@ namespace IvyFEMProtoApp
             }
         }
 
-        public void FluidTDProblem1(MainWindow mainWindow)
+        public void FluidTDProblem1(MainWindow mainWindow, FluidEquationType fluidEquationType)
         {
             CadObject2D cad2D = new CadObject2D();
             {
@@ -217,7 +218,7 @@ namespace IvyFEMProtoApp
                     MassDensity = 1.2,
                     GravityX = 0.0,
                     GravityY = 0.0,
-                    Mu = 0.00002
+                    Mu = 0.02//0.00002
                 };
                 uint maId = world.AddMaterial(ma);
 
@@ -239,7 +240,7 @@ namespace IvyFEMProtoApp
                 var fixedCadDatas = new[]
                 {
                     new { CadId = (uint)3, CadElemType = CadElementType.Edge,
-                        FixedDofIndexs = new List<uint> { 0, 1 }, Values = new double[] { 0.4, 0.0 } }
+                        FixedDofIndexs = new List<uint> { 0, 1 }, Values = new double[] { 0.5, 0.0 } }
                 };
                 IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(vQuantityId);
                 fixedCads.Clear();
@@ -299,6 +300,7 @@ namespace IvyFEMProtoApp
             {
                 var FEM = new Fluid2DTDFEM(world, dt,
                     newmarkBeta, newmarkGamma, vValueId, prevVValueId);
+                FEM.EquationType = fluidEquationType;
                 {
                     var solver = new IvyFEM.Linear.LapackEquationSolver();
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;

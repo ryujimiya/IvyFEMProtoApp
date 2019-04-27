@@ -9,7 +9,7 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void FluidProblem2(MainWindow mainWindow)
+        public void FluidProblem2(MainWindow mainWindow, FluidEquationType fluidEquationType)
         {
             CadObject2D cad2D = new CadObject2D();
             {
@@ -67,7 +67,7 @@ namespace IvyFEMProtoApp
                     MassDensity = 1.2,
                     GravityX = 0.0,
                     GravityY = 0.0,
-                    Mu = 0.00002
+                    Mu = 0.02//0.00002
                 };
                 NewtonFluidMaterial ma2 = new NewtonFluidMaterial
                 {
@@ -165,6 +165,7 @@ namespace IvyFEMProtoApp
                 }
 
                 var FEM = new Fluid2DFEM(world);
+                FEM.EquationType = fluidEquationType;
                 {
                     var solver = new IvyFEM.Linear.LapackEquationSolver();
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
@@ -200,7 +201,7 @@ namespace IvyFEMProtoApp
             }
         }
 
-        public void FluidTDProblem2(MainWindow mainWindow)
+        public void FluidTDProblem2(MainWindow mainWindow, FluidEquationType fluidEquationType)
         {
             CadObject2D cad2D = new CadObject2D();
             {
@@ -258,7 +259,7 @@ namespace IvyFEMProtoApp
                     MassDensity = 1.2,
                     GravityX = 0.0,
                     GravityY = 0.0,
-                    Mu = 0.00002
+                    Mu = 0.02//0.00002
                 };
                 NewtonFluidMaterial ma2 = new NewtonFluidMaterial
                 {
@@ -367,6 +368,7 @@ namespace IvyFEMProtoApp
 
                 var FEM = new Fluid2DTDFEM(world, dt,
                     newmarkBeta, newmarkGamma, vValueId, prevVValueId);
+                FEM.EquationType = fluidEquationType;
                 {
                     var solver = new IvyFEM.Linear.LapackEquationSolver();
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;

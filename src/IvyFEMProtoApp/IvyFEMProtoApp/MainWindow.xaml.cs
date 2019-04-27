@@ -501,24 +501,26 @@ namespace IvyFEMProtoApp
             Problem.HelmholtzProblem(this);
         }
 
+        private FluidEquationType FluidEquationType = FluidEquationType.StandardGalerkinNavierStokes;
+
         private void fluid1Btn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.FluidProblem1(this);
+            Problem.FluidProblem1(this, FluidEquationType);
         }
 
         private void fluid1TDBtn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.FluidTDProblem1(this);
+            Problem.FluidTDProblem1(this, FluidEquationType);
         }
 
         private void fluid2Btn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.FluidProblem2(this);
+            Problem.FluidProblem2(this, FluidEquationType);
         }
 
         private void fluid2TDBtn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.FluidTDProblem2(this);
+            Problem.FluidTDProblem2(this, FluidEquationType);
         }
 
         private void waveguideBtn_Click(object sender, RoutedEventArgs e)
