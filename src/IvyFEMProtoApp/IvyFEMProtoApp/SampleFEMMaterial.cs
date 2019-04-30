@@ -24,5 +24,15 @@ namespace IvyFEMProtoApp
                 Values[i] = 0.0;
             }
         }
+
+        public SampleFEMMaterial(SampleFEMMaterial src) : base(src)
+        {
+
+        }
+
+        public override void Copy(IObject src)
+        {
+            base.Copy(src);
+        }
     }
 }

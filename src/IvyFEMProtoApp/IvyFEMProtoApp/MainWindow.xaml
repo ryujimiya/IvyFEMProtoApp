@@ -69,10 +69,16 @@
                     <MenuItem Header="Helmholtz" Click="helmholtzBtn_Click"/>
                 </MenuItem>
                 <MenuItem Header="Fluid">
-                    <MenuItem Header="Fluid(1)" Click="fluid1Btn_Click"/>
-                    <MenuItem Header="Fluid(1)(Time Domain)" Click="fluid1TDBtn_Click"/>
-                    <MenuItem Header="Fluid(2)" Click="fluid2Btn_Click"/>
-                    <MenuItem Header="Fluid(2)(Time Domain)" Click="fluid2TDBtn_Click"/>
+                    <MenuItem Header="Fluid(1)" Click="stdgFluid1Btn_Click"/>
+                    <MenuItem Header="Fluid(1)(Time Domain)" Click="stdgFluid1TDBtn_Click"/>
+                    <MenuItem Header="Fluid(2)" Click="stdgFluid2Btn_Click"/>
+                    <MenuItem Header="Fluid(2)(Time Domain)" Click="stdgFluid2TDBtn_Click"/>
+                </MenuItem>
+                <MenuItem Header="Fluid(SUPG)">
+                    <MenuItem Header="Fluid(SUPG)(1)" Click="supgFluidSUPG1Btn_Click"/>
+                    <MenuItem Header="Fluid(SUPG)(1)(Time Domain)" Click="supgFluid1SUPGTDBtn_Click"/>
+                    <MenuItem Header="Fluid(SUPG)(2)" Click="supgFluid2Btn_Click"/>
+                    <MenuItem Header="Fluid(SUPG)(2)(Time Domain)" Click="supgFluid2TDBtn_Click"/>
                 </MenuItem>
                 <MenuItem Header="ElectroMagnetic">
                     <MenuItem Header="Waveguide" Click="waveguideBtn_Click"/>

@@ -501,26 +501,55 @@ namespace IvyFEMProtoApp
             Problem.HelmholtzProblem(this);
         }
 
-        private FluidEquationType FluidEquationType = FluidEquationType.StandardGalerkinNavierStokes;
-
-        private void fluid1Btn_Click(object sender, RoutedEventArgs e)
+        // mu = 0.02, 0.002 FluidEquationType.StdGNavierStokes
+        // mu = 0.0002 FluidEquationType.SUPGNavierStokes
+        // mu = 0.00002 Not converge
+        private void stdgFluid1Btn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.FluidProblem1(this, FluidEquationType);
+            FluidEquationType fluidEquationType = FluidEquationType.StdGNavierStokes;
+            Problem.FluidProblem1(this, fluidEquationType);
         }
 
-        private void fluid1TDBtn_Click(object sender, RoutedEventArgs e)
+        private void stdgFluid1TDBtn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.FluidTDProblem1(this, FluidEquationType);
+            FluidEquationType fluidEquationType = FluidEquationType.StdGNavierStokes;
+            Problem.FluidTDProblem1(this, fluidEquationType);
         }
 
-        private void fluid2Btn_Click(object sender, RoutedEventArgs e)
+        private void stdgFluid2Btn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.FluidProblem2(this, FluidEquationType);
+            FluidEquationType fluidEquationType = FluidEquationType.StdGNavierStokes;
+            Problem.FluidProblem2(this, fluidEquationType);
         }
 
-        private void fluid2TDBtn_Click(object sender, RoutedEventArgs e)
+        private void stdgFluid2TDBtn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.FluidTDProblem2(this, FluidEquationType);
+            FluidEquationType fluidEquationType = FluidEquationType.StdGNavierStokes;
+            Problem.FluidTDProblem2(this, fluidEquationType);
+        }
+
+        private void supgFluidSUPG1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            FluidEquationType fluidEquationType = FluidEquationType.SUPGNavierStokes;
+            Problem.FluidProblem1(this, fluidEquationType);
+        }
+
+        private void supgFluid1SUPGTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            FluidEquationType fluidEquationType = FluidEquationType.SUPGNavierStokes;
+            Problem.FluidTDProblem1(this, fluidEquationType);
+        }
+
+        private void supgFluid2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            FluidEquationType fluidEquationType = FluidEquationType.SUPGNavierStokes;
+            Problem.FluidProblem2(this, fluidEquationType);
+        }
+
+        private void supgFluid2TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            FluidEquationType fluidEquationType = FluidEquationType.SUPGNavierStokes;
+            Problem.FluidTDProblem2(this, fluidEquationType);
         }
 
         private void waveguideBtn_Click(object sender, RoutedEventArgs e)

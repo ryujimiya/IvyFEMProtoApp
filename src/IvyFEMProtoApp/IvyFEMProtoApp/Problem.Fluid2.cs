@@ -20,10 +20,10 @@ namespace IvyFEMProtoApp
                     pts.Add(new OpenTK.Vector2d(0, 0.7));
                     pts.Add(new OpenTK.Vector2d(0.5, 0.7));
                     pts.Add(new OpenTK.Vector2d(0.5, 0.0));
-                    pts.Add(new OpenTK.Vector2d(1.9, 0.0));
+                    pts.Add(new OpenTK.Vector2d(1.5, 0.0));
                     pts.Add(new OpenTK.Vector2d(2.0, 0.0));
                     pts.Add(new OpenTK.Vector2d(2.0, 1.0));
-                    pts.Add(new OpenTK.Vector2d(1.9, 1.0));
+                    pts.Add(new OpenTK.Vector2d(1.5, 1.0));
                     pts.Add(new OpenTK.Vector2d(0.0, 1.0));
                     lId1 = cad2D.AddPolygon(pts).AddLId;
                     System.Diagnostics.Debug.Assert(lId1 == 1);
@@ -55,6 +55,20 @@ namespace IvyFEMProtoApp
                 uint pDof = 1; // スカラー
                 uint vFEOrder = 2;
                 uint pFEOrder = 1;
+                if (fluidEquationType == FluidEquationType.StdGNavierStokes)
+                {
+                    vFEOrder = 2;
+                    pFEOrder = 1;
+                }
+                else if (fluidEquationType == FluidEquationType.SUPGNavierStokes)
+                {
+                    vFEOrder = 1;
+                    pFEOrder = 1;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.Assert(false);
+                }
                 vQuantityId = world.AddQuantity(vDof, vFEOrder);
                 pQuantityId = world.AddQuantity(pDof, pFEOrder);
             }
@@ -62,20 +76,36 @@ namespace IvyFEMProtoApp
 
             {
                 world.ClearMaterial();
-                NewtonFluidMaterial ma1 = new NewtonFluidMaterial
+                NewtonFluidMaterial ma1 = null;
+                NewtonFluidMaterial ma2 = null;
+                if (fluidEquationType == FluidEquationType.StdGNavierStokes)
                 {
-                    MassDensity = 1.2,
-                    GravityX = 0.0,
-                    GravityY = 0.0,
-                    Mu = 0.02//0.00002
-                };
-                NewtonFluidMaterial ma2 = new NewtonFluidMaterial
+                    ma1 = new NewtonFluidMaterial
+                    {
+                        MassDensity = 1.2,
+                        GravityX = 0.0,
+                        GravityY = 0.0,
+                        Mu = 0.02//0.002//0.00002
+                    };
+                    ma2 = new NewtonFluidMaterial(ma1);
+                    ma2.Mu = ma1.Mu * 10.0;
+                }
+                else if (fluidEquationType == FluidEquationType.SUPGNavierStokes)
                 {
-                    MassDensity = 1.2,
-                    GravityX = 0.0,
-                    GravityY = 0.0,
-                    Mu = 0.0001
-                };
+                    ma1 = new NewtonFluidMaterial
+                    {
+                        MassDensity = 1.2,
+                        GravityX = 0.0,
+                        GravityY = 0.0,
+                        Mu = 0.0002//0.00002
+                    };
+                    ma2 = new NewtonFluidMaterial(ma1);
+                    ma2.Mu = ma1.Mu * 10.0;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.Assert(false);
+                }
                 uint maId1 = world.AddMaterial(ma1);
                 uint maId2 = world.AddMaterial(ma2);
 
@@ -187,6 +217,11 @@ namespace IvyFEMProtoApp
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
                     //FEM.Solver = solver;
                 }
+                if (fluidEquationType == FluidEquationType.SUPGNavierStokes)
+                {
+                    // 収束が遅いのでこの精度で様子を見る
+                    FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-6;
+                }
                 FEM.Solve();
                 double[] U = FEM.U;
 
@@ -212,10 +247,10 @@ namespace IvyFEMProtoApp
                     pts.Add(new OpenTK.Vector2d(0, 0.7));
                     pts.Add(new OpenTK.Vector2d(0.5, 0.7));
                     pts.Add(new OpenTK.Vector2d(0.5, 0.0));
-                    pts.Add(new OpenTK.Vector2d(1.9, 0.0));
+                    pts.Add(new OpenTK.Vector2d(1.5, 0.0));
                     pts.Add(new OpenTK.Vector2d(2.0, 0.0));
                     pts.Add(new OpenTK.Vector2d(2.0, 1.0));
-                    pts.Add(new OpenTK.Vector2d(1.9, 1.0));
+                    pts.Add(new OpenTK.Vector2d(1.5, 1.0));
                     pts.Add(new OpenTK.Vector2d(0.0, 1.0));
                     lId1 = cad2D.AddPolygon(pts).AddLId;
                     System.Diagnostics.Debug.Assert(lId1 == 1);
@@ -247,6 +282,20 @@ namespace IvyFEMProtoApp
                 uint pDof = 1; // スカラー
                 uint vFEOrder = 2;
                 uint pFEOrder = 1;
+                if (fluidEquationType == FluidEquationType.StdGNavierStokes)
+                {
+                    vFEOrder = 2;
+                    pFEOrder = 1;
+                }
+                else if (fluidEquationType == FluidEquationType.SUPGNavierStokes)
+                {
+                    vFEOrder = 1;
+                    pFEOrder = 1;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.Assert(false);
+                }
                 vQuantityId = world.AddQuantity(vDof, vFEOrder);
                 pQuantityId = world.AddQuantity(pDof, pFEOrder);
             }
@@ -254,20 +303,36 @@ namespace IvyFEMProtoApp
 
             {
                 world.ClearMaterial();
-                NewtonFluidMaterial ma1 = new NewtonFluidMaterial
+                NewtonFluidMaterial ma1 = null;
+                NewtonFluidMaterial ma2 = null;
+                if (fluidEquationType == FluidEquationType.StdGNavierStokes)
                 {
-                    MassDensity = 1.2,
-                    GravityX = 0.0,
-                    GravityY = 0.0,
-                    Mu = 0.02//0.00002
-                };
-                NewtonFluidMaterial ma2 = new NewtonFluidMaterial
+                    ma1 = new NewtonFluidMaterial
+                    {
+                        MassDensity = 1.2,
+                        GravityX = 0.0,
+                        GravityY = 0.0,
+                        Mu = 0.02//0.002//0.00002
+                    };
+                    ma2 = new NewtonFluidMaterial(ma1);
+                    ma2.Mu = ma1.Mu * 10.0;
+                }
+                else if (fluidEquationType == FluidEquationType.SUPGNavierStokes)
                 {
-                    MassDensity = 1.2,
-                    GravityX = 0.0,
-                    GravityY = 0.0,
-                    Mu = 0.0001
-                };
+                    ma1 = new NewtonFluidMaterial
+                    {
+                        MassDensity = 1.2,
+                        GravityX = 0.0,
+                        GravityY = 0.0,
+                        Mu = 0.0002//0.00002
+                    };
+                    ma2 = new NewtonFluidMaterial(ma1);
+                    ma2.Mu = ma1.Mu * 10.0;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.Assert(false);
+                }
                 uint maId1 = world.AddMaterial(ma1);
                 uint maId2 = world.AddMaterial(ma2);
 
@@ -349,7 +414,7 @@ namespace IvyFEMProtoApp
             }
 
             double t = 0;
-            double dt = 20.0;
+            double dt = 10.0;
             double newmarkBeta = 1.0 / 4.0;
             double newmarkGamma = 1.0 / 2.0;
             for (int iTime = 0; iTime <= 20; iTime++)
@@ -389,6 +454,11 @@ namespace IvyFEMProtoApp
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
                     //FEM.Solver = solver;
+                }
+                if (fluidEquationType == FluidEquationType.SUPGNavierStokes)
+                {
+                    // 収束が遅いのでこの精度で様子を見る
+                    FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-6;
                 }
                 FEM.Solve();
                 double[] U = FEM.U;
