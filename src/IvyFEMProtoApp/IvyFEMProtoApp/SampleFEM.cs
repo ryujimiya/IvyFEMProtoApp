@@ -88,7 +88,7 @@ namespace IvyFEMProtoApp
             var B = new double[nodeCnt];
             CalcAB(A, B);
 
-            DoubleSetFixedCadsCondtion(A, B, new int[] { nodeCnt }, new int[] { 1 });
+            DoubleSetFixedCadsCondtion(A, B);
 
             double[] X;
             Solver.DoubleSolve(out X, A, B);

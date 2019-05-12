@@ -33,7 +33,7 @@ namespace IvyFEMProtoApp
             InitializeComponent();
         }
 
-        public void Set(Mesher2D mesher2D, double width, double height)
+        public void Init(Mesher2D mesher2D, double width, double height)
         {
             Mesher2D = mesher2D;
             BackgroundWidth = width;

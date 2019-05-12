@@ -84,16 +84,22 @@ namespace IvyFEMProtoApp
                 world.SetCadLoopMaterial(lId, maId);
             }
             {
-                world.IncidentPortId = 0;
-                world.IncidentModeId = 0;
+                IList<PortCondition> portConditions = world.GetPortConditions(quantityId);
+                portConditions.Clear();
+                world.SetIncidentPortId(quantityId, 0);
+                world.SetIncidentModeId(quantityId, 0);
                 IList<uint> port1EIds = new List<uint>();
                 IList<uint> port2EIds = new List<uint>();
                 port1EIds.Add(eId1);
                 port2EIds.Add(eId2);
-                var portEIdss = world.PortEIdss;
-                portEIdss.Clear();
+                IList<IList<uint>> portEIdss = new List<IList<uint>>();
                 portEIdss.Add(port1EIds);
                 portEIdss.Add(port2EIds);
+                foreach (IList<uint> portEIds in portEIdss)
+                {
+                    PortCondition portCondition = new PortCondition(portEIds, FieldValueType.ZScalar);
+                    portConditions.Add(portCondition);
+                }
             }
             uint[] zeroEIds = { 2, 3, 5, 6 };
             var zeroFixedCads = world.GetZeroFieldFixedCads(quantityId);

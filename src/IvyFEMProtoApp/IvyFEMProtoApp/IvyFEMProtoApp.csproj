@@ -137,6 +137,8 @@
       <DependentUpon>MeshWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="PortEdge.cs" />
+    <Compile Include="Problem.VorticityFluid2.cs" />
+    <Compile Include="Problem.VorticityFluid1.cs" />
     <Compile Include="Problem.Fluid2.cs" />
     <Compile Include="Problem.Fluid1.cs" />
     <Compile Include="Problem.ElasticTwoBodyContact.cs" />

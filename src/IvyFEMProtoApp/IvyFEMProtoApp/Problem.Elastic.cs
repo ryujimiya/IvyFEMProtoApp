@@ -79,7 +79,7 @@ namespace IvyFEMProtoApp
                 var fixedCadDatas = new[]
                 {
                     new { CadId = (uint)2, CadElemType = CadElementType.Edge,
-                        FixedDofIndexs = new List<uint> { 0, 1 }, Values = new double[] { 0.0, 0.0 } }
+                        FixedDofIndexs = new List<uint> { 0, 1 }, Values = new List<double> { 0.0, 0.0 } }
                 };
                 IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(quantityId);
                 fixedCads.Clear();
@@ -255,7 +255,7 @@ namespace IvyFEMProtoApp
                 var fixedCadDatas = new[]
                 {
                     new { CadId = (uint)2, CadElemType = CadElementType.Edge,
-                        FixedDofIndexs = new List<uint> { 0, 1 }, Values = new double[] { 0.0, 0.0 } }
+                        FixedDofIndexs = new List<uint> { 0, 1 }, Values = new List<double> { 0.0, 0.0 } }
                 };
                 IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(quantityId);
                 fixedCads.Clear();

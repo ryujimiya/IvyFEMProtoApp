@@ -6,7 +6,7 @@
         xmlns:OpenTK="clr-namespace:OpenTK;assembly=OpenTK.GLControl"        
         xmlns:local="clr-namespace:IvyFEM"
         mc:Ignorable="d"
-        Title="IvyFEMProtoApp" Height="389" Width="500" Loaded="Window_Loaded" Activated="Window_Activated">
+        Title="IvyFEMProtoApp" Height="400" Width="500" Loaded="Window_Loaded" Activated="Window_Activated">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -75,11 +75,23 @@
                     <MenuItem Header="Fluid(2)(Time Domain)" Click="stdgFluid2TDBtn_Click"/>
                 </MenuItem>
                 <MenuItem Header="Fluid(SUPG)">
-                    <MenuItem Header="Fluid(SUPG)(1)" Click="supgFluidSUPG1Btn_Click"/>
-                    <MenuItem Header="Fluid(SUPG)(1)(Time Domain)" Click="supgFluid1SUPGTDBtn_Click"/>
+                    <MenuItem Header="Fluid(SUPG)(1)" Click="supgFluid1Btn_Click"/>
+                    <MenuItem Header="Fluid(SUPG)(1)(Time Domain)" Click="supgFluid1TDBtn_Click"/>
                     <MenuItem Header="Fluid(SUPG)(2)" Click="supgFluid2Btn_Click"/>
                     <MenuItem Header="Fluid(SUPG)(2)(Time Domain)" Click="supgFluid2TDBtn_Click"/>
                 </MenuItem>
+                <MenuItem Header="Vorticity">
+                    <MenuItem Header="Vorticity(1)" Click="stdgVorticityFluid1Btn_Click"/>
+                    <MenuItem Header="Vorticity(1)(Time Domain)" Click="stdgVorticityFluid1TDBtn_Click"/>
+                    <MenuItem Header="Vorticity(2)" Click="stdgVorticityFluid2Btn_Click"/>
+                    <MenuItem Header="Vorticity(2)(Time Domain)" Click="stdgVorticityFluid2TDBtn_Click"/>
+                </MenuItem>
+                <!--<MenuItem Header="Vorticity(SUPG)">
+                    <MenuItem Header="Vorticity(SUPG)(1)" Click="supgVorticityFluid1Btn_Click"/>
+                    <MenuItem Header="Vorticity(SUPG)(1)(Time Domain)" Click="supgVorticityFluid1TDBtn_Click"/>
+                    <MenuItem Header="Vorticity(SUPG)(2)" Click="supgVorticityFluid2Btn_Click"/>
+                    <MenuItem Header="Vorticity(SUPG)(2)(Time Domain)" Click="supgVorticityFluid2TDBtn_Click"/>
+                </MenuItem>-->
                 <MenuItem Header="ElectroMagnetic">
                     <MenuItem Header="Waveguide" Click="waveguideBtn_Click"/>
                 </MenuItem>

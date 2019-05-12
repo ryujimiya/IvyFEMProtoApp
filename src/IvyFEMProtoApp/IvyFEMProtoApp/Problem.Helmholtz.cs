@@ -67,14 +67,17 @@ namespace IvyFEMProtoApp
             }
 
             // 吸収境界
-            IList<uint> abcEIds = world.ABCEIds;
             {
+                IList<PortCondition> portConditions = world.GetPortConditions(quantityId);
+                portConditions.Clear();
+                IList<uint> abcEIds = new List<uint>();
                 uint[] eIds = { 1, 2, 3, 4 };
-                abcEIds.Clear();
                 foreach (uint eId in eIds)
                 {
                     abcEIds.Add(eId);
                 }
+                PortCondition portCondition = new PortCondition(abcEIds, FieldValueType.ZScalar);
+                portConditions.Add(portCondition);
             }
 
             {

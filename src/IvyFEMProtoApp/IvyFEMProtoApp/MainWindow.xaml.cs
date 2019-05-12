@@ -528,13 +528,13 @@ namespace IvyFEMProtoApp
             Problem.FluidTDProblem2(this, fluidEquationType);
         }
 
-        private void supgFluidSUPG1Btn_Click(object sender, RoutedEventArgs e)
+        private void supgFluid1Btn_Click(object sender, RoutedEventArgs e)
         {
             FluidEquationType fluidEquationType = FluidEquationType.SUPGNavierStokes;
             Problem.FluidProblem1(this, fluidEquationType);
         }
 
-        private void supgFluid1SUPGTDBtn_Click(object sender, RoutedEventArgs e)
+        private void supgFluid1TDBtn_Click(object sender, RoutedEventArgs e)
         {
             FluidEquationType fluidEquationType = FluidEquationType.SUPGNavierStokes;
             Problem.FluidTDProblem1(this, fluidEquationType);
@@ -550,6 +550,54 @@ namespace IvyFEMProtoApp
         {
             FluidEquationType fluidEquationType = FluidEquationType.SUPGNavierStokes;
             Problem.FluidTDProblem2(this, fluidEquationType);
+        }
+
+        private void stdgVorticityFluid1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            FluidEquationType fluidEquationType = FluidEquationType.StdGVorticity;
+            Problem.VorticityFluidProblem1(this, fluidEquationType);
+        }
+
+        private void stdgVorticityFluid1TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            FluidEquationType fluidEquationType = FluidEquationType.StdGVorticity;
+            Problem.VorticityFluidTDProblem1(this, fluidEquationType);
+        }
+
+        private void stdgVorticityFluid2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            FluidEquationType fluidEquationType = FluidEquationType.StdGVorticity;
+            Problem.VorticityFluidProblem2(this, fluidEquationType);
+        }
+
+        private void stdgVorticityFluid2TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            FluidEquationType fluidEquationType = FluidEquationType.StdGVorticity;
+            Problem.VorticityFluidTDProblem2(this, fluidEquationType);
+        }
+
+        private void supgVorticityFluid1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            FluidEquationType fluidEquationType = FluidEquationType.SUPGVorticity;
+            Problem.VorticityFluidProblem1(this, fluidEquationType);
+        }
+
+        private void supgVorticityFluid1TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            FluidEquationType fluidEquationType = FluidEquationType.SUPGVorticity;
+            Problem.VorticityFluidTDProblem1(this, fluidEquationType);
+        }
+
+        private void supgVorticityFluid2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            FluidEquationType fluidEquationType = FluidEquationType.SUPGVorticity;
+            Problem.VorticityFluidProblem2(this, fluidEquationType);
+        }
+
+        private void supgVorticityFluid2TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            FluidEquationType fluidEquationType = FluidEquationType.SUPGVorticity;
+            Problem.VorticityFluidTDProblem2(this, fluidEquationType);
         }
 
         private void waveguideBtn_Click(object sender, RoutedEventArgs e)

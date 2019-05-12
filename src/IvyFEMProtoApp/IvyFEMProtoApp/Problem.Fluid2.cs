@@ -126,12 +126,16 @@ namespace IvyFEMProtoApp
                 zeroFixedCads.Add(fixedCad);
             }
 
+            ///////////
+            // 分布速度
+            Func<double, double> vFunc = y => -0.4 * 4.0 / (0.3 * 0.3) * (y - 0.7) * (y - 1.0);
+            //////////
             DistributedFieldFixedCad srcFixedCad;
             {
                 var fixedCadDatas = new[]
                 {
                     new { CadId = (uint)8, CadElemType = CadElementType.Edge,
-                        FixedDofIndexs = new List<uint> { 0, 1 }, Values = new double[] { 0.0, 0.0 } }
+                        FixedDofIndexs = new List<uint> { 0, 1 }, Values = new List<double> { 0.0, 0.0 } }
                 };
                 IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(vQuantityId);
                 fixedCads.Clear();
@@ -189,38 +193,79 @@ namespace IvyFEMProtoApp
                     {
                         double[] coord = world.GetCoord(vQuantityId, coId);
                         double[] values = srcFixedCad.GetDoubleValues(coId);
-                        values[0] = 0.4 * Math.Sin(Math.PI * (coord[1] - 0.7) / 0.3);
+                        values[0] = vFunc(coord[1]);
                         values[1] = 0;
                     }
                 }
 
                 var FEM = new Fluid2DFEM(world);
                 FEM.EquationType = fluidEquationType;
+                if (fluidEquationType == FluidEquationType.StdGNavierStokes)
                 {
-                    var solver = new IvyFEM.Linear.LapackEquationSolver();
-                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
-                    solver.IsOrderingToBandMatrix = true;
-                    solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
-                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
-                    FEM.Solver = solver;
+                    {
+                        var solver = new IvyFEM.Linear.LapackEquationSolver();
+                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
+                        solver.IsOrderingToBandMatrix = true;
+                        solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
+                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
+                        FEM.Solver = solver;
+                    }
+                    {
+                        //var solver = new IvyFEM.Linear.LisEquationSolver();
+                        //solver.Method = IvyFEM.Linear.LisEquationSolverMethod.Default;
+                        //FEM.Solver = solver;
+                    }
+                    {
+                        //var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
+                        //FEM.Solver = solver;
+                    }
                 }
+                else if (fluidEquationType == FluidEquationType.SUPGNavierStokes)
                 {
-                    //var solver = new IvyFEM.Linear.LisEquationSolver();
-                    //solver.Method = IvyFEM.Linear.LisEquationSolverMethod.Default;
-                    //FEM.Solver = solver;
+                    {
+                        //var solver = new IvyFEM.Linear.LapackEquationSolver();
+                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
+                        //solver.IsOrderingToBandMatrix = true;
+                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
+                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
+                        //FEM.Solver = solver;
+                    }
+                    {
+                        //var solver = new IvyFEM.Linear.LisEquationSolver();
+                        //solver.Method = IvyFEM.Linear.LisEquationSolverMethod.Default;
+                        //FEM.Solver = solver;
+                    }
+                    {
+                        var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
+                        solver.ILUFillinLevel = 1;
+                        solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.BiCGSTAB;
+                        FEM.Solver = solver;
+                    }
                 }
+                else
                 {
-                    //var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
-                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
-                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
-                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
-                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
-                    //FEM.Solver = solver;
+                    System.Diagnostics.Debug.Assert(false);
                 }
-                if (fluidEquationType == FluidEquationType.SUPGNavierStokes)
+                if (fluidEquationType == FluidEquationType.StdGNavierStokes)
+                {
+                    // default
+                }
+                else if (fluidEquationType == FluidEquationType.SUPGNavierStokes)
                 {
                     // 収束が遅いのでこの精度で様子を見る
                     FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-6;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.Assert(false);
                 }
                 FEM.Solve();
                 double[] U = FEM.U;
@@ -353,12 +398,16 @@ namespace IvyFEMProtoApp
                 zeroFixedCads.Add(fixedCad);
             }
 
+            ///////////
+            // 分布速度
+            Func<double, double> vFunc = y => -0.4 * 4.0 / (0.3 * 0.3) * (y - 0.7) * (y - 1.0);
+            //////////
             DistributedFieldFixedCad srcFixedCad;
             {
                 var fixedCadDatas = new[]
                 {
                     new { CadId = (uint)8, CadElemType = CadElementType.Edge,
-                        FixedDofIndexs = new List<uint> { 0, 1 }, Values = new double[] { 0.0, 0.0 } }
+                        FixedDofIndexs = new List<uint> { 0, 1 }, Values = new List<double> { 0.0, 0.0 } }
                 };
                 IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(vQuantityId);
                 fixedCads.Clear();
@@ -426,7 +475,7 @@ namespace IvyFEMProtoApp
                     {
                         double[] coord = world.GetCoord(vQuantityId, coId);
                         double[] values = srcFixedCad.GetDoubleValues(coId);
-                        values[0] = 0.4 * Math.Sin(Math.PI * (coord[1] - 0.7) / 0.3);
+                        values[0] = vFunc(coord[1]);
                         values[1] = 0;
                     }
                 }
@@ -434,31 +483,72 @@ namespace IvyFEMProtoApp
                 var FEM = new Fluid2DTDFEM(world, dt,
                     newmarkBeta, newmarkGamma, vValueId, prevVValueId);
                 FEM.EquationType = fluidEquationType;
+                if (fluidEquationType == FluidEquationType.StdGNavierStokes)
                 {
-                    var solver = new IvyFEM.Linear.LapackEquationSolver();
-                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
-                    solver.IsOrderingToBandMatrix = true;
-                    solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
-                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
-                    FEM.Solver = solver;
+                    {
+                        var solver = new IvyFEM.Linear.LapackEquationSolver();
+                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
+                        solver.IsOrderingToBandMatrix = true;
+                        solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
+                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
+                        FEM.Solver = solver;
+                    }
+                    {
+                        //var solver = new IvyFEM.Linear.LisEquationSolver();
+                        //solver.Method = IvyFEM.Linear.LisEquationSolverMethod.Default;
+                        //FEM.Solver = solver;
+                    }
+                    {
+                        //var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
+                        //FEM.Solver = solver;
+                    }
                 }
+                else if (fluidEquationType == FluidEquationType.SUPGNavierStokes)
                 {
-                    //var solver = new IvyFEM.Linear.LisEquationSolver();
-                    //solver.Method = IvyFEM.Linear.LisEquationSolverMethod.Default;
-                    //FEM.Solver = solver;
+                    {
+                        //var solver = new IvyFEM.Linear.LapackEquationSolver();
+                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
+                        //solver.IsOrderingToBandMatrix = true;
+                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
+                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
+                        //FEM.Solver = solver;
+                    }
+                    {
+                        //var solver = new IvyFEM.Linear.LisEquationSolver();
+                        //solver.Method = IvyFEM.Linear.LisEquationSolverMethod.Default;
+                        //FEM.Solver = solver;
+                    }
+                    {
+                        var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
+                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
+                        solver.ILUFillinLevel = 1;
+                        solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.BiCGSTAB;
+                        FEM.Solver = solver;
+                    }
                 }
+                else
                 {
-                    //var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
-                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
-                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
-                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
-                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
-                    //FEM.Solver = solver;
+                    System.Diagnostics.Debug.Assert(false);
                 }
-                if (fluidEquationType == FluidEquationType.SUPGNavierStokes)
+                if (fluidEquationType == FluidEquationType.StdGNavierStokes)
+                {
+                    // default
+                }
+                else if (fluidEquationType == FluidEquationType.SUPGNavierStokes)
                 {
                     // 収束が遅いのでこの精度で様子を見る
                     FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-6;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.Assert(false);
                 }
                 FEM.Solve();
                 double[] U = FEM.U;
