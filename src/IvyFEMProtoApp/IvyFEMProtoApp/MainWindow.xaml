@@ -86,12 +86,12 @@
                     <MenuItem Header="Vorticity(2)" Click="stdgVorticityFluid2Btn_Click"/>
                     <MenuItem Header="Vorticity(2)(Time Domain)" Click="stdgVorticityFluid2TDBtn_Click"/>
                 </MenuItem>
-                <!--<MenuItem Header="Vorticity(SUPG)">
+                <MenuItem Header="Vorticity(SUPG)">
                     <MenuItem Header="Vorticity(SUPG)(1)" Click="supgVorticityFluid1Btn_Click"/>
                     <MenuItem Header="Vorticity(SUPG)(1)(Time Domain)" Click="supgVorticityFluid1TDBtn_Click"/>
                     <MenuItem Header="Vorticity(SUPG)(2)" Click="supgVorticityFluid2Btn_Click"/>
                     <MenuItem Header="Vorticity(SUPG)(2)(Time Domain)" Click="supgVorticityFluid2TDBtn_Click"/>
-                </MenuItem>-->
+                </MenuItem>
                 <MenuItem Header="ElectroMagnetic">
                     <MenuItem Header="Waveguide" Click="waveguideBtn_Click"/>
                 </MenuItem>

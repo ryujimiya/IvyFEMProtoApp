@@ -117,27 +117,69 @@ namespace IvyFEMProtoApp
                 pZeroFixedCads.Add(fixedCad);
             }
 
-            // ωを差分法の式で指定
+            //////////////////////////
+            // dψ/dx, dψ/dyの分布
+            Func<double, double> pxFunc = x => 0.0;
+            Func<double, double> pyFunc = x => 0.5;
+
+            // ω 境界
+            DistributedPortCondition wSrcPortCondition;
             {
-                var portDatas = new[]
-                {
-                    // 境界 (xに平行な境界ならvx方向 = dψ/dyを指定、vy方向 = 0)
-                    new { EId = (uint)3, Parameters = new List<double> { 0.0, 0.5 } },
-                    new { EId = (uint)1, Parameters = new List<double> { 0.0, 0.0 } },
-                    new { EId = (uint)2, Parameters = new List<double> { 0.0, 0.0 } },
-                    new { EId = (uint)4, Parameters = new List<double> { 0.0, 0.0 } },
-                };
                 var portConditions = world.GetPortConditions(wQuantityId);
                 portConditions.Clear();
-                foreach (var data in portDatas)
+
+                // 境界に平行な速度
                 {
+                    FlowDirectionType flowDirType = FlowDirectionType.Tangential;
+                    var portDatas = new[]
+                    {
+                        new { EId = (uint)3 }
+                    };
                     // Scalar
-                    IList<uint> eIds = new List<uint>();
-                    eIds.Add(data.EId);
-                    var portCondition = new PortCondition(eIds, FieldValueType.Scalar);
-                    portCondition.IntAdditionalParameters = new List<int> { };
-                    portCondition.DoubleAdditionalParameters = data.Parameters;
-                    portConditions.Add(portCondition);
+                    IList<uint> fixedDofIndexs = new List<uint>(); // dummy
+                    // dψ/dx、dψ / dy
+                    uint additionalParamDof = 2;
+                    foreach (var data in portDatas)
+                    {
+                        // Scalar
+                        IList<uint> eIds = new List<uint>();
+                        eIds.Add(data.EId);
+                        var portCondition = new DistributedPortCondition(
+                            eIds, FieldValueType.Scalar, fixedDofIndexs, additionalParamDof);
+                        portCondition.IntAdditionalParameters = new List<int> { (int)flowDirType };
+                        portConditions.Add(portCondition);
+                    }
+
+                    wSrcPortCondition = portConditions[0] as DistributedPortCondition;
+                }
+                // 境界に平行な速度
+                {
+                    FlowDirectionType flowDirType = FlowDirectionType.Tangential;
+                    var portDatas = new[]
+                    {
+                        //new { EId = (uint)3, Parameters = new List<double> { 0.0, 0.5 } }, // 一定速度の場合
+                        new { EId = (uint)1, Parameters = new List<double> { 0.0, 0.0 } },
+                        new { EId = (uint)2, Parameters = new List<double> { 0.0, 0.0 } },
+                        new { EId = (uint)4, Parameters = new List<double> { 0.0, 0.0 } },
+                    };
+                    // Scalar
+                    IList<uint> fixedDofIndexs = new List<uint>(); // dummy
+                    IList<double> fixedValues = new List<double>(); // dummy
+                    // dψ/dx、dψ / dy
+                    uint additionalParamDof = 2;
+                    foreach (var data in portDatas)
+                    {
+                        // Scalar
+                        IList<uint> eIds = new List<uint>();
+                        eIds.Add(data.EId);
+                        var portCondition = new ConstPortCondition(
+                            eIds, FieldValueType.Scalar, fixedDofIndexs, fixedValues, additionalParamDof);
+                        portCondition.IntAdditionalParameters = new List<int> { (int)flowDirType };
+                        double[] param = portCondition.GetDoubleAdditionalParameters();
+                        System.Diagnostics.Debug.Assert(data.Parameters.Count == param.Length);
+                        data.Parameters.CopyTo(param, 0);
+                        portConditions.Add(portCondition);
+                    }
                 }
             }
 
@@ -145,7 +187,6 @@ namespace IvyFEMProtoApp
 
             uint wValueId = 0;
             uint pValueId = 0;
-            uint vValueId = 0;
             uint bubbleVValueId = 0;
             var fieldDrawerArray = mainWindow.FieldDrawerArray;
             {
@@ -154,8 +195,6 @@ namespace IvyFEMProtoApp
                 wValueId = world.AddFieldValue(FieldValueType.Scalar, FieldDerivativeType.Value,
                     wQuantityId, false, FieldShowType.Real);
                 // Vector2 (ψからvを求める)
-                vValueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivativeType.Value,
-                    pQuantityId, false, FieldShowType.Real);
                 bubbleVValueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivativeType.Value,
                     pQuantityId, true, FieldShowType.Real);
                 // Scalar
@@ -180,6 +219,18 @@ namespace IvyFEMProtoApp
             }
 
             {
+                // ポートω分布条件
+                {
+                    wSrcPortCondition.InitDoubleAdditionalParameters();
+                    foreach (int coId in wSrcPortCondition.CoIds)
+                    {
+                        double[] coord = world.GetCoord(pQuantityId, coId);
+                        double[] values = wSrcPortCondition.GetDoubleAdditionalParameters(coId);
+                        values[0] = pxFunc(coord[0]);
+                        values[1] = pyFunc(coord[0]);
+                    }
+                }
+
                 var FEM = new Fluid2DFEM(world);
                 FEM.EquationType = fluidEquationType;
                 if (fluidEquationType == FluidEquationType.StdGVorticity)
@@ -369,27 +420,69 @@ namespace IvyFEMProtoApp
                 pZeroFixedCads.Add(fixedCad);
             }
 
-            // ωを差分法の式で指定
+            //////////////////////////
+            // dψ/dx, dψ/dyの分布
+            Func<double, double> pxFunc = x => 0.0;
+            Func<double, double> pyFunc = x => 0.5;
+
+            // ω 境界
+            DistributedPortCondition wSrcPortCondition;
             {
-                var portDatas = new[]
-                {
-                    // 境界 (xに平行な境界ならvx方向 = dψ/dyを指定、vy方向 = 0)
-                    new { EId = (uint)3, Parameters = new List<double> { 0.0, 0.5 } },
-                    new { EId = (uint)1, Parameters = new List<double> { 0.0, 0.0 } },
-                    new { EId = (uint)2, Parameters = new List<double> { 0.0, 0.0 } },
-                    new { EId = (uint)4, Parameters = new List<double> { 0.0, 0.0 } }
-                };
                 var portConditions = world.GetPortConditions(wQuantityId);
                 portConditions.Clear();
-                foreach (var data in portDatas)
+
+                // 境界に平行な速度
                 {
+                    FlowDirectionType flowDirType = FlowDirectionType.Tangential;
+                    var portDatas = new[]
+                    {
+                        new { EId = (uint)3 }
+                    };
                     // Scalar
-                    IList<uint> eIds = new List<uint>();
-                    eIds.Add(data.EId);
-                    var portCondition = new PortCondition(eIds, FieldValueType.Scalar);
-                    portCondition.IntAdditionalParameters = new List<int> { };
-                    portCondition.DoubleAdditionalParameters = data.Parameters;
-                    portConditions.Add(portCondition);
+                    IList<uint> fixedDofIndexs = new List<uint>(); // dummy
+                    // dψ/dx、dψ / dy
+                    uint additionalParamDof = 2;
+                    foreach (var data in portDatas)
+                    {
+                        // Scalar
+                        IList<uint> eIds = new List<uint>();
+                        eIds.Add(data.EId);
+                        var portCondition = new DistributedPortCondition(
+                            eIds, FieldValueType.Scalar, fixedDofIndexs, additionalParamDof);
+                        portCondition.IntAdditionalParameters = new List<int> { (int)flowDirType };
+                        portConditions.Add(portCondition);
+                    }
+
+                    wSrcPortCondition = portConditions[0] as DistributedPortCondition;
+                }
+                // 境界に平行な速度
+                {
+                    FlowDirectionType flowDirType = FlowDirectionType.Tangential;
+                    var portDatas = new[]
+                    {
+                        //new { EId = (uint)3, Parameters = new List<double> { 0.0, 0.5 } }, // 一定速度の場合
+                        new { EId = (uint)1, Parameters = new List<double> { 0.0, 0.0 } },
+                        new { EId = (uint)2, Parameters = new List<double> { 0.0, 0.0 } },
+                        new { EId = (uint)4, Parameters = new List<double> { 0.0, 0.0 } },
+                    };
+                    // Scalar
+                    IList<uint> fixedDofIndexs = new List<uint>(); // dummy
+                    IList<double> fixedValues = new List<double>(); // dummy
+                    // dψ/dx、dψ / dy
+                    uint additionalParamDof = 2;
+                    foreach (var data in portDatas)
+                    {
+                        // Scalar
+                        IList<uint> eIds = new List<uint>();
+                        eIds.Add(data.EId);
+                        var portCondition = new ConstPortCondition(
+                            eIds, FieldValueType.Scalar, fixedDofIndexs, fixedValues, additionalParamDof);
+                        portCondition.IntAdditionalParameters = new List<int> { (int)flowDirType };
+                        double[] param = portCondition.GetDoubleAdditionalParameters();
+                        System.Diagnostics.Debug.Assert(data.Parameters.Count == param.Length);
+                        data.Parameters.CopyTo(param, 0);
+                        portConditions.Add(portCondition);
+                    }
                 }
             }
 
@@ -398,7 +491,6 @@ namespace IvyFEMProtoApp
             uint wValueId = 0;
             uint prevWValueId = 0;
             uint pValueId = 0;
-            uint vValueId = 0;
             uint bubbleVValueId = 0;
             var fieldDrawerArray = mainWindow.FieldDrawerArray;
             {
@@ -411,8 +503,6 @@ namespace IvyFEMProtoApp
                     FieldDerivativeType.Value | FieldDerivativeType.Velocity | FieldDerivativeType.Acceleration,
                     wQuantityId, false, FieldShowType.Real);
                 // Vector2 (ψからvを求める)
-                vValueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivativeType.Value,
-                    pQuantityId, false, FieldShowType.Real);
                 bubbleVValueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivativeType.Value,
                     pQuantityId, true, FieldShowType.Real);
                 // Scalar
@@ -438,10 +528,39 @@ namespace IvyFEMProtoApp
 
             double t = 0;
             double dt = 30.0;
+            int nTime = 10;
+            if (fluidEquationType == FluidEquationType.StdGVorticity)
+            {
+                dt = 30.0;
+                nTime = 10;
+            }
+            else if (fluidEquationType == FluidEquationType.SUPGVorticity)
+            {
+                dt = 180.0;
+                nTime = 5;
+                //dt = 1.0;
+                //nTime = 300;
+            }
+            else
+            {
+                System.Diagnostics.Debug.Assert(false);
+            }
             double newmarkBeta = 1.0 / 4.0;
             double newmarkGamma = 1.0 / 2.0;
-            for (int iTime = 0; iTime <= 10; iTime++)
+            for (int iTime = 0; iTime <= nTime; iTime++)
             {
+                // ポートω分布条件
+                {
+                    wSrcPortCondition.InitDoubleAdditionalParameters();
+                    foreach (int coId in wSrcPortCondition.CoIds)
+                    {
+                        double[] coord = world.GetCoord(pQuantityId, coId);
+                        double[] values = wSrcPortCondition.GetDoubleAdditionalParameters(coId);
+                        values[0] = pxFunc(coord[0]);
+                        values[1] = pyFunc(coord[0]);
+                    }
+                }
+
                 var FEM = new Fluid2DTDFEM(world, dt,
                     newmarkBeta, newmarkGamma, wValueId, prevWValueId);
                 FEM.EquationType = fluidEquationType;

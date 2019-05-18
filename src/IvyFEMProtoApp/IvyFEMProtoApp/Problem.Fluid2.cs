@@ -43,7 +43,7 @@ namespace IvyFEMProtoApp
             mainWindow.glControl.Update();
             WPFUtils.DoEvents();
 
-            double eLen = 0.1;
+            double eLen = 0.08;
             Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
 
             FEWorld world = new FEWorld();
@@ -315,7 +315,7 @@ namespace IvyFEMProtoApp
             mainWindow.glControl.Update();
             WPFUtils.DoEvents();
 
-            double eLen = 0.1;
+            double eLen = 0.08;
             Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
 
             FEWorld world = new FEWorld();
