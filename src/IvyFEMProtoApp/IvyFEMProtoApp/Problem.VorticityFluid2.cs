@@ -219,7 +219,7 @@ namespace IvyFEMProtoApp
                 portConditions.Clear();
 
                 {
-                    FlowDirectionType flowDirType = FlowDirectionType.Normal;
+                    FlowVorticityBCType bcType = FlowVorticityBCType.Outflow;
                     var portDatas = new[]
                     {
                         // outflow
@@ -231,12 +231,12 @@ namespace IvyFEMProtoApp
                         IList<uint> eIds = new List<uint>();
                         eIds.Add(data.EId);
                         var portCondition = new PortCondition(eIds, FieldValueType.Scalar);
-                        portCondition.IntAdditionalParameters = new List<int> { (int)flowDirType };
+                        portCondition.IntAdditionalParameters = new List<int> { (int)bcType };
                         portConditions.Add(portCondition);
                     }
                 }
                 {
-                    FlowDirectionType flowDirType = FlowDirectionType.Tangential;
+                    FlowVorticityBCType bcType = FlowVorticityBCType.TangentialFlow;
                     var portDatas = new[]
                     {
                         // inflow/outflowは指定しない
@@ -260,7 +260,7 @@ namespace IvyFEMProtoApp
                         eIds.Add(data.EId);
                         var portCondition = new ConstPortCondition(
                             eIds, FieldValueType.Scalar, fixedDofIndexs, fixedValues, additionalParamDof);
-                        portCondition.IntAdditionalParameters = new List<int> { (int)flowDirType };
+                        portCondition.IntAdditionalParameters = new List<int> { (int)bcType };
                         double[] param = portCondition.GetDoubleAdditionalParameters();
                         System.Diagnostics.Debug.Assert(data.Parameters.Count == param.Length);
                         data.Parameters.CopyTo(param, 0);
@@ -275,7 +275,7 @@ namespace IvyFEMProtoApp
                 portConditions.Clear();
 
                 {
-                    FlowDirectionType flowDirType = FlowDirectionType.Normal;
+                    FlowVorticityBCType bcType = FlowVorticityBCType.Outflow;
                     var portDatas = new[]
                     {
                         // outflow
@@ -287,7 +287,7 @@ namespace IvyFEMProtoApp
                         IList<uint> eIds = new List<uint>();
                         eIds.Add(data.EId);
                         var portCondition = new PortCondition(eIds, FieldValueType.Scalar);
-                        portCondition.IntAdditionalParameters = new List<int> { (int)flowDirType };
+                        portCondition.IntAdditionalParameters = new List<int> { (int)bcType };
                         portConditions.Add(portCondition);
                     }
                 }
@@ -352,65 +352,35 @@ namespace IvyFEMProtoApp
 
                 var FEM = new Fluid2DFEM(world);
                 FEM.EquationType = fluidEquationType;
-                if (fluidEquationType == FluidEquationType.StdGVorticity)
                 {
-                    {
-                        //var solver = new IvyFEM.Linear.LapackEquationSolver();
-                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
-                        //solver.IsOrderingToBandMatrix = true;
-                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
-                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
-                        //FEM.Solver = solver;
-                    }
-                    {
-                        //var solver = new IvyFEM.Linear.LisEquationSolver();
-                        //solver.Method = IvyFEM.Linear.LisEquationSolverMethod.Default;
-                        //FEM.Solver = solver;
-                    }
-                    {
-                        var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
-                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
-                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
-                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
-                        solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
-                        FEM.Solver = solver;
-                    }
+                    var solver = new IvyFEM.Linear.LapackEquationSolver();
+                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
+                    solver.IsOrderingToBandMatrix = true;
+                    solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
+                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
+                    FEM.Solver = solver;
                 }
-                else if (fluidEquationType == FluidEquationType.SUPGVorticity)
                 {
-                    {
-                        var solver = new IvyFEM.Linear.LapackEquationSolver();
-                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
-                        solver.IsOrderingToBandMatrix = true;
-                        solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
-                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
-                        FEM.Solver = solver;
-                    }
-                    {
-                        //var solver = new IvyFEM.Linear.LisEquationSolver();
-                        //solver.Method = IvyFEM.Linear.LisEquationSolverMethod.Default;
-                        //FEM.Solver = solver;
-                    }
-                    {
-                        //var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
-                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
-                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
-                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
-                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
-                        //FEM.Solver = solver;
-                    }
+                    //var solver = new IvyFEM.Linear.LisEquationSolver();
+                    //solver.Method = IvyFEM.Linear.LisEquationSolverMethod.Default;
+                    //FEM.Solver = solver;
                 }
-                else
                 {
-                    System.Diagnostics.Debug.Assert(false);
+                    //var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
+                    //FEM.Solver = solver;
                 }
+
                 if (fluidEquationType == FluidEquationType.StdGVorticity)
                 {
                     // default
                 }
                 else if (fluidEquationType == FluidEquationType.SUPGVorticity)
                 {
-                    FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-6;
+                    FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6;
                 }
                 else
                 {
@@ -418,7 +388,7 @@ namespace IvyFEMProtoApp
                 }
                 FEM.Solve();
                 double[] U = FEM.U;
-                double[] V = FEM.CoordV;
+                double[] V = FEM.CoordVelocity;
 
                 world.UpdateFieldValueValuesFromNodeValues(wValueId, FieldDerivativeType.Value, U);
                 world.UpdateFieldValueValuesFromNodeValues(pValueId, FieldDerivativeType.Value, U);
@@ -642,7 +612,7 @@ namespace IvyFEMProtoApp
                 portConditions.Clear();
 
                 {
-                    FlowDirectionType flowDirType = FlowDirectionType.Normal;
+                    FlowVorticityBCType bcType = FlowVorticityBCType.Outflow;
                     var portDatas = new[]
                     {
                         // outflow
@@ -654,12 +624,12 @@ namespace IvyFEMProtoApp
                         IList<uint> eIds = new List<uint>();
                         eIds.Add(data.EId);
                         var portCondition = new PortCondition(eIds, FieldValueType.Scalar);
-                        portCondition.IntAdditionalParameters = new List<int> { (int)flowDirType };
+                        portCondition.IntAdditionalParameters = new List<int> { (int)bcType };
                         portConditions.Add(portCondition);
                     }
                 }
                 {
-                    FlowDirectionType flowDirType = FlowDirectionType.Tangential;
+                    FlowVorticityBCType bcType = FlowVorticityBCType.TangentialFlow;
                     var portDatas = new[]
                     {
                         // inflow/outflowは指定しない
@@ -683,7 +653,7 @@ namespace IvyFEMProtoApp
                         eIds.Add(data.EId);
                         var portCondition = new ConstPortCondition(
                             eIds, FieldValueType.Scalar, fixedDofIndexs, fixedValues, additionalParamDof);
-                        portCondition.IntAdditionalParameters = new List<int> { (int)flowDirType };
+                        portCondition.IntAdditionalParameters = new List<int> { (int)bcType };
                         double[] param = portCondition.GetDoubleAdditionalParameters();
                         System.Diagnostics.Debug.Assert(data.Parameters.Count == param.Length);
                         data.Parameters.CopyTo(param, 0);
@@ -698,7 +668,7 @@ namespace IvyFEMProtoApp
                 portConditions.Clear();
 
                 {
-                    FlowDirectionType flowDirType = FlowDirectionType.Normal;
+                    FlowVorticityBCType bcType = FlowVorticityBCType.Outflow;
                     var portDatas = new[]
                     {
                         // outflow
@@ -710,7 +680,7 @@ namespace IvyFEMProtoApp
                         IList<uint> eIds = new List<uint>();
                         eIds.Add(data.EId);
                         var portCondition = new PortCondition(eIds, FieldValueType.Scalar);
-                        portCondition.IntAdditionalParameters = new List<int> { (int)flowDirType };
+                        portCondition.IntAdditionalParameters = new List<int> { (int)bcType };
                         portConditions.Add(portCondition);
                     }
                 }
@@ -804,65 +774,35 @@ namespace IvyFEMProtoApp
                 var FEM = new Fluid2DTDFEM(world, dt,
                     newmarkBeta, newmarkGamma, wValueId, prevWValueId);
                 FEM.EquationType = fluidEquationType;
-                if (fluidEquationType == FluidEquationType.StdGVorticity)
                 {
-                    {
-                        //var solver = new IvyFEM.Linear.LapackEquationSolver();
-                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
-                        //solver.IsOrderingToBandMatrix = true;
-                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
-                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
-                        //FEM.Solver = solver;
-                    }
-                    {
-                        //var solver = new IvyFEM.Linear.LisEquationSolver();
-                        //solver.Method = IvyFEM.Linear.LisEquationSolverMethod.Default;
-                        //FEM.Solver = solver;
-                    }
-                    {
-                        var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
-                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
-                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
-                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
-                        solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
-                        FEM.Solver = solver;
-                    }
+                    var solver = new IvyFEM.Linear.LapackEquationSolver();
+                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
+                    solver.IsOrderingToBandMatrix = true;
+                    solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
+                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
+                    FEM.Solver = solver;
                 }
-                else if (fluidEquationType == FluidEquationType.SUPGVorticity)
                 {
-                    {
-                        var solver = new IvyFEM.Linear.LapackEquationSolver();
-                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
-                        solver.IsOrderingToBandMatrix = true;
-                        solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
-                        //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
-                        FEM.Solver = solver;
-                    }
-                    {
-                        //var solver = new IvyFEM.Linear.LisEquationSolver();
-                        //solver.Method = IvyFEM.Linear.LisEquationSolverMethod.Default;
-                        //FEM.Solver = solver;
-                    }
-                    {
-                        //var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
-                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
-                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
-                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
-                        //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
-                        //FEM.Solver = solver;
-                    }
+                    //var solver = new IvyFEM.Linear.LisEquationSolver();
+                    //solver.Method = IvyFEM.Linear.LisEquationSolverMethod.Default;
+                    //FEM.Solver = solver;
                 }
-                else
                 {
-                    System.Diagnostics.Debug.Assert(false);
+                    //var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
+                    //FEM.Solver = solver;
                 }
+
                 if (fluidEquationType == FluidEquationType.StdGVorticity)
                 {
                     // default
                 }
                 else if (fluidEquationType == FluidEquationType.SUPGVorticity)
                 {
-                    FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-6;
+                    FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6;
                 }
                 else
                 {
@@ -870,7 +810,7 @@ namespace IvyFEMProtoApp
                 }
                 FEM.Solve();
                 double[] U = FEM.U;
-                double[] V = FEM.CoordV;
+                double[] V = FEM.CoordVelocity;
 
                 FEM.UpdateFieldValuesTimeDomain(); // for wValueId, prevWValueId
                 world.UpdateFieldValueValuesFromNodeValues(pValueId, FieldDerivativeType.Value, U);

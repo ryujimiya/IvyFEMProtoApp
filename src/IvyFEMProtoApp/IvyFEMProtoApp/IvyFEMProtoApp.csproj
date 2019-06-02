@@ -137,6 +137,12 @@
       <DependentUpon>MeshWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="PortEdge.cs" />
+    <Compile Include="Problem.PressurePoissonFluidRK2.cs" />
+    <Compile Include="Problem.PressurePoissonFluidRK1.cs" />
+    <Compile Include="Problem.PressurePoissonFluid2.cs" />
+    <Compile Include="Problem.PressurePoissonFluid1.cs" />
+    <Compile Include="Problem.VorticityFluidRK2.cs" />
+    <Compile Include="Problem.VorticityFluidRK1.cs" />
     <Compile Include="Problem.VorticityFluid2.cs" />
     <Compile Include="Problem.VorticityFluid1.cs" />
     <Compile Include="Problem.Fluid2.cs" />

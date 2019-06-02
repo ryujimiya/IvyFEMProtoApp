@@ -261,7 +261,7 @@ namespace IvyFEMProtoApp
                 else if (fluidEquationType == FluidEquationType.SUPGNavierStokes)
                 {
                     // 収束が遅いのでこの精度で様子を見る
-                    FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-6;
+                    FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6;
                 }
                 else
                 {
@@ -544,7 +544,7 @@ namespace IvyFEMProtoApp
                 else if (fluidEquationType == FluidEquationType.SUPGNavierStokes)
                 {
                     // 収束が遅いのでこの精度で様子を見る
-                    FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-6;
+                    FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6;
                 }
                 else
                 {

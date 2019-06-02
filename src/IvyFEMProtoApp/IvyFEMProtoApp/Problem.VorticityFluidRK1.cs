@@ -1,0 +1,259 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using IvyFEM;
+
+namespace IvyFEMProtoApp
+{
+    partial class Problem
+    {
+        public void VorticityFluidRKTDProblem1(MainWindow mainWindow)
+        {
+            FluidEquationType fluidEquationType = FluidEquationType.StdGVorticity;
+            CadObject2D cad2D = new CadObject2D();
+            {
+                uint lId1 = 0;
+                {
+                    IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
+                    pts.Add(new OpenTK.Vector2d(0.0, 0.0));
+                    pts.Add(new OpenTK.Vector2d(1.0, 0.0));
+                    pts.Add(new OpenTK.Vector2d(1.0, 1.0));
+                    pts.Add(new OpenTK.Vector2d(0.0, 1.0));
+                    lId1 = cad2D.AddPolygon(pts).AddLId;
+                    System.Diagnostics.Debug.Assert(lId1 == 1);
+                }
+            }
+
+            mainWindow.IsFieldDraw = false;
+            var drawerArray = mainWindow.DrawerArray;
+            drawerArray.Clear();
+            IDrawer drawer = new CadObject2DDrawer(cad2D);
+            mainWindow.DrawerArray.Add(drawer);
+            mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
+            mainWindow.glControl_ResizeProc();
+            mainWindow.glControl.Invalidate();
+            mainWindow.glControl.Update();
+            WPFUtils.DoEvents();
+
+            double eLen = 0.08;
+            Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
+
+            FEWorld world = new FEWorld();
+            world.Mesh = mesher2D;
+            uint wQuantityId;
+            uint pQuantityId;
+            {
+                uint wDof = 1; // ω
+                uint pDof = 1; // ψ
+                uint wFEOrder = 1;
+                uint pFEOrder = 1;
+                wQuantityId = world.AddQuantity(wDof, wFEOrder);
+                pQuantityId = world.AddQuantity(pDof, pFEOrder);
+            }
+            world.TriIntegrationPointCount = TriangleIntegrationPointCount.Point7;
+
+            {
+                world.ClearMaterial();
+                NewtonFluidMaterial ma = null;
+                ma = new NewtonFluidMaterial
+                {
+                    MassDensity = 1.2,
+                    GravityX = 0.0,
+                    GravityY = 0.0,
+                    Mu = 0.02//0.002//0.00002
+                };
+                uint maId = world.AddMaterial(ma);
+
+                uint lId1 = 1;
+                world.SetCadLoopMaterial(lId1, maId);
+
+                uint[] eIds = { 1, 2, 3, 4 };
+                foreach (uint eId in eIds)
+                {
+                    world.SetCadEdgeMaterial(eId, maId);
+                }
+            }
+
+            // 入口(境界3)も流線が平行なので0
+            uint[] pZeroEIds = { 1, 2, 3, 4 };
+            var pZeroFixedCads = world.GetZeroFieldFixedCads(pQuantityId);
+            pZeroFixedCads.Clear();
+            foreach (uint eId in pZeroEIds)
+            {
+                // Scalar
+                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Scalar);
+                pZeroFixedCads.Add(fixedCad);
+            }
+
+            //////////////////////////
+            // dψ/dx, dψ/dyの分布
+            Func<double, double> pxFunc = x => 0.0;
+            Func<double, double> pyFunc = x => 0.5;
+
+            // ω 境界
+            DistributedPortCondition wSrcPortCondition;
+            {
+                var portConditions = world.GetPortConditions(wQuantityId);
+                portConditions.Clear();
+
+                // 境界に平行な速度
+                {
+                    FlowVorticityBCType bcType = FlowVorticityBCType.TangentialFlow;
+                    var portDatas = new[]
+                    {
+                        new { EId = (uint)3 }
+                    };
+                    // Scalar
+                    IList<uint> fixedDofIndexs = new List<uint>(); // dummy
+                    // dψ/dx、dψ / dy
+                    uint additionalParamDof = 2;
+                    foreach (var data in portDatas)
+                    {
+                        // Scalar
+                        IList<uint> eIds = new List<uint>();
+                        eIds.Add(data.EId);
+                        var portCondition = new DistributedPortCondition(
+                            eIds, FieldValueType.Scalar, fixedDofIndexs, additionalParamDof);
+                        portCondition.IntAdditionalParameters = new List<int> { (int)bcType };
+                        portConditions.Add(portCondition);
+                    }
+
+                    wSrcPortCondition = portConditions[0] as DistributedPortCondition;
+                }
+                // 境界に平行な速度
+                {
+                    FlowVorticityBCType bcType = FlowVorticityBCType.TangentialFlow;
+                    var portDatas = new[]
+                    {
+                        //new { EId = (uint)3, Parameters = new List<double> { 0.0, 0.5 } }, // 一定速度の場合
+                        new { EId = (uint)1, Parameters = new List<double> { 0.0, 0.0 } },
+                        new { EId = (uint)2, Parameters = new List<double> { 0.0, 0.0 } },
+                        new { EId = (uint)4, Parameters = new List<double> { 0.0, 0.0 } },
+                    };
+                    // Scalar
+                    IList<uint> fixedDofIndexs = new List<uint>(); // dummy
+                    IList<double> fixedValues = new List<double>(); // dummy
+                    // dψ/dx、dψ / dy
+                    uint additionalParamDof = 2;
+                    foreach (var data in portDatas)
+                    {
+                        // Scalar
+                        IList<uint> eIds = new List<uint>();
+                        eIds.Add(data.EId);
+                        var portCondition = new ConstPortCondition(
+                            eIds, FieldValueType.Scalar, fixedDofIndexs, fixedValues, additionalParamDof);
+                        portCondition.IntAdditionalParameters = new List<int> { (int)bcType };
+                        double[] param = portCondition.GetDoubleAdditionalParameters();
+                        System.Diagnostics.Debug.Assert(data.Parameters.Count == param.Length);
+                        data.Parameters.CopyTo(param, 0);
+                        portConditions.Add(portCondition);
+                    }
+                }
+            }
+
+            world.MakeElements();
+
+            uint wValueId = 0;
+            uint prevWValueId = 0;
+            uint pValueId = 0;
+            uint bubbleVValueId = 0;
+            var fieldDrawerArray = mainWindow.FieldDrawerArray;
+            {
+                world.ClearFieldValue();
+                // Scalar
+                wValueId = world.AddFieldValue(FieldValueType.Scalar,
+                    FieldDerivativeType.Value, wQuantityId, false, FieldShowType.Real);
+                prevWValueId = world.AddFieldValue(FieldValueType.Scalar,
+                    FieldDerivativeType.Value, wQuantityId, false, FieldShowType.Real);
+                // Vector2 (ψからvを求める)
+                bubbleVValueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivativeType.Value,
+                    pQuantityId, true, FieldShowType.Real);
+                // Scalar
+                pValueId = world.AddFieldValue(FieldValueType.Scalar, FieldDerivativeType.Value,
+                    pQuantityId, false, FieldShowType.Real);
+                mainWindow.IsFieldDraw = true;
+                fieldDrawerArray.Clear();
+                IFieldDrawer vectorDrawer = new VectorFieldDrawer(
+                    bubbleVValueId, FieldDerivativeType.Value, world);
+                fieldDrawerArray.Add(vectorDrawer);
+                IFieldDrawer faceDrawer = new FaceFieldDrawer(wValueId, FieldDerivativeType.Value, true, world,
+                    wValueId, FieldDerivativeType.Value);
+                fieldDrawerArray.Add(faceDrawer);
+                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(
+                    wValueId, FieldDerivativeType.Value, true, false, world);
+                fieldDrawerArray.Add(edgeDrawer);
+                mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
+                mainWindow.glControl_ResizeProc();
+                //mainWindow.glControl.Invalidate();
+                //mainWindow.glControl.Update();
+                //WPFUtils.DoEvents();
+            }
+
+            double nu;
+            {
+                uint maId = 1;
+                NewtonFluidMaterial ma = world.GetMaterial(maId) as NewtonFluidMaterial;
+                nu = ma.Mu / ma.MassDensity;
+            }
+            double t = 0;
+            //double dt = 0.02;
+            //int nTime = 100;
+            double dt = 0.05 * (1.0 / 4.0) * (eLen * eLen / nu);
+            int nTime = 200;
+            for (int iTime = 0; iTime <= nTime; iTime++)
+            {
+                // ポートω分布条件
+                {
+                    wSrcPortCondition.InitDoubleAdditionalParameters();
+                    foreach (int coId in wSrcPortCondition.CoIds)
+                    {
+                        double[] coord = world.GetCoord(pQuantityId, coId);
+                        double[] values = wSrcPortCondition.GetDoubleAdditionalParameters(coId);
+                        values[0] = pxFunc(coord[0]);
+                        values[1] = pyFunc(coord[0]);
+                    }
+                }
+
+                var FEM = new Fluid2DRKTDFEM(world, dt, wValueId, prevWValueId);
+                FEM.EquationType = fluidEquationType;
+                {
+                    var solver = new IvyFEM.Linear.LapackEquationSolver();
+                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
+                    solver.IsOrderingToBandMatrix = true;
+                    solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
+                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
+                    FEM.Solver = solver;
+                }
+                {
+                    //var solver = new IvyFEM.Linear.LisEquationSolver();
+                    //solver.Method = IvyFEM.Linear.LisEquationSolverMethod.Default;
+                    //FEM.Solver = solver;
+                }
+                {
+                    //var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
+                    //FEM.Solver = solver;
+                }
+                FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6;
+                FEM.Solve();
+                double[] U = FEM.U;
+                double[] V = FEM.CoordVelocity;
+
+                FEM.UpdateFieldValuesTimeDomain(); // for wValueId, prevWValueId
+                world.UpdateFieldValueValuesFromNodeValues(pValueId, FieldDerivativeType.Value, U);
+                world.UpdateBubbleFieldValueValuesFromCoordValues(bubbleVValueId, FieldDerivativeType.Value, V);
+
+                fieldDrawerArray.Update(world);
+                mainWindow.glControl.Invalidate();
+                mainWindow.glControl.Update();
+                WPFUtils.DoEvents();
+                t += dt;
+            }
+        }
+    }
+}

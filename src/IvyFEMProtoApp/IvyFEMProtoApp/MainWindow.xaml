@@ -26,6 +26,12 @@
                     <MenuItem Header="LAPACK" Click="lapackBtn_Click"/>
                     <MenuItem Header="Lis" Click="lisBtn_Click"/>
                 </MenuItem>
+                <MenuItem Header="Implement">
+                    <MenuItem Header="Sample FEM" Click="sampleFEMBtn_Click"/>
+                </MenuItem>
+                <MenuItem Header="Edit">
+                    <MenuItem Header="CadEdit" Click="cadEditBtn_Click"/>
+                </MenuItem>
                 <MenuItem Header="Elastic">
                     <MenuItem Header="Elastic" Click="elasticBtn_Click"/>
                     <MenuItem Header="Elastic Time Domain" Click="elasticTDBtn_Click"/>
@@ -68,6 +74,9 @@
                     <MenuItem Header="Advection Diffusion (Time Domain)" Click="advectionDiffusionTDBtn_Click"/>
                     <MenuItem Header="Helmholtz" Click="helmholtzBtn_Click"/>
                 </MenuItem>
+                <MenuItem Header="ElectroMagnetic">
+                    <MenuItem Header="Waveguide" Click="waveguideBtn_Click"/>
+                </MenuItem>
                 <MenuItem Header="Fluid">
                     <MenuItem Header="Fluid(1)" Click="stdgFluid1Btn_Click"/>
                     <MenuItem Header="Fluid(1)(Time Domain)" Click="stdgFluid1TDBtn_Click"/>
@@ -92,14 +101,19 @@
                     <MenuItem Header="Vorticity(SUPG)(2)" Click="supgVorticityFluid2Btn_Click"/>
                     <MenuItem Header="Vorticity(SUPG)(2)(Time Domain)" Click="supgVorticityFluid2TDBtn_Click"/>
                 </MenuItem>
-                <MenuItem Header="ElectroMagnetic">
-                    <MenuItem Header="Waveguide" Click="waveguideBtn_Click"/>
+                <MenuItem Header="Vorticity(RK)">
+                    <MenuItem Header="Vorticity(RK)(1)(Time Domain)" Click="stdgVorticityFluid1RKTDBtn_Click"/>
+                    <MenuItem Header="Vorticity(RK)(2)(Time Domain)" Click="stdgVorticityFluid2RKTDBtn_Click"/>
                 </MenuItem>
-                <MenuItem Header="Implement">
-                    <MenuItem Header="Sample FEM" Click="sampleFEMBtn_Click"/>
+                <MenuItem Header="Pressure Poisson">
+                    <MenuItem Header="Pressure Poisson(1)" Click="stdgPressurePoissonFluid1Btn_Click"/>
+                    <MenuItem Header="Pressure Poisson(1)(Time Domain)" Click="stdgPressurePoissonFluid1TDBtn_Click"/>
+                    <!--<MenuItem Header="Pressure Poisson(2)" Click="stdgPressurePoissonFluid2Btn_Click"/>
+                    <MenuItem Header="Pressure Poisson(2)(Time Domain)" Click="stdgPressurePoissonFluid2TDBtn_Click"/>-->
                 </MenuItem>
-                <MenuItem Header="Edit">
-                    <MenuItem Header="CadEdit" Click="cadEditBtn_Click"/>
+                <MenuItem Header="Pressure Poisson(RK)">
+                    <MenuItem Header="Pressure Poisson(RK)(1)(Time Domain)" Click="stdgPressurePoissonFluid1RKTDBtn_Click"/>
+                    <!--<MenuItem Header="Pressure Poisson(RK)(2)(Time Domain)" Click="stdgPressurePoissonFluid2RKTDBtn_Click"/>-->
                 </MenuItem>
             </Menu>
             <Grid>

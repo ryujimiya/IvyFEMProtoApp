@@ -192,7 +192,7 @@ namespace IvyFEMProtoApp
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
                     FEM.Solver = solver;
                 }
-                FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-10;
+                FEM.ConvRatioToleranceForNonlinearIter = 1.0e-10;
                 FEM.Solve();
                 double[] U = FEM.U;
 
@@ -358,7 +358,7 @@ namespace IvyFEMProtoApp
                     //solver.IsOrderingToBandMatrix = true;
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
-                    //FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-10;
+                    //FEM.ConvRatioToleranceForNonlinearIter = 1.0e-10;
                     //FEM.Solver = solver;
                 }
                 {
@@ -374,7 +374,7 @@ namespace IvyFEMProtoApp
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
                     FEM.Solver = solver;
                 }
-                FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-10;
+                FEM.ConvRatioToleranceForNonlinearIter = 1.0e-10;
                 FEM.Solve();
                 //double[] U = FEM.U;
 

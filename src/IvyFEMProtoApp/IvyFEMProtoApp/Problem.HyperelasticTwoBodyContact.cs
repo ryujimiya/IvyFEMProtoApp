@@ -218,7 +218,7 @@ namespace IvyFEMProtoApp
                         //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
                         FEM.Solver = solver;
                     }
-                    FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-10;
+                    FEM.ConvRatioToleranceForNonlinearIter = 1.0e-10;
                 }
                 else
                 */
@@ -246,7 +246,7 @@ namespace IvyFEMProtoApp
                         //FEM.Solver = solver;
                     }
                 }
-                FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-10;
+                FEM.ConvRatioToleranceForNonlinearIter = 1.0e-10;
                 FEM.Solve();
                 //double[] U = FEM.U;
 

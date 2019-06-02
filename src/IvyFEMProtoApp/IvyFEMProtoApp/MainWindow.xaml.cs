@@ -311,6 +311,18 @@ namespace IvyFEMProtoApp
             Problem.LisExample();
         }
 
+        private void sampleFEMBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.SampleFEMProblem(this);
+        }
+
+        private void cadEditBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var cadEditWindow = new CadEditWindow();
+            cadEditWindow.Owner = this;
+            cadEditWindow.ShowDialog();
+        }
+
         private void elasticBtn_Click(object sender, RoutedEventArgs e)
         {
             bool isSaintVenant = false;
@@ -501,6 +513,11 @@ namespace IvyFEMProtoApp
             Problem.HelmholtzProblem(this);
         }
 
+        private void waveguideBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.WaveguideProblem(this);
+        }
+
         // mu = 0.02, 0.002 FluidEquationType.StdGNavierStokes
         // mu = 0.0002 FluidEquationType.SUPGNavierStokes
         // mu = 0.00002 Not converge
@@ -600,21 +617,44 @@ namespace IvyFEMProtoApp
             Problem.VorticityFluidTDProblem2(this, fluidEquationType);
         }
 
-        private void waveguideBtn_Click(object sender, RoutedEventArgs e)
+        private void stdgVorticityFluid1RKTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.WaveguideProblem(this);
+            Problem.VorticityFluidRKTDProblem1(this);
         }
 
-        private void sampleFEMBtn_Click(object sender, RoutedEventArgs e)
+        private void stdgVorticityFluid2RKTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.SampleFEMProblem(this);
+            Problem.VorticityFluidRKTDProblem2(this);
         }
 
-        private void cadEditBtn_Click(object sender, RoutedEventArgs e)
+        private void stdgPressurePoissonFluid1Btn_Click(object sender, RoutedEventArgs e)
         {
-            var cadEditWindow = new CadEditWindow();
-            cadEditWindow.Owner = this;
-            cadEditWindow.ShowDialog();
+            Problem.PressurePoissonFluidProblem1(this);
+        }
+
+        private void stdgPressurePoissonFluid1TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.PressurePoissonFluidTDProblem1(this);
+        }
+
+        private void stdgPressurePoissonFluid2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.PressurePoissonFluidProblem2(this);
+        }
+
+        private void stdgPressurePoissonFluid2TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.PressurePoissonFluidTDProblem2(this);
+        }
+
+        private void stdgPressurePoissonFluid1RKTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.PressurePoissonFluidRKTDProblem1(this);
+        }
+
+        private void stdgPressurePoissonFluid2RKTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.PressurePoissonFluidRKTDProblem2(this);
         }
     }
 }

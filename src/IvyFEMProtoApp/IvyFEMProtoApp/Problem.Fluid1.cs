@@ -77,7 +77,7 @@ namespace IvyFEMProtoApp
                         MassDensity = 1.2,
                         GravityX = 0.0,
                         GravityY = 0.0,
-                        Mu = 0.002//0.02//0.002//0.00002
+                        Mu = 0.02//0.002//0.00002
                     };
                 }
                 else if (fluidEquationType == FluidEquationType.SUPGNavierStokes)
@@ -226,7 +226,7 @@ namespace IvyFEMProtoApp
                 else if (fluidEquationType == FluidEquationType.SUPGNavierStokes)
                 {
                     // 収束が遅いのでこの精度で様子を見る
-                    FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-6;
+                    FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6;
                 }
                 else
                 {
@@ -474,7 +474,7 @@ namespace IvyFEMProtoApp
                 else if (fluidEquationType == FluidEquationType.SUPGNavierStokes)
                 {
                     // 収束が遅いのでこの精度で様子を見る
-                    FEM.ConvRatioToleranceForNewtonRaphson = 1.0e-6;
+                    FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6;
                 }
                 else
                 {
