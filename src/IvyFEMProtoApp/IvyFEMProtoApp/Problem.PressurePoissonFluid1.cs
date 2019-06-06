@@ -11,7 +11,7 @@ namespace IvyFEMProtoApp
     {
         public void PressurePoissonFluidProblem1(MainWindow mainWindow)
         {
-            FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoissson;
+            FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoisson;
             CadObject2D cad2D = new CadObject2D();
             {
                 uint lId1 = 0;
@@ -204,7 +204,7 @@ namespace IvyFEMProtoApp
 
         public void PressurePoissonFluidTDProblem1(MainWindow mainWindow)
         {
-            FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoissson;
+            FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoisson;
             CadObject2D cad2D = new CadObject2D();
             {
                 uint lId1 = 0;

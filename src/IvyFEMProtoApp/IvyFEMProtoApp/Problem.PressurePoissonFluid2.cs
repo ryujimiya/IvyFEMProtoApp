@@ -11,7 +11,7 @@ namespace IvyFEMProtoApp
     {
         public void PressurePoissonFluidProblem2(MainWindow mainWindow)
         {
-            FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoissson;
+            FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoisson;
             CadObject2D cad2D = new CadObject2D();
             {
                 uint lId1 = 0;
@@ -103,6 +103,17 @@ namespace IvyFEMProtoApp
                 var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Vector2);
                 zeroFixedCads.Add(fixedCad);
             }
+
+            //// TEST Outflow p = 0の条件にする
+            //uint[] pZeroEIds = { 5 };
+            //var pZeroFixedCads = world.GetZeroFieldFixedCads(pQuantityId);
+            //pZeroFixedCads.Clear();
+            //foreach (uint eId in pZeroEIds)
+            //{
+            //    // Scalar
+            //    var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Scalar);
+            //    pZeroFixedCads.Add(fixedCad);
+            //}
 
             ///////////
             // 分布速度
@@ -276,7 +287,7 @@ namespace IvyFEMProtoApp
 
         public void PressurePoissonFluidTDProblem2(MainWindow mainWindow)
         {
-            FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoissson;
+            FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoisson;
             CadObject2D cad2D = new CadObject2D();
             {
                 uint lId1 = 0;

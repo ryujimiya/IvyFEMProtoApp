@@ -108,12 +108,12 @@
                 <MenuItem Header="Pressure Poisson">
                     <MenuItem Header="Pressure Poisson(1)" Click="stdgPressurePoissonFluid1Btn_Click"/>
                     <MenuItem Header="Pressure Poisson(1)(Time Domain)" Click="stdgPressurePoissonFluid1TDBtn_Click"/>
-                    <!--<MenuItem Header="Pressure Poisson(2)" Click="stdgPressurePoissonFluid2Btn_Click"/>
-                    <MenuItem Header="Pressure Poisson(2)(Time Domain)" Click="stdgPressurePoissonFluid2TDBtn_Click"/>-->
+                    <MenuItem Header="Pressure Poisson(2)" Click="stdgPressurePoissonFluid2Btn_Click"/>
+                    <MenuItem Header="Pressure Poisson(2)(Time Domain)" Click="stdgPressurePoissonFluid2TDBtn_Click"/>
                 </MenuItem>
                 <MenuItem Header="Pressure Poisson(RK)">
                     <MenuItem Header="Pressure Poisson(RK)(1)(Time Domain)" Click="stdgPressurePoissonFluid1RKTDBtn_Click"/>
-                    <!--<MenuItem Header="Pressure Poisson(RK)(2)(Time Domain)" Click="stdgPressurePoissonFluid2RKTDBtn_Click"/>-->
+                    <MenuItem Header="Pressure Poisson(RK)(2)(Time Domain)" Click="stdgPressurePoissonFluid2RKTDBtn_Click"/>
                 </MenuItem>
             </Menu>
             <Grid>

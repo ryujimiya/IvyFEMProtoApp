@@ -11,7 +11,7 @@ namespace IvyFEMProtoApp
     {
         public void PressurePoissonFluidRKTDProblem2(MainWindow mainWindow)
         {
-            FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoissson;
+            FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoisson;
             CadObject2D cad2D = new CadObject2D();
             {
                 uint lId1 = 0;
@@ -104,6 +104,17 @@ namespace IvyFEMProtoApp
                 zeroFixedCads.Add(fixedCad);
             }
 
+            // TEST Outflow p = 0の条件にすると収束する
+            uint[] pZeroEIds = { 5 };
+            var pZeroFixedCads = world.GetZeroFieldFixedCads(pQuantityId);
+            pZeroFixedCads.Clear();
+            foreach (uint eId in pZeroEIds)
+            {
+                // Scalar
+                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Scalar);
+                pZeroFixedCads.Add(fixedCad);
+            }
+
             ///////////
             // 分布速度
             Func<double, double> vFunc = y => -0.4 * 4.0 / (0.3 * 0.3) * (y - 0.7) * (y - 1.0);
@@ -171,6 +182,8 @@ namespace IvyFEMProtoApp
                         portConditions.Add(portCondition);
                     }
                 }
+                /*
+                // 収束しない
                 {
                     FlowPressureBCType bcType = FlowPressureBCType.Outflow;
                     var portDatas = new[]
@@ -187,6 +200,7 @@ namespace IvyFEMProtoApp
                         portConditions.Add(portCondition);
                     }
                 }
+                */
             }
 
             world.MakeElements();
@@ -235,7 +249,7 @@ namespace IvyFEMProtoApp
             double t = 0;
             //double dt = 0.002;
             //int nTime = 100;
-            double dt = 0.01 * (1.0 / 4.0) * (eLen * eLen / nu);
+            double dt = 0.02 * (1.0 / 4.0) * (eLen * eLen / nu);
             int nTime = 200;
             for (int iTime = 0; iTime <= nTime; iTime++)
             {
