@@ -119,6 +119,8 @@ namespace IvyFEMProtoApp
 
             var chartWin = new ChartWindow();
             chartWin.Owner = mainWindow;
+            chartWin.Left = mainWindow.Left + mainWindow.Width;
+            chartWin.Top = mainWindow.Top;
             chartWin.Show();
             var model = new PlotModel();
             chartWin.plot.Model = model;

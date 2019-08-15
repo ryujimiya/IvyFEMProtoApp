@@ -77,6 +77,9 @@
                 <MenuItem Header="ElectroMagnetic">
                     <MenuItem Header="Waveguide" Click="waveguideBtn_Click"/>
                 </MenuItem>
+                <MenuItem Header="Photonic Crystal">
+                    <MenuItem Header="Waveguide" Click="pcWaveguideBtn_Click"/>
+                </MenuItem>
                 <MenuItem Header="Fluid">
                     <MenuItem Header="Fluid(1)" Click="stdgFluid1Btn_Click"/>
                     <MenuItem Header="Fluid(1)(Time Domain)" Click="stdgFluid1TDBtn_Click"/>

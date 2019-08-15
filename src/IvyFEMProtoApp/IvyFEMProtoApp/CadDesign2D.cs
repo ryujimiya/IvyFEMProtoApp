@@ -711,8 +711,8 @@ namespace IvyFEMProtoApp
             foreach (PortEdge edge in PortEdges)
             {
                 uint eId = edge.EdgeId;
-                OpenTK.Vector2d pp1 = Cad2D.GetEdge(eId).GetVertex(true);
-                OpenTK.Vector2d pp2 = Cad2D.GetEdge(eId).GetVertex(false);
+                OpenTK.Vector2d pp1 = Cad2D.GetEdge(eId).GetVertexCoord(true);
+                OpenTK.Vector2d pp2 = Cad2D.GetEdge(eId).GetVertexCoord(false);
                 double xx;
                 double yy;
                 xx = (pp1.X + pp2.X) / 2.0;
@@ -3105,7 +3105,7 @@ namespace IvyFEMProtoApp
                     // 親でないならスキップする
                     continue;
                 }
-                for (lItr.Begin(); !lItr.IsEnd(); lItr++)
+                for (lItr.Begin(); !lItr.IsEnd(); lItr.Next())
                 {
                     uint eId;
                     bool isSameDir;
@@ -3127,7 +3127,7 @@ namespace IvyFEMProtoApp
         {
             uint loopId = 0;
 
-            for (VertexEdgeItr vItr = cad2D.GetVertexEdgeItr(vId); !vItr.IsEnd(); vItr++)
+            for (VertexEdgeItr vItr = cad2D.GetVertexEdgeItr(vId); !vItr.IsEnd(); vItr.Next())
             {
                 uint lId = vItr.GetLoopId();
                 if (lId != 0)
@@ -3316,7 +3316,7 @@ namespace IvyFEMProtoApp
             IList<uint> eIdList = new List<uint>();
             if (vId != 0)
             {
-                for (VertexEdgeItr vItr = cad2D.GetVertexEdgeItr(vId); !vItr.IsEnd(); vItr++)
+                for (VertexEdgeItr vItr = cad2D.GetVertexEdgeItr(vId); !vItr.IsEnd(); vItr.Next())
                 {
                     bool ret;
                     uint eId;
@@ -3422,7 +3422,7 @@ namespace IvyFEMProtoApp
 
             VertexEdgeItr vItr = cad2D.GetVertexEdgeItr(vId);
             int edgeCnt = 0;
-            for (vItr.Begin(); !vItr.IsEnd(); vItr++)
+            for (vItr.Begin(); !vItr.IsEnd(); vItr.Next())
             {
                 uint eId;
                 bool isSameDir;
