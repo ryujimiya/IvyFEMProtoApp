@@ -230,7 +230,7 @@ namespace IvyFEMProtoApp
             {
                 uint dof = 1; // 複素数
                 uint feOrder = 1;
-                quantityId = world.AddQuantity(dof, feOrder);
+                quantityId = world.AddQuantity(dof, feOrder, FiniteElementType.ScalarLagrange);
             }
 
             uint claddingMaId = uint.MaxValue;

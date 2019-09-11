@@ -45,8 +45,8 @@ namespace IvyFEMProtoApp
                 //uint cDof = 1; // Scalar
                 uint cDof = 2; // Vector2 for mortar
                 uint cFEOrder = 1;
-                uQuantityId = world.AddQuantity(uDof, uFEOrder);
-                cQuantityId = world.AddQuantity(cDof, cFEOrder);
+                uQuantityId = world.AddQuantity(uDof, uFEOrder, FiniteElementType.ScalarLagrange);
+                cQuantityId = world.AddQuantity(cDof, cFEOrder, FiniteElementType.ScalarLagrange);
             }
 
             {
@@ -239,8 +239,8 @@ namespace IvyFEMProtoApp
                 //uint cDof = 1; // Scalar
                 uint cDof = 2; // Vector2 for mortar
                 uint cFEOrder = 1;
-                uQuantityId = world.AddQuantity(uDof, uFEOrder);
-                cQuantityId = world.AddQuantity(cDof, cFEOrder);
+                uQuantityId = world.AddQuantity(uDof, uFEOrder, FiniteElementType.ScalarLagrange);
+                cQuantityId = world.AddQuantity(cDof, cFEOrder, FiniteElementType.ScalarLagrange);
             }
 
             {

@@ -635,32 +635,38 @@ namespace IvyFEMProtoApp
 
         private void stdgPressurePoissonFluid1Btn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.PressurePoissonFluidProblem1(this);
+            //Problem.PressurePoissonFluidProblem1(this);
+            Problem.PressurePoissonWithBellFluidProblem1(this);
         }
 
         private void stdgPressurePoissonFluid1TDBtn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.PressurePoissonFluidTDProblem1(this);
+            //Problem.PressurePoissonFluidTDProblem1(this);
+            Problem.PressurePoissonWithBellFluidTDProblem1(this);
         }
 
         private void stdgPressurePoissonFluid2Btn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.PressurePoissonFluidProblem2(this);
+            //Problem.PressurePoissonFluidProblem2(this);
+            Problem.PressurePoissonWithBellFluidProblem2(this);
         }
 
         private void stdgPressurePoissonFluid2TDBtn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.PressurePoissonFluidTDProblem2(this);
+            //Problem.PressurePoissonFluidTDProblem2(this);
+            Problem.PressurePoissonWithBellFluidTDProblem2(this);
         }
 
         private void stdgPressurePoissonFluid1RKTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.PressurePoissonFluidRKTDProblem1(this);
+            //Problem.PressurePoissonFluidRKTDProblem1(this);
+            MessageBox.Show("Not implemented yet!");
         }
 
         private void stdgPressurePoissonFluid2RKTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.PressurePoissonFluidRKTDProblem2(this);
+            //Problem.PressurePoissonFluidRKTDProblem2(this);
+            MessageBox.Show("Not implemented yet!");
         }
     }
 }

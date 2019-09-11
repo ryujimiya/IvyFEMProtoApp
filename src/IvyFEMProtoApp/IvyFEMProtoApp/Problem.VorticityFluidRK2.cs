@@ -56,8 +56,8 @@ namespace IvyFEMProtoApp
                 uint pDof = 1; // ψ
                 uint wFEOrder = 1;
                 uint pFEOrder = 1;
-                wQuantityId = world.AddQuantity(wDof, wFEOrder);
-                pQuantityId = world.AddQuantity(pDof, pFEOrder);
+                wQuantityId = world.AddQuantity(wDof, wFEOrder, FiniteElementType.ScalarLagrange);
+                pQuantityId = world.AddQuantity(pDof, pFEOrder, FiniteElementType.ScalarLagrange);
             }
             world.TriIntegrationPointCount = TriangleIntegrationPointCount.Point7;
 

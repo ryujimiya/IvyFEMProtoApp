@@ -139,6 +139,8 @@
     <Compile Include="PortEdge.cs" />
     <Compile Include="Problem.PCWaveguide1.cs" />
     <Compile Include="Problem.PCWaveguide0.cs" />
+    <Compile Include="Problem.PressurePoissonWithBellFluid2.cs" />
+    <Compile Include="Problem.PressurePoissonWithBellFluid1.cs" />
     <Compile Include="Problem.PressurePoissonFluidRK2.cs" />
     <Compile Include="Problem.PressurePoissonFluidRK1.cs" />
     <Compile Include="Problem.PressurePoissonFluid2.cs" />

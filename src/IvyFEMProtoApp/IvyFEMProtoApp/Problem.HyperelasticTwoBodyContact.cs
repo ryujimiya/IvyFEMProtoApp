@@ -49,9 +49,9 @@ namespace IvyFEMProtoApp
                 uint lFEOrder = 1;
                 uint cFEOrder = 1;
                 System.Diagnostics.Debug.Assert(uFEOrder == cFEOrder);
-                uQuantityId = world.AddQuantity(uDof, uFEOrder);
-                lQuantityId = world.AddQuantity(lDof, lFEOrder);
-                cQuantityId = world.AddQuantity(cDof, cFEOrder);
+                uQuantityId = world.AddQuantity(uDof, uFEOrder, FiniteElementType.ScalarLagrange);
+                lQuantityId = world.AddQuantity(lDof, lFEOrder, FiniteElementType.ScalarLagrange);
+                cQuantityId = world.AddQuantity(cDof, cFEOrder, FiniteElementType.ScalarLagrange);
             }
             world.TriIntegrationPointCount = TriangleIntegrationPointCount.Point3;
 

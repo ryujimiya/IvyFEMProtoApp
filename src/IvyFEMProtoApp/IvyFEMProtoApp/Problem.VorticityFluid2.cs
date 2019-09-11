@@ -69,8 +69,8 @@ namespace IvyFEMProtoApp
                 {
                     System.Diagnostics.Debug.Assert(false);
                 }
-                wQuantityId = world.AddQuantity(wDof, wFEOrder);
-                pQuantityId = world.AddQuantity(pDof, pFEOrder);
+                wQuantityId = world.AddQuantity(wDof, wFEOrder, FiniteElementType.ScalarLagrange);
+                pQuantityId = world.AddQuantity(pDof, pFEOrder, FiniteElementType.ScalarLagrange);
             }
             world.TriIntegrationPointCount = TriangleIntegrationPointCount.Point7;
 
@@ -461,8 +461,8 @@ namespace IvyFEMProtoApp
                 {
                     System.Diagnostics.Debug.Assert(false);
                 }
-                wQuantityId = world.AddQuantity(wDof, wFEOrder);
-                pQuantityId = world.AddQuantity(pDof, pFEOrder);
+                wQuantityId = world.AddQuantity(wDof, wFEOrder, FiniteElementType.ScalarLagrange);
+                pQuantityId = world.AddQuantity(pDof, pFEOrder, FiniteElementType.ScalarLagrange);
             }
             world.TriIntegrationPointCount = TriangleIntegrationPointCount.Point7;
 

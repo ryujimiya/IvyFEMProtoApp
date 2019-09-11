@@ -33,7 +33,7 @@ namespace IvyFEMProtoApp
             {
                 uint dof = 2; // Vector2
                 uint feOrder = 1;
-                quantityId = world.AddQuantity(dof, feOrder);
+                quantityId = world.AddQuantity(dof, feOrder, FiniteElementType.ScalarLagrange);
             }
             world.TriIntegrationPointCount = TriangleIntegrationPointCount.Point3;
 
@@ -210,7 +210,7 @@ namespace IvyFEMProtoApp
             {
                 uint dof = 2; // Vector2
                 uint feOrder = 1;
-                quantityId = world.AddQuantity(dof, feOrder);
+                quantityId = world.AddQuantity(dof, feOrder, FiniteElementType.ScalarLagrange);
             }
 
             {
