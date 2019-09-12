@@ -117,7 +117,12 @@ namespace IvyFEMProtoApp
             double eFreq = 2.0;
             int freqDiv = 50;
 
-            var chartWin = new ChartWindow();
+            if (ChartWindow == null)
+            {
+                ChartWindow = new ChartWindow();
+                ChartWindow.Closed += ChartWindow_Closed;
+            }
+            ChartWindow chartWin = ChartWindow;
             chartWin.Owner = mainWindow;
             chartWin.Left = mainWindow.Left + mainWindow.Width;
             chartWin.Top = mainWindow.Top;

@@ -12,9 +12,16 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
+        private ChartWindow ChartWindow = null;
+
         public Problem()
         {
 
+        }
+
+        private void ChartWindow_Closed(object sender, EventArgs e)
+        {
+            ChartWindow = null;
         }
     }
 }

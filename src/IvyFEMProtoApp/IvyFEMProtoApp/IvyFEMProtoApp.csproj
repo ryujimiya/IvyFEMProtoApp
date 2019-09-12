@@ -81,6 +81,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\IvyFEM\src\IvyFEM\IvyFEM\bin\x64\Debug\IvyFEM.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Solver.Foundation, Version=3.0.2.10889, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Solver.Foundation.3.1.0\lib\Microsoft.Solver.Foundation.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTK, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.3.0.1\lib\net20\OpenTK.dll</HintPath>
     </Reference>
@@ -136,7 +139,9 @@
     <Compile Include="MeshWindow.xaml.cs">
       <DependentUpon>MeshWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="NonlinerOptimizingProblem.cs" />
     <Compile Include="PortEdge.cs" />
+    <Compile Include="Problem.OptimizeProblem1.cs" />
     <Compile Include="Problem.PCWaveguide1.cs" />
     <Compile Include="Problem.PCWaveguide0.cs" />
     <Compile Include="Problem.PressurePoissonWithBellFluid2.cs" />

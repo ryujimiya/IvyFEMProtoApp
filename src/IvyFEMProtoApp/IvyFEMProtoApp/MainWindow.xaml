@@ -118,6 +118,9 @@
                     <MenuItem Header="Pressure Poisson(RK)(1)(Time Domain)" Click="stdgPressurePoissonFluid1RKTDBtn_Click"/>
                     <MenuItem Header="Pressure Poisson(RK)(2)(Time Domain)" Click="stdgPressurePoissonFluid2RKTDBtn_Click"/>
                 </MenuItem>
+                <MenuItem Header="Optimizing">
+                    <MenuItem Header="H-Plane Waveguide" Click="optimize1Btn_Click"/>
+                </MenuItem>
             </Menu>
             <Grid>
                 <WindowsFormsHost>

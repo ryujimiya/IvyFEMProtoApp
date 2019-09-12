@@ -668,5 +668,10 @@ namespace IvyFEMProtoApp
             //Problem.PressurePoissonFluidRKTDProblem2(this);
             MessageBox.Show("Not implemented yet!");
         }
+
+        private void optimize1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.Optimize1Problem(this);
+        }
     }
 }
