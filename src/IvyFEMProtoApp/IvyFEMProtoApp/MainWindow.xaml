@@ -78,7 +78,8 @@
                     <MenuItem Header="Waveguide" Click="waveguideBtn_Click"/>
                 </MenuItem>
                 <MenuItem Header="Photonic Crystal">
-                    <MenuItem Header="Waveguide" Click="pcWaveguideBtn_Click"/>
+                    <MenuItem Header="PC Waveguide(Square Lattice)" Click="squareLatticePCWaveguideBtn_Click"/>
+                    <MenuItem Header="PC Waveguide(Triangle Lattice)" Click="triangleLatticePCWaveguideBtn_Click"/>
                 </MenuItem>
                 <MenuItem Header="Fluid">
                     <MenuItem Header="Fluid(1)" Click="stdgFluid1Btn_Click"/>

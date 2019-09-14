@@ -518,10 +518,16 @@ namespace IvyFEMProtoApp
             Problem.WaveguideProblem(this);
         }
 
-        private void pcWaveguideBtn_Click(object sender, RoutedEventArgs e)
+        private void squareLatticePCWaveguideBtn_Click(object sender, RoutedEventArgs e)
         {
-            //Problem.PCWaveguideProblem0(this);
-            Problem.PCWaveguideProblem1(this);
+            //Problem.PCWaveguideSquareLatticeProblem0(this);
+            Problem.PCWaveguideSquareLatticeProblem1(this);
+        }
+
+        private void triangleLatticePCWaveguideBtn_Click(object sender, RoutedEventArgs e)
+        {
+            //Problem.PCWaveguideTriangleLatticeProblem0(this);
+            Problem.PCWaveguideTriangleLatticeProblem1(this);
         }
 
         // mu = 0.02, 0.002 FluidEquationType.StdGNavierStokes

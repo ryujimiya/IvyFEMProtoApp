@@ -142,8 +142,10 @@
     <Compile Include="NonlinerOptimizingProblem.cs" />
     <Compile Include="PortEdge.cs" />
     <Compile Include="Problem.OptimizeProblem1.cs" />
-    <Compile Include="Problem.PCWaveguide1.cs" />
-    <Compile Include="Problem.PCWaveguide0.cs" />
+    <Compile Include="Problem.PCWaveguideTriangleLattice1.cs" />
+    <Compile Include="Problem.PCWaveguideTriangleLattice0.cs" />
+    <Compile Include="Problem.PCWaveguideSquareLattice1.cs" />
+    <Compile Include="Problem.PCWaveguideSquareLattice0.cs" />
     <Compile Include="Problem.PressurePoissonWithBellFluid2.cs" />
     <Compile Include="Problem.PressurePoissonWithBellFluid1.cs" />
     <Compile Include="Problem.PressurePoissonFluidRK2.cs" />
