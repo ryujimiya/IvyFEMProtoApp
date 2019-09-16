@@ -513,9 +513,14 @@ namespace IvyFEMProtoApp
             Problem.HelmholtzProblem(this);
         }
 
-        private void waveguideBtn_Click(object sender, RoutedEventArgs e)
+        private void HPlaneWaveguideBtn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.WaveguideProblem(this);
+            Problem.HPlaneWaveguideProblem(this);
+        }
+
+        private void EPlaneWaveguideBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.EPlaneWaveguideProblem(this);
         }
 
         private void squareLatticePCWaveguideBtn_Click(object sender, RoutedEventArgs e)

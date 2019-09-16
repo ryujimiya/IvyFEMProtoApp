@@ -141,6 +141,7 @@
     </Compile>
     <Compile Include="NonlinerOptimizingProblem.cs" />
     <Compile Include="PortEdge.cs" />
+    <Compile Include="Problem.EMEPlaneWaveguide.cs" />
     <Compile Include="Problem.OptimizeProblem1.cs" />
     <Compile Include="Problem.PCWaveguideTriangleLattice1.cs" />
     <Compile Include="Problem.PCWaveguideTriangleLattice0.cs" />
@@ -166,7 +167,7 @@
     <Compile Include="Problem.Hyperelastic.cs" />
     <Compile Include="Problem.ElasticMPC.cs" />
     <Compile Include="Problem.Elastic.cs" />
-    <Compile Include="Problem.EMWaveguide.cs" />
+    <Compile Include="Problem.EMHPlaneWaveguide.cs" />
     <Compile Include="Problem.Helmholtz.cs" />
     <Compile Include="Problem.SampleFEM.cs" />
     <Compile Include="Problem.Solver.cs" />

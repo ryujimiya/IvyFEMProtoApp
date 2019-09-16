@@ -75,7 +75,8 @@
                     <MenuItem Header="Helmholtz" Click="helmholtzBtn_Click"/>
                 </MenuItem>
                 <MenuItem Header="ElectroMagnetic">
-                    <MenuItem Header="Waveguide" Click="waveguideBtn_Click"/>
+                    <MenuItem Header="H-Plane Waveguide" Click="HPlaneWaveguideBtn_Click"/>
+                    <MenuItem Header="E-Plane Waveguide" Click="EPlaneWaveguideBtn_Click"/>
                 </MenuItem>
                 <MenuItem Header="Photonic Crystal">
                     <MenuItem Header="PC Waveguide(Square Lattice)" Click="squareLatticePCWaveguideBtn_Click"/>
