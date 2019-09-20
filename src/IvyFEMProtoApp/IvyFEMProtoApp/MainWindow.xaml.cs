@@ -523,6 +523,12 @@ namespace IvyFEMProtoApp
             Problem.EPlaneWaveguideProblem(this);
         }
 
+        private void HPlaneWaveguideHigherOrderABCTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            //Problem.HPlaneWaveguideHigherOrderABCTDProblem0(this);
+            Problem.HPlaneWaveguideHigherOrderABCTDProblem1(this);
+        }
+
         private void squareLatticePCWaveguideBtn_Click(object sender, RoutedEventArgs e)
         {
             //Problem.PCWaveguideSquareLatticeProblem0(this);
@@ -683,6 +689,11 @@ namespace IvyFEMProtoApp
         private void optimize1Btn_Click(object sender, RoutedEventArgs e)
         {
             Problem.Optimize1Problem(this);
+        }
+
+        private void fftBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Problem.FFTExample(this);
         }
     }
 }

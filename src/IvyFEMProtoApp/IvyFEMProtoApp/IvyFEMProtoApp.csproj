@@ -142,6 +142,9 @@
     <Compile Include="NonlinerOptimizingProblem.cs" />
     <Compile Include="PortEdge.cs" />
     <Compile Include="Problem.EMEPlaneWaveguide.cs" />
+    <Compile Include="Problem.EMHPlaneWaveguideHigherOrderABCTD1.cs" />
+    <Compile Include="Problem.EMHPlaneWaveguideHigherOrderABCTD0.cs" />
+    <Compile Include="Problem.FFT.cs" />
     <Compile Include="Problem.OptimizeProblem1.cs" />
     <Compile Include="Problem.PCWaveguideTriangleLattice1.cs" />
     <Compile Include="Problem.PCWaveguideTriangleLattice0.cs" />
@@ -278,6 +281,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="libwinpthread-1.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OouraFFTDll.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

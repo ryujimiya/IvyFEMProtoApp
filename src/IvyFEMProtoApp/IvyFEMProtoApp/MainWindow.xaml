@@ -22,9 +22,10 @@
                     <Separator/>
                     <MenuItem Header="DrawString" Click="drawStringBtn_Click"/>
                 </MenuItem>
-                <MenuItem Header="Solver">
+                <MenuItem Header="Numerics">
                     <MenuItem Header="LAPACK" Click="lapackBtn_Click"/>
                     <MenuItem Header="Lis" Click="lisBtn_Click"/>
+                    <MenuItem Header="FFT" Click="fftBtn_Click"/>
                 </MenuItem>
                 <MenuItem Header="Implement">
                     <MenuItem Header="Sample FEM" Click="sampleFEMBtn_Click"/>
@@ -77,6 +78,7 @@
                 <MenuItem Header="ElectroMagnetic">
                     <MenuItem Header="H-Plane Waveguide" Click="HPlaneWaveguideBtn_Click"/>
                     <MenuItem Header="E-Plane Waveguide" Click="EPlaneWaveguideBtn_Click"/>
+                    <MenuItem Header="H-Plane Waveguide (Time Domain)(Higher Order ABC)" Click="HPlaneWaveguideHigherOrderABCTDBtn_Click"/>
                 </MenuItem>
                 <MenuItem Header="Photonic Crystal">
                     <MenuItem Header="PC Waveguide(Square Lattice)" Click="squareLatticePCWaveguideBtn_Click"/>
