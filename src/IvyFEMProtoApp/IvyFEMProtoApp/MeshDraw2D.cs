@@ -15,7 +15,7 @@ namespace IvyFEMProtoApp
         /// <summary>
         /// Cadパネル
         /// </summary>
-        private OpenTK.GLControl glControl = null;
+        private OpenTK.GLControl GLControl = null;
         /// <summary>
         /// カメラ
         /// </summary>
@@ -30,9 +30,9 @@ namespace IvyFEMProtoApp
         public BackgroundDrawer BackgroundDrawer { get; private set; } = null;
 
 
-        public MeshDraw2D(OpenTK.GLControl glControl, double width, double height)
+        public MeshDraw2D(OpenTK.GLControl GLControl, double width, double height)
         {
-            this.glControl = glControl;
+            this.GLControl = GLControl;
 
             BackgroundDrawer = new BackgroundDrawer(width, height);
 
@@ -52,8 +52,8 @@ namespace IvyFEMProtoApp
 
                 SetupRegionSize();
                 PanelResize();
-                glControl.Invalidate();
-                glControl.Update();
+                GLControl.Invalidate();
+                GLControl.Update();
             }
         }
 
@@ -70,8 +70,8 @@ namespace IvyFEMProtoApp
             SetupRegionSize();
             PanelResize();
 
-            glControl.Invalidate();
-            glControl.Update();
+            GLControl.Invalidate();
+            GLControl.Update();
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace IvyFEMProtoApp
             OpenGLUtils.SetModelViewTransform(Camera);
 
             DrawerArray.Draw();
-            glControl.SwapBuffers();
+            GLControl.SwapBuffers();
         }
 
         /// <summary>
@@ -127,8 +127,8 @@ namespace IvyFEMProtoApp
 
         public void PanelResize()
         {
-            int width = glControl.Size.Width;
-            int height = glControl.Size.Height;
+            int width = GLControl.Size.Width;
+            int height = GLControl.Size.Height;
             resizeScene(width, height);
         }
     }

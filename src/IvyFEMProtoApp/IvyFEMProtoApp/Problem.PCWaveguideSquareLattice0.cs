@@ -14,7 +14,7 @@ namespace IvyFEMProtoApp
     {
         public void PCWaveguideSquareLatticeProblem0(MainWindow mainWindow)
         {
-            double WaveguideWidth = 1.0;
+            double waveguideWidth = 1.0;
 
             // 格子定数
             double latticeA = 0;
@@ -30,7 +30,7 @@ namespace IvyFEMProtoApp
             // 格子数
             const int latticeCnt = rodCntHalf * 2 + defectRodCnt;
             // 格子定数
-            latticeA = WaveguideWidth / (double)latticeCnt;
+            latticeA = waveguideWidth / (double)latticeCnt;
             // 周期構造距離
             periodicDistance = latticeA;
             // ロッドの半径
@@ -53,7 +53,7 @@ namespace IvyFEMProtoApp
             // 入出力導波路の周期構造部分の長さ
             double inputWgLength = latticeA;
             // メッシュサイズ
-            double eLen = 1.05 * WaveguideWidth / divCnt;
+            double eLen = 1.05 * waveguideWidth / divCnt;
             // 最小屈折率
             double minEffN = 0.0;
             // 最大屈折率
@@ -92,14 +92,14 @@ namespace IvyFEMProtoApp
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
                 // 領域追加
-                pts.Add(new OpenTK.Vector2d(0.0, WaveguideWidth));
+                pts.Add(new OpenTK.Vector2d(0.0, waveguideWidth));
                 pts.Add(new OpenTK.Vector2d(0.0, 0.0));
                 pts.Add(new OpenTK.Vector2d(inputWgLength, 0.0));
                 pts.Add(new OpenTK.Vector2d(inputWgLength + disconLength, 0.0));
                 pts.Add(new OpenTK.Vector2d(inputWgLength * 2 + disconLength, 0.0));
-                pts.Add(new OpenTK.Vector2d(inputWgLength * 2 + disconLength, WaveguideWidth));
-                pts.Add(new OpenTK.Vector2d(inputWgLength + disconLength, WaveguideWidth));
-                pts.Add(new OpenTK.Vector2d(inputWgLength, WaveguideWidth));
+                pts.Add(new OpenTK.Vector2d(inputWgLength * 2 + disconLength, waveguideWidth));
+                pts.Add(new OpenTK.Vector2d(inputWgLength + disconLength, waveguideWidth));
+                pts.Add(new OpenTK.Vector2d(inputWgLength, waveguideWidth));
                 uint lId = cad2D.AddPolygon(pts).AddLId;
             }
             // 入出力領域を分離
@@ -112,7 +112,7 @@ namespace IvyFEMProtoApp
             {
                 uint eId = 1;
                 double x1 = 0.0;
-                double y1 = WaveguideWidth;
+                double y1 = waveguideWidth;
                 double y2 = 0.0;
                 PCWaveguideUtils.DivideBoundary(cad2D, eId, divCnt, x1, y1, x1, y2);
             }
@@ -120,7 +120,7 @@ namespace IvyFEMProtoApp
                 uint eId = 9;
                 double x1 = inputWgLength;
                 double y1 = 0.0;
-                double y2 = WaveguideWidth;
+                double y2 = waveguideWidth;
                 PCWaveguideUtils.DivideBoundary(cad2D, eId, divCnt, x1, y1, x1, y2);
             }
             // 出力導波路
@@ -128,14 +128,14 @@ namespace IvyFEMProtoApp
                 uint eId = 5;
                 double x1 = inputWgLength * 2 + disconLength;
                 double y1 = 0.0;
-                double y2 = WaveguideWidth;
+                double y2 = waveguideWidth;
                 PCWaveguideUtils.DivideBoundary(cad2D, eId, divCnt, x1, y1, x1, y2);
             }
             {
                 uint eId = 10;
                 double x1 = inputWgLength + disconLength;
                 double y1 = 0.0;
-                double y2 = WaveguideWidth;
+                double y2 = waveguideWidth;
                 PCWaveguideUtils.DivideBoundary(cad2D, eId, divCnt, x1, y1, x1, y2);
             }
             // ロッドを追加
@@ -168,7 +168,7 @@ namespace IvyFEMProtoApp
                 for (int row = 0; row < rodCntHalf; row++)
                 {
                     double x0 = latticeA * 0.5 + col * latticeA;
-                    double y0 = WaveguideWidth - row * latticeA - latticeA * 0.5;
+                    double y0 = waveguideWidth - row * latticeA - latticeA * 0.5;
                     uint lId = PCWaveguideUtils.AddRod(
                         cad2D, baseLoopId, x0, y0, rodRadius, rodCircleDiv, rodRadiusDiv);
                     rodLoopIds.Add(lId);
@@ -205,9 +205,9 @@ namespace IvyFEMProtoApp
             IDrawer drawer = new CadObject2DDrawer(cad2D);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-            mainWindow.glControl_ResizeProc();
-            mainWindow.glControl.Invalidate();
-            mainWindow.glControl.Update();
+            mainWindow.GLControl_ResizeProc();
+            mainWindow.GLControl.Invalidate();
+            mainWindow.GLControl.Update();
             WPFUtils.DoEvents();
 
             Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
@@ -218,9 +218,9 @@ namespace IvyFEMProtoApp
             IDrawer meshDrawer = new Mesher2DDrawer(mesher2D);
             mainWindow.DrawerArray.Add(meshDrawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-            mainWindow.glControl_ResizeProc();
-            mainWindow.glControl.Invalidate();
-            mainWindow.glControl.Update();
+            mainWindow.GLControl_ResizeProc();
+            mainWindow.GLControl.Invalidate();
+            mainWindow.GLControl.Update();
             WPFUtils.DoEvents();
             */
 
@@ -416,7 +416,6 @@ namespace IvyFEMProtoApp
             // ポート条件
             IList<PortCondition> portConditions = world.GetPortConditions(quantityId);
             {
-                portConditions.Clear();
                 world.SetIncidentPortId(quantityId, 0);
                 world.SetIncidentModeId(quantityId, 0);
                 for (int portId = 0; portId < portCnt; portId++)
@@ -433,7 +432,6 @@ namespace IvyFEMProtoApp
             // 強制境界
             uint[] zeroEIds = { 2, 3, 4, 6, 7, 8 };
             var zeroFixedCads = world.GetZeroFieldFixedCads(quantityId);
-            zeroFixedCads.Clear();
             foreach (uint eId in zeroEIds)
             {
                 // 複素数
@@ -485,8 +483,8 @@ namespace IvyFEMProtoApp
                         double[] coord = world.GetCoord(quantityId, coId);
                         // X方向周期構造
                         double y = Math.Abs(coord[1] - coord0[1]); // Y座標
-                        if (y >= (WaveguideWidth - latticeA * (rodCntHalf + defectRodCnt)) &&
-                            y <= (WaveguideWidth - latticeA * (rodCntHalf)))
+                        if (y >= (waveguideWidth - latticeA * (rodCntHalf + defectRodCnt)) &&
+                            y <= (waveguideWidth - latticeA * (rodCntHalf)))
                         {
                             channelCoIds.Add(coId);
                         }
@@ -500,7 +498,7 @@ namespace IvyFEMProtoApp
             chartWin.Top = mainWindow.Top;
             chartWin.Show();
             var model = new PlotModel();
-            chartWin.plot.Model = model;
+            chartWin.Plot.Model = model;
             model.Title = "PCWaveguide Example";
             var axis1 = new LinearAxis
             {
@@ -528,7 +526,6 @@ namespace IvyFEMProtoApp
             };
             model.Series.Add(series1);
             model.Series.Add(series2);
-            var datas = new List<DataPoint>();
             model.InvalidatePlot(true);
             WPFUtils.DoEvents();
 
@@ -548,9 +545,9 @@ namespace IvyFEMProtoApp
                     valueId, FieldDerivativeType.Value, true, false, world);
                 fieldDrawerArray.Add(edgeDrawer);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-                mainWindow.glControl_ResizeProc();
-                //mainWindow.glControl.Invalidate();
-                //mainWindow.glControl.Update();
+                mainWindow.GLControl_ResizeProc();
+                //mainWindow.GLControl.Invalidate();
+                //mainWindow.GLControl.Update();
                 //WPFUtils.DoEvents();
             }
 
@@ -654,8 +651,8 @@ namespace IvyFEMProtoApp
                 world.UpdateFieldValueValuesFromNodeValues(valueId, FieldDerivativeType.Value, Ez);
 
                 fieldDrawerArray.Update(world);
-                mainWindow.glControl.Invalidate();
-                mainWindow.glControl.Update();
+                mainWindow.GLControl.Invalidate();
+                mainWindow.GLControl.Update();
                 WPFUtils.DoEvents();
             }
         }

@@ -134,7 +134,6 @@ namespace IvyFEMProtoApp
 
             uint[] zeroEIds = { 5 };
             var zeroFixedCads = world.GetZeroFieldFixedCads(uQuantityId);
-            zeroFixedCads.Clear();
             foreach (uint eId in zeroEIds)
             {
                 // Vector2
@@ -178,9 +177,9 @@ namespace IvyFEMProtoApp
                     uValueId, FieldDerivativeType.Value, false, true, world);
                 fieldDrawerArray.Add(edgeDrawer);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-                mainWindow.glControl_ResizeProc();
-                //mainWindow.glControl.Invalidate();
-                //mainWindow.glControl.Update();
+                mainWindow.GLControl_ResizeProc();
+                //mainWindow.GLControl.Invalidate();
+                //mainWindow.GLControl.Update();
                 //WPFUtils.DoEvents();
             }
 
@@ -253,8 +252,8 @@ namespace IvyFEMProtoApp
                 FEM.UpdateFieldValuesTimeDomain();
 
                 fieldDrawerArray.Update(world);
-                mainWindow.glControl.Invalidate();
-                mainWindow.glControl.Update();
+                mainWindow.GLControl.Invalidate();
+                mainWindow.GLControl.Update();
                 WPFUtils.DoEvents();
                 t += dt;
             }

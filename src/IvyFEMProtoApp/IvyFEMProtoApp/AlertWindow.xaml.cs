@@ -28,7 +28,7 @@ namespace IvyFEMProtoApp
         {
             var win = new AlertWindow();
             win.Title = title;
-            win.textBox1.Text = text;
+            win.TextBox1.Text = text;
             win.ShowDialog();
         }
     }

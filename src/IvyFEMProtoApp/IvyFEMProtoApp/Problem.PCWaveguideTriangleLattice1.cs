@@ -14,7 +14,7 @@ namespace IvyFEMProtoApp
     {
         public void PCWaveguideTriangleLatticeProblem1(MainWindow mainWindow)
         {
-            double WaveguideWidth = 1.0;
+            double waveguideWidth = 1.0;
 
             // 格子定数
             double latticeA = 0;
@@ -64,10 +64,10 @@ namespace IvyFEMProtoApp
             // 格子の数
             int latticeCnt = rodCntHalf * 2 + defectRodCnt;
             // ロッド間の距離(Y方向)
-            double rodDistanceY = WaveguideWidth / (double)latticeCnt;
+            double rodDistanceY = waveguideWidth / (double)latticeCnt;
             if (isLargeRod)
             {
-                rodDistanceY = WaveguideWidth / (double)(latticeCnt - 1);
+                rodDistanceY = waveguideWidth / (double)(latticeCnt - 1);
             }
             // 格子定数
             latticeA = rodDistanceY / Math.Sin(latticeTheta * Math.PI / 180.0);
@@ -83,7 +83,7 @@ namespace IvyFEMProtoApp
             double inputWgLength1 = rodDistanceX;
             double inputWgLength2 = rodDistanceX;
             // メッシュのサイズ
-            double eLen = 1.05 * WaveguideWidth / (latticeCnt * divCntForOneLattice);
+            double eLen = 1.05 * waveguideWidth / (latticeCnt * divCntForOneLattice);
 
             // フォトニック結晶導波路の場合、a/λを規格化周波数とする
             double sFreq = 0.268;
@@ -173,7 +173,7 @@ namespace IvyFEMProtoApp
             // 導波路２の幅
             double waveguideWidth2 = rodDistanceY * latticeCnt_port2;
             System.Diagnostics.Debug.Assert(
-                Math.Abs(waveguideWidth2 - WaveguideWidth) < Constants.PrecisionLowerLimit);
+                Math.Abs(waveguideWidth2 - waveguideWidth) < Constants.PrecisionLowerLimit);
             // 導波路２の１格子当たりの分割数
             int divCntForOneLatticePort2 = divCntForOneLattice;
             // 入出力不連続部の距離
@@ -200,7 +200,7 @@ namespace IvyFEMProtoApp
             IList<uint> eIdsF2Bend = new List<uint>();
 
             // ベンド下側角
-            double bendX10 = inputWgLength1 + disconLength1 + WaveguideWidth / Math.Sqrt(3.0);
+            double bendX10 = inputWgLength1 + disconLength1 + waveguideWidth / Math.Sqrt(3.0);
             double bendY10 = 0.0;
             bendX10 -= latticeA * Math.Sqrt(3.0) / 4.0;
             bendY10 -= rodDistanceY / 4.0;
@@ -222,7 +222,7 @@ namespace IvyFEMProtoApp
             double port2Y2B3 = port2Y2B4 + inputWgLength2 * Math.Sqrt(3.0) / 2.0;
             // ベンド部上側角
             double bendX30 = inputWgLength1 + disconLength1;
-            double bendY30 = WaveguideWidth;
+            double bendY30 = waveguideWidth;
             bendX30 -= latticeA * Math.Sqrt(3.0) / 4.0;
             bendY30 -= rodDistanceY / 4.0;
             if (!isShift180)
@@ -230,8 +230,8 @@ namespace IvyFEMProtoApp
                 bendX30 += rodDistanceX / 4.0;
                 bendY30 -= rodDistanceY / 2.0;
             }
-            double bendX3 = bendX30 + (WaveguideWidth - bendY30) / Math.Sqrt(3.0);
-            double bendY3 = WaveguideWidth;
+            double bendX3 = bendX30 + (waveguideWidth - bendY30) / Math.Sqrt(3.0);
+            double bendY3 = waveguideWidth;
             // 出力部内部境界の始点
             double port2X1B4 = bendX30 + disconLength2 / 2.0;
             double port2Y1B4 = bendY30 + disconLength2 * Math.Sqrt(3.0) / 2.0;
@@ -261,7 +261,7 @@ namespace IvyFEMProtoApp
                 {
                     IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
                     // 領域追加
-                    pts.Add(new OpenTK.Vector2d(0.0, WaveguideWidth));
+                    pts.Add(new OpenTK.Vector2d(0.0, waveguideWidth));
                     pts.Add(new OpenTK.Vector2d(0.0, 0.0));
                     pts.Add(new OpenTK.Vector2d(inputWgLength1, 0.0));
                     pts.Add(new OpenTK.Vector2d(bendX1, bendY1));
@@ -270,7 +270,7 @@ namespace IvyFEMProtoApp
                     pts.Add(new OpenTK.Vector2d(port2X1B3, port2Y1B3));
                     pts.Add(new OpenTK.Vector2d(port2X1B4, port2Y1B4));
                     pts.Add(new OpenTK.Vector2d(bendX3, bendY3));
-                    pts.Add(new OpenTK.Vector2d(inputWgLength1, WaveguideWidth));
+                    pts.Add(new OpenTK.Vector2d(inputWgLength1, waveguideWidth));
                     uint lId1 = cad2D.AddPolygon(pts).AddLId;
                 }
                 // 入出力領域を分離
@@ -292,7 +292,7 @@ namespace IvyFEMProtoApp
                     int currodCntHalf = 0;
                     int curdefectRodCnt = 0;
                     int curdivCntForOneLattice = 0;
-                    double curWaveguideWidth = 0.0;
+                    double curwaveguideWidth = 0.0;
                     double currodDistanceY = 0.0;
                     IList<double> ys = null;
                     IList<double> ys_rod = null;
@@ -301,7 +301,7 @@ namespace IvyFEMProtoApp
                         currodCntHalf = rodCntHalf;
                         curdefectRodCnt = defectRodCnt;
                         curdivCntForOneLattice = divCntForOneLattice;
-                        curWaveguideWidth = WaveguideWidth;
+                        curwaveguideWidth = waveguideWidth;
                         currodDistanceY = rodDistanceY;
                         ys = port1Ys;
                         ys_rod = rodPort1Ys;
@@ -313,7 +313,7 @@ namespace IvyFEMProtoApp
                         currodCntHalf = rodCntHalfPort2;
                         curdefectRodCnt = defectRodCntPort2;
                         curdivCntForOneLattice = divCntForOneLatticePort2;
-                        curWaveguideWidth = waveguideWidth2;
+                        curwaveguideWidth = waveguideWidth2;
                         currodDistanceY = rodDistanceY;
                         ys = port2Xs;
                         ys_rod = rodPort2Xs;
@@ -330,7 +330,7 @@ namespace IvyFEMProtoApp
                     for (int i = 0; i < currodCntHalf; i++)
                     {
                         if ((currodCntHalf - 1 - i) % 2 == (isShift180 ? 1 : 0)) continue;
-                        double y0 = curWaveguideWidth - i * currodDistanceY - 0.5 * currodDistanceY;
+                        double y0 = curwaveguideWidth - i * currodDistanceY - 0.5 * currodDistanceY;
                         ys_rod.Add(y0);
                         for (int k = 1; k <= rodRadiusDiv; k++)
                         {
@@ -363,9 +363,9 @@ namespace IvyFEMProtoApp
                         if ((currodCntHalf - 1 - i) % 2 == (isShift180 ? 1 : 0)) continue;
                         for (int k = 1; k <= (curdivCntForOneLattice - 1); k++)
                         {
-                            double y_divpt = curWaveguideWidth - i * currodDistanceY - k * (currodDistanceY / curdivCntForOneLattice);
-                            double y_min_rod = curWaveguideWidth - i * currodDistanceY - 0.5 * currodDistanceY - rodRadius - radiusMargin;
-                            double y_max_rod = curWaveguideWidth - i * currodDistanceY - 0.5 * currodDistanceY + rodRadius + radiusMargin;
+                            double y_divpt = curwaveguideWidth - i * currodDistanceY - k * (currodDistanceY / curdivCntForOneLattice);
+                            double y_min_rod = curwaveguideWidth - i * currodDistanceY - 0.5 * currodDistanceY - rodRadius - radiusMargin;
+                            double y_max_rod = curwaveguideWidth - i * currodDistanceY - 0.5 * currodDistanceY + rodRadius + radiusMargin;
                             if (y_divpt < y_min_rod || y_divpt > y_max_rod)
                             {
                                 ys.Add(y_divpt);
@@ -394,7 +394,7 @@ namespace IvyFEMProtoApp
                         for (int k = 0; k <= curdivCntForOneLattice; k++)
                         {
                             if (i == 0 && k == 0) continue;
-                            double y_divpt = curWaveguideWidth - i * currodDistanceY - k * (currodDistanceY / curdivCntForOneLattice);
+                            double y_divpt = curwaveguideWidth - i * currodDistanceY - k * (currodDistanceY / curdivCntForOneLattice);
                             ys.Add(y_divpt);
                         }
                     }
@@ -603,7 +603,7 @@ namespace IvyFEMProtoApp
                                     vId2 = workrodBVIds[(rodRadiusDiv * 2) + i2 * (rodRadiusDiv * 2 + 1)];
                                 }
                                 double x0 = xB;
-                                double y0 = WaveguideWidth - i * rodDistanceY - rodDistanceY * 0.5;
+                                double y0 = waveguideWidth - i * rodDistanceY - rodDistanceY * 0.5;
                                 uint workVId0 = vId0;
                                 uint workVId2 = vId2;
                                 if (isReverse)
@@ -745,7 +745,7 @@ namespace IvyFEMProtoApp
                                     vId2 = workrodBVIds[(rodRadiusDiv * 2) + i2 * (rodRadiusDiv * 2 + 1)];
                                 }
                                 double x0 = xB;
-                                double y0 = WaveguideWidth - i * rodDistanceY - rodDistanceY * 0.5;
+                                double y0 = waveguideWidth - i * rodDistanceY - rodDistanceY * 0.5;
                                 OpenTK.Vector2d centerPt = cad2D.GetVertexCoord(vId1);
                                 uint lId = PCWaveguideUtils.AddRightRod(
                                     cad2D,
@@ -928,7 +928,7 @@ namespace IvyFEMProtoApp
                         {
                             // 中央ロッド
                             double x0 = rodDistanceX * 0.5 * col;
-                            double y0 = WaveguideWidth - i * rodDistanceY - rodDistanceY * 0.5;
+                            double y0 = waveguideWidth - i * rodDistanceY - rodDistanceY * 0.5;
                             x0 += rodOfsX;
                             y0 += rodOfsY;
                             uint lId = PCWaveguideUtils.AddRod(cad2D, baseLoopId, x0, y0, rr, nc, nr);
@@ -1282,9 +1282,9 @@ namespace IvyFEMProtoApp
             IDrawer drawer = new CadObject2DDrawer(cad2D);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-            mainWindow.glControl_ResizeProc();
-            mainWindow.glControl.Invalidate();
-            mainWindow.glControl.Update();
+            mainWindow.GLControl_ResizeProc();
+            mainWindow.GLControl.Invalidate();
+            mainWindow.GLControl.Update();
             WPFUtils.DoEvents();
 
             Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
@@ -1295,9 +1295,9 @@ namespace IvyFEMProtoApp
             IDrawer meshDrawer = new Mesher2DDrawer(mesher2D);
             mainWindow.DrawerArray.Add(meshDrawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-            mainWindow.glControl_ResizeProc();
-            mainWindow.glControl.Invalidate();
-            mainWindow.glControl.Update();
+            mainWindow.GLControl_ResizeProc();
+            mainWindow.GLControl.Invalidate();
+            mainWindow.GLControl.Update();
             WPFUtils.DoEvents();
             */
 
@@ -1561,7 +1561,6 @@ namespace IvyFEMProtoApp
             // ポート条件
             IList<PortCondition> portConditions = world.GetPortConditions(quantityId);
             {
-                portConditions.Clear();
                 world.SetIncidentPortId(quantityId, 0);
                 world.SetIncidentModeId(quantityId, 0);
                 for (int portId = 0; portId < portCnt; portId++)
@@ -1628,13 +1627,13 @@ namespace IvyFEMProtoApp
                         double[] coord = world.GetCoord(quantityId, coId);
                         // X方向周期構造
                         double y = Math.Abs(coord[1] - coord0[1]); // Y座標
-                        //if (y >= (WaveguideWidth - rodDistanceY * (rodCntHalf + defectRodCnt) -
+                        //if (y >= (waveguideWidth - rodDistanceY * (rodCntHalf + defectRodCnt) -
                         //    (0.5 * rodDistanceY - rodRadius)) && y <=
-                        //    (WaveguideWidth - rodDistanceY * rodCntHalf +
+                        //    (waveguideWidth - rodDistanceY * rodCntHalf +
                         //    (0.5 * rodDistanceY - rodRadius))) // dielectric rod
-                        if (y >= (WaveguideWidth - rodDistanceY * (rodCntHalf + defectRodCnt) -
+                        if (y >= (waveguideWidth - rodDistanceY * (rodCntHalf + defectRodCnt) -
                             1.0 * rodDistanceY) &&
-                            y <= (WaveguideWidth - rodDistanceY * rodCntHalf +
+                            y <= (waveguideWidth - rodDistanceY * rodCntHalf +
                             1.0 * rodDistanceY)) // air hole
                         {
                             channelCoIds.Add(coId);
@@ -1653,7 +1652,7 @@ namespace IvyFEMProtoApp
             chartWin.Top = mainWindow.Top;
             chartWin.Show();
             var model = new PlotModel();
-            chartWin.plot.Model = model;
+            chartWin.Plot.Model = model;
             model.Title = "PCWaveguide Example";
             var axis1 = new LinearAxis
             {
@@ -1681,7 +1680,6 @@ namespace IvyFEMProtoApp
             };
             model.Series.Add(series1);
             model.Series.Add(series2);
-            var datas = new List<DataPoint>();
             model.InvalidatePlot(true);
             WPFUtils.DoEvents();
 
@@ -1701,9 +1699,9 @@ namespace IvyFEMProtoApp
                     valueId, FieldDerivativeType.Value, true, false, world);
                 fieldDrawerArray.Add(edgeDrawer);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-                mainWindow.glControl_ResizeProc();
-                //mainWindow.glControl.Invalidate();
-                //mainWindow.glControl.Update();
+                mainWindow.GLControl_ResizeProc();
+                //mainWindow.GLControl.Invalidate();
+                //mainWindow.GLControl.Update();
                 //WPFUtils.DoEvents();
             }
 
@@ -1807,8 +1805,8 @@ namespace IvyFEMProtoApp
                 world.UpdateFieldValueValuesFromNodeValues(valueId, FieldDerivativeType.Value, Ez);
 
                 fieldDrawerArray.Update(world);
-                mainWindow.glControl.Invalidate();
-                mainWindow.glControl.Update();
+                mainWindow.GLControl.Invalidate();
+                mainWindow.GLControl.Update();
                 WPFUtils.DoEvents();
             }
         }

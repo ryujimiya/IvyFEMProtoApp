@@ -9,7 +9,7 @@
         Title="メッシュ" Height="400" Width="400" Loaded="Window_Loaded" GotFocus="Window_GotFocus">
     <Grid>
         <WindowsFormsHost>
-            <OpenTK:GLControl x:Name="glControl" Load="glControl_Load" Resize="glControl_Resize" Paint="glControl_Paint" MouseClick="glControl_MouseClick" KeyDown="glControl_KeyDown" KeyUp="glControl_KeyUp" MouseMove="glControl_MouseMove" MouseDown="glControl_MouseDown" MouseWheel="glControl_MouseWheel" MouseUp="glControl_MouseUp" KeyPress="glControl_KeyPress"/>
+            <OpenTK:GLControl x:Name="GLControl" Load="GLControl_Load" Resize="GLControl_Resize" Paint="GLControl_Paint" MouseClick="GLControl_MouseClick" KeyDown="GLControl_KeyDown" KeyUp="GLControl_KeyUp" MouseMove="GLControl_MouseMove" MouseDown="GLControl_MouseDown" MouseWheel="GLControl_MouseWheel" MouseUp="GLControl_MouseUp" KeyPress="GLControl_KeyPress"/>
         </WindowsFormsHost>
     </Grid>
 </Window>

@@ -65,8 +65,8 @@ namespace IvyFEMProtoApp
         {
             totalS11 = 0;
 
-            double WaveguideWidth = 1.0;
-            double InputWGLength = 1.0 * WaveguideWidth;
+            double waveguideWidth = 1.0;
+            double inputWGLength = 1.0 * waveguideWidth;
 
             IList<uint> zeroEIds = new List<uint>();
             uint eId1 = 0;
@@ -74,33 +74,33 @@ namespace IvyFEMProtoApp
             CadObject2D cad2D = new CadObject2D();
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
-                pts.Add(new OpenTK.Vector2d(0.0, WaveguideWidth));
+                pts.Add(new OpenTK.Vector2d(0.0, waveguideWidth));
                 pts.Add(new OpenTK.Vector2d(0.0, 0.0));
-                pts.Add(new OpenTK.Vector2d(InputWGLength, 0.0));
-                pts.Add(new OpenTK.Vector2d(InputWGLength, (-InputWGLength)));
-                pts.Add(new OpenTK.Vector2d((InputWGLength + WaveguideWidth), (-InputWGLength)));
-                pts.Add(new OpenTK.Vector2d((InputWGLength + WaveguideWidth), 0.0));
+                pts.Add(new OpenTK.Vector2d(inputWGLength, 0.0));
+                pts.Add(new OpenTK.Vector2d(inputWGLength, (-inputWGLength)));
+                pts.Add(new OpenTK.Vector2d((inputWGLength + waveguideWidth), (-inputWGLength)));
+                pts.Add(new OpenTK.Vector2d((inputWGLength + waveguideWidth), 0.0));
                 for (int i = 0; i < (paramCnt - 1); i++)
                 {
                     double theta = (i + 1) / (double)paramCnt * Math.PI / 4.0;
-                    double x = InputWGLength + WaveguideWidth * ds[i] * Math.Cos(theta);
-                    double y = 0.0 + WaveguideWidth * ds[i] * Math.Sin(theta);
+                    double x = inputWGLength + waveguideWidth * ds[i] * Math.Cos(theta);
+                    double y = 0.0 + waveguideWidth * ds[i] * Math.Sin(theta);
                     pts.Add(new OpenTK.Vector2d(x, y));
                 }
                 {
                     double theta = Math.PI / 4.0;
-                    double x = InputWGLength + WaveguideWidth * ds[paramCnt - 1] * Math.Cos(theta);
-                    double y = 0.0 + WaveguideWidth * ds[paramCnt - 1] * Math.Sin(theta);
+                    double x = inputWGLength + waveguideWidth * ds[paramCnt - 1] * Math.Cos(theta);
+                    double y = 0.0 + waveguideWidth * ds[paramCnt - 1] * Math.Sin(theta);
                     pts.Add(new OpenTK.Vector2d(x, y));
                 }
                 for (int i = 0; i < (paramCnt - 1); i++)
                 {
                     double theta = (i + 1) / (double)paramCnt * Math.PI / 4.0 + Math.PI / 4.0;
-                    double x = InputWGLength + WaveguideWidth * ds[paramCnt - 2 - i] * Math.Cos(theta);
-                    double y = 0.0 + WaveguideWidth * ds[paramCnt - 2 - i] * Math.Sin(theta);
+                    double x = inputWGLength + waveguideWidth * ds[paramCnt - 2 - i] * Math.Cos(theta);
+                    double y = 0.0 + waveguideWidth * ds[paramCnt - 2 - i] * Math.Sin(theta);
                     pts.Add(new OpenTK.Vector2d(x, y));
                 }
-                pts.Add(new OpenTK.Vector2d(InputWGLength, WaveguideWidth));
+                pts.Add(new OpenTK.Vector2d(inputWGLength, waveguideWidth));
                 var res = cad2D.AddPolygon(pts);
                 IList<uint> eIds = res.EIds;
                 eId1 = eIds[0];
@@ -121,12 +121,12 @@ namespace IvyFEMProtoApp
             IDrawer drawer = new CadObject2DDrawer(cad2D);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-            mainWindow.glControl_ResizeProc();
-            mainWindow.glControl.Invalidate();
-            mainWindow.glControl.Update();
+            mainWindow.GLControl_ResizeProc();
+            mainWindow.GLControl.Invalidate();
+            mainWindow.GLControl.Update();
             WPFUtils.DoEvents();
 
-            double eLen = WaveguideWidth * 0.05;
+            double eLen = waveguideWidth * 0.05;
             Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
 
             FEWorld world = new FEWorld();
@@ -138,7 +138,7 @@ namespace IvyFEMProtoApp
                 quantityId = world.AddQuantity(dof, feOrder, FiniteElementType.ScalarLagrange);
             }
 
-            uint lId = 1;
+            int loopCnt = 1;
             {
                 world.ClearMaterial();
                 DielectricMaterial vacuumMa = new DielectricMaterial
@@ -152,22 +152,31 @@ namespace IvyFEMProtoApp
                 };
                 uint maId = world.AddMaterial(vacuumMa);
 
-                world.SetCadEdgeMaterial(eId1, maId);
-                world.SetCadEdgeMaterial(eId2, maId);
-                world.SetCadLoopMaterial(lId, maId);
+                uint[] eIds = { eId1, eId2 };
+                foreach (uint eId in eIds)
+                {
+                    world.SetCadEdgeMaterial(eId, maId);
+                }
+                for (int i = 0; i < loopCnt; i++)
+                {
+                    uint lId = (uint)(i + 1);
+                    world.SetCadLoopMaterial(lId, maId);
+                }
             }
             {
                 IList<PortCondition> portConditions = world.GetPortConditions(quantityId);
-                portConditions.Clear();
                 world.SetIncidentPortId(quantityId, 0);
                 world.SetIncidentModeId(quantityId, 0);
-                IList<uint> port1EIds = new List<uint>();
-                IList<uint> port2EIds = new List<uint>();
-                port1EIds.Add(eId1);
-                port2EIds.Add(eId2);
                 IList<IList<uint>> portEIdss = new List<IList<uint>>();
-                portEIdss.Add(port1EIds);
-                portEIdss.Add(port2EIds);
+                uint[] eIds = { eId1, eId2 };
+                foreach (uint eId in eIds)
+                {
+                    IList<uint> portEIds = new List<uint>();
+                    {
+                        portEIds.Add(eId);
+                    }
+                    portEIdss.Add(portEIds);
+                }
                 foreach (IList<uint> portEIds in portEIdss)
                 {
                     PortCondition portCondition = new PortCondition(portEIds, FieldValueType.ZScalar);
@@ -175,7 +184,6 @@ namespace IvyFEMProtoApp
                 }
             }
             var zeroFixedCads = world.GetZeroFieldFixedCads(quantityId);
-            zeroFixedCads.Clear();
             foreach (uint eId in zeroEIds)
             {
                 // 複素数
@@ -198,7 +206,7 @@ namespace IvyFEMProtoApp
             chartWin.Owner = mainWindow;
             chartWin.Show();
             var model = new PlotModel();
-            chartWin.plot.Model = model;
+            chartWin.Plot.Model = model;
             model.Title = "Waveguide Example";
             var axis1 = new LinearAxis
             {
@@ -226,7 +234,6 @@ namespace IvyFEMProtoApp
             };
             model.Series.Add(series1);
             model.Series.Add(series2);
-            var datas = new List<DataPoint>();
             model.InvalidatePlot(true);
             WPFUtils.DoEvents();
 
@@ -246,9 +253,9 @@ namespace IvyFEMProtoApp
                     valueId, FieldDerivativeType.Value, true, false, world);
                 fieldDrawerArray.Add(edgeDrawer);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-                mainWindow.glControl_ResizeProc();
-                //mainWindow.glControl.Invalidate();
-                //mainWindow.glControl.Update();
+                mainWindow.GLControl_ResizeProc();
+                //mainWindow.GLControl.Invalidate();
+                //mainWindow.GLControl.Update();
                 //WPFUtils.DoEvents();
             }
 
@@ -257,7 +264,7 @@ namespace IvyFEMProtoApp
             {
                 double normalizedFreq = sFreq + (iFreq / (double)freqDiv) * (eFreq - sFreq);
                 // 波数
-                double k0 = normalizedFreq * Math.PI / WaveguideWidth;
+                double k0 = normalizedFreq * Math.PI / waveguideWidth;
                 // 角周波数
                 double omega = k0 * Constants.C0;
                 // 周波数
@@ -313,8 +320,8 @@ namespace IvyFEMProtoApp
                 world.UpdateFieldValueValuesFromNodeValues(valueId, FieldDerivativeType.Value, Ez);
 
                 fieldDrawerArray.Update(world);
-                mainWindow.glControl.Invalidate();
-                mainWindow.glControl.Update();
+                mainWindow.GLControl.Invalidate();
+                mainWindow.GLControl.Update();
                 WPFUtils.DoEvents();
             }
         }

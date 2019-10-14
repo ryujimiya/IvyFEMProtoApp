@@ -16,8 +16,8 @@ namespace IvyFEMProtoApp
                 cad2D.Serialize(arch);
             }
             window.CadDesign.RefreshDrawerAry();
-            window.glControl.Invalidate();
-            window.glControl.Update();
+            window.GLControl.Invalidate();
+            window.GLControl.Update();
         }
 
         public void CadObjSaveToFile(string cadObjFileName, CadObject2D cad2D)
@@ -90,7 +90,6 @@ namespace IvyFEMProtoApp
 
             uint[] zeroEIds = { zeroEId };
             var zeroFixedCads = world.GetZeroFieldFixedCads(quantityId);
-            zeroFixedCads.Clear();
             foreach (uint eId in zeroEIds)
             {
                 // Vector2
@@ -107,7 +106,6 @@ namespace IvyFEMProtoApp
                         FixedDofIndexs = new List<uint> { 0, 1 }, Values = new List<double> { 0.0, 0.0 } }
                 };
                 IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(quantityId);
-                fixedCads.Clear();
                 foreach (var data in fixedCadDatas)
                 {
                     // Vector2
@@ -182,8 +180,8 @@ namespace IvyFEMProtoApp
                 world.UpdateFieldValueValuesFromNodeValues(valueId, FieldDerivativeType.Value, U);
 
                 fieldDrawerArray.Update(world);
-                window.glControl.Invalidate();
-                window.glControl.Update();
+                window.GLControl.Invalidate();
+                window.GLControl.Update();
                 WPFUtils.DoEvents();
                 t += dt;
             }

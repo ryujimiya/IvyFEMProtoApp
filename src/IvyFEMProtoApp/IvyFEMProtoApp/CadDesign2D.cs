@@ -95,7 +95,7 @@ namespace IvyFEMProtoApp
         /// <summary>
         /// Cadパネル
         /// </summary>
-        private OpenTK.GLControl glControl = null;
+        private OpenTK.GLControl GLControl = null;
         /// <summary>
         /// 背景の横
         /// </summary>
@@ -206,17 +206,17 @@ namespace IvyFEMProtoApp
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public CadDesign2D(OpenTK.GLControl glControl, double width, double height)
+        public CadDesign2D(OpenTK.GLControl GLControl, double width, double height)
             : base()
         {
-            this.glControl = glControl;
+            this.GLControl = GLControl;
 
             BackgroundWidth = width;
             BackgroundHeight = height;
             MinDistance = width / 100.0 * 2.0;
 
             // 色の設定
-            CadDesign2D.TmpEdgeColor = this.glControl.ForeColor;
+            CadDesign2D.TmpEdgeColor = this.GLControl.ForeColor;
 
             // 図面背景
             BackgroundDrawer = new BackgroundDrawer(BackgroundWidth, BackgroundHeight);
@@ -252,7 +252,7 @@ namespace IvyFEMProtoApp
 
             // Cad図面
             CadObject2DDrawer drawer = new CadObject2DDrawer(Cad2D);
-            uint lineWidth = (uint)(CadDesign2D.LineWidth * glControl.Width / (double)400);
+            uint lineWidth = (uint)(CadDesign2D.LineWidth * GLControl.Width / (double)400);
             drawer.LineWidth = lineWidth;
             DrawerArray.Add(drawer);
         }
@@ -300,7 +300,7 @@ namespace IvyFEMProtoApp
                 MessageBoxShowError(exception.Message, "");
             }
 
-            glControl.SwapBuffers();
+            GLControl.SwapBuffers();
         }
 
         /// <summary>
@@ -326,10 +326,10 @@ namespace IvyFEMProtoApp
         public void CadPanelResize()
         {
             //System.Diagnostics.Debug.WriteLine("CadPanelResize");
-            int scrollPosX = glControl.AutoScrollPosition.X;
-            int scrollPosY = glControl.AutoScrollPosition.Y;
-            int w = glControl.Width;
-            int h = glControl.Height;
+            int scrollPosX = GLControl.AutoScrollPosition.X;
+            int scrollPosY = GLControl.AutoScrollPosition.Y;
+            int w = GLControl.Width;
+            int h = GLControl.Height;
             ResizeScene(w, h);
         }
 
@@ -373,8 +373,8 @@ namespace IvyFEMProtoApp
                 // 描画オブジェクトアレイを更新する
                 RefreshDrawerAry();
                 // Cadパネルの再描画
-                glControl.Invalidate();
-                glControl.Update();
+                GLControl.Invalidate();
+                GLControl.Update();
             }
         }
 
@@ -505,8 +505,8 @@ namespace IvyFEMProtoApp
                     RefreshDrawerAry();
                 }
                 // Cadパネルの再描画
-                glControl.Invalidate();
-                glControl.Update();
+                GLControl.Invalidate();
+                GLControl.Update();
             }
         }
 
@@ -541,8 +541,8 @@ namespace IvyFEMProtoApp
                 // 描画オブジェクトアレイを更新する
                 RefreshDrawerAry();
                 // Cadパネルの再描画
-                glControl.Invalidate();
-                glControl.Update();
+                GLControl.Invalidate();
+                GLControl.Update();
             }
         }
 
@@ -633,8 +633,8 @@ namespace IvyFEMProtoApp
                 // 描画オブジェクトアレイを更新する
                 RefreshDrawerAry();
                 // Cadパネルの再描画
-                glControl.Invalidate();
-                glControl.Update();
+                GLControl.Invalidate();
+                GLControl.Update();
             }
             return executed;
         }
@@ -804,7 +804,7 @@ namespace IvyFEMProtoApp
             scale *= Math.Pow(1.1, delta / 120.0);
             Camera.Scale = scale;
 
-            glControl.MakeCurrent();
+            GLControl.MakeCurrent();
             CadPanelResize();
 
             executed = true;

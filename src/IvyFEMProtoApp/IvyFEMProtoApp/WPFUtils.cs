@@ -23,5 +23,14 @@ namespace IvyFEMProtoApp
             Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, callback, frame);
             Dispatcher.PushFrame(frame);
         }
+
+        public static void DoEvents(int milliseconds)
+        {
+            int t = System.Environment.TickCount + milliseconds;
+            while (t >= System.Environment.TickCount)
+            {
+                DoEvents();
+            }
+        }
     }
 }

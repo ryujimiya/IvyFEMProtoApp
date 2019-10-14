@@ -98,7 +98,6 @@ namespace IvyFEMProtoApp
                         FixedDofIndexs = new List<uint> { 0, 1 }, Values = new List<double> { 0.0, 0.0 } }
                 };
                 IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(uQuantityId);
-                fixedCads.Clear();
                 foreach (var data in fixedCadDatas)
                 {
                     // Vector2
@@ -157,9 +156,9 @@ namespace IvyFEMProtoApp
                     uValueId, FieldDerivativeType.Value, true, true, world);
                 fieldDrawerArray.Add(edgeDrawer2);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-                mainWindow.glControl_ResizeProc();
-                //mainWindow.glControl.Invalidate();
-                //mainWindow.glControl.Update();
+                mainWindow.GLControl_ResizeProc();
+                //mainWindow.GLControl.Invalidate();
+                //mainWindow.GLControl.Update();
                 //WPFUtils.DoEvents();
             }
             var constraintDrawerArray = mainWindow.ConstraintDrawerArray;
@@ -241,8 +240,8 @@ namespace IvyFEMProtoApp
                 FEM.UpdateFieldValuesTimeDomain();
 
                 fieldDrawerArray.Update(world);
-                mainWindow.glControl.Invalidate();
-                mainWindow.glControl.Update();
+                mainWindow.GLControl.Invalidate();
+                mainWindow.GLControl.Update();
                 WPFUtils.DoEvents();
                 t += dt;
             }
@@ -371,9 +370,9 @@ namespace IvyFEMProtoApp
                     uValueId, FieldDerivativeType.Value, true, true, world);
                 fieldDrawerArray.Add(edgeDrawer2);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-                mainWindow.glControl_ResizeProc();
-                //mainWindow.glControl.Invalidate();
-                //mainWindow.glControl.Update();
+                mainWindow.GLControl_ResizeProc();
+                //mainWindow.GLControl.Invalidate();
+                //mainWindow.GLControl.Update();
                 //WPFUtils.DoEvents();
             }
             var constraintDrawerArray = mainWindow.ConstraintDrawerArray;
@@ -450,8 +449,8 @@ namespace IvyFEMProtoApp
                 FEM.UpdateFieldValuesTimeDomain();
 
                 fieldDrawerArray.Update(world);
-                mainWindow.glControl.Invalidate();
-                mainWindow.glControl.Update();
+                mainWindow.GLControl.Invalidate();
+                mainWindow.GLControl.Update();
                 WPFUtils.DoEvents();
                 t += dt;
             }

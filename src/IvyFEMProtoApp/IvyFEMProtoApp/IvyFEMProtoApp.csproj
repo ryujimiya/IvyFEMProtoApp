@@ -141,9 +141,18 @@
     </Compile>
     <Compile Include="NonlinerOptimizingProblem.cs" />
     <Compile Include="PortEdge.cs" />
-    <Compile Include="Problem.EMEPlaneWaveguide.cs" />
-    <Compile Include="Problem.EMHPlaneWaveguideHigherOrderABCTD1.cs" />
-    <Compile Include="Problem.EMHPlaneWaveguideHigherOrderABCTD0.cs" />
+    <Compile Include="Problem.EMEWaveguide1.cs" />
+    <Compile Include="Problem.EMHWaveguide2.cs" />
+    <Compile Include="Problem.EMHWaveguideFirstOrderABCTDb2Open.cs" />
+    <Compile Include="Problem.EMHWaveguideHigherOrderABCTDb2Open.cs" />
+    <Compile Include="Problem.EMHWaveguideHigherOrderABCTDb2Open_0.cs" />
+    <Compile Include="Problem.EMHWaveguideFirstOrderABCTDb2Open_0.cs" />
+    <Compile Include="Problem.EMHWaveguideHigherOrderABCTDb2.cs" />
+    <Compile Include="Problem.EMHWaveguideHigherOrderABCTDb2_0.cs" />
+    <Compile Include="Problem.EMHWaveguideHigherOrderABCTDb1.cs" />
+    <Compile Include="Problem.EMHWaveguideHigherOrderABCTDb1_0.cs" />
+    <Compile Include="Problem.EMHWaveguideHigherOrderABCTDa1_0.cs" />
+    <Compile Include="Problem.EMHWaveguideHigherOrderABCTDa1.cs" />
     <Compile Include="Problem.FFT.cs" />
     <Compile Include="Problem.OptimizeProblem1.cs" />
     <Compile Include="Problem.PCWaveguideTriangleLattice1.cs" />
@@ -170,9 +179,9 @@
     <Compile Include="Problem.Hyperelastic.cs" />
     <Compile Include="Problem.ElasticMPC.cs" />
     <Compile Include="Problem.Elastic.cs" />
-    <Compile Include="Problem.EMHPlaneWaveguide.cs" />
+    <Compile Include="Problem.EMHWaveguide1.cs" />
     <Compile Include="Problem.Helmholtz.cs" />
-    <Compile Include="Problem.SampleFEM.cs" />
+    <Compile Include="Problem.ExampleFEM.cs" />
     <Compile Include="Problem.Solver.cs" />
     <Compile Include="Problem.Cad.cs" />
     <Compile Include="Problem.AdvectionDiffusion.cs" />
@@ -180,8 +189,8 @@
     <Compile Include="Problem.Poisson.cs" />
     <Compile Include="Problem.CadEdit.cs" />
     <Compile Include="Problem.cs" />
-    <Compile Include="SampleFEM.cs" />
-    <Compile Include="SampleFEMMaterial.cs" />
+    <Compile Include="ExampleFEM.cs" />
+    <Compile Include="ExampleFEMMaterial.cs" />
     <Compile Include="WPFUtils.cs" />
     <Page Include="AlertWindow.xaml">
       <SubType>Designer</SubType>

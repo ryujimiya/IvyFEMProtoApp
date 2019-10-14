@@ -43,11 +43,11 @@ namespace IvyFEMProtoApp
         public CadEditWindow()
         {
             InitializeComponent();
-            CadDesign = new CadDesign2D(glControl, 100, 100);
+            CadDesign = new CadDesign2D(GLControl, 100, 100);
             CadDesign.Change += CadDesign_Change;
             CadDesign.ShowProperty += CadDesign_ShowProperty;
             CadDesign.CadMode = CadDesign2DBase.CadModeType.None;
-            CalcDraw = new CalcDraw2D(glControl, CadDesign.Camera);
+            CalcDraw = new CalcDraw2D(GLControl, CadDesign.Camera);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -57,16 +57,16 @@ namespace IvyFEMProtoApp
 
         private void Window_Activated(object sender, EventArgs e)
         {
-            glControl.MakeCurrent();
+            GLControl.MakeCurrent();
         }
 
-        private void glControl_Load(object sender, EventArgs e)
+        private void GLControl_Load(object sender, EventArgs e)
         {
             GL.Enable(EnableCap.DepthTest);
             GL.ClearColor(Color4.Black);
         }
 
-        private void glControl_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
+        private void GLControl_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
         {
             try
             {
@@ -85,7 +85,7 @@ namespace IvyFEMProtoApp
             }
         }
 
-        private void glControl_Resize(object sender, EventArgs e)
+        private void GLControl_Resize(object sender, EventArgs e)
         {
             if (IsFieldDraw)
             {
@@ -97,17 +97,17 @@ namespace IvyFEMProtoApp
             }
         }
 
-        private void glControl_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void GLControl_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             CadDesign.CadPanelMouseClick(e);
         }
 
-        private void glControl_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void GLControl_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             CadDesign.CadPanelMouseDown(e);
         }
 
-        private void glControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void GLControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             {
                 System.Drawing.Point pt = e.Location;
@@ -117,27 +117,27 @@ namespace IvyFEMProtoApp
             CadDesign.CadPanelMouseMove(e);
         }
 
-        private void glControl_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void GLControl_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             CadDesign.CadPanelMouseUp(e);
         }
 
-        private void glControl_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void GLControl_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             CadDesign.CadPanelMouseWheel(e);
         }
 
-        private void glControl_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        private void GLControl_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             CadDesign.CadPanelKeyDown(e);
         }
 
-        private void glControl_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+        private void GLControl_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
         {
             CadDesign.CadPanelKeyPress(e);
         }
 
-        private void glControl_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+        private void GLControl_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             CadDesign.CadPanelKeyUp(e);
         }
@@ -158,12 +158,12 @@ namespace IvyFEMProtoApp
         private void ModeBtn_Click(CadDesign2D.CadModeType cadMode)
         {
             Button[] modeBtns = {
-                noneBtn,
-                polygonBtn,
-                moveBtn,
-                arcBtn,
-                portBtn,
-                eraseBtn
+                NoneBtn,
+                PolygonBtn,
+                MoveBtn,
+                ArcBtn,
+                PortBtn,
+                EraseBtn
             };
             CadDesign2D.CadModeType[] cadModes = {
                 CadDesign2DBase.CadModeType.None,
@@ -190,54 +190,54 @@ namespace IvyFEMProtoApp
             }
         }
 
-        private void noneBtn_Click(object sender, RoutedEventArgs e)
+        private void NoneBtn_Click(object sender, RoutedEventArgs e)
         {
             ModeBtn_Click(CadDesign2DBase.CadModeType.None);
             IsFieldDraw = false;
-            glControl.Invalidate();
+            GLControl.Invalidate();
         }
 
-        private void polygonBtn_Click(object sender, RoutedEventArgs e)
+        private void PolygonBtn_Click(object sender, RoutedEventArgs e)
         {
             ModeBtn_Click(CadDesign2DBase.CadModeType.Polygon);
             IsFieldDraw = false;
-            glControl.Invalidate();
-            glControl.Update();
+            GLControl.Invalidate();
+            GLControl.Update();
         }
 
-        private void moveBtn_Click(object sender, RoutedEventArgs e)
+        private void MoveBtn_Click(object sender, RoutedEventArgs e)
         {
             ModeBtn_Click(CadDesign2DBase.CadModeType.Move);
             IsFieldDraw = false;
-            glControl.Invalidate();
-            glControl.Update();
+            GLControl.Invalidate();
+            GLControl.Update();
         }
 
-        private void arcBtn_Click(object sender, RoutedEventArgs e)
+        private void ArcBtn_Click(object sender, RoutedEventArgs e)
         {
             ModeBtn_Click(CadDesign2DBase.CadModeType.Arc);
             IsFieldDraw = false;
-            glControl.Invalidate();
-            glControl.Update();
+            GLControl.Invalidate();
+            GLControl.Update();
         }
 
-        private void portBtn_Click(object sender, RoutedEventArgs e)
+        private void PortBtn_Click(object sender, RoutedEventArgs e)
         {
             ModeBtn_Click(CadDesign2DBase.CadModeType.Port);
             IsFieldDraw = false;
-            glControl.Invalidate();
-            glControl.Update();
+            GLControl.Invalidate();
+            GLControl.Update();
         }
 
-        private void eraseBtn_Click(object sender, RoutedEventArgs e)
+        private void EraseBtn_Click(object sender, RoutedEventArgs e)
         {
             ModeBtn_Click(CadDesign2DBase.CadModeType.Erase);
             IsFieldDraw = false;
-            glControl.Invalidate();
-            glControl.Update();
+            GLControl.Invalidate();
+            GLControl.Update();
         }
 
-        private void calcSampleBtn_Click(object sender, RoutedEventArgs e)
+        private void CalcExampleBtn_Click(object sender, RoutedEventArgs e)
         {
             var portEdges = CadDesign.PortEdges;
             if (portEdges.Count < 2)
@@ -251,7 +251,7 @@ namespace IvyFEMProtoApp
                 CadDesign.Cad2D, CadDesign.Camera, zeroEId, moveEId, this);
         }
 
-        private void openBtn_Click(object sender, RoutedEventArgs e)
+        private void OpenBtn_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new Microsoft.Win32.OpenFileDialog();
             dialog.Title = "ファイルを開く";
@@ -265,7 +265,7 @@ namespace IvyFEMProtoApp
             Problem.CadObjLoadFromFile(cadObjFileName, CadDesign.Cad2D, this);
         }
 
-        private void saveBtn_Click(object sender, RoutedEventArgs e)
+        private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new Microsoft.Win32.SaveFileDialog();
             dialog.Title = "ファイルを保存";
@@ -280,7 +280,7 @@ namespace IvyFEMProtoApp
             MessageBox.Show("保存しました", "");
         }
 
-        private void meshBtn_Click(object sender, RoutedEventArgs e)
+        private void MeshBtn_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new Microsoft.Win32.SaveFileDialog();
             dialog.Title = "ファイルを保存";

@@ -14,19 +14,19 @@
         </Grid.ColumnDefinitions>
 
         <ToolBar Height="40" VerticalAlignment="Top" Margin="0,29,0,0">
-            <Button x:Name="noneBtn" Content="None" VerticalAlignment="Stretch" Width="40" Margin="0,0,0,-5" Click="noneBtn_Click"/>
-            <Button x:Name="polygonBtn" Content="Polygon" VerticalAlignment="Stretch" Width="40" Margin="0,0,0,-5" Click="polygonBtn_Click"/>
-            <Button x:Name="moveBtn" Content="Move" VerticalAlignment="Stretch" Width="40" Margin="0,0,0,-5" Click="moveBtn_Click"/>
-            <Button x:Name="arcBtn" Content="Arc" VerticalAlignment="Stretch" Width="40" Click="arcBtn_Click" Margin="0,0,0,-5"/>
-            <Button x:Name="portBtn" Content="Port" VerticalAlignment="Stretch" Width="40" Margin="0,0,0,-5" Click="portBtn_Click"/>
+            <Button x:Name="NoneBtn" Content="None" VerticalAlignment="Stretch" Width="40" Margin="0,0,0,-5" Click="NoneBtn_Click"/>
+            <Button x:Name="PolygonBtn" Content="Polygon" VerticalAlignment="Stretch" Width="40" Margin="0,0,0,-5" Click="PolygonBtn_Click"/>
+            <Button x:Name="MoveBtn" Content="Move" VerticalAlignment="Stretch" Width="40" Margin="0,0,0,-5" Click="MoveBtn_Click"/>
+            <Button x:Name="ArcBtn" Content="Arc" VerticalAlignment="Stretch" Width="40" Click="ArcBtn_Click" Margin="0,0,0,-5"/>
+            <Button x:Name="PortBtn" Content="Port" VerticalAlignment="Stretch" Width="40" Margin="0,0,0,-5" Click="PortBtn_Click"/>
             <Separator VerticalAlignment="Stretch" Width="10" Margin="0,0,0,-5"/>
-            <Button x:Name="eraseBtn" Content="Erase" VerticalAlignment="Stretch" Width="40" Margin="0,0,0,-5" Click="eraseBtn_Click"/>
+            <Button x:Name="EraseBtn" Content="Erase" VerticalAlignment="Stretch" Width="40" Margin="0,0,0,-5" Click="EraseBtn_Click"/>
             <Separator VerticalAlignment="Stretch" Width="40" Margin="0,0,0,-5"/>
-            <Button x:Name="meshBtn" Content="Mesh" VerticalAlignment="Stretch" Width="40" Margin="0,0,0,-5" Click="meshBtn_Click"/>
-            <Button x:Name="calcSampleBtn" Content="Calc! Sample" VerticalAlignment="Stretch" Width="80" Margin="0,0,0,-5" Click="calcSampleBtn_Click"/>
+            <Button x:Name="MeshBtn" Content="Mesh" VerticalAlignment="Stretch" Width="40" Margin="0,0,0,-5" Click="MeshBtn_Click"/>
+            <Button x:Name="CalcExampleBtn" Content="Calc! Example" VerticalAlignment="Stretch" Width="80" Margin="0,0,0,-5" Click="CalcExampleBtn_Click"/>
         </ToolBar>
         <WindowsFormsHost Margin="0,69,0,47">
-            <OpenTK:GLControl x:Name="glControl" Load="glControl_Load" Resize="glControl_Resize" Paint="glControl_Paint" MouseClick="glControl_MouseClick" KeyDown="glControl_KeyDown" KeyUp="glControl_KeyUp" MouseMove="glControl_MouseMove" MouseDown="glControl_MouseDown" MouseWheel="glControl_MouseWheel" MouseUp="glControl_MouseUp" KeyPress="glControl_KeyPress"/>
+            <OpenTK:GLControl x:Name="GLControl" Load="GLControl_Load" Resize="GLControl_Resize" Paint="GLControl_Paint" MouseClick="GLControl_MouseClick" KeyDown="GLControl_KeyDown" KeyUp="GLControl_KeyUp" MouseMove="GLControl_MouseMove" MouseDown="GLControl_MouseDown" MouseWheel="GLControl_MouseWheel" MouseUp="GLControl_MouseUp" KeyPress="GLControl_KeyPress"/>
         </WindowsFormsHost>
         <StatusBar Height="47" VerticalAlignment="Bottom">
             <Label Content="X,Y: "/>
@@ -34,8 +34,8 @@
         </StatusBar>
         <Menu Height="29" VerticalAlignment="Top">
             <MenuItem Header="File">
-                <MenuItem Header="Open" Click="openBtn_Click"/>
-                <MenuItem Header="Save" Click="saveBtn_Click"/>
+                <MenuItem Header="Open" Click="OpenBtn_Click"/>
+                <MenuItem Header="Save" Click="SaveBtn_Click"/>
             </MenuItem>
         </Menu>
 

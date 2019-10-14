@@ -14,7 +14,7 @@ namespace IvyFEMProtoApp
     {
         public void PCWaveguideTriangleLatticeProblem0(MainWindow mainWindow)
         {
-            double WaveguideWidth = 1.0;
+            double waveguideWidth = 1.0;
 
             // 格子定数
             double latticeA = 0;
@@ -63,10 +63,10 @@ namespace IvyFEMProtoApp
             // 格子の数
             int latticeCnt = rodCntHalf * 2 + defectRodCnt;
             // ロッド間の距離(Y方向)
-            double rodDistanceY = WaveguideWidth / (double)latticeCnt;
+            double rodDistanceY = waveguideWidth / (double)latticeCnt;
             if (isLargeRod)
             {
-                rodDistanceY = WaveguideWidth / (double)(latticeCnt - 1);
+                rodDistanceY = waveguideWidth / (double)(latticeCnt - 1);
             }
             // 格子定数
             latticeA = rodDistanceY / Math.Sin(latticeTheta * Math.PI / 180.0);
@@ -81,7 +81,7 @@ namespace IvyFEMProtoApp
             // 入出力導波路の周期構造部分の長さ
             double inputWgLength = rodDistanceX;
             // メッシュのサイズ
-            double eLen = 1.05 * WaveguideWidth / (latticeCnt * divCntForOneLattice);
+            double eLen = 1.05 * waveguideWidth / (latticeCnt * divCntForOneLattice);
 
             // フォトニック結晶導波路の場合、a/λを規格化周波数とする
             double sFreq = 0.268;
@@ -175,14 +175,14 @@ namespace IvyFEMProtoApp
                 {
                     IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
                     // 領域追加
-                    pts.Add(new OpenTK.Vector2d(0.0, WaveguideWidth));
+                    pts.Add(new OpenTK.Vector2d(0.0, waveguideWidth));
                     pts.Add(new OpenTK.Vector2d(0.0, 0.0));
                     pts.Add(new OpenTK.Vector2d(inputWgLength, 0.0));
                     pts.Add(new OpenTK.Vector2d(inputWgLength + disconLength, 0.0));
                     pts.Add(new OpenTK.Vector2d(inputWgLength * 2 + disconLength, 0.0));
-                    pts.Add(new OpenTK.Vector2d(inputWgLength * 2 + disconLength, WaveguideWidth));
-                    pts.Add(new OpenTK.Vector2d(inputWgLength + disconLength, WaveguideWidth));
-                    pts.Add(new OpenTK.Vector2d(inputWgLength, WaveguideWidth));
+                    pts.Add(new OpenTK.Vector2d(inputWgLength * 2 + disconLength, waveguideWidth));
+                    pts.Add(new OpenTK.Vector2d(inputWgLength + disconLength, waveguideWidth));
+                    pts.Add(new OpenTK.Vector2d(inputWgLength, waveguideWidth));
                     uint lId1 = cad2D.AddPolygon(pts).AddLId;
                 }
                 // 入出力領域を分離
@@ -203,13 +203,13 @@ namespace IvyFEMProtoApp
                 for (int i = 0; i < rodCntHalf; i++)
                 {
                     if ((rodCntHalf - 1 - i) % 2 == (isShift180 ? 1 : 0)) continue;
-                    double y0 = WaveguideWidth - i * rodDistanceY - 0.5 * rodDistanceY;
+                    double y0 = waveguideWidth - i * rodDistanceY - 0.5 * rodDistanceY;
                     if (isLargeRod)
                     {
                         y0 += 0.5 * rodDistanceY;
                     }
                     if (y0 > (0.0 + Constants.PrecisionLowerLimit) &&
-                        y0 < (WaveguideWidth - Constants.PrecisionLowerLimit))
+                        y0 < (waveguideWidth - Constants.PrecisionLowerLimit))
                     {
                         rodys.Add(y0);
                     }
@@ -229,7 +229,7 @@ namespace IvyFEMProtoApp
                         double y1 = y0 - k * rodRadius / rodRadiusDiv;
                         double y2 = y0 + k * rodRadius / rodRadiusDiv;
                         if (y1 > (0.0 + Constants.PrecisionLowerLimit) &&
-                            y1 < (WaveguideWidth - Constants.PrecisionLowerLimit))
+                            y1 < (waveguideWidth - Constants.PrecisionLowerLimit))
                         {
                             rodys.Add(y1);
                         }
@@ -238,7 +238,7 @@ namespace IvyFEMProtoApp
                             System.Diagnostics.Debug.Assert(false);
                         }
                         if (y2 > (0.0 + Constants.PrecisionLowerLimit) &&
-                            y2 < (WaveguideWidth - Constants.PrecisionLowerLimit))
+                            y2 < (waveguideWidth - Constants.PrecisionLowerLimit))
                         {
                             rodys.Add(y2);
                         }
@@ -263,7 +263,7 @@ namespace IvyFEMProtoApp
                     {
                         y0 -= 0.5 * rodDistanceY;
                     }
-                    if (y0 > (0.0 + Constants.PrecisionLowerLimit) && y0 < (WaveguideWidth - Constants.PrecisionLowerLimit))
+                    if (y0 > (0.0 + Constants.PrecisionLowerLimit) && y0 < (waveguideWidth - Constants.PrecisionLowerLimit))
                     {
                         rodys.Add(y0);
                     }
@@ -282,7 +282,7 @@ namespace IvyFEMProtoApp
                     {
                         double y1 = y0 - k * rodRadius / rodRadiusDiv;
                         double y2 = y0 + k * rodRadius / rodRadiusDiv;
-                        if (y1 > (0.0 + Constants.PrecisionLowerLimit) && y1 < (WaveguideWidth - Constants.PrecisionLowerLimit))
+                        if (y1 > (0.0 + Constants.PrecisionLowerLimit) && y1 < (waveguideWidth - Constants.PrecisionLowerLimit))
                         {
                             rodys.Add(y1);
                         }
@@ -297,7 +297,7 @@ namespace IvyFEMProtoApp
                                 System.Diagnostics.Debug.Assert(false);
                             }
                         }
-                        if (y2 > (0.0 + Constants.PrecisionLowerLimit) && y2 < (WaveguideWidth - Constants.PrecisionLowerLimit))
+                        if (y2 > (0.0 + Constants.PrecisionLowerLimit) && y2 < (waveguideWidth - Constants.PrecisionLowerLimit))
                         {
                             rodys.Add(y2);
                         }
@@ -320,15 +320,15 @@ namespace IvyFEMProtoApp
                     if ((rodCntHalf - 1 - i) % 2 == (isShift180 ? 1 : 0)) continue;
                     for (int k = 1; k <= (divCntForOneLattice - 1); k++)
                     {
-                        double divptY = WaveguideWidth - i * rodDistanceY - k * (rodDistanceY / divCntForOneLattice);
+                        double divptY = waveguideWidth - i * rodDistanceY - k * (rodDistanceY / divCntForOneLattice);
                         double minRodY =
-                            WaveguideWidth - i * rodDistanceY - 0.5 * rodDistanceY - rodRadius - radiusMargin;
+                            waveguideWidth - i * rodDistanceY - 0.5 * rodDistanceY - rodRadius - radiusMargin;
                         double maxRodY =
-                            WaveguideWidth - i * rodDistanceY - 0.5 * rodDistanceY + rodRadius + radiusMargin;
+                            waveguideWidth - i * rodDistanceY - 0.5 * rodDistanceY + rodRadius + radiusMargin;
                         if (isLargeRod)
                         {
                             divptY += rodDistanceY * 0.5;
-                            if (divptY >= (WaveguideWidth - Constants.PrecisionLowerLimit)) continue;
+                            if (divptY >= (waveguideWidth - Constants.PrecisionLowerLimit)) continue;
                             minRodY += rodDistanceY * 0.5;
                             maxRodY += rodDistanceY * 0.5;
                         }
@@ -372,14 +372,14 @@ namespace IvyFEMProtoApp
                     for (int k = 0; k <= divCntForOneLattice; k++)
                     {
                         if (i == 0 && k == 0) continue;
-                        double divptY = WaveguideWidth - i * rodDistanceY - k * (rodDistanceY / divCntForOneLattice);
+                        double divptY = waveguideWidth - i * rodDistanceY - k * (rodDistanceY / divCntForOneLattice);
                         double minUpperRodY =
-                            WaveguideWidth - i * rodDistanceY + 0.5 * rodDistanceY - rodRadius - radiusMargin;
-                        double maxLowerRodY = WaveguideWidth - (i + 1) * rodDistanceY - 0.5 * rodDistanceY + rodRadius + radiusMargin;
+                            waveguideWidth - i * rodDistanceY + 0.5 * rodDistanceY - rodRadius - radiusMargin;
+                        double maxLowerRodY = waveguideWidth - (i + 1) * rodDistanceY - 0.5 * rodDistanceY + rodRadius + radiusMargin;
                         if (isLargeRod)
                         {
                             divptY += rodDistanceY * 0.5;
-                            if (divptY >= (WaveguideWidth - Constants.PrecisionLowerLimit)) continue;
+                            if (divptY >= (waveguideWidth - Constants.PrecisionLowerLimit)) continue;
                             minUpperRodY += rodDistanceY * 0.5;
                             maxLowerRodY += rodDistanceY * 0.5;
                         }
@@ -689,8 +689,8 @@ namespace IvyFEMProtoApp
                         {
                             System.Diagnostics.Debug.Assert(false);
                         }
-                        double y0 = WaveguideWidth;
-                        double crossY = WaveguideWidth;
+                        double y0 = waveguideWidth;
+                        double crossY = waveguideWidth;
                         double[] crossXs = new double[2];
                         crossXs[0] = -1.0 * Math.Sqrt(rodRadius * rodRadius - (crossY - y0) * (crossY - y0)) + x0;
                         crossXs[1] = Math.Sqrt(rodRadius * rodRadius - (crossY - y0) * (crossY - y0)) + x0;
@@ -1006,7 +1006,7 @@ namespace IvyFEMProtoApp
                                     }
                                 }
                                 double x0 = xB;
-                                double y0 = WaveguideWidth - i * rodDistanceY - rodDistanceY * 0.5;
+                                double y0 = waveguideWidth - i * rodDistanceY - rodDistanceY * 0.5;
                                 if (isLargeRod)
                                 {
                                     y0 += rodDistanceY * 0.5;
@@ -1290,7 +1290,7 @@ namespace IvyFEMProtoApp
                                     }
                                 }
                                 double x0 = xB;
-                                double y0 = WaveguideWidth - i * rodDistanceY - rodDistanceY * 0.5;
+                                double y0 = waveguideWidth - i * rodDistanceY - rodDistanceY * 0.5;
                                 if (isLargeRod)
                                 {
                                     y0 += rodDistanceY * 0.5;
@@ -1525,8 +1525,8 @@ namespace IvyFEMProtoApp
                             System.Diagnostics.Debug.Assert(false);
                         }
                         double x0 = rodDistanceX * 0.5 * col;
-                        double y0 = WaveguideWidth;
-                        double crossY = WaveguideWidth;
+                        double y0 = waveguideWidth;
+                        double crossY = waveguideWidth;
                         double[] crossXs = new double[3];
                         crossXs[0] = -1.0 * Math.Sqrt(rodRadius * rodRadius - (crossY - y0) * (crossY - y0)) + x0; // 交点
                         crossXs[1] = x0; // 中心
@@ -1671,7 +1671,7 @@ namespace IvyFEMProtoApp
                                 {
                                     // 半円（下半分)を追加
                                     double x0 = rodDistanceX * 0.5 * col;
-                                    double y0 = WaveguideWidth - i * rodDistanceY - rodDistanceY * 0.5;
+                                    double y0 = waveguideWidth - i * rodDistanceY - rodDistanceY * 0.5;
                                     if (isLargeRod)
                                     {
                                         y0 += rodDistanceY * 0.5; // for isLargeRod
@@ -1722,7 +1722,7 @@ namespace IvyFEMProtoApp
                         {
                             // 中央ロッド
                             double x0 = rodDistanceX * 0.5 * col;
-                            double y0 = WaveguideWidth - i * rodDistanceY - rodDistanceY * 0.5;
+                            double y0 = waveguideWidth - i * rodDistanceY - rodDistanceY * 0.5;
                             if (isLargeRod)
                             {
                                 y0 += rodDistanceY * 0.5; // for isLargeRod
@@ -1828,9 +1828,9 @@ namespace IvyFEMProtoApp
             IDrawer drawer = new CadObject2DDrawer(cad2D);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-            mainWindow.glControl_ResizeProc();
-            mainWindow.glControl.Invalidate();
-            mainWindow.glControl.Update();
+            mainWindow.GLControl_ResizeProc();
+            mainWindow.GLControl.Invalidate();
+            mainWindow.GLControl.Update();
             WPFUtils.DoEvents();
 
             Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
@@ -1841,9 +1841,9 @@ namespace IvyFEMProtoApp
             IDrawer meshDrawer = new Mesher2DDrawer(mesher2D);
             mainWindow.DrawerArray.Add(meshDrawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-            mainWindow.glControl_ResizeProc();
-            mainWindow.glControl.Invalidate();
-            mainWindow.glControl.Update();
+            mainWindow.GLControl_ResizeProc();
+            mainWindow.GLControl.Invalidate();
+            mainWindow.GLControl.Update();
             WPFUtils.DoEvents();
             */
 
@@ -2081,7 +2081,6 @@ namespace IvyFEMProtoApp
             // ポート条件
             IList<PortCondition> portConditions = world.GetPortConditions(quantityId);
             {
-                portConditions.Clear();
                 world.SetIncidentPortId(quantityId, 0);
                 world.SetIncidentModeId(quantityId, 0);
                 for (int portId = 0; portId < portCnt; portId++)
@@ -2110,7 +2109,6 @@ namespace IvyFEMProtoApp
                 zeroEIds[6 + eIdsF1.Count + i] = eIdsF2[i];
             }
             var zeroFixedCads = world.GetZeroFieldFixedCads(quantityId);
-            zeroFixedCads.Clear();
             foreach (uint eId in zeroEIds)
             {
                 // 複素数
@@ -2163,13 +2161,13 @@ namespace IvyFEMProtoApp
                         double[] coord = world.GetCoord(quantityId, coId);
                         // X方向周期構造
                         double y = Math.Abs(coord[1] - coord0[1]); // Y座標
-                        //if (y >= (WaveguideWidth - rodDistanceY * (rodCntHalf + defectRodCnt) -
+                        //if (y >= (waveguideWidth - rodDistanceY * (rodCntHalf + defectRodCnt) -
                         //    (0.5 * rodDistanceY - rodRadius)) && y <=
-                        //    (WaveguideWidth - rodDistanceY * rodCntHalf +
+                        //    (waveguideWidth - rodDistanceY * rodCntHalf +
                         //    (0.5 * rodDistanceY - rodRadius))) // dielectric rod
-                        if (y >= (WaveguideWidth - rodDistanceY * (rodCntHalf + defectRodCnt) -
+                        if (y >= (waveguideWidth - rodDistanceY * (rodCntHalf + defectRodCnt) -
                             1.0 * rodDistanceY) &&
-                            y <= (WaveguideWidth - rodDistanceY * rodCntHalf +
+                            y <= (waveguideWidth - rodDistanceY * rodCntHalf +
                             1.0 * rodDistanceY)) // air hole
                         {
                             channelCoIds.Add(coId);
@@ -2184,7 +2182,7 @@ namespace IvyFEMProtoApp
             chartWin.Top = mainWindow.Top;
             chartWin.Show();
             var model = new PlotModel();
-            chartWin.plot.Model = model;
+            chartWin.Plot.Model = model;
             model.Title = "PCWaveguide Example";
             var axis1 = new LinearAxis
             {
@@ -2212,7 +2210,6 @@ namespace IvyFEMProtoApp
             };
             model.Series.Add(series1);
             model.Series.Add(series2);
-            var datas = new List<DataPoint>();
             model.InvalidatePlot(true);
             WPFUtils.DoEvents();
 
@@ -2232,9 +2229,9 @@ namespace IvyFEMProtoApp
                     valueId, FieldDerivativeType.Value, true, false, world);
                 fieldDrawerArray.Add(edgeDrawer);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-                mainWindow.glControl_ResizeProc();
-                //mainWindow.glControl.Invalidate();
-                //mainWindow.glControl.Update();
+                mainWindow.GLControl_ResizeProc();
+                //mainWindow.GLControl.Invalidate();
+                //mainWindow.GLControl.Update();
                 //WPFUtils.DoEvents();
             }
 
@@ -2338,8 +2335,8 @@ namespace IvyFEMProtoApp
                 world.UpdateFieldValueValuesFromNodeValues(valueId, FieldDerivativeType.Value, Ez);
 
                 fieldDrawerArray.Update(world);
-                mainWindow.glControl.Invalidate();
-                mainWindow.glControl.Update();
+                mainWindow.GLControl.Invalidate();
+                mainWindow.GLControl.Update();
                 WPFUtils.DoEvents();
             }
         }

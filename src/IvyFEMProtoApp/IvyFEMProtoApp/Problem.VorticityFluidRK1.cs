@@ -32,9 +32,9 @@ namespace IvyFEMProtoApp
             IDrawer drawer = new CadObject2DDrawer(cad2D);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-            mainWindow.glControl_ResizeProc();
-            mainWindow.glControl.Invalidate();
-            mainWindow.glControl.Update();
+            mainWindow.GLControl_ResizeProc();
+            mainWindow.GLControl.Invalidate();
+            mainWindow.GLControl.Update();
             WPFUtils.DoEvents();
 
             double eLen = 0.08;
@@ -79,7 +79,6 @@ namespace IvyFEMProtoApp
             // 入口(境界3)も流線が平行なので0
             uint[] pZeroEIds = { 1, 2, 3, 4 };
             var pZeroFixedCads = world.GetZeroFieldFixedCads(pQuantityId);
-            pZeroFixedCads.Clear();
             foreach (uint eId in pZeroEIds)
             {
                 // Scalar
@@ -96,7 +95,6 @@ namespace IvyFEMProtoApp
             DistributedPortCondition wSrcPortCondition;
             {
                 var portConditions = world.GetPortConditions(wQuantityId);
-                portConditions.Clear();
 
                 // 境界に平行な速度
                 {
@@ -185,9 +183,9 @@ namespace IvyFEMProtoApp
                     wValueId, FieldDerivativeType.Value, true, false, world);
                 fieldDrawerArray.Add(edgeDrawer);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-                mainWindow.glControl_ResizeProc();
-                //mainWindow.glControl.Invalidate();
-                //mainWindow.glControl.Update();
+                mainWindow.GLControl_ResizeProc();
+                //mainWindow.GLControl.Invalidate();
+                //mainWindow.GLControl.Update();
                 //WPFUtils.DoEvents();
             }
 
@@ -249,8 +247,8 @@ namespace IvyFEMProtoApp
                 world.UpdateBubbleFieldValueValuesFromCoordValues(bubbleVValueId, FieldDerivativeType.Value, V);
 
                 fieldDrawerArray.Update(world);
-                mainWindow.glControl.Invalidate();
-                mainWindow.glControl.Update();
+                mainWindow.GLControl.Invalidate();
+                mainWindow.GLControl.Update();
                 WPFUtils.DoEvents();
                 t += dt;
             }

@@ -65,7 +65,6 @@ namespace IvyFEMProtoApp
 
             uint[] zeroEIds = { 4 };
             var zeroFixedCads = world.GetZeroFieldFixedCads(quantityId);
-            zeroFixedCads.Clear();
             foreach (uint eId in zeroEIds)
             {
                 // Vector2
@@ -82,7 +81,6 @@ namespace IvyFEMProtoApp
                         FixedDofIndexs = new List<uint> { 0, 1 }, Values = new List<double> { 0.0, 0.0 } }
                 };
                 IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(quantityId);
-                fixedCads.Clear();
                 foreach (var data in fixedCadDatas)
                 {
                     // Vector2
@@ -136,9 +134,9 @@ namespace IvyFEMProtoApp
                     valueId, FieldDerivativeType.Value, true, true, world);
                 fieldDrawerArray.Add(edgeDrawer2);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-                mainWindow.glControl_ResizeProc();
-                //mainWindow.glControl.Invalidate();
-                //mainWindow.glControl.Update();
+                mainWindow.GLControl_ResizeProc();
+                //mainWindow.GLControl.Invalidate();
+                //mainWindow.GLControl.Update();
                 //WPFUtils.DoEvents();
             }
 
@@ -182,8 +180,8 @@ namespace IvyFEMProtoApp
                 }
 
                 fieldDrawerArray.Update(world);
-                mainWindow.glControl.Invalidate();
-                mainWindow.glControl.Update();
+                mainWindow.GLControl.Invalidate();
+                mainWindow.GLControl.Update();
                 WPFUtils.DoEvents();
                 t += dt;
             }
@@ -241,7 +239,6 @@ namespace IvyFEMProtoApp
 
             uint[] zeroEIds = { 4 };
             var zeroFixedCads = world.GetZeroFieldFixedCads(quantityId);
-            zeroFixedCads.Clear();
             foreach (uint eId in zeroEIds)
             {
                 // Vector2
@@ -258,7 +255,6 @@ namespace IvyFEMProtoApp
                         FixedDofIndexs = new List<uint> { 0, 1 }, Values = new List<double> { 0.0, 0.0 } }
                 };
                 IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(quantityId);
-                fixedCads.Clear();
                 foreach (var data in fixedCadDatas)
                 {
                     // Vector2
@@ -294,9 +290,9 @@ namespace IvyFEMProtoApp
                     valueId, FieldDerivativeType.Value, true, true, world);
                 fieldDrawerArray.Add(edgeDrawer2);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-                mainWindow.glControl_ResizeProc();
-                //mainWindow.glControl.Invalidate();
-                //mainWindow.glControl.Update();
+                mainWindow.GLControl_ResizeProc();
+                //mainWindow.GLControl.Invalidate();
+                //mainWindow.GLControl.Update();
                 //WPFUtils.DoEvents();
             }
 
@@ -340,8 +336,8 @@ namespace IvyFEMProtoApp
                 FEM.UpdateFieldValuesTimeDomain();
 
                 fieldDrawerArray.Update(world);
-                mainWindow.glControl.Invalidate();
-                mainWindow.glControl.Update();
+                mainWindow.GLControl.Invalidate();
+                mainWindow.GLControl.Update();
                 WPFUtils.DoEvents();
                 t += dt;
             }

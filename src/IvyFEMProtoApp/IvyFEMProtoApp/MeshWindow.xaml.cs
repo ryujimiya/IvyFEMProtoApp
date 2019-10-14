@@ -42,80 +42,80 @@ namespace IvyFEMProtoApp
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            MeshDraw = new MeshDraw2D(glControl, BackgroundWidth, BackgroundHeight);
+            MeshDraw = new MeshDraw2D(GLControl, BackgroundWidth, BackgroundHeight);
 
-            glControl.MakeCurrent();
+            GLControl.MakeCurrent();
             MeshDraw.Init(Mesher2D);
         }
 
         private void Window_GotFocus(object sender, RoutedEventArgs e)
         {
-            glControl.MakeCurrent();
-            glControl.Invalidate();
-            glControl.Update();
+            GLControl.MakeCurrent();
+            GLControl.Invalidate();
+            GLControl.Update();
         }
 
-        private void glControl_Load(object sender, EventArgs e)
+        private void GLControl_Load(object sender, EventArgs e)
         {
-            glControl.MakeCurrent();
+            GLControl.MakeCurrent();
             GL.Enable(EnableCap.DepthTest);
             GL.ClearColor(Color4.Black);
         }
 
-        private void glControl_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
+        private void GLControl_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
         {
             if (MeshDraw != null)
             {
-                glControl.MakeCurrent();
+                GLControl.MakeCurrent();
                 MeshDraw.PanelPaint();
             }
         }
 
-        private void glControl_Resize(object sender, EventArgs e)
+        private void GLControl_Resize(object sender, EventArgs e)
         {
             if (MeshDraw != null)
             {
-                glControl.MakeCurrent();
+                GLControl.MakeCurrent();
                 MeshDraw.PanelResize();
             }
         }
 
-        private void glControl_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void GLControl_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
 
         }
 
-        private void glControl_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void GLControl_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
         {
 
         }
 
-        private void glControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void GLControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
 
         }
 
-        private void glControl_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void GLControl_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
         {
 
         }
 
-        private void glControl_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void GLControl_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
         {
 
         }
 
-        private void glControl_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        private void GLControl_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
 
         }
 
-        private void glControl_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+        private void GLControl_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
         {
 
         }
 
-        private void glControl_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+        private void GLControl_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
         {
 
         }

@@ -27,6 +27,11 @@ namespace IvyFEMProtoApp
     public partial class MainWindow : Window
     {
         /// <summary>
+        /// タイトルベース
+        /// </summary>
+        private string TitleBase = "";
+
+        /// <summary>
         /// 問題
         /// </summary>
         private Problem Problem = null;
@@ -78,6 +83,7 @@ namespace IvyFEMProtoApp
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            TitleBase = this.Title;
             Problem = new Problem();
         }
 
@@ -88,33 +94,33 @@ namespace IvyFEMProtoApp
         /// <param name="e"></param>
         private void Window_Activated(object sender, EventArgs e)
         {
-            glControl.MakeCurrent();
+            GLControl.MakeCurrent();
         }
 
         /// <summary>
-        /// glControlの起動時に実行される。
+        /// GLControlの起動時に実行される。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void glControl_Load(object sender, EventArgs e)
+        private void GLControl_Load(object sender, EventArgs e)
         {
             GL.Enable(EnableCap.DepthTest);
         }
 
         /// <summary>
-        /// glControlのサイズ変更時に実行される。
+        /// GLControlのサイズ変更時に実行される。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void glControl_Resize(object sender, EventArgs e)
+        private void GLControl_Resize(object sender, EventArgs e)
         {
-            glControl_ResizeProc();
+            GLControl_ResizeProc();
         }
 
-        internal void glControl_ResizeProc()
+        internal void GLControl_ResizeProc()
         {
-            int width = glControl.Size.Width;
-            int height = glControl.Size.Height;
+            int width = GLControl.Size.Width;
+            int height = GLControl.Size.Height;
             Camera.WindowAspect = ((double)width / height);
             GL.Viewport(0, 0, width, height);
             GL.MatrixMode(MatrixMode.Projection);
@@ -123,31 +129,31 @@ namespace IvyFEMProtoApp
         }
 
         /// <summary>
-        /// glControl キーが押下された
+        /// GLControl キーが押下された
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void glControl_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        private void GLControl_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             Modifiers = e.Modifiers;
         }
 
         /// <summary>
-        /// glControl キーが離された
+        /// GLControl キーが離された
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void glControl_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+        private void GLControl_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             Modifiers = new System.Windows.Forms.Keys();
         }
 
         /// <summary>
-        /// glControl クリックされた
+        /// GLControl クリックされた
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void glControl_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void GLControl_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             if (IsFieldDraw)
             {
@@ -175,16 +181,16 @@ namespace IvyFEMProtoApp
                     DrawerArray.AddSelected(selectedObjs[0].Name);
                     System.Diagnostics.Debug.WriteLine("selectedObjs[0].Name[1] = " + selectedObjs[0].Name[1]);
                 }
-                glControl.Invalidate();
+                GLControl.Invalidate();
             }
         }
 
         /// <summary>
-        /// glControl マウスボタンが押された
+        /// GLControl マウスボタンが押された
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void glControl_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void GLControl_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             int[] viewport = new int[4];
             GL.GetInteger(GetPName.Viewport, viewport);
@@ -195,11 +201,11 @@ namespace IvyFEMProtoApp
         }
 
         /// <summary>
-        /// glControl マウスが移動した
+        /// GLControl マウスが移動した
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void glControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void GLControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             if (e.Button == System.Windows.Forms.MouseButtons.None)
             {
@@ -225,16 +231,16 @@ namespace IvyFEMProtoApp
                 }
                 MovBeginX = movEndX;
                 MovBeginY = movEndY;
-                glControl.Invalidate();
+                GLControl.Invalidate();
             }
         }
 
         /// <summary>
-        /// glControl マウスホイール
+        /// GLControl マウスホイール
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void glControl_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void GLControl_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             double delta = e.Delta;
             double scale = Camera.Scale;
@@ -242,16 +248,16 @@ namespace IvyFEMProtoApp
             scale *= Math.Pow(1.1, delta / 120.0);
             Camera.Scale = scale;
 
-            glControl_ResizeProc();
-            glControl.Invalidate();
+            GLControl_ResizeProc();
+            GLControl.Invalidate();
         }
 
         /// <summary>
-        /// glControlの描画時に実行される。
+        /// GLControlの描画時に実行される。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void glControl_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
+        private void GLControl_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
         {
             GL.ClearColor(Color4.White);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -271,272 +277,413 @@ namespace IvyFEMProtoApp
                 DrawerArray.Draw();
             }
 
-            glControl.SwapBuffers();
+            GLControl.SwapBuffers();
         }
 
-        private void cad2DBtn_Click(object sender, RoutedEventArgs e)
+        private void SetProblemTitle(MenuItem menuItem)
         {
+            string menuItemTitle = menuItem.Header.ToString();
+            this.Title = menuItemTitle + " - " + TitleBase;
+        }
+
+        private void Cad2DBtn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
             Problem.MakeBluePrint(this);
         }
 
-        private void coarseMesh2DBtn_Click(object sender, RoutedEventArgs e)
+        private void CoarseMesh2DBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             Problem.MakeCoarseMesh(this);
         }
 
-        private void mesh2DBtn_Click(object sender, RoutedEventArgs e)
+        private void Mesh2DBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             Problem.MakeMesh(this);
         }
 
-        private void mesh2DHollowLoopBtn_Click(object sender, RoutedEventArgs e)
+        private void Mesh2DHollowLoopBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             Problem.MakeMeshHollowLoop(this);
         }
 
-        private void drawStringBtn_Click(object sender, RoutedEventArgs e)
+        private void DrawStringBtn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.DrawStringTest(Camera, glControl);
+            SetProblemTitle(e.Source as MenuItem);
+
+            Problem.DrawStringTest(Camera, GLControl);
         }
 
-        private void lapackBtn_Click(object sender, RoutedEventArgs e)
+        private void LapackBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             Problem.InterseMatrixExample();
             Problem.LinearEquationExample();
             Problem.EigenValueExample();
         }
 
-        private void lisBtn_Click(object sender, RoutedEventArgs e)
+        private void LisBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             Problem.LisExample();
         }
 
-        private void sampleFEMBtn_Click(object sender, RoutedEventArgs e)
+        private void FFTBtn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.SampleFEMProblem(this);
+            SetProblemTitle(e.Source as MenuItem);
+
+            Problem.FFTExample(this);
         }
 
-        private void cadEditBtn_Click(object sender, RoutedEventArgs e)
+        private void ExampleFEMBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
+            Problem.ExampleFEMProblem(this);
+        }
+
+        private void CadEditBtn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
             var cadEditWindow = new CadEditWindow();
             cadEditWindow.Owner = this;
             cadEditWindow.ShowDialog();
         }
 
-        private void elasticBtn_Click(object sender, RoutedEventArgs e)
+        private void ElasticBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             bool isSaintVenant = false;
             Problem.ElasticProblem(this, false, isSaintVenant);
             Problem.ElasticProblem(this, true, isSaintVenant);
         }
 
-        private void elasticTDBtn_Click(object sender, RoutedEventArgs e)
+        private void ElasticTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             bool isSaintVenant = false;
             Problem.ElasticTDProblem(this, isSaintVenant);
         }
 
-        private void saintVenantHyperelasticBtn_Click(object sender, RoutedEventArgs e)
+        private void SaintVenantHyperelasticBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             bool isSaintVenant = true;
             Problem.ElasticProblem(this, false, isSaintVenant);
         }
 
-        private void saintVenantHyperelasticTDBtn_Click(object sender, RoutedEventArgs e)
+        private void SaintVenantHyperelasticTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             bool isSaintVenant = true;
             Problem.ElasticTDProblem(this, isSaintVenant);
         }
 
-        private void mooneyRivlinHyperelasticBtn_Click(object sender, RoutedEventArgs e)
+        private void MooneyRivlinHyperelasticBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             bool isMooney = true;
             Problem.HyperelasticProblem(this, isMooney);
         }
 
-        private void mooneyRivlinHyperelasticTDBtn_Click(object sender, RoutedEventArgs e)
+        private void MooneyRivlinHyperelasticTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             bool isMooney = true;
             Problem.HyperelasticTDProblem(this, isMooney);
         }
 
-        private void ogdenHyperelasticBtn_Click(object sender, RoutedEventArgs e)
+        private void OgdenHyperelasticBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             bool isMooney = false; // Ogden
             Problem.HyperelasticProblem(this, isMooney);
         }
 
-        private void ogdenHyperelasticTDBtn_Click(object sender, RoutedEventArgs e)
+        private void OgdenHyperelasticTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             bool isMooney = false; // Ogden
             Problem.HyperelasticTDProblem(this, isMooney);
         }
 
-        private void elasticMultipointConstraintTDBtn_Click(object sender, RoutedEventArgs e)
+        private void ElasticMultipointConstraintTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             bool isSaintVenant = false;
             Problem.ElasticMultipointConstraintTDProblem(this, isSaintVenant);
         }
 
-        private void saintVenantHyperelasticMultipointConstraintTDBtn_Click(object sender, RoutedEventArgs e)
+        private void SaintVenantHyperelasticMultipointConstraintTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             bool isSaintVenant = true;
             Problem.ElasticMultipointConstraintTDProblem(this, isSaintVenant);
         }
 
-        private void mooneyRivlinHyperelasticMultipointConstraintTDBtn_Click(object sender, RoutedEventArgs e)
+        private void MooneyRivlinHyperelasticMultipointConstraintTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             bool isMooney = true;
             Problem.HyperelasticMultipointConstraintTDProblem(this, isMooney);
         }
 
-        private void ogdenHyperelasticMultipointConstraintTDBtn_Click(object sender, RoutedEventArgs e)
+        private void OgdenHyperelasticMultipointConstraintTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             bool isMooney = false; // Ogden
             Problem.HyperelasticMultipointConstraintTDProblem(this, isMooney);
         }
 
-        private void elasticContactTDBtn_Click(object sender, RoutedEventArgs e)
+        private void ElasticContactTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             bool isSaintVenant = false;
             Problem.ElasticContactTDProblem(this, isSaintVenant);
         }
 
-        private void saintVenantHyperelasticContactTDBtn_Click(object sender, RoutedEventArgs e)
+        private void SaintVenantHyperelasticContactTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             bool isSaintVenant = true;
             Problem.ElasticContactTDProblem(this, isSaintVenant);
         }
 
-        private void mooneyRivlinHyperelasticContactTDBtn_Click(object sender, RoutedEventArgs e)
+        private void MooneyRivlinHyperelasticContactTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             bool isMooney = true;
             Problem.HyperelasticContactTDProblem(this, isMooney);
         }
 
-        private void ogdenHyperelasticContactTDBtn_Click(object sender, RoutedEventArgs e)
+        private void OgdenHyperelasticContactTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             // Ogden
             bool isMooney = false;
             Problem.HyperelasticContactTDProblem(this, isMooney);
         }
 
-        private void elasticCircleContactTDBtn_Click(object sender, RoutedEventArgs e)
+        private void ElasticCircleContactTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             bool isSaintVenant = false;
             Problem.ElasticCircleContactTDProblem(this, isSaintVenant);
         }
 
-        private void saintVenantHyperelasticCircleContactTDBtn_Click(object sender, RoutedEventArgs e)
+        private void SaintVenantHyperelasticCircleContactTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             bool isSaintVenant = true;
             Problem.ElasticCircleContactTDProblem(this, isSaintVenant);
         }
 
-        private void mooneyRivlinHyperelasticCircleContactTDBtn_Click(object sender, RoutedEventArgs e)
+        private void MooneyRivlinHyperelasticCircleContactTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             bool isMooney = true;
             Problem.HyperelasticCircleContactTDProblem(this, isMooney);
         }
 
-        private void ogdenHyperelasticCircleContactTDBtn_Click(object sender, RoutedEventArgs e)
+        private void OgdenHyperelasticCircleContactTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             // Ogden
             bool isMooney = false;
             Problem.HyperelasticCircleContactTDProblem(this, isMooney);
         }
 
-        private void elasticTwoBodyContactBtn_Click(object sender, RoutedEventArgs e)
+        private void ElasticTwoBodyContactBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             bool isSaintVenant = false;
             Problem.ElasticTwoBodyContactProblem(this, isSaintVenant);
         }
 
-        private void elasticTwoBodyContactTDBtn_Click(object sender, RoutedEventArgs e)
+        private void ElasticTwoBodyContactTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             bool isSaintVenant = false;
             Problem.ElasticTwoBodyContactTDProblem(this, isSaintVenant);
         }
 
-        private void saintVenantHyperelasticTwoBodyContactBtn_Click(object sender, RoutedEventArgs e)
+        private void SaintVenantHyperelasticTwoBodyContactBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             bool isSaintVenant = true;
             Problem.ElasticTwoBodyContactProblem(this, isSaintVenant);
         }
 
-        private void saintVenantHyperelasticTwoBodyContactTDBtn_Click(object sender, RoutedEventArgs e)
+        private void SaintVenantHyperelasticTwoBodyContactTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             bool isSaintVenant = true;
             Problem.ElasticTwoBodyContactTDProblem(this, isSaintVenant);
         }
 
-        private void mooneyRivlinHyperelasticTwoBodyContactTDBtn_Click(object sender, RoutedEventArgs e)
+        private void MooneyRivlinHyperelasticTwoBodyContactTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             bool isMooney = true;
             Problem.HyperelasticTwoBodyContactTDProblem(this, isMooney);
         }
 
-        private void ogdenHyperelasticTwoBodyContactTDBtn_Click(object sender, RoutedEventArgs e)
+        private void OgdenHyperelasticTwoBodyContactTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             // Ogden
             bool isMooney = false;
             Problem.HyperelasticTwoBodyContactTDProblem(this, isMooney);
         }
 
-        private void poissonBtn_Click(object sender, RoutedEventArgs e)
+        private void PoissonBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             Problem.PoissonProblem(this);
         }
 
-        private void diffusionBtn_Click(object sender, RoutedEventArgs e)
+        private void DiffusionBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             Problem.DiffusionProblem(this);
         }
 
-        private void diffusionTDBtn_Click(object sender, RoutedEventArgs e)
+        private void DiffusionTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             Problem.DiffusionTDProblem(this);
         }
 
-        private void advectionDiffusionBtn_Click(object sender, RoutedEventArgs e)
+        private void AdvectionDiffusionBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             Problem.AdvectionDiffusionProblem(this);
         }
 
-        private void advectionDiffusionTDBtn_Click(object sender, RoutedEventArgs e)
+        private void AdvectionDiffusionTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             Problem.AdvectionDiffusionTDProblem(this);
         }
 
-        private void helmholtzBtn_Click(object sender, RoutedEventArgs e)
+        private void HelmholtzBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             Problem.HelmholtzProblem(this);
         }
 
-        private void HPlaneWaveguideBtn_Click(object sender, RoutedEventArgs e)
+        private void HPlaneWaveguide1Btn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.HPlaneWaveguideProblem(this);
+            SetProblemTitle(e.Source as MenuItem);
+
+            Problem.HWaveguideProblem1(this);
         }
 
-        private void EPlaneWaveguideBtn_Click(object sender, RoutedEventArgs e)
+        private void HPlaneWaveguide2Btn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.EPlaneWaveguideProblem(this);
+            SetProblemTitle(e.Source as MenuItem);
+
+            Problem.HWaveguideProblem2(this);
         }
 
-        private void HPlaneWaveguideHigherOrderABCTDBtn_Click(object sender, RoutedEventArgs e)
+        private void EPlaneWaveguide1Btn_Click(object sender, RoutedEventArgs e)
         {
-            //Problem.HPlaneWaveguideHigherOrderABCTDProblem0(this);
-            Problem.HPlaneWaveguideHigherOrderABCTDProblem1(this);
+            SetProblemTitle(e.Source as MenuItem);
+
+            Problem.EWaveguideProblem1(this);
         }
 
-        private void squareLatticePCWaveguideBtn_Click(object sender, RoutedEventArgs e)
+        private void HPlaneWaveguideHigherOrderABCTD1Btn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
+            /*
+            //Problem.HWaveguideHigherOrderABCTDProblema1_0(this);
+            Problem.HWaveguideHigherOrderABCTDProblema1(this);
+            */
+
+            //Problem.HWaveguideHigherOrderABCTDProblemb1_0(this);
+            Problem.HWaveguideHigherOrderABCTDProblemb1(this);
+        }
+
+        private void HPlaneWaveguideHigherOrderABCTD2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            //Problem.HWaveguideHigherOrderABCTDProblemb2_0(this);
+            Problem.HWaveguideHigherOrderABCTDProblemb2(this);
+        }
+
+        private void HPlaneWaveguideHigherOrderABCTD2OpenBtn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            //Problem.HWaveguideHigherOrderABCTDProblemb2Open_0(this);
+            Problem.HWaveguideHigherOrderABCTDProblemb2Open(this);
+        }
+
+        private void HPlaneWaveguideFirstOrderABCTD2OpenBtn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            //Problem.HWaveguideFirstOrderABCTDProblemb2Open_0(this);
+            Problem.HWaveguideFirstOrderABCTDProblemb2Open(this);
+        }
+
+        private void SquareLatticePCWaveguideBtn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
             //Problem.PCWaveguideSquareLatticeProblem0(this);
             Problem.PCWaveguideSquareLatticeProblem1(this);
         }
 
-        private void triangleLatticePCWaveguideBtn_Click(object sender, RoutedEventArgs e)
+        private void TriangleLatticePCWaveguideBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             //Problem.PCWaveguideTriangleLatticeProblem0(this);
             Problem.PCWaveguideTriangleLatticeProblem1(this);
         }
@@ -544,156 +691,201 @@ namespace IvyFEMProtoApp
         // mu = 0.02, 0.002 FluidEquationType.StdGNavierStokes
         // mu = 0.0002 FluidEquationType.SUPGNavierStokes
         // mu = 0.00002 Not converge
-        private void stdgFluid1Btn_Click(object sender, RoutedEventArgs e)
+        private void StdGFluid1Btn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             FluidEquationType fluidEquationType = FluidEquationType.StdGNavierStokes;
             Problem.FluidProblem1(this, fluidEquationType);
         }
 
-        private void stdgFluid1TDBtn_Click(object sender, RoutedEventArgs e)
+        private void StdGFluid1TDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             FluidEquationType fluidEquationType = FluidEquationType.StdGNavierStokes;
             Problem.FluidTDProblem1(this, fluidEquationType);
         }
 
-        private void stdgFluid2Btn_Click(object sender, RoutedEventArgs e)
+        private void StdGFluid2Btn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             FluidEquationType fluidEquationType = FluidEquationType.StdGNavierStokes;
             Problem.FluidProblem2(this, fluidEquationType);
         }
 
-        private void stdgFluid2TDBtn_Click(object sender, RoutedEventArgs e)
+        private void StdGFluid2TDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             FluidEquationType fluidEquationType = FluidEquationType.StdGNavierStokes;
             Problem.FluidTDProblem2(this, fluidEquationType);
         }
 
-        private void supgFluid1Btn_Click(object sender, RoutedEventArgs e)
+        private void SUPGFluid1Btn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             FluidEquationType fluidEquationType = FluidEquationType.SUPGNavierStokes;
             Problem.FluidProblem1(this, fluidEquationType);
         }
 
-        private void supgFluid1TDBtn_Click(object sender, RoutedEventArgs e)
+        private void SUPGFluid1TDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             FluidEquationType fluidEquationType = FluidEquationType.SUPGNavierStokes;
             Problem.FluidTDProblem1(this, fluidEquationType);
         }
 
-        private void supgFluid2Btn_Click(object sender, RoutedEventArgs e)
+        private void SUPGFluid2Btn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             FluidEquationType fluidEquationType = FluidEquationType.SUPGNavierStokes;
             Problem.FluidProblem2(this, fluidEquationType);
         }
 
-        private void supgFluid2TDBtn_Click(object sender, RoutedEventArgs e)
+        private void SUPGFluid2TDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             FluidEquationType fluidEquationType = FluidEquationType.SUPGNavierStokes;
             Problem.FluidTDProblem2(this, fluidEquationType);
         }
 
-        private void stdgVorticityFluid1Btn_Click(object sender, RoutedEventArgs e)
+        private void StdGVorticityFluid1Btn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             FluidEquationType fluidEquationType = FluidEquationType.StdGVorticity;
             Problem.VorticityFluidProblem1(this, fluidEquationType);
         }
 
-        private void stdgVorticityFluid1TDBtn_Click(object sender, RoutedEventArgs e)
+        private void StdGVorticityFluid1TDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             FluidEquationType fluidEquationType = FluidEquationType.StdGVorticity;
             Problem.VorticityFluidTDProblem1(this, fluidEquationType);
         }
 
-        private void stdgVorticityFluid2Btn_Click(object sender, RoutedEventArgs e)
+        private void StdGVorticityFluid2Btn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             FluidEquationType fluidEquationType = FluidEquationType.StdGVorticity;
             Problem.VorticityFluidProblem2(this, fluidEquationType);
         }
 
-        private void stdgVorticityFluid2TDBtn_Click(object sender, RoutedEventArgs e)
+        private void StdGVorticityFluid2TDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             FluidEquationType fluidEquationType = FluidEquationType.StdGVorticity;
             Problem.VorticityFluidTDProblem2(this, fluidEquationType);
         }
 
-        private void supgVorticityFluid1Btn_Click(object sender, RoutedEventArgs e)
+        private void SUPGVorticityFluid1Btn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             FluidEquationType fluidEquationType = FluidEquationType.SUPGVorticity;
             Problem.VorticityFluidProblem1(this, fluidEquationType);
         }
 
-        private void supgVorticityFluid1TDBtn_Click(object sender, RoutedEventArgs e)
+        private void SUPGVorticityFluid1TDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             FluidEquationType fluidEquationType = FluidEquationType.SUPGVorticity;
             Problem.VorticityFluidTDProblem1(this, fluidEquationType);
         }
 
-        private void supgVorticityFluid2Btn_Click(object sender, RoutedEventArgs e)
+        private void SUPGVorticityFluid2Btn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             FluidEquationType fluidEquationType = FluidEquationType.SUPGVorticity;
             Problem.VorticityFluidProblem2(this, fluidEquationType);
         }
 
-        private void supgVorticityFluid2TDBtn_Click(object sender, RoutedEventArgs e)
+        private void SUPGVorticityFluid2TDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             FluidEquationType fluidEquationType = FluidEquationType.SUPGVorticity;
             Problem.VorticityFluidTDProblem2(this, fluidEquationType);
         }
 
-        private void stdgVorticityFluid1RKTDBtn_Click(object sender, RoutedEventArgs e)
+        private void StdGVorticityFluid1RKTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             Problem.VorticityFluidRKTDProblem1(this);
         }
 
-        private void stdgVorticityFluid2RKTDBtn_Click(object sender, RoutedEventArgs e)
+        private void StdGVorticityFluid2RKTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             Problem.VorticityFluidRKTDProblem2(this);
         }
 
-        private void stdgPressurePoissonFluid1Btn_Click(object sender, RoutedEventArgs e)
+        private void StdGPressurePoissonFluid1Btn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             //Problem.PressurePoissonFluidProblem1(this);
             Problem.PressurePoissonWithBellFluidProblem1(this);
         }
 
-        private void stdgPressurePoissonFluid1TDBtn_Click(object sender, RoutedEventArgs e)
+        private void StdGPressurePoissonFluid1TDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             //Problem.PressurePoissonFluidTDProblem1(this);
             Problem.PressurePoissonWithBellFluidTDProblem1(this);
         }
 
-        private void stdgPressurePoissonFluid2Btn_Click(object sender, RoutedEventArgs e)
+        private void StdGPressurePoissonFluid2Btn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             //Problem.PressurePoissonFluidProblem2(this);
             Problem.PressurePoissonWithBellFluidProblem2(this);
         }
 
-        private void stdgPressurePoissonFluid2TDBtn_Click(object sender, RoutedEventArgs e)
+        private void StdGPressurePoissonFluid2TDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             //Problem.PressurePoissonFluidTDProblem2(this);
             Problem.PressurePoissonWithBellFluidTDProblem2(this);
         }
 
-        private void stdgPressurePoissonFluid1RKTDBtn_Click(object sender, RoutedEventArgs e)
+        private void StdGPressurePoissonFluid1RKTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             //Problem.PressurePoissonFluidRKTDProblem1(this);
             MessageBox.Show("Not implemented yet!");
         }
 
-        private void stdgPressurePoissonFluid2RKTDBtn_Click(object sender, RoutedEventArgs e)
+        private void StdGPressurePoissonFluid2RKTDBtn_Click(object sender, RoutedEventArgs e)
         {
+            SetProblemTitle(e.Source as MenuItem);
+
             //Problem.PressurePoissonFluidRKTDProblem2(this);
             MessageBox.Show("Not implemented yet!");
         }
 
-        private void optimize1Btn_Click(object sender, RoutedEventArgs e)
+        private void Optimize1Btn_Click(object sender, RoutedEventArgs e)
         {
-            Problem.Optimize1Problem(this);
-        }
+            SetProblemTitle(e.Source as MenuItem);
 
-        private void fftBtn_Click(object sender, RoutedEventArgs e)
-        {
-            Problem.FFTExample(this);
+            Problem.Optimize1Problem(this);
         }
     }
 }

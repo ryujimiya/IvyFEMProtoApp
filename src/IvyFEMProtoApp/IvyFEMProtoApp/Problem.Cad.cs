@@ -40,9 +40,9 @@ namespace IvyFEMProtoApp
             IDrawer drawer = new CadObject2DDrawer(cad2D);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-            mainWindow.glControl_ResizeProc();
-            mainWindow.glControl.Invalidate();
-            mainWindow.glControl.Update();
+            mainWindow.GLControl_ResizeProc();
+            mainWindow.GLControl.Invalidate();
+            mainWindow.GLControl.Update();
         }
 
         public void MakeCoarseMesh(MainWindow mainWindow)
@@ -67,9 +67,9 @@ namespace IvyFEMProtoApp
             IDrawer drawer = new Mesher2DDrawer(mesher2D);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-            mainWindow.glControl_ResizeProc();
-            mainWindow.glControl.Invalidate();
-            mainWindow.glControl.Update();
+            mainWindow.GLControl_ResizeProc();
+            mainWindow.GLControl.Invalidate();
+            mainWindow.GLControl.Update();
         }
 
         public void MakeMesh(MainWindow mainWindow)
@@ -95,9 +95,9 @@ namespace IvyFEMProtoApp
             IDrawer drawer = new Mesher2DDrawer(mesher2D);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-            mainWindow.glControl_ResizeProc();
-            mainWindow.glControl.Invalidate();
-            mainWindow.glControl.Update();
+            mainWindow.GLControl_ResizeProc();
+            mainWindow.GLControl.Invalidate();
+            mainWindow.GLControl.Update();
         }
 
         public void MakeMeshHollowLoop(MainWindow mainWindow)
@@ -118,7 +118,7 @@ namespace IvyFEMProtoApp
             double eLen = 0.05;
             //Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
             Mesher2D mesher2D = new Mesher2D();
-            mesher2D.SetMeshingModeElemLength(eLen);
+            mesher2D.SetMeshingModeElemLength();
             IList<uint> lIds = cad2D.GetElementIds(CadElementType.Loop);
             foreach (uint lId in lIds)
             {
@@ -127,7 +127,7 @@ namespace IvyFEMProtoApp
                     // メッシュ切りしない
                     continue;
                 }
-                mesher2D.AddCutMeshLCadId(lId);
+                mesher2D.AddCutMeshLoopCadId(lId, eLen);
             }
             mesher2D.Meshing(cad2D);
 
@@ -137,12 +137,12 @@ namespace IvyFEMProtoApp
             IDrawer drawer = new Mesher2DDrawer(mesher2D);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-            mainWindow.glControl_ResizeProc();
-            mainWindow.glControl.Invalidate();
-            mainWindow.glControl.Update();
+            mainWindow.GLControl_ResizeProc();
+            mainWindow.GLControl.Invalidate();
+            mainWindow.GLControl.Update();
         }
 
-        public void DrawStringTest(Camera Camera, OpenTK.GLControl glControl)
+        public void DrawStringTest(Camera Camera, OpenTK.GLControl GLControl)
         {
             // ウィンドウの幅、高さの取得
             int[] viewport = new int[4];
@@ -190,7 +190,7 @@ namespace IvyFEMProtoApp
             GL.MatrixMode(MatrixMode.Modelview);
             GL.PopMatrix();
 
-            glControl.SwapBuffers();
+            GLControl.SwapBuffers();
         }
     }
 }

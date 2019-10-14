@@ -8,6 +8,6 @@
         mc:Ignorable="d"
         Title="ChartWindow" Height="300" Width="300">
     <Grid>
-        <oxy:PlotView x:Name="plot" Model="{Binding PlotModel}"/>
+        <oxy:PlotView x:Name="Plot" Model="{Binding PlotModel}"/>
     </Grid>
 </Window>

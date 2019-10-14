@@ -38,9 +38,9 @@ namespace IvyFEMProtoApp
             IDrawer drawer = new CadObject2DDrawer(cad2D);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-            mainWindow.glControl_ResizeProc();
-            mainWindow.glControl.Invalidate();
-            mainWindow.glControl.Update();
+            mainWindow.GLControl_ResizeProc();
+            mainWindow.GLControl.Invalidate();
+            mainWindow.GLControl.Update();
             WPFUtils.DoEvents();
 
             double eLen = 0.08;
@@ -131,7 +131,6 @@ namespace IvyFEMProtoApp
             // 1-4: ψ = 0, 6-7: ψ = const (!= 0)
             uint[] pZeroEIds = { 1, 2, 3, 4 };
             var pZeroFixedCads = world.GetZeroFieldFixedCads(pQuantityId);
-            pZeroFixedCads.Clear();
             foreach (uint eId in pZeroEIds)
             {
                 // Scalar
@@ -156,8 +155,6 @@ namespace IvyFEMProtoApp
             DistributedFieldFixedCad wSrcFixedCad;
             {
                 IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(wQuantityId);
-                fixedCads.Clear();
-
                 var fixedCadDatas = new[]
                 {
                     new { CadId = (uint)8, CadElemType = CadElementType.Edge,
@@ -176,7 +173,6 @@ namespace IvyFEMProtoApp
             DistributedFieldFixedCad pSrcFixedCad;
             {
                 IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(pQuantityId);
-                fixedCads.Clear();
                 {
                     // ψ(分布)を指定
                     var fixedCadDatas = new[]
@@ -216,8 +212,6 @@ namespace IvyFEMProtoApp
             // ω 境界
             {
                 var portConditions = world.GetPortConditions(wQuantityId);
-                portConditions.Clear();
-
                 {
                     FlowVorticityBCType bcType = FlowVorticityBCType.Outflow;
                     var portDatas = new[]
@@ -272,8 +266,6 @@ namespace IvyFEMProtoApp
             // ψ 境界
             {
                 var portConditions = world.GetPortConditions(pQuantityId);
-                portConditions.Clear();
-
                 {
                     FlowVorticityBCType bcType = FlowVorticityBCType.Outflow;
                     var portDatas = new[]
@@ -322,9 +314,9 @@ namespace IvyFEMProtoApp
                     wValueId, FieldDerivativeType.Value, true, false, world);
                 fieldDrawerArray.Add(edgeDrawer);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-                mainWindow.glControl_ResizeProc();
-                //mainWindow.glControl.Invalidate();
-                //mainWindow.glControl.Update();
+                mainWindow.GLControl_ResizeProc();
+                //mainWindow.GLControl.Invalidate();
+                //mainWindow.GLControl.Update();
                 //WPFUtils.DoEvents();
             }
 
@@ -395,8 +387,8 @@ namespace IvyFEMProtoApp
                 world.UpdateBubbleFieldValueValuesFromCoordValues(bubbleVValueId, FieldDerivativeType.Value, V);
 
                 fieldDrawerArray.Update(world);
-                mainWindow.glControl.Invalidate();
-                mainWindow.glControl.Update();
+                mainWindow.GLControl.Invalidate();
+                mainWindow.GLControl.Update();
                 WPFUtils.DoEvents();
             }
         }
@@ -430,9 +422,9 @@ namespace IvyFEMProtoApp
             IDrawer drawer = new CadObject2DDrawer(cad2D);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-            mainWindow.glControl_ResizeProc();
-            mainWindow.glControl.Invalidate();
-            mainWindow.glControl.Update();
+            mainWindow.GLControl_ResizeProc();
+            mainWindow.GLControl.Invalidate();
+            mainWindow.GLControl.Update();
             WPFUtils.DoEvents();
 
             double eLen = 0.08;
@@ -523,7 +515,6 @@ namespace IvyFEMProtoApp
             // 1-4: ψ = 0, 6-7: ψ = const (!= 0)
             uint[] pZeroEIds = { 1, 2, 3, 4 };
             var pZeroFixedCads = world.GetZeroFieldFixedCads(pQuantityId);
-            pZeroFixedCads.Clear();
             foreach (uint eId in pZeroEIds)
             {
                 // Scalar
@@ -548,8 +539,6 @@ namespace IvyFEMProtoApp
             DistributedFieldFixedCad wSrcFixedCad;
             {
                 IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(wQuantityId);
-                fixedCads.Clear();
-
                 var fixedCadDatas = new[]
                 {
                     new { CadId = (uint)8, CadElemType = CadElementType.Edge,
@@ -568,8 +557,6 @@ namespace IvyFEMProtoApp
             DistributedFieldFixedCad pSrcFixedCad;
             {
                 IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(pQuantityId);
-                fixedCads.Clear();
-
                 // ψ(分布)を指定
                 {
                     var fixedCadDatas = new[]
@@ -609,8 +596,6 @@ namespace IvyFEMProtoApp
             // ω 境界
             {
                 var portConditions = world.GetPortConditions(wQuantityId);
-                portConditions.Clear();
-
                 {
                     FlowVorticityBCType bcType = FlowVorticityBCType.Outflow;
                     var portDatas = new[]
@@ -665,8 +650,6 @@ namespace IvyFEMProtoApp
             // ψ 境界
             {
                 var portConditions = world.GetPortConditions(pQuantityId);
-                portConditions.Clear();
-
                 {
                     FlowVorticityBCType bcType = FlowVorticityBCType.Outflow;
                     var portDatas = new[]
@@ -720,9 +703,9 @@ namespace IvyFEMProtoApp
                     wValueId, FieldDerivativeType.Value, true, false, world);
                 fieldDrawerArray.Add(edgeDrawer);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
-                mainWindow.glControl_ResizeProc();
-                //mainWindow.glControl.Invalidate();
-                //mainWindow.glControl.Update();
+                mainWindow.GLControl_ResizeProc();
+                //mainWindow.GLControl.Invalidate();
+                //mainWindow.GLControl.Update();
                 //WPFUtils.DoEvents();
             }
 
@@ -817,8 +800,8 @@ namespace IvyFEMProtoApp
                 world.UpdateBubbleFieldValueValuesFromCoordValues(bubbleVValueId, FieldDerivativeType.Value, V);
 
                 fieldDrawerArray.Update(world);
-                mainWindow.glControl.Invalidate();
-                mainWindow.glControl.Update();
+                mainWindow.GLControl.Invalidate();
+                mainWindow.GLControl.Update();
                 WPFUtils.DoEvents();
                 t += dt;
             }
