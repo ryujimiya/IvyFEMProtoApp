@@ -486,10 +486,10 @@ namespace IvyFEMProtoApp
             }
 
             // ポート条件
+            world.SetIncidentPortId(quantityId, 0);
+            world.SetIncidentModeId(quantityId, 0);
             IList<PortCondition> portConditions = world.GetPortConditions(quantityId);
             {
-                world.SetIncidentPortId(quantityId, 0);
-                world.SetIncidentModeId(quantityId, 0);
                 for (int portId = 0; portId < portCnt; portId++)
                 {
                     PCWaveguidePortInfo wgPortInfo = wgPortInfos[portId];

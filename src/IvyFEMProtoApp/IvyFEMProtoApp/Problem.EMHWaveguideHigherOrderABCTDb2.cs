@@ -79,7 +79,8 @@ namespace IvyFEMProtoApp
             Func<double, double> toNormalizedFreq =
                 waveLength => 2.0 * coreWidth * Math.Sqrt(coreEps - claddingEps) / waveLength;
             // 吸収境界条件の次数
-            int[] abcOrders = { 1, 1 };
+            //int[] abcOrders = { 1, 1 };
+            int[] abcOrders = { 1, 5 };
 
             // ガウシアンパルス？ (true: default ガウシアンパルス false: 正弦波)
             bool isGaussian = true;

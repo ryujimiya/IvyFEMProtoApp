@@ -117,7 +117,7 @@ namespace IvyFEMProtoApp
                 }
             }
             /* E面導波路では電気壁は自然境界
-            uint[] zeroEIds = { 2, 3, 5, 6 };
+            uint[] zeroEIds = { };
             var zeroFixedCads = world.GetZeroFieldFixedCads(quantityId);
             foreach (uint eId in zeroEIds)
             {

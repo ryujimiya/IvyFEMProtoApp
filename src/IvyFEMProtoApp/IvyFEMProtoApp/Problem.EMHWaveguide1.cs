@@ -95,9 +95,9 @@ namespace IvyFEMProtoApp
                 }
             }
             {
-                IList<PortCondition> portConditions = world.GetPortConditions(quantityId);
                 world.SetIncidentPortId(quantityId, 0);
                 world.SetIncidentModeId(quantityId, 0);
+                IList<PortCondition> portConditions = world.GetPortConditions(quantityId);
                 uint[] eIds = { eId1, eId2 };
                 IList<IList<uint>> portEIdss = new List<IList<uint>>();
                 foreach (uint eId in eIds)

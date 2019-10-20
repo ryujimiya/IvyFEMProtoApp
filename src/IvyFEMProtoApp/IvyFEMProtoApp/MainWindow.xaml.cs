@@ -618,6 +618,7 @@ namespace IvyFEMProtoApp
         {
             SetProblemTitle(e.Source as MenuItem);
 
+            //Problem.HWaveguideProblem1_0(this);
             Problem.HWaveguideProblem1(this);
         }
 
@@ -625,6 +626,7 @@ namespace IvyFEMProtoApp
         {
             SetProblemTitle(e.Source as MenuItem);
 
+            //Problem.HWaveguideProblem2_0(this);
             Problem.HWaveguideProblem2(this);
         }
 
@@ -632,7 +634,47 @@ namespace IvyFEMProtoApp
         {
             SetProblemTitle(e.Source as MenuItem);
 
+            //Problem.EWaveguideProblem1_0(this);
             Problem.EWaveguideProblem1(this);
+        }
+
+        private void HPlaneWaveguideHigherOrderABC1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            /*
+            //Problem.HWaveguideHigherOrderABCProblema1_0(this);
+            Problem.HWaveguideHigherOrderABCProblema1(this);
+            */
+
+            //Problem.HWaveguideHigherOrderABCProblemb1_0(this);
+            Problem.HWaveguideHigherOrderABCProblemb1(this);
+        }
+
+        private void HPlaneWaveguideHigherOrderABC2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            /*
+            //Problem.HWaveguideHigherOrderABCProblema2_0(this);
+            Problem.HWaveguideHigherOrderABCProblema2(this);
+            */
+
+            //Problem.HWaveguideHigherOrderABCProblemb2_0(this);
+            Problem.HWaveguideHigherOrderABCProblemb2(this);
+        }
+
+        private void HPlaneWaveguideHigherOrderABC3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            /*
+            //Problem.HWaveguideHigherOrderABCProblema3_0(this);
+            Problem.HWaveguideHigherOrderABCProblema3(this);
+            */
+
+            //Problem.HWaveguideHigherOrderABCProblemb3_0(this);
+            Problem.HWaveguideHigherOrderABCProblemb3(this);
         }
 
         private void HPlaneWaveguideHigherOrderABCTD1Btn_Click(object sender, RoutedEventArgs e)
@@ -656,27 +698,27 @@ namespace IvyFEMProtoApp
             Problem.HWaveguideHigherOrderABCTDProblemb2(this);
         }
 
-        private void HPlaneWaveguideHigherOrderABCTD2OpenBtn_Click(object sender, RoutedEventArgs e)
+        private void HPlaneWaveguideHigherOrderABCTD3Btn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
 
-            //Problem.HWaveguideHigherOrderABCTDProblemb2Open_0(this);
-            Problem.HWaveguideHigherOrderABCTDProblemb2Open(this);
+            //Problem.HWaveguideHigherOrderABCTDProblemb3_0(this);
+            Problem.HWaveguideHigherOrderABCTDProblemb3(this);
         }
 
-        private void HPlaneWaveguideFirstOrderABCTD2OpenBtn_Click(object sender, RoutedEventArgs e)
+        private void HPlaneWaveguideFirstOrderABCTD3Btn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
 
-            //Problem.HWaveguideFirstOrderABCTDProblemb2Open_0(this);
-            Problem.HWaveguideFirstOrderABCTDProblemb2Open(this);
+            //Problem.HWaveguideFirstOrderABCTDProblemb3_0(this);
+            Problem.HWaveguideFirstOrderABCTDProblemb3(this);
         }
 
         private void SquareLatticePCWaveguideBtn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
 
-            //Problem.PCWaveguideSquareLatticeProblem0(this);
+            //Problem.PCWaveguideSquareLatticeProblem1_0(this);
             Problem.PCWaveguideSquareLatticeProblem1(this);
         }
 
@@ -684,7 +726,7 @@ namespace IvyFEMProtoApp
         {
             SetProblemTitle(e.Source as MenuItem);
 
-            //Problem.PCWaveguideTriangleLatticeProblem0(this);
+            //Problem.PCWaveguideTriangleLatticeProblem1_0(this);
             Problem.PCWaveguideTriangleLatticeProblem1(this);
         }
 

@@ -80,13 +80,19 @@
                     <MenuItem Header="H-Plane Waveguide(2)" Click="HPlaneWaveguide2Btn_Click"/>
                     <Separator/>
                     <MenuItem Header="E-Plane Waveguide(1)" Click="EPlaneWaveguide1Btn_Click"/>
+                </MenuItem>
+                <MenuItem Header="ElectroMagnetic(ABC)">
+                    <MenuItem Header="H-Plane Waveguide (Higher Order ABC)(1)" Click="HPlaneWaveguideHigherOrderABC1Btn_Click"/>
+                    <MenuItem Header="H-Plane Waveguide (Higher Order ABC)(2)" Click="HPlaneWaveguideHigherOrderABC2Btn_Click"/>
+                    <MenuItem Header="H-Plane Waveguide (Higher Order ABC)(3,Open)" Click="HPlaneWaveguideHigherOrderABC3Btn_Click"/>
                     <Separator/>
                     <MenuItem Header="H-Plane Waveguide (Time Domain)(Higher Order ABC)(1)" Click="HPlaneWaveguideHigherOrderABCTD1Btn_Click"/>
                     <MenuItem Header="H-Plane Waveguide (Time Domain)(Higher Order ABC)(2)" Click="HPlaneWaveguideHigherOrderABCTD2Btn_Click"/>
-                    <MenuItem Header="H-Plane Waveguide (Time Domain)(Higher Order ABC)(2,Open)" Click="HPlaneWaveguideHigherOrderABCTD2OpenBtn_Click"/>
+                    <MenuItem Header="H-Plane Waveguide (Time Domain)(Higher Order ABC)(3,Open)" Click="HPlaneWaveguideHigherOrderABCTD3Btn_Click"/>
                     <Separator/>
-                    <MenuItem Header="H-Plane Waveguide (Time Domain)(First Order ABC)(2,Open)" Click="HPlaneWaveguideFirstOrderABCTD2OpenBtn_Click"/>
+                    <MenuItem Header="H-Plane Waveguide (Time Domain)(First Order ABC)(3,Open)" Click="HPlaneWaveguideFirstOrderABCTD3Btn_Click"/>
                 </MenuItem>
+
                 <MenuItem Header="Photonic Crystal">
                     <MenuItem Header="PC Waveguide(Square Lattice)" Click="SquareLatticePCWaveguideBtn_Click"/>
                     <MenuItem Header="PC Waveguide(Triangle Lattice)" Click="TriangleLatticePCWaveguideBtn_Click"/>
