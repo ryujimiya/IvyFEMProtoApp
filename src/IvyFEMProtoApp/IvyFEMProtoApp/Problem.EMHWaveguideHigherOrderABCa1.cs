@@ -15,7 +15,8 @@ namespace IvyFEMProtoApp
         public void HWaveguideHigherOrderABCProblema1(MainWindow mainWindow)
         {
             double waveguideWidth = 1.0; 
-            double eLen = waveguideWidth * 0.09; // 10分割(0.1)
+            //double eLen = waveguideWidth * 0.09; // 10分割(0.1)
+            double eLen = waveguideWidth * 0.9 * (1.0 / 20.0);
 
             // 入力部の長さ
             double inputWGLength = 2.0 * waveguideWidth;

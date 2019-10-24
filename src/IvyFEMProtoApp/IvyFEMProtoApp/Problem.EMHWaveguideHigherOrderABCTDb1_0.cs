@@ -292,10 +292,12 @@ namespace IvyFEMProtoApp
 
                 {
                     int timeIndex = FEM.TimeIndex;
-                    int nodeCntB = FEM.RefTimeEzsss[0][timeIndex].Length;
-                    int refNodeIdB = nodeCntB / 2;
-                    double ezPort1 = FEM.RefTimeEzsss[0][timeIndex][refNodeIdB];
-                    double ezPort2 = FEM.RefTimeEzsss[1][timeIndex][refNodeIdB];
+                    int nodeCntB1 = FEM.RefTimeEzsss[0][timeIndex].Length;
+                    int refNodeIdB1 = nodeCntB1 / 2;
+                    int nodeCntB2 = FEM.RefTimeEzsss[1][timeIndex].Length;
+                    int refNodeIdB2 = nodeCntB2 / 2;
+                    double ezPort1 = FEM.RefTimeEzsss[0][timeIndex][refNodeIdB1];
+                    double ezPort2 = FEM.RefTimeEzsss[1][timeIndex][refNodeIdB2];
                     var chartWin = ChartWindow2;
                     var model = chartWin.Plot.Model;
                     var series = model.Series;

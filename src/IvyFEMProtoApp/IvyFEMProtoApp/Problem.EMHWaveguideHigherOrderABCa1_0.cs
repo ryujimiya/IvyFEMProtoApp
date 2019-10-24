@@ -14,8 +14,9 @@ namespace IvyFEMProtoApp
     {
         public void HWaveguideHigherOrderABCProblema1_0(MainWindow mainWindow)
         {
-            double waveguideWidth = 1; 
-            double eLen = waveguideWidth * 0.09; // 10分割(0.1)
+            double waveguideWidth = 1;
+            //double eLen = waveguideWidth * 0.09; // 10分割(0.1)
+            double eLen = waveguideWidth * 0.9 * (1.0 / 20.0);
 
             // 導波管不連続領域の長さ
             double disconLength = 1.0 * waveguideWidth;

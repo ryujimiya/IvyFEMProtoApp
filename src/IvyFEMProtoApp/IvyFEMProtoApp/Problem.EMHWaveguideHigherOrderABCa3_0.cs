@@ -17,6 +17,7 @@ namespace IvyFEMProtoApp
         {
             double waveguideWidth = 1.0;
             //double eLen = waveguideWidth * (0.95 * 1.0 / 30.0);
+            //double eLen = waveguideWidth * (0.95 * 1.0 / 30.0); // 入射波の入射面-ポート1参照面誤差が大きい
             double eLen = waveguideWidth * (0.95 * 0.25 / 30.0);
 
             // 導波管不連続領域の長さ
@@ -95,9 +96,9 @@ namespace IvyFEMProtoApp
             uint[] port1EIds = { 1, 15, 14 };
             uint[] port1CoreEIds = { 15 };
             uint[] port1CladdingEIds = { 1, 14 };
-            uint[] port2EIds = { 6, 17, 16 };
-            uint[] port2CoreEIds = { 17 };
-            uint[] port2CladdingEIds = { 6, 16 };
+            uint[] port2EIds = { 6, 23, 22 };
+            uint[] port2CoreEIds = { 23 };
+            uint[] port2CladdingEIds = { 6, 22 };
             uint[] port3EIds = { 2, 3, 4, 5 };
             uint[] port3CladdingEIds = { 2, 3, 4, 5 };
             uint[] port4EIds = { 7, 8, 9, 10 };
@@ -108,9 +109,9 @@ namespace IvyFEMProtoApp
             uint[] refport2EIds = { 13, 21, 20 };
             uint[] refport2CoreEIds = { 21 };
             uint[] refport2CladdingEIds = { 13, 20 };
-            uint[] portSrcEIds = { 11, 23, 22 };
-            uint[] portSrcCoreEIds = { 23 };
-            uint[] portSrcCladdingEIds = { 11, 22 };
+            uint[] portSrcEIds = { 11, 17, 16 };
+            uint[] portSrcCoreEIds = { 17 };
+            uint[] portSrcCladdingEIds = { 11, 16 };
             // 観測点ポート数
             int refPortCnt = 2;
             // メッシュの長さ
@@ -146,9 +147,8 @@ namespace IvyFEMProtoApp
             }
             // スラブ導波路と境界の交点
             {
-                // 入出力面と参照面、励振面
-                double[] portXs = { 0.0, disconLength, port1PosX, port2PosX, srcPosX };
-                uint[] parentEIds = { 1, 6, 12, 13, 11 };
+                double[] portXs = { 0.0, srcPosX, port1PosX, port2PosX, disconLength };
+                uint[] parentEIds = { 1, 11, 12, 13, 6 };
                 IList<uint[]> coreVIds = new List<uint[]>();
                 for (int index = 0; index < portXs.Length; index++)
                 {
@@ -188,49 +188,18 @@ namespace IvyFEMProtoApp
                 }
                 // スラブ導波路
                 {
-                    // 励振面の左側領域
+                    for (int portIndex = 0; portIndex < (portXs.Length - 1); portIndex++)
                     {
-                        uint workVId1 = coreVIds[0][0];
-                        uint workVId2 = coreVIds[4][0];
-                        uint workEId = cad2D.ConnectVertexLine(workVId1, workVId2).AddEId;
-                    }
-                    {
-                        uint workVId1 = coreVIds[0][1];
-                        uint workVId2 = coreVIds[4][1];
-                        uint workEId = cad2D.ConnectVertexLine(workVId1, workVId2).AddEId;
-                    }
-                    // 励振面の右側領域
-                    {
-                        uint workVId1 = coreVIds[4][0];
-                        uint workVId2 = coreVIds[2][0];
-                        uint workEId = cad2D.ConnectVertexLine(workVId1, workVId2).AddEId;
-                    }
-                    {
-                        uint workVId1 = coreVIds[4][1];
-                        uint workVId2 = coreVIds[2][1];
-                        uint workEId = cad2D.ConnectVertexLine(workVId1, workVId2).AddEId;
-                    }
-                    //
-                    {
-                        uint workVId1 = coreVIds[2][0];
-                        uint workVId2 = coreVIds[3][0];
-                        uint workEId = cad2D.ConnectVertexLine(workVId1, workVId2).AddEId;
-                    }
-                    {
-                        uint workVId1 = coreVIds[2][1];
-                        uint workVId2 = coreVIds[3][1];
-                        uint workEId = cad2D.ConnectVertexLine(workVId1, workVId2).AddEId;
-                    }
-                    //
-                    {
-                        uint workVId1 = coreVIds[3][0];
-                        uint workVId2 = coreVIds[1][0];
-                        uint workEId = cad2D.ConnectVertexLine(workVId1, workVId2).AddEId;
-                    }
-                    {
-                        uint workVId1 = coreVIds[3][1];
-                        uint workVId2 = coreVIds[1][1];
-                        uint workEId = cad2D.ConnectVertexLine(workVId1, workVId2).AddEId;
+                        {
+                            uint workVId1 = coreVIds[portIndex][0];
+                            uint workVId2 = coreVIds[portIndex + 1][0];
+                            uint workEId = cad2D.ConnectVertexLine(workVId1, workVId2).AddEId;
+                        }
+                        {
+                            uint workVId1 = coreVIds[portIndex][1];
+                            uint workVId2 = coreVIds[portIndex + 1][1];
+                            uint workEId = cad2D.ConnectVertexLine(workVId1, workVId2).AddEId;
+                        }
                     }
                 }
             }

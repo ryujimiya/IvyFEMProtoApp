@@ -127,9 +127,9 @@ namespace IvyFEMProtoApp
             uint[] refport2EIds = { 16 };
             uint[] refport2CoreEIds = { };
             uint[] refport2CladdingEIds = { };
-            uint[] portSrcEIds = { 13, 24, 23 };
-            uint[] portSrcCoreEIds = { 24 };
-            uint[] portSrcCladdingEIds = { 13, 23 };
+            uint[] portSrcEIds = { 13, 20, 19 };
+            uint[] portSrcCoreEIds = { 20 };
+            uint[] portSrcCladdingEIds = { 13, 19 };
             // 観測点ポート数
             int refPortCnt = 2;
             // メッシュの長さ
@@ -169,9 +169,8 @@ namespace IvyFEMProtoApp
             }
             // スラブ導波路と境界の交点
             {
-                // 入力面と終端と参照面、励振面
-                double[] portXs = { 0.0, terminalPosX, port1PosX, srcPosX };
-                uint[] parentEIds = { 1, 15, 14, 13 };
+                double[] portXs = { 0.0, srcPosX, port1PosX, terminalPosX };
+                uint[] parentEIds = { 1, 13, 14, 15 };
                 IList<uint[]> coreVIds = new List<uint[]>();
                 for (int index = 0; index < portXs.Length; index++)
                 {
@@ -211,38 +210,18 @@ namespace IvyFEMProtoApp
                 }
                 // スラブ導波路
                 {
-                    // 励振面の左側領域
+                    for (int portIndex = 0; portIndex < (portXs.Length - 1); portIndex++)
                     {
-                        uint workVId1 = coreVIds[0][0];
-                        uint workVId2 = coreVIds[3][0];
-                        uint workEId = cad2D.ConnectVertexLine(workVId1, workVId2).AddEId;
-                    }
-                    {
-                        uint workVId1 = coreVIds[0][1];
-                        uint workVId2 = coreVIds[3][1];
-                        uint workEId = cad2D.ConnectVertexLine(workVId1, workVId2).AddEId;
-                    }
-                    // 励振面の右側領域
-                    {
-                        uint workVId1 = coreVIds[3][0];
-                        uint workVId2 = coreVIds[2][0];
-                        uint workEId = cad2D.ConnectVertexLine(workVId1, workVId2).AddEId;
-                    }
-                    {
-                        uint workVId1 = coreVIds[3][1];
-                        uint workVId2 = coreVIds[2][1];
-                        uint workEId = cad2D.ConnectVertexLine(workVId1, workVId2).AddEId;
-                    }
-                    //
-                    {
-                        uint workVId1 = coreVIds[2][0];
-                        uint workVId2 = coreVIds[1][0];
-                        uint workEId = cad2D.ConnectVertexLine(workVId1, workVId2).AddEId;
-                    }
-                    {
-                        uint workVId1 = coreVIds[2][1];
-                        uint workVId2 = coreVIds[1][1];
-                        uint workEId = cad2D.ConnectVertexLine(workVId1, workVId2).AddEId;
+                        {
+                            uint workVId1 = coreVIds[portIndex][0];
+                            uint workVId2 = coreVIds[portIndex + 1][0];
+                            uint workEId = cad2D.ConnectVertexLine(workVId1, workVId2).AddEId;
+                        }
+                        {
+                            uint workVId1 = coreVIds[portIndex][1];
+                            uint workVId2 = coreVIds[portIndex + 1][1];
+                            uint workEId = cad2D.ConnectVertexLine(workVId1, workVId2).AddEId;
+                        }
                     }
                 }
             }
@@ -582,10 +561,12 @@ namespace IvyFEMProtoApp
 
                 {
                     int timeIndex = FEM.TimeIndex;
-                    int nodeCntB = FEM.RefTimeEzsss[0][timeIndex].Length;
-                    int refNodeIdB = nodeCntB / 2;
-                    double ezPort1 = FEM.RefTimeEzsss[0][timeIndex][refNodeIdB];
-                    double ezPort2 = FEM.RefTimeEzsss[1][timeIndex][refNodeIdB];
+                    int nodeCntB1 = FEM.RefTimeEzsss[0][timeIndex].Length;
+                    int refNodeIdB1 = nodeCntB1 / 2;
+                    int nodeCntB2 = FEM.RefTimeEzsss[1][timeIndex].Length;
+                    int refNodeIdB2 = nodeCntB2 / 2;
+                    double ezPort1 = FEM.RefTimeEzsss[0][timeIndex][refNodeIdB1];
+                    double ezPort2 = FEM.RefTimeEzsss[1][timeIndex][refNodeIdB2];
                     var chartWin = ChartWindow2;
                     var model = chartWin.Plot.Model;
                     var series = model.Series;

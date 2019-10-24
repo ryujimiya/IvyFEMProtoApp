@@ -714,6 +714,69 @@ namespace IvyFEMProtoApp
             Problem.HWaveguideFirstOrderABCTDProblemb3(this);
         }
 
+        private void HPlaneWaveguidePML1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            /*
+            //Problem.HWaveguidePMLProblema1_0(this);
+            Problem.HWaveguidePMLProblema1(this);
+            */
+
+            //Problem.HWaveguidePMLProblemb1_0(this);
+            Problem.HWaveguidePMLProblemb1(this);
+        }
+
+        private void HPlaneWaveguidePML2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            /*
+            //Problem.HWaveguidePMLProblema2_0(this);
+            Problem.HWaveguidePMLProblema2(this);
+            */
+
+            //Problem.HWaveguidePMLProblemb2_0(this);
+            Problem.HWaveguidePMLProblemb2(this);
+        }
+
+        private void HPlaneWaveguidePML3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            /*
+            //Problem.HWaveguidePMLProblema3_0(this);
+            Problem.HWaveguidePMLProblema3(this);
+            */
+
+            //Problem.HWaveguidePMLProblemb3_0(this);
+            Problem.HWaveguidePMLProblemb3(this);
+        }
+
+        private void HPlaneWaveguidePMLTD1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            //Problem.HWaveguidePMLTDProblemb1_0(this);
+            Problem.HWaveguidePMLTDProblemb1(this);
+        }
+
+        private void HPlaneWaveguidePMLTD2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            //Problem.HWaveguidePMLTDProblemb2_0(this);
+            Problem.HWaveguidePMLTDProblemb2(this);
+        }
+
+        private void HPlaneWaveguidePMLTD3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            //Problem.HWaveguidePMLTDProblemb3_0(this);
+            Problem.HWaveguidePMLTDProblemb3(this);
+        }
+
         private void SquareLatticePCWaveguideBtn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);

@@ -6,7 +6,7 @@
         xmlns:OpenTK="clr-namespace:OpenTK;assembly=OpenTK.GLControl"        
         xmlns:local="clr-namespace:IvyFEM"
         mc:Ignorable="d"
-        Title="IvyFEMProtoApp" Height="400" Width="500" Loaded="Window_Loaded" Activated="Window_Activated">
+        Title="IvyFEMProtoApp" Height="450" Width="500" Loaded="Window_Loaded" Activated="Window_Activated">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -91,6 +91,15 @@
                     <MenuItem Header="H-Plane Waveguide (Time Domain)(Higher Order ABC)(3,Open)" Click="HPlaneWaveguideHigherOrderABCTD3Btn_Click"/>
                     <Separator/>
                     <MenuItem Header="H-Plane Waveguide (Time Domain)(First Order ABC)(3,Open)" Click="HPlaneWaveguideFirstOrderABCTD3Btn_Click"/>
+                </MenuItem>
+                <MenuItem Header="ElectroMagnetic(PML)">
+                    <MenuItem Header="H-Plane Waveguide (PML)(1)" Click="HPlaneWaveguidePML1Btn_Click"/>
+                    <MenuItem Header="H-Plane Waveguide (PML)(2)" Click="HPlaneWaveguidePML2Btn_Click"/>
+                    <MenuItem Header="H-Plane Waveguide (PML)(3,Open)" Click="HPlaneWaveguidePML3Btn_Click"/>
+                    <Separator/>
+                    <MenuItem Header="H-Plane Waveguide (Time Domain)(PML)(1)" Click="HPlaneWaveguidePMLTD1Btn_Click"/>
+                    <MenuItem Header="H-Plane Waveguide (Time Domain)(PML)(2)" Click="HPlaneWaveguidePMLTD2Btn_Click"/>
+                    <MenuItem Header="H-Plane Waveguide (Time Domain)(PML)(3,Open)" Click="HPlaneWaveguidePMLTD3Btn_Click"/>
                 </MenuItem>
 
                 <MenuItem Header="Photonic Crystal">

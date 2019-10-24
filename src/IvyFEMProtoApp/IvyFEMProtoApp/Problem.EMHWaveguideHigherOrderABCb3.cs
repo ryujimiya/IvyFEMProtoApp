@@ -18,7 +18,7 @@ namespace IvyFEMProtoApp
         {
             double waveguideWidth = 1.0;
             //double eLen = waveguideWidth * (0.95 * 1.0 / 30.0);
-            //double eLen = waveguideWidth * (0.95 * 0.25 / 30.0);
+            //double eLen = waveguideWidth * (0.95 * 1.0 / 30.0);
             double eLen = waveguideWidth * (0.95 * 0.75 / 30.0);
 
             // 導波管不連続領域の長さ
