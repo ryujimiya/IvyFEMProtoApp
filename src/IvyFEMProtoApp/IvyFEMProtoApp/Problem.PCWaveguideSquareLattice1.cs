@@ -64,26 +64,6 @@ namespace IvyFEMProtoApp
             double eFreq = 0.440;
             int freqDiv = 20;
 
-            // 媒質リスト作成
-            DielectricMaterial claddingMa = new DielectricMaterial
-            {
-                Epxx = 1.0,
-                Epyy = 1.0,
-                Epzz = 1.0,
-                Muxx = 1.0,
-                Muyy = 1.0,
-                Muzz = 1.0
-            };
-            DielectricMaterial coreMa = new DielectricMaterial
-            {
-                Epxx = rodEps,
-                Epyy = rodEps,
-                Epzz = rodEps,
-                Muxx = 1.0,
-                Muyy = 1.0,
-                Muzz = 1.0
-            };
-
             IList<uint> rodLoopIds = new List<uint>();
             IList<uint> inputWgRodLoopIds1 = new List<uint>();
             IList<uint> inputWgRodLoopIds2 = new List<uint>();
@@ -311,6 +291,25 @@ namespace IvyFEMProtoApp
             {
                 world.ClearMaterial();
 
+                // 媒質リスト作成
+                DielectricMaterial claddingMa = new DielectricMaterial
+                {
+                    Epxx = 1.0,
+                    Epyy = 1.0,
+                    Epzz = 1.0,
+                    Muxx = 1.0,
+                    Muyy = 1.0,
+                    Muzz = 1.0
+                };
+                DielectricMaterial coreMa = new DielectricMaterial
+                {
+                    Epxx = rodEps,
+                    Epyy = rodEps,
+                    Epzz = rodEps,
+                    Muxx = 1.0,
+                    Muyy = 1.0,
+                    Muzz = 1.0
+                };
                 claddingMaId = world.AddMaterial(claddingMa);
                 coreMaId = world.AddMaterial(coreMa);
 

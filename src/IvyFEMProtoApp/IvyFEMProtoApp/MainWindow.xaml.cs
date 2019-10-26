@@ -655,11 +655,6 @@ namespace IvyFEMProtoApp
         {
             SetProblemTitle(e.Source as MenuItem);
 
-            /*
-            //Problem.HWaveguideHigherOrderABCProblema2_0(this);
-            Problem.HWaveguideHigherOrderABCProblema2(this);
-            */
-
             //Problem.HWaveguideHigherOrderABCProblemb2_0(this);
             Problem.HWaveguideHigherOrderABCProblemb2(this);
         }
@@ -667,11 +662,6 @@ namespace IvyFEMProtoApp
         private void HPlaneWaveguideHigherOrderABC3Btn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
-
-            /*
-            //Problem.HWaveguideHigherOrderABCProblema3_0(this);
-            Problem.HWaveguideHigherOrderABCProblema3(this);
-            */
 
             //Problem.HWaveguideHigherOrderABCProblemb3_0(this);
             Problem.HWaveguideHigherOrderABCProblemb3(this);
@@ -731,11 +721,6 @@ namespace IvyFEMProtoApp
         {
             SetProblemTitle(e.Source as MenuItem);
 
-            /*
-            //Problem.HWaveguidePMLProblema2_0(this);
-            Problem.HWaveguidePMLProblema2(this);
-            */
-
             //Problem.HWaveguidePMLProblemb2_0(this);
             Problem.HWaveguidePMLProblemb2(this);
         }
@@ -743,11 +728,6 @@ namespace IvyFEMProtoApp
         private void HPlaneWaveguidePML3Btn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
-
-            /*
-            //Problem.HWaveguidePMLProblema3_0(this);
-            Problem.HWaveguidePMLProblema3(this);
-            */
 
             //Problem.HWaveguidePMLProblemb3_0(this);
             Problem.HWaveguidePMLProblemb3(this);

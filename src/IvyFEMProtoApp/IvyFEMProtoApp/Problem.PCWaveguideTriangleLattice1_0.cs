@@ -33,8 +33,8 @@ namespace IvyFEMProtoApp
             //bool isAirHole = false; // dielectric rod
             bool isAirHole = true; // air hole
             // 周期を180°ずらす
-            bool isShift180 = false; // for latticeTheta = 60 r = 0.30a air hole
-            //bool isShift180 = true; // for latticeTheta = 45 r = 0.18a dielectric rod
+            //bool isShift180 = false; // for latticeTheta = 60 r = 0.30a air hole
+            //bool isShift180 = true;
             // ロッドの数(半分)
             //const int rodCntHalf = 5;
             const int rodCntHalf = 3;
@@ -57,17 +57,14 @@ namespace IvyFEMProtoApp
             //const int rodCntDiscon = 4;
             const int rodCntDiscon = 2;
 
-            // ロッドが1格子を超える？
-            //bool isLargeRod = (rodRadiusRatio >= 0.25);
-            bool isLargeRod = (rodRadiusRatio >= 0.5 * Math.Sin(latticeTheta * Math.PI / 180.0));
             // 格子の数
             int latticeCnt = rodCntHalf * 2 + defectRodCnt;
+            // ロッドから上下の電気壁までの距離
+            double electricWallDistance = 0.1 * waveguideWidth / (rodCntHalf * 2 + defectRodCnt);
             // ロッド間の距離(Y方向)
-            double rodDistanceY = waveguideWidth / (double)latticeCnt;
-            if (isLargeRod)
-            {
-                rodDistanceY = waveguideWidth / (double)(latticeCnt - 1);
-            }
+            double rodDistanceY = 
+                (waveguideWidth - 2.0 * electricWallDistance) /
+                (latticeCnt - 1 + 2.0 * rodRadiusRatio / Math.Sin(latticeTheta * Math.PI / 180.0));
             // 格子定数
             latticeA = rodDistanceY / Math.Sin(latticeTheta * Math.PI / 180.0);
             // ロッド間の距離(X方向)
@@ -84,8 +81,8 @@ namespace IvyFEMProtoApp
             double eLen = 1.05 * waveguideWidth / (latticeCnt * divCntForOneLattice);
 
             // フォトニック結晶導波路の場合、a/λを規格化周波数とする
-            double sFreq = 0.268;
-            double eFreq = 0.282;
+            double sFreq = 0.267;
+            double eFreq = 0.287;
             int freqDiv = 20;
 
             // 最小屈折率
@@ -101,73 +98,20 @@ namespace IvyFEMProtoApp
             // μ0
             //double replacedMu0 = Constants.Mu0; // TEモード
             double replacedMu0 = Constants.Ep0; // TMモード
-
-            // 媒質リスト作成
-            double claddingP = 1.0;
-            double claddingQ = 1.0;
-            double coreP = 1.0;
-            double coreQ = 1.0;
-            if (isAirHole)
-            {
-                // 誘電体基盤 + 空孔(air hole)
-                ///////////////////////////////////////
-                // Note: IvyFEMではTEモードで実装されているが、係数を読み替えればTMモードにも適用できる
-                ///////////////////////////////////////
-                {
-                    // TMモード
-                    claddingP = 1.0 / rodEps;
-                    claddingQ = 1.0;
-                    coreP = 1.0 / 1.0;
-                    coreQ = 1.0;
-                }
-                /*
-                {
-                    // TEモード
-                    claddingP = 1.0;
-                    claddingQ = rodEps;
-                    coreP = 1.0;
-                    coreQ = 1.0;
-                }
-                */
-            }
-            else
-            {
-                System.Diagnostics.Debug.Assert(false);
-            }
-
-            // 媒質リスト作成
-            DielectricMaterial claddingMa = new DielectricMaterial
-            {
-                Epxx = claddingQ,
-                Epyy = claddingQ,
-                Epzz = claddingQ,
-                Muxx = 1.0 / claddingP,
-                Muyy = 1.0 / claddingP,
-                Muzz = 1.0 / claddingP
-            };
-            DielectricMaterial coreMa = new DielectricMaterial
-            {
-                Epxx = coreQ,
-                Epyy = coreQ,
-                Epzz = coreQ,
-                Muxx = 1.0 / coreP,
-                Muyy = 1.0 / coreP,
-                Muzz = 1.0 / coreP
-            };
-
             // Cad
             CadObject2D cad2D = new CadObject2D();
             cad2D.IsSkipAssertValid = true; // AssertValidを無視する
             IList<uint> rodLoopIds = new List<uint>();
             IList<uint> inputWgRodLoopIds1 = new List<uint>();
             IList<uint> inputWgRodLoopIds2 = new List<uint>();
-            int divCnt = 0;
             IList<uint> rodEIdsB1 = new List<uint>();
             IList<uint> rodEIdsB2 = new List<uint>();
             IList<uint> rodEIdsB3 = new List<uint>();
             IList<uint> rodEIdsB4 = new List<uint>();
-            IList<uint> eIdsF1 = new List<uint>();
-            IList<uint> eIdsF2 = new List<uint>();
+            IList<uint> rodVIdsB1 = new List<uint>();
+            IList<uint> rodVIdsB2 = new List<uint>();
+            IList<uint> rodVIdsB3 = new List<uint>();
+            IList<uint> rodVIdsB4 = new List<uint>();
             {
                 //------------------------------------------------------------------
                 // 図面作成
@@ -189,1466 +133,251 @@ namespace IvyFEMProtoApp
                 uint eIdAdd1 = cad2D.ConnectVertexLine(3, 8).AddEId;
                 uint eIdAdd2 = cad2D.ConnectVertexLine(4, 7).AddEId;
 
-                // 入出力導波路の周期構造境界上の頂点を追加
-                IList<double> ys = new List<double>();
-                IList<double> rodys = new List<double>();
-                IList<uint> rodVIIdsB1 = new List<uint>();
-                IList<uint> rodVIdsB2 = new List<uint>();
-                IList<uint> rodVIdsB3 = new List<uint>();
-                IList<uint> rodVIdsB4 = new List<uint>();
-                int outofAreaRodPtCntRowTop = 0;
-                int outofAreaRodPtCntRowBottom = 0;
-                // 境界上にロッドのある格子
-                // 境界上のロッドの頂点
-                for (int i = 0; i < rodCntHalf; i++)
+                //////////////////////////////////////////
+                // ロッドの中心Y座標(偶数/奇数カラム)
+                IList<double> rodY0sX1 = new List<double>();
+                IList<double> rodY0sX2 = new List<double>();
+                for (int i = 0; i < latticeCnt; i++)
                 {
-                    if ((rodCntHalf - 1 - i) % 2 == (isShift180 ? 1 : 0)) continue;
-                    double y0 = waveguideWidth - i * rodDistanceY - 0.5 * rodDistanceY;
-                    if (isLargeRod)
+                    if (i >= rodCntHalf && i < (rodCntHalf + defectRodCnt))
                     {
-                        y0 += 0.5 * rodDistanceY;
+                        // 欠陥部
+                        continue;
                     }
-                    if (y0 > (0.0 + Constants.PrecisionLowerLimit) &&
-                        y0 < (waveguideWidth - Constants.PrecisionLowerLimit))
+                    double upperRodPosY = waveguideWidth -electricWallDistance - rodRadius;
+                    if (i % 2 == 0)
                     {
-                        rodys.Add(y0);
+                        double y0 = upperRodPosY - i * rodDistanceY;
+                        if ((y0 + rodRadius) > waveguideWidth || (y0 - rodRadius) < 0.0)
+                        {
+                            System.Diagnostics.Debug.Assert(false);
+                        }
+                        rodY0sX2.Add(y0);
                     }
                     else
                     {
-                        if (isLargeRod && i == 0)
-                        {
-                            outofAreaRodPtCntRowTop++;
-                        }
-                        else
+                        double y0 = upperRodPosY - rodDistanceY - (i - 1) * rodDistanceY;
+                        if ((y0 + rodRadius) > waveguideWidth || (y0 - rodRadius) < 0.0)
                         {
                             System.Diagnostics.Debug.Assert(false);
                         }
-                    }
-                    for (int k = 1; k <= rodRadiusDiv; k++)
-                    {
-                        double y1 = y0 - k * rodRadius / rodRadiusDiv;
-                        double y2 = y0 + k * rodRadius / rodRadiusDiv;
-                        if (y1 > (0.0 + Constants.PrecisionLowerLimit) &&
-                            y1 < (waveguideWidth - Constants.PrecisionLowerLimit))
-                        {
-                            rodys.Add(y1);
-                        }
-                        else
-                        {
-                            System.Diagnostics.Debug.Assert(false);
-                        }
-                        if (y2 > (0.0 + Constants.PrecisionLowerLimit) &&
-                            y2 < (waveguideWidth - Constants.PrecisionLowerLimit))
-                        {
-                            rodys.Add(y2);
-                        }
-                        else
-                        {
-                            if (isLargeRod && i == 0)
-                            {
-                                outofAreaRodPtCntRowTop++;
-                            }
-                            else
-                            {
-                                System.Diagnostics.Debug.Assert(false);
-                            }
-                        }
-                    }
-                }
-                for (int i = 0; i < rodCntHalf; i++)
-                {
-                    if (i % 2 == (isShift180 ? 1 : 0)) continue;
-                    double y0 = rodDistanceY * rodCntHalf - i * rodDistanceY - 0.5 * rodDistanceY;
-                    if (isLargeRod)
-                    {
-                        y0 -= 0.5 * rodDistanceY;
-                    }
-                    if (y0 > (0.0 + Constants.PrecisionLowerLimit) && y0 < (waveguideWidth - Constants.PrecisionLowerLimit))
-                    {
-                        rodys.Add(y0);
-                    }
-                    else
-                    {
-                        if (isLargeRod && i == (rodCntHalf - 1))
-                        {
-                            outofAreaRodPtCntRowBottom++;
-                        }
-                        else
-                        {
-                            System.Diagnostics.Debug.Assert(false);
-                        }
-                    }
-                    for (int k = 1; k <= rodRadiusDiv; k++)
-                    {
-                        double y1 = y0 - k * rodRadius / rodRadiusDiv;
-                        double y2 = y0 + k * rodRadius / rodRadiusDiv;
-                        if (y1 > (0.0 + Constants.PrecisionLowerLimit) && y1 < (waveguideWidth - Constants.PrecisionLowerLimit))
-                        {
-                            rodys.Add(y1);
-                        }
-                        else
-                        {
-                            if (isLargeRod && i == (rodCntHalf - 1))
-                            {
-                                outofAreaRodPtCntRowBottom++;
-                            }
-                            else
-                            {
-                                System.Diagnostics.Debug.Assert(false);
-                            }
-                        }
-                        if (y2 > (0.0 + Constants.PrecisionLowerLimit) && y2 < (waveguideWidth - Constants.PrecisionLowerLimit))
-                        {
-                            rodys.Add(y2);
-                        }
-                        else
-                        {
-                            System.Diagnostics.Debug.Assert(false);
-                        }
-                    }
-                }
-                foreach (double y_rod in rodys)
-                {
-                    ys.Add(y_rod);
-                }
-                // 境界上のロッドの外の頂点はロッドから少し離さないとロッドの追加で失敗するのでマージンをとる
-                double radiusMargin = rodDistanceY * 0.01;
-                // 境界上にロッドのある格子
-                // ロッドの外
-                for (int i = 0; i < rodCntHalf; i++)
-                {
-                    if ((rodCntHalf - 1 - i) % 2 == (isShift180 ? 1 : 0)) continue;
-                    for (int k = 1; k <= (divCntForOneLattice - 1); k++)
-                    {
-                        double divptY = waveguideWidth - i * rodDistanceY - k * (rodDistanceY / divCntForOneLattice);
-                        double minRodY =
-                            waveguideWidth - i * rodDistanceY - 0.5 * rodDistanceY - rodRadius - radiusMargin;
-                        double maxRodY =
-                            waveguideWidth - i * rodDistanceY - 0.5 * rodDistanceY + rodRadius + radiusMargin;
-                        if (isLargeRod)
-                        {
-                            divptY += rodDistanceY * 0.5;
-                            if (divptY >= (waveguideWidth - Constants.PrecisionLowerLimit)) continue;
-                            minRodY += rodDistanceY * 0.5;
-                            maxRodY += rodDistanceY * 0.5;
-                        }
-                        if (divptY < (minRodY - Constants.PrecisionLowerLimit) ||
-                            divptY > (maxRodY + Constants.PrecisionLowerLimit))
-                        {
-                            ys.Add(divptY);
-                        }
-                    }
-                }
-                for (int i = 0; i < rodCntHalf; i++)
-                {
-                    if (i % 2 == (isShift180 ? 1 : 0)) continue;
-                    for (int k = 1; k <= (divCntForOneLattice - 1); k++)
-                    {
-                        double divptY =
-                            rodDistanceY * rodCntHalf - i * rodDistanceY - k * (rodDistanceY / divCntForOneLattice);
-                        double minRodY =
-                            rodDistanceY * rodCntHalf - i * rodDistanceY - 0.5 * rodDistanceY - rodRadius - radiusMargin;
-                        double maxRodY =
-                            rodDistanceY * rodCntHalf - i * rodDistanceY - 0.5 * rodDistanceY + rodRadius + radiusMargin;
-                        if (isLargeRod)
-                        {
-                            divptY -= rodDistanceY * 0.5;
-                            if (divptY <= (0.0 + Constants.PrecisionLowerLimit)) continue;
-                            minRodY -= rodDistanceY * 0.5;
-                            maxRodY -= rodDistanceY * 0.5;
-                        }
-                        if (divptY < (minRodY - Constants.PrecisionLowerLimit) ||
-                            divptY > (maxRodY + Constants.PrecisionLowerLimit))
-                        {
-                            ys.Add(divptY);
-                        }
+                        rodY0sX1.Add(y0);
                     }
                 }
 
-                // 境界上にロッドのない格子
-                for (int i = 0; i < rodCntHalf; i++)
-                {
-                    if ((rodCntHalf - 1 - i) % 2 == (isShift180 ? 0 : 1)) continue;
-                    for (int k = 0; k <= divCntForOneLattice; k++)
-                    {
-                        if (i == 0 && k == 0) continue;
-                        double divptY = waveguideWidth - i * rodDistanceY - k * (rodDistanceY / divCntForOneLattice);
-                        double minUpperRodY =
-                            waveguideWidth - i * rodDistanceY + 0.5 * rodDistanceY - rodRadius - radiusMargin;
-                        double maxLowerRodY = waveguideWidth - (i + 1) * rodDistanceY - 0.5 * rodDistanceY + rodRadius + radiusMargin;
-                        if (isLargeRod)
-                        {
-                            divptY += rodDistanceY * 0.5;
-                            if (divptY >= (waveguideWidth - Constants.PrecisionLowerLimit)) continue;
-                            minUpperRodY += rodDistanceY * 0.5;
-                            maxLowerRodY += rodDistanceY * 0.5;
-                        }
-                        bool isAddHalfRodRowTop = (isLargeRod
-                            && ((isShift180 && (rodCntHalf % 2 == 1)) || (!isShift180 && (rodCntHalf % 2 == 0))));
-                        if ((i != 0 || (i == 0 && isAddHalfRodRowTop))
-                                && divptY >= (minUpperRodY - Constants.PrecisionLowerLimit))
-                        {
-                            continue;
-                        }
-                        if ((isShift180 || (!isShift180 && i != (rodCntHalf - 1)))
-                            && divptY <= (maxLowerRodY + Constants.PrecisionLowerLimit))
-                        {
-                            continue;
-                        }
-
-                        ys.Add(divptY);
-                    }
-                }
-                for (int i = 0; i < rodCntHalf; i++)
-                {
-                    if (i % 2 == (isShift180 ? 0 : 1)) continue;
-                    for (int k = 0; k <= divCntForOneLattice; k++)
-                    {
-                        if (i == (rodCntHalf - 1) && k == divCntForOneLattice) continue;
-                        double divptY =
-                            rodDistanceY * rodCntHalf - i * rodDistanceY - k * (rodDistanceY / divCntForOneLattice);
-                        double minUpperRodY =
-                            rodDistanceY * rodCntHalf - i * rodDistanceY + 0.5 * rodDistanceY - rodRadius - radiusMargin;
-                        double maxLowerRodY =
-                            rodDistanceY * rodCntHalf - (i + 1) * rodDistanceY - 0.5 * rodDistanceY +
-                            rodRadius + radiusMargin;
-                        if (isLargeRod)
-                        {
-                            divptY -= rodDistanceY * 0.5;
-                            if (divptY <= (0.0 + Constants.PrecisionLowerLimit)) continue;
-                            minUpperRodY -= rodDistanceY * 0.5;
-                            maxLowerRodY -= rodDistanceY * 0.5;
-                        }
-                        bool isAddHalfRodRowBottom = (isLargeRod
-                            && ((isShift180 && (rodCntHalf % 2 == 1)) || (!isShift180 && (rodCntHalf % 2 == 0))));
-                        if ((isShift180 || (!isShift180 && i != 0))
-                            && divptY >= (minUpperRodY - Constants.PrecisionLowerLimit))
-                        {
-                            continue;
-                        }
-                        if ((i != (rodCntHalf - 1) || (i == (rodCntHalf - 1) && isAddHalfRodRowBottom))
-                            && divptY <= (maxLowerRodY + Constants.PrecisionLowerLimit))
-                        {
-                            continue;
-                        }
-
-                        ys.Add(divptY);
-                    }
-                }
-                // 欠陥部
-                for (int i = 0; i <= (defectRodCnt * divCntForOneLattice); i++)
-                {
-                    if (!isShift180 && (i == 0 || i == (defectRodCnt * divCntForOneLattice))) continue;
-                    double divptY = rodDistanceY * (rodCntHalf + defectRodCnt) - i * (rodDistanceY / divCntForOneLattice);
-                    double minUpperRodY =
-                        rodDistanceY * (rodCntHalf + defectRodCnt) + 0.5 * rodDistanceY - rodRadius - radiusMargin;
-                    double maxLowerRodY =
-                        rodDistanceY * rodCntHalf - 0.5 * rodDistanceY + rodRadius + radiusMargin;
-                    if (isLargeRod)
-                    {
-                        divptY -= rodDistanceY * 0.5;
-                        minUpperRodY -= rodDistanceY * 0.5;
-                        maxLowerRodY -= rodDistanceY * 0.5;
-                    }
-                    if (isLargeRod && isShift180)
-                    {
-                        // for isLargeRod == true
-                        if (divptY >= (minUpperRodY - Constants.PrecisionLowerLimit)
-                                || divptY <= (maxLowerRodY + Constants.PrecisionLowerLimit)
-                            )
-                        {
-                            continue;
-                        }
-                    }
-                    ys.Add(divptY);
-                }
-
-                // 昇順でソート
-                double[] yAry = ys.ToArray();
-                Array.Sort(yAry);
-                divCnt = yAry.Length + 1;
-
-                // yAryは昇順なので、yAryの並びの順に追加すると境界1上を逆方向に移動することになる
-                //  逆から追加しているのは、頂点によって新たに生成される辺に頂点を追加しないようにするため
+                ///////////////////////////////////////////
+                // 境界上のロッドの頂点を追加
                 // 入力導波路 外側境界
                 // 入力導波路 内部側境界
                 // 出力導波路 外側境界
                 // 出力導波路 内部側境界
-                for (int boundaryIndex = 0; boundaryIndex < 4; boundaryIndex++)
+                uint[] eIdsB = { 1, 9, 5, 10 };
+                IList<uint>[] rodVIdsB = { rodVIdsB1, rodVIdsB2, rodVIdsB3, rodVIdsB4 };
+                IList<uint>[] rodEIdsB = { rodEIdsB1, rodEIdsB2, rodEIdsB3, rodEIdsB4 };
+                double[] ptXsB = {
+                    0.0, inputWgLength,
+                    inputWgLength * 2 + disconLength,  inputWgLength + disconLength
+                };
+                for (int boundaryIndex = 0; boundaryIndex < eIdsB.Length; boundaryIndex++)
                 {
-                    bool isInRod = false;
-                    if (isLargeRod
-                        && ((isShift180 && (rodCntHalf % 2 == 1)) || (!isShift180 && (rodCntHalf % 2 == 0))))
+                    uint eId = eIdsB[boundaryIndex];
+                    double ptXB = ptXsB[boundaryIndex];
+                    IList<uint> workrodEIdsB = rodEIdsB[boundaryIndex];
+                    IList<uint> workrodVIdsB = rodVIdsB[boundaryIndex];
+                    int rodCntX1 = rodY0sX1.Count;
+                    for (int i = 0; i < rodCntX1; i++)
                     {
-                        isInRod = true;
-                    }
-
-                    for (int i = 0; i < yAry.Length; i++)
-                    {
-                        uint eId = 0;
-                        double x1 = 0.0;
-                        double ptY = 0.0;
-                        IList<uint> workrodEIdsB = null;
-                        IList<uint> workrodVIdsB = null;
+                        double ptY0 = 0.0;
+                        double ptY1 = 0.0;
+                        double ptY2 = 0.0;
                         if (boundaryIndex == 0)
                         {
                             // 入力導波路 外側境界
-                            eId = 1;
-                            x1 = 0.0;
-                            ptY = yAry[i];
-                            workrodEIdsB = rodEIdsB1;
-                            workrodVIdsB = rodVIIdsB1;
-                        }
-                        else if (boundaryIndex == 1)
-                        {
-                            // 入力導波路 内側境界
-                            eId = 9;
-                            x1 = inputWgLength;
-                            ptY = yAry[yAry.Length - 1 - i];
-                            workrodEIdsB = rodEIdsB2;
-                            workrodVIdsB = rodVIdsB2;
-                        }
-                        else if (boundaryIndex == 2)
-                        {
-                            // 出力導波路 外側境界
-                            eId = 5;
-                            x1 = inputWgLength * 2 + disconLength;
-                            ptY = yAry[yAry.Length - 1 - i];
-                            workrodEIdsB = rodEIdsB3;
-                            workrodVIdsB = rodVIdsB3;
-                        }
-                        else if (boundaryIndex == 3)
-                        {
-                            // 出力導波路 内側境界
-                            eId = 10;
-                            x1 = inputWgLength + disconLength;
-                            ptY = yAry[yAry.Length - 1 - i];
-                            workrodEIdsB = rodEIdsB4;
-                            workrodVIdsB = rodVIdsB4;
+                            // 下から順に追加
+                            ptY0 = rodY0sX1[rodCntX1 - 1 - i];
+                            ptY1 = ptY0 - rodRadius;
+                            ptY2 = ptY0 + rodRadius;
                         }
                         else
                         {
-                            System.Diagnostics.Debug.Assert(false);
+                            // 上から順に追加
+                            ptY0 = rodY0sX1[i];
+                            ptY1 = ptY0 + rodRadius;
+                            ptY2 = ptY0 - rodRadius;
                         }
 
-                        var resAddVertex = cad2D.AddVertex(CadElementType.Edge, eId, new OpenTK.Vector2d(x1, ptY));
-                        uint addVId = resAddVertex.AddVId;
-                        uint addEId = resAddVertex.AddEId;
-                        System.Diagnostics.Debug.Assert(addVId != 0);
-                        System.Diagnostics.Debug.Assert(addEId != 0);
-                        if (isInRod)
+                        double[] ptYs = { ptY1, ptY0, ptY2 };
+                        for (int iY = 0; iY < ptYs.Length; iY++)
                         {
-                            workrodEIdsB.Add(addEId);
-                        }
-                        bool contains = false;
-                        foreach (double rodY in rodys)
-                        {
-                            if (Math.Abs(rodY - ptY) < Constants.PrecisionLowerLimit)
-                            {
-                                contains = true;
-                                break;
-                            }
-                        }
-                        if (contains)
-                        {
+                            var res = cad2D.AddVertex(
+                                CadElementType.Edge, eId, new OpenTK.Vector2d(ptXB, ptYs[iY]));
+                            uint addVId = res.AddVId;
+                            uint addEId = res.AddEId;
+                            System.Diagnostics.Debug.Assert(addVId != 0);
+                            System.Diagnostics.Debug.Assert(addEId != 0);
                             workrodVIdsB.Add(addVId);
-
-                            if (isLargeRod
-                                && ((isShift180 && (rodCntHalf % 2 == 1)) || (!isShift180 && (rodCntHalf % 2 == 0))))
+                            if (iY != 0) // iY == 0のときはロッドの外の辺が生成される
                             {
-                                if ((workrodVIdsB.Count + outofAreaRodPtCntRowTop) % (rodRadiusDiv * 2 + 1) == 1)
-                                {
-                                    isInRod = true;
-                                }
-                                else if ((workrodVIdsB.Count + outofAreaRodPtCntRowTop) % (rodRadiusDiv * 2 + 1) == 0)
-                                {
-                                    isInRod = false;
-                                }
-                            }
-                            else
-                            {
-                                if (workrodVIdsB.Count % (rodRadiusDiv * 2 + 1) == 1)
-                                {
-                                    isInRod = true;
-                                }
-                                else if (workrodVIdsB.Count % (rodRadiusDiv * 2 + 1) == 0)
-                                {
-                                    isInRod = false;
-                                }
-                            }
-                        }
-                        if (isLargeRod
-                            && ((isShift180 && (rodCntHalf % 2 == 1)) || (!isShift180 && (rodCntHalf % 2 == 0))))
-                        {
-                            if (i == (yAry.Length - 1))
-                            {
-                                System.Diagnostics.Debug.Assert(isInRod == true);
-                                workrodEIdsB.Add(eId);
+                                workrodEIdsB.Add(addEId);
                             }
                         }
                     }
-                }
-
-                int rodCntHalfB = (isShift180 ? (int)((rodCntHalf + 1) / 2) : (int)((rodCntHalf) / 2));
-                if (!isLargeRod
-                    || (isLargeRod &&
-                           (isShift180 && (rodCntHalf % 2 == 0)) || (!isShift180 && (rodCntHalf % 2 == 1))
-                       )
-                    )
-                {
-                    System.Diagnostics.Debug.Assert(rodVIIdsB1.Count == rodCntHalfB * 2 * (rodRadiusDiv * 2 + 1));
-                    System.Diagnostics.Debug.Assert(rodVIdsB2.Count == rodCntHalfB * 2 * (rodRadiusDiv * 2 + 1));
-                    System.Diagnostics.Debug.Assert(rodVIdsB3.Count == rodCntHalfB * 2 * (rodRadiusDiv * 2 + 1));
-                    System.Diagnostics.Debug.Assert(rodVIdsB4.Count == rodCntHalfB * 2 * (rodRadiusDiv * 2 + 1));
-                }
-                else
-                {
-                    System.Diagnostics.Debug.Assert(outofAreaRodPtCntRowTop == (rodRadiusDiv + 1));
-                    System.Diagnostics.Debug.Assert(outofAreaRodPtCntRowBottom == (rodRadiusDiv + 1));
-                    System.Diagnostics.Debug.Assert(rodVIIdsB1.Count == (rodCntHalfB * 2 * (rodRadiusDiv * 2 + 1) - outofAreaRodPtCntRowTop - outofAreaRodPtCntRowBottom));
-                    System.Diagnostics.Debug.Assert(rodVIdsB2.Count == (rodCntHalfB * 2 * (rodRadiusDiv * 2 + 1) - outofAreaRodPtCntRowTop - outofAreaRodPtCntRowBottom));
-                    System.Diagnostics.Debug.Assert(rodVIdsB3.Count == (rodCntHalfB * 2 * (rodRadiusDiv * 2 + 1) - outofAreaRodPtCntRowTop - outofAreaRodPtCntRowBottom));
-                    System.Diagnostics.Debug.Assert(rodVIdsB4.Count == (rodCntHalfB * 2 * (rodRadiusDiv * 2 + 1) - outofAreaRodPtCntRowTop - outofAreaRodPtCntRowBottom));
+                    System.Diagnostics.Debug.Assert(workrodVIdsB.Count % 3 == 0);
+                    System.Diagnostics.Debug.Assert(workrodEIdsB.Count % 2 == 0);
                 }
 
                 /////////////////////////////////////////////////////////////////////////////
-                // ロッドを追加
-                uint F1NewPort1EId = 0;
-                uint F2NewPort1EId = 0;
-                uint F1DisconNewPort1EId = 0;
-                uint F2DisconNewPport1EId = 0;
-                uint F1NewPort2EId = 0;
-                uint F2NewPort2EId = 0;
-                uint F1DisconNewPort2EId = 0;
-                uint F2DisconNewPort2EId = 0;
-                uint B1TopRodCenterVId = 1;
-                uint B1BottomRodCenterVId = 2;
-                uint B2TopRodCenterVId = 8;
-                uint B2BottomRodCenterVId = 3;
-                uint B3TopRodCenterVId = 6;
-                uint B3BottomRodCenterVId = 5;
-                uint B4TopRodCenterVId = 7;
-                uint B4BottomRodCenterVId = 4;
-
-                // 左右のロッド(上下の強制境界と交差する円)と境界の交点
-                IList<uint> rodQuarterVIdsF1 = new List<uint>();
-                IList<uint> rodQuarterVIdsF2 = new List<uint>();
-
-                for (int colIndex = 0; colIndex < 4; colIndex++) // このcolIndexは特に図面上のカラムを指すわけではない（ループ変数)
-                {
-                    // 上の強制境界と交差する点
-                    if (isLargeRod
-                        && ((isShift180 && (rodCntHalf % 2 == 1)) || (!isShift180 && (rodCntHalf % 2 == 0)))
-                           )
-                    {
-                        uint[] eIds = new uint[2];
-                        if (colIndex == 0)
-                        {
-                            // 入力境界 外側
-                            // 入力導波路領域
-                            eIds[0] = 8;
-                            eIds[1] = 8;
-                        }
-                        else if (colIndex == 1)
-                        {
-                            // 入力境界内側
-                            // 不連続領域
-                            eIds[0] = 8;
-                            eIds[1] = 7;
-                        }
-                        else if (colIndex == 2)
-                        {
-                            // 出力境界内側
-                            // 不連続領域
-                            eIds[0] = 7;
-                            eIds[1] = 6;
-                        }
-                        else if (colIndex == 3)
-                        {
-                            // 出力境界外側
-                            // 出力導波路領域
-                            eIds[0] = 6;
-                            eIds[1] = 6;
-                        }
-                        else
-                        {
-                            System.Diagnostics.Debug.Assert(false);
-                        }
-                        double x0 = 0.0;
-                        if (colIndex == 0 || colIndex == 1)
-                        {
-                            // 入力側
-                            x0 = (rodDistanceX) * colIndex;
-                        }
-                        else if (colIndex == 2 || colIndex == 3)
-                        {
-                            // 出力側
-                            x0 = inputWgLength + disconLength + (rodDistanceX) * (colIndex - 2);
-                        }
-                        else
-                        {
-                            System.Diagnostics.Debug.Assert(false);
-                        }
-                        double y0 = waveguideWidth;
-                        double crossY = waveguideWidth;
-                        double[] crossXs = new double[2];
-                        crossXs[0] = -1.0 * Math.Sqrt(rodRadius * rodRadius - (crossY - y0) * (crossY - y0)) + x0;
-                        crossXs[1] = Math.Sqrt(rodRadius * rodRadius - (crossY - y0) * (crossY - y0)) + x0;
-                        for (int k = 0; k < 2; k++)
-                        {
-                            uint eId = eIds[k];
-                            double crossX = crossXs[k];
-                            if (colIndex == 0 || colIndex == 1)
-                            {
-                                if (crossX <= (0.0 + Constants.PrecisionLowerLimit))
-                                {
-                                    continue;
-                                }
-                            }
-                            else if (colIndex == 2 || colIndex == 3)
-                            {
-                                if (crossX >= (inputWgLength * 2.0 + disconLength - Constants.PrecisionLowerLimit))
-                                {
-                                    continue;
-                                }
-                            }
-                            else
-                            {
-                                System.Diagnostics.Debug.Assert(false);
-                            }
-                            var resAddVertex = cad2D.AddVertex(
-                                CadElementType.Edge, eId, new OpenTK.Vector2d(crossX, crossY));
-                            uint addVId = resAddVertex.AddVId;
-                            uint addEId = resAddVertex.AddEId;
-                            System.Diagnostics.Debug.Assert(addVId != 0);
-                            System.Diagnostics.Debug.Assert(addEId != 0);
-                            rodQuarterVIdsF1.Add(addVId);
-                            eIdsF1.Add(addEId);
-                            // 上側境界の中央部分の辺IDが新しくなる
-                            if (colIndex == 0 && k == 1)
-                            {
-                                // 入力部
-                                // 不変
-                            }
-                            else if (colIndex == 1 && k == 0)
-                            {
-                                // 不連続部
-                                F1NewPort1EId = addEId;
-                            }
-                            else if (colIndex == 1 && k == 1)
-                            {
-                                // 不連続部
-                                //不変
-                            }
-                            else if (colIndex == 2 && k == 0)
-                            {
-                                // 不連続部（出力側)
-                                F1DisconNewPort1EId = addEId;
-                                F1DisconNewPort2EId = addEId;
-                            }
-                            else if (colIndex == 2 && k == 1)
-                            {
-                                // 不連続部（出力側)
-                                // 不変
-                            }
-                            else if (colIndex == 3 && k == 0)
-                            {
-                                // 出力部
-                                F1NewPort2EId = addEId;
-                            }
-                            // DEBUG
-                            //cad2d.SetColor_Edge(id_e_add, new double[] { 1.0, 0.0, 0.0 });
-                        }
-                    }
-                }
-
-                for (int colIndex = 3; colIndex >= 0; colIndex--) // このcolIndexは特に図面上のカラムを指すわけではない（ループ変数)
-                {
-                    // 下の強制境界と交差するロッド
-                    if (isLargeRod
-                        && ((isShift180 && (rodCntHalf % 2 == 1)) || (!isShift180 && (rodCntHalf % 2 == 0)))
-                           )
-                    {
-                        uint[] eIds = new uint[2];
-                        if (colIndex == 0)
-                        {
-                            // 入力境界 外側
-                            // 入力導波路領域
-                            eIds[0] = 2;
-                            eIds[1] = 2;
-                        }
-                        else if (colIndex == 1)
-                        {
-                            // 入力境界内側
-                            // 不連続領域
-                            eIds[0] = 3;
-                            eIds[1] = 2;
-                        }
-                        else if (colIndex == 2)
-                        {
-                            // 出力境界内側
-                            // 不連続領域
-                            eIds[0] = 4;
-                            eIds[1] = 3;
-                        }
-                        else if (colIndex == 3)
-                        {
-                            // 入力境界 外側
-                            // 入力導波路領域
-                            eIds[0] = 4;
-                            eIds[1] = 4;
-                        }
-                        else
-                        {
-                            System.Diagnostics.Debug.Assert(false);
-                        }
-                        double x0 = 0.0;
-                        if (colIndex == 0 || colIndex == 1)
-                        {
-                            // 入力側
-                            x0 = (rodDistanceX) * colIndex;
-                        }
-                        else if (colIndex == 2 || colIndex == 3)
-                        {
-                            // 出力側
-                            x0 = inputWgLength + disconLength + (rodDistanceX) * (colIndex - 2);
-                        }
-                        else
-                        {
-                            System.Diagnostics.Debug.Assert(false);
-                        }
-                        double y0 = 0.0;
-                        double crossY = 0.0;
-                        double[] crossXs = new double[2];
-                        crossXs[0] = Math.Sqrt(rodRadius * rodRadius - (crossY - y0) * (crossY - y0)) + x0;
-                        crossXs[1] = -1.0 * Math.Sqrt(rodRadius * rodRadius - (crossY - y0) * (crossY - y0)) + x0;
-                        for (int k = 0; k < 2; k++)
-                        {
-                            uint eId = eIds[k];
-                            double crossX = crossXs[k];
-                            if (colIndex == 0 || colIndex == 1)
-                            {
-                                if (crossX <= (0.0 + Constants.PrecisionLowerLimit))
-                                {
-                                    continue;
-                                }
-                            }
-                            else if (colIndex == 2 || colIndex == 3)
-                            {
-                                if (crossX >= (inputWgLength * 2.0 + disconLength - Constants.PrecisionLowerLimit))
-                                {
-                                    continue;
-                                }
-                            }
-                            else
-                            {
-                                System.Diagnostics.Debug.Assert(false);
-                            }
-                            var resAddVertex = cad2D.AddVertex(
-                                CadElementType.Edge, eId, new OpenTK.Vector2d(crossX, crossY));
-                            uint addVId = resAddVertex.AddVId;
-                            uint addEId = resAddVertex.AddEId;
-                            System.Diagnostics.Debug.Assert(addVId != 0);
-                            System.Diagnostics.Debug.Assert(addEId != 0);
-                            rodQuarterVIdsF2.Add(addVId);
-                            eIdsF2.Add(addEId);
-                            // 下側境界の中央部分の辺IDが新しくなる
-                            //   Note:colInde == 3から追加されることに注意
-                            if (colIndex == 0 && k == 0)
-                            {
-                                // 入力部
-                                F2NewPort1EId = addEId;
-                            }
-                            else if (colIndex == 0 && k == 1)
-                            {
-                                // 入力部
-                                // 不変
-                            }
-                            else if (colIndex == 1 && k == 0)
-                            {
-                                // 不連続部
-                                F2DisconNewPport1EId = addEId;
-                                F2DisconNewPort2EId = addEId;
-                            }
-                            else if (colIndex == 2 && k == 1)
-                            {
-                                // 不連続部（出力側)
-                                // 不変
-                            }
-                            else if (colIndex == 2 && k == 0)
-                            {
-                                // 不連続部（出力側)
-                                F2NewPort2EId = addEId;
-                            }
-                            else if (colIndex == 3 && k == 1)
-                            {
-                                // 出力部
-                                // 不変
-                            }
-                            // DEBUG
-                            //cad2d.SetColor_Edge(id_e_add, new double[] { 1.0, 0.0, 0.0 });
-                        }
-                    }
-                }
-
                 // 左のロッドを追加
-                for (int colIndex = 0; colIndex < 3; colIndex++) // このcolIndexは特に図面上のカラムを指すわけではない（ループ変数)
+                uint[] leftRodContainsLIds = { 1, 2, 3 };
+                IList<uint>[] leftRodVIdsB = { rodVIdsB[0], rodVIdsB[1], rodVIdsB[3] };
+                IList<uint>[] leftRodContainsInputWgRodLoopIdss = { inputWgRodLoopIds1, null, inputWgRodLoopIds2 };
+                for (int index = 0; index < leftRodContainsLIds.Length; index++)
                 {
-                    // 左のロッド
-                    IList<uint> workrodVIdsB = null;
-                    double xB = 0;
-                    uint baseLoopId = 0;
-                    int inputWgNo = 0;
-                    uint workBTopRodCenterVId = 0;
-                    uint workBBottomRodCenterVId = 0;
+                    IList<uint> workrodVIdsB = leftRodVIdsB[index];
+                    uint baseLoopId = leftRodContainsLIds[index];
+                    IList<uint> workInputWgRodLoopIds = leftRodContainsInputWgRodLoopIdss[index];
 
                     // 始点、終点が逆？
                     bool isReverse = false;
-                    if (colIndex == 0)
+                    if (index == 0)
                     {
                         // 入力境界 外側
-                        xB = 0.0;
-                        workrodVIdsB = rodVIIdsB1;
-                        // 入力導波路領域
-                        baseLoopId = 1;
-                        inputWgNo = 1;
-                        workBTopRodCenterVId = B1TopRodCenterVId;
-                        workBBottomRodCenterVId = B1BottomRodCenterVId;
                         isReverse = false;
                     }
-                    else if (colIndex == 1)
-                    {
-                        // 入力境界 内側
-                        xB = inputWgLength;
-                        workrodVIdsB = rodVIdsB2;
-                        // 不連続領域
-                        baseLoopId = 2;
-                        inputWgNo = 0;
-                        workBTopRodCenterVId = B2TopRodCenterVId;
-                        workBBottomRodCenterVId = B2BottomRodCenterVId;
-                        isReverse = true;
-                    }
-                    else if (colIndex == 2)
-                    {
-                        // 出力境界 内側
-                        xB = inputWgLength + disconLength;
-                        workrodVIdsB = rodVIdsB4;
-                        // 出力導波路領域
-                        baseLoopId = 3;
-                        inputWgNo = 2;
-                        workBTopRodCenterVId = B4TopRodCenterVId;
-                        workBBottomRodCenterVId = B4BottomRodCenterVId;
-                        isReverse = true;
-                    }
                     else
                     {
-                        System.Diagnostics.Debug.Assert(false);
+                        isReverse = true;
                     }
 
-                    for (int i = 0; i < rodCntHalf; i++)
-                    {
-                        if ((rodCntHalf - 1 - i) % 2 == (isShift180 ? 0 : 1))
-                        {
-                            int i2 = rodCntHalfB - 1 - (int)((rodCntHalf - 1 - i) / 2);
-                            int leftOfsIndex = 0;
-                            if (isLargeRod && ((isShift180 && (rodCntHalf % 2 == 1)) ||
-                                (!isShift180 && (rodCntHalf % 2 == 0))))
-                            {
-                                leftOfsIndex = -outofAreaRodPtCntRowTop;
-                            }
-                            bool isQuarterRod = false;
-                            // 左のロッド
-                            {
-                                uint vId0 = 0;
-                                uint vId1 = 0;
-                                uint vId2 = 0;
-                                if (workrodVIdsB == rodVIIdsB1)
-                                {
-                                    int indexV0 =
-                                        (workrodVIdsB.Count - (rodRadiusDiv * 2 + 1) -
-                                        i2 * (rodRadiusDiv * 2 + 1)) - leftOfsIndex;
-                                    int indexV1 =
-                                        (workrodVIdsB.Count - (rodRadiusDiv + 1) -
-                                        i2 * (rodRadiusDiv * 2 + 1)) - leftOfsIndex;
-                                    int indexV2 = (workrodVIdsB.Count - 1 -
-                                        i2 * (rodRadiusDiv * 2 + 1)) - leftOfsIndex;
-                                    if (indexV2 > workrodVIdsB.Count - 1)
-                                    {
-                                        isQuarterRod = true;
-                                        vId0 = workrodVIdsB[indexV0];
-                                        vId1 = workBTopRodCenterVId;
-                                        vId2 = rodQuarterVIdsF1[0 + colIndex * 2]; // 1つ飛ばしで参照;
-                                    }
-                                    else
-                                    {
-                                        vId0 = workrodVIdsB[indexV0];
-                                        vId1 = workrodVIdsB[indexV1];
-                                        vId2 = workrodVIdsB[indexV2];
-                                    }
-                                }
-                                else
-                                {
-                                    int indexV0 = (0 + i2 * (rodRadiusDiv * 2 + 1)) + leftOfsIndex;
-                                    int indexV1 = ((rodRadiusDiv) + i2 * (rodRadiusDiv * 2 + 1)) + leftOfsIndex;
-                                    int indexV2 = ((rodRadiusDiv * 2) + i2 * (rodRadiusDiv * 2 + 1)) + leftOfsIndex;
-                                    if (indexV0 < 0)
-                                    {
-                                        isQuarterRod = true;
-                                        vId0 = rodQuarterVIdsF1[0 + colIndex * 2]; // 1つ飛ばしで参照
-                                        vId1 = workBTopRodCenterVId;
-                                        vId2 = workrodVIdsB[indexV2];
-                                    }
-                                    else
-                                    {
-                                        vId0 = workrodVIdsB[indexV0];
-                                        vId1 = workrodVIdsB[indexV1];
-                                        vId2 = workrodVIdsB[indexV2];
-                                    }
-                                }
-                                double x0 = xB;
-                                double y0 = waveguideWidth - i * rodDistanceY - rodDistanceY * 0.5;
-                                if (isLargeRod)
-                                {
-                                    y0 += rodDistanceY * 0.5;
-                                }
-                                uint workVId0 = vId0;
-                                uint workVId2 = vId2;
-                                if (isReverse)
-                                {
-                                    workVId0 = vId2;
-                                    workVId2 = vId0;
-                                }
-                                uint lId = 0;
-                                if (isQuarterRod)
-                                {
-                                    // 1/4円を追加する
-                                    lId = PCWaveguideUtils.AddExactlyQuarterRod(
-                                        cad2D,
-                                        baseLoopId,
-                                        x0,
-                                        y0,
-                                        rodRadius,
-                                        rodCircleDiv,
-                                        rodRadiusDiv,
-                                        workVId2,
-                                        vId1,
-                                        workVId0,
-                                        0.0,
-                                        true);
-                                }
-                                else
-                                {
-                                    // 左のロッド
-                                    lId = PCWaveguideUtils.AddLeftRod(
-                                        cad2D,
-                                        baseLoopId,
-                                        workVId0,
-                                        vId1,
-                                        workVId2,
-                                        x0,
-                                        y0,
-                                        rodRadius,
-                                        rodCircleDiv,
-                                        rodRadiusDiv);
-                                }
-                                rodLoopIds.Add(lId);
-                                if (inputWgNo == 1)
-                                {
-                                    inputWgRodLoopIds1.Add(lId);
-                                }
-                                else if (inputWgNo == 2)
-                                {
-                                    inputWgRodLoopIds2.Add(lId);
-                                }
+                    int rodCnt = workrodVIdsB.Count / 3;
 
-                            }
+                    for (int i = 0; i < rodCnt; i++)
+                    {
+                        uint vId0 = workrodVIdsB[i * 3];
+                        uint vId1 = workrodVIdsB[i * 3 + 1]; // 中心はこれ
+                        uint vId2 = workrodVIdsB[i * 3 + 2];
+                        // 中心
+                        OpenTK.Vector2d cPt = cad2D.GetVertexCoord(vId1);
+                        double x0 = cPt.X;
+                        double y0 = cPt.Y;
+
+                        uint workVId0 = 0;
+                        uint workVId2 = 0;
+                        if (isReverse)
+                        {
+                            workVId0 = vId2;
+                            workVId2 = vId0;
                         }
-                    }
-                    for (int i = 0; i < rodCntHalf; i++)
-                    {
-                        if (i % 2 == (isShift180 ? 0 : 1))
+                        else
                         {
-                            int i2 = i / 2;
-                            int ofs_index_left = 0;
-                            if (isLargeRod &&
-                                ((isShift180 && (rodCntHalf % 2 == 1)) || (!isShift180 && (rodCntHalf % 2 == 0))))
-                            {
-                                ofs_index_left = -outofAreaRodPtCntRowTop;
-                            }
-                            bool isQuarterRod = false;
-                            // 左のロッド
-                            {
-                                uint vId0 = 0;
-                                uint vId1 = 0;
-                                uint vId2 = 0;
-                                if (workrodVIdsB == rodVIIdsB1)
-                                {
-                                    int indexV0 =
-                                        (workrodVIdsB.Count / 2 - (rodRadiusDiv * 2 + 1) - i2 * (rodRadiusDiv * 2 + 1));
-                                    int indexV1 =
-                                        (workrodVIdsB.Count / 2 - (rodRadiusDiv + 1) - i2 * (rodRadiusDiv * 2 + 1));
-                                    int indexV2 =
-                                        (workrodVIdsB.Count / 2 - 1 - i2 * (rodRadiusDiv * 2 + 1));
-                                    if (indexV0 < 0)
-                                    {
-                                        isQuarterRod = true;
-                                        vId0 = rodQuarterVIdsF2[rodQuarterVIdsF2.Count - 1 - colIndex * 2]; // 1つ飛ばしで参照
-                                        vId1 = workBBottomRodCenterVId;
-                                        vId2 = workrodVIdsB[indexV2];
-                                    }
-                                    else
-                                    {
-                                        vId0 = workrodVIdsB[indexV0];
-                                        vId1 = workrodVIdsB[indexV1];
-                                        vId2 = workrodVIdsB[indexV2];
-                                    }
-                                }
-                                else
-                                {
-                                    int indexV0 = (workrodVIdsB.Count / 2 + 0 + i2 * (rodRadiusDiv * 2 + 1));
-                                    int indexV1 = (workrodVIdsB.Count / 2 + (rodRadiusDiv) + i2 * (rodRadiusDiv * 2 + 1));
-                                    int indexV2 =
-                                        (workrodVIdsB.Count / 2 + (rodRadiusDiv * 2) + i2 * (rodRadiusDiv * 2 + 1));
-                                    if (indexV2 > workrodVIdsB.Count - 1)
-                                    {
-                                        isQuarterRod = true;
-                                        vId0 = workrodVIdsB[indexV0];
-                                        vId1 = workBBottomRodCenterVId;
-                                        vId2 = rodQuarterVIdsF2[rodQuarterVIdsF2.Count - 1 - colIndex * 2]; // 1つ飛ばしで参照
-                                    }
-                                    else
-                                    {
-                                        vId0 = workrodVIdsB[indexV0];
-                                        vId1 = workrodVIdsB[indexV1];
-                                        vId2 = workrodVIdsB[indexV2];
-                                    }
+                            workVId0 = vId0;
+                            workVId2 = vId2;
+                        }
+                        // 左のロッド
+                        uint lId = PCWaveguideUtils.AddLeftRod(
+                            cad2D,
+                            baseLoopId,
+                            workVId0,
+                            vId1,
+                            workVId2,
+                            x0,
+                            y0,
+                            rodRadius,
+                            rodCircleDiv,
+                            rodRadiusDiv);
 
-                                }
-                                double x0 = xB;
-                                double y0 = rodDistanceY * rodCntHalf - i * rodDistanceY - rodDistanceY * 0.5;
-                                if (isLargeRod)
-                                {
-                                    y0 -= rodDistanceY * 0.5;
-                                }
-                                uint work_id_v0 = vId0;
-                                uint work_id_v2 = vId2;
-                                if (isReverse)
-                                {
-                                    work_id_v0 = vId2;
-                                    work_id_v2 = vId0;
-                                }
-                                uint lId = 0;
-                                if (isQuarterRod)
-                                {
-                                    // 1/4円を追加する
-                                    lId = PCWaveguideUtils.AddExactlyQuarterRod(
-                                        cad2D,
-                                        baseLoopId,
-                                        x0,
-                                        y0,
-                                        rodRadius,
-                                        rodCircleDiv,
-                                        rodRadiusDiv,
-                                        work_id_v2,
-                                        vId1,
-                                        work_id_v0,
-                                        90.0,
-                                        true);
-                                }
-                                else
-                                {
-                                    // 左のロッド
-                                    lId = PCWaveguideUtils.AddLeftRod(
-                                         cad2D,
-                                         baseLoopId,
-                                         work_id_v0,
-                                         vId1,
-                                         work_id_v2,
-                                         x0,
-                                         y0,
-                                         rodRadius,
-                                         rodCircleDiv,
-                                         rodRadiusDiv);
-                                }
-                                rodLoopIds.Add(lId);
-                                if (inputWgNo == 1)
-                                {
-                                    inputWgRodLoopIds1.Add(lId);
-                                }
-                                else if (inputWgNo == 2)
-                                {
-                                    inputWgRodLoopIds2.Add(lId);
-                                }
-                            }
+                        rodLoopIds.Add(lId);
+
+                        if (workInputWgRodLoopIds != null)
+                        {
+                            workInputWgRodLoopIds.Add(lId);
                         }
                     }
                 }
 
+                /////////////////////////////////////////////////////////////////////////////
                 // 右のロッドを追加
-                for (int colIndex = 0; colIndex < 3; colIndex++) // このcolIndexは特に図面上のカラムを指すわけではない（ループ変数)
+                uint[] rightRodContainsLIds = { 1, 3, 2 };
+                IList<uint>[] rightRodVIdsB = { rodVIdsB[1], rodVIdsB[2], rodVIdsB[3] };
+                IList<uint>[] rightRodContainsInputWgRodLoopIdss = { inputWgRodLoopIds1, inputWgRodLoopIds2, null };
+                for (int index = 0; index < rightRodContainsLIds.Length; index++)
                 {
-                    // 右のロッド
-                    IList<uint> workrodVIdsB = null;
-                    double xB = 0;
-                    uint baseLoopId = 0;
-                    int inputWgNo = 0;
-                    uint workBTopRodCenterVId = 0;
-                    uint workBBottomRodCenterVId = 0;
+                    IList<uint> workrodVIdsB = rightRodVIdsB[index];
+                    uint baseLoopId = rightRodContainsLIds[index];
+                    IList<uint> workInputWgRodLoopIds = rightRodContainsInputWgRodLoopIdss[index];
 
-                    if (colIndex == 0)
-                    {
-                        // 入力境界 内側
-                        xB = inputWgLength;
-                        workrodVIdsB = rodVIdsB2;
-                        // 入力導波路領域
-                        baseLoopId = 1;
-                        inputWgNo = 1;
-                        workBTopRodCenterVId = B2TopRodCenterVId;
-                        workBBottomRodCenterVId = B2BottomRodCenterVId;
-                    }
-                    else if (colIndex == 1)
-                    {
-                        // 出力境界 内側
-                        xB = inputWgLength + disconLength;
-                        workrodVIdsB = rodVIdsB4;
-                        // 不連続領域
-                        baseLoopId = 2;
-                        inputWgNo = 0;
-                        workBTopRodCenterVId = B4TopRodCenterVId;
-                        workBBottomRodCenterVId = B4BottomRodCenterVId;
-                    }
-                    else if (colIndex == 2)
-                    {
-                        // 出力境界 外側
-                        xB = inputWgLength * 2.0 + disconLength;
-                        workrodVIdsB = rodVIdsB3;
-                        // 出力導波路領域
-                        baseLoopId = 3;
-                        inputWgNo = 2;
-                        workBTopRodCenterVId = B3TopRodCenterVId;
-                        workBBottomRodCenterVId = B3BottomRodCenterVId;
-                    }
-                    else
-                    {
-                        System.Diagnostics.Debug.Assert(false);
-                    }
+                    // 始点、終点が逆？
+                    bool isReverse = false;
 
-                    for (int i = 0; i < rodCntHalf; i++)
+                    int rodCnt = workrodVIdsB.Count / 3;
+
+                    for (int i = 0; i < rodCnt; i++)
                     {
-                        if ((rodCntHalf - 1 - i) % 2 == (isShift180 ? 0 : 1))
+                        uint vId0 = workrodVIdsB[i * 3];
+                        uint vId1 = workrodVIdsB[i * 3 + 1]; // 中心はこれ
+                        uint vId2 = workrodVIdsB[i * 3 + 2];
+                        // 中心
+                        OpenTK.Vector2d cPt = cad2D.GetVertexCoord(vId1);
+                        double x0 = cPt.X;
+                        double y0 = cPt.Y;
+
+                        uint workVId0 = 0;
+                        uint workVId2 = 0;
+                        if (isReverse)
                         {
-                            int i2 = rodCntHalfB - 1 - (int)((rodCntHalf - 1 - i) / 2);
-                            int topOfsIndex = 0;
-                            if (isLargeRod &&
-                                ((isShift180 && (rodCntHalf % 2 == 1)) || (!isShift180 && (rodCntHalf % 2 == 0))))
-                            {
-                                topOfsIndex = -outofAreaRodPtCntRowTop;
-                            }
-                            bool isQuarterRod = false;
-
-                            // 右のロッド
-                            {
-                                uint vId0 = 0;
-                                uint vId1 = 0;
-                                uint vId2 = 0;
-                                if (workrodVIdsB == rodVIIdsB1)
-                                {
-                                    int index_v0 = (workrodVIdsB.Count - (rodRadiusDiv * 2 + 1) - i2 * (rodRadiusDiv * 2 + 1)) - topOfsIndex;
-                                    int index_v1 = (workrodVIdsB.Count - (rodRadiusDiv + 1) - i2 * (rodRadiusDiv * 2 + 1)) - topOfsIndex;
-                                    int index_v2 = (workrodVIdsB.Count - 1 - i2 * (rodRadiusDiv * 2 + 1));
-                                    if (index_v2 > workrodVIdsB.Count - 1)
-                                    {
-                                        isQuarterRod = true;
-                                        vId0 = workrodVIdsB[index_v0];
-                                        vId1 = B2TopRodCenterVId;
-                                        vId2 = rodQuarterVIdsF1[1 + colIndex * 2]; // 1つ飛ばしで参照;
-                                    }
-                                    else
-                                    {
-                                        vId0 = workrodVIdsB[index_v0];
-                                        vId1 = workrodVIdsB[index_v1];
-                                        vId2 = workrodVIdsB[index_v2];
-                                    }
-                                }
-                                else
-                                {
-                                    int indexV0 = (0 + i2 * (rodRadiusDiv * 2 + 1)) + topOfsIndex;
-                                    int indexV1 = ((rodRadiusDiv) + i2 * (rodRadiusDiv * 2 + 1)) + topOfsIndex;
-                                    int indexV2 = ((rodRadiusDiv * 2) + i2 * (rodRadiusDiv * 2 + 1)) + topOfsIndex;
-                                    if (indexV0 < 0)
-                                    {
-                                        isQuarterRod = true;
-                                        vId0 = rodQuarterVIdsF1[1 + colIndex * 2];
-                                        vId1 = workBTopRodCenterVId;
-                                        vId2 = workrodVIdsB[indexV2];
-                                    }
-                                    else
-                                    {
-                                        vId0 = workrodVIdsB[indexV0];
-                                        vId1 = workrodVIdsB[indexV1];
-                                        vId2 = workrodVIdsB[indexV2];
-                                    }
-                                }
-                                double x0 = xB;
-                                double y0 = waveguideWidth - i * rodDistanceY - rodDistanceY * 0.5;
-                                if (isLargeRod)
-                                {
-                                    y0 += rodDistanceY * 0.5;
-                                }
-                                OpenTK.Vector2d centerPt = cad2D.GetVertexCoord(vId1);
-                                uint lId = 0;
-                                if (isQuarterRod)
-                                {
-                                    // 1/4円を追加する
-                                    lId = PCWaveguideUtils.AddExactlyQuarterRod(
-                                        cad2D,
-                                        baseLoopId,
-                                        x0,
-                                        y0,
-                                        rodRadius,
-                                        rodCircleDiv,
-                                        rodRadiusDiv,
-                                        vId2,
-                                        vId1,
-                                        vId0,
-                                        270.0,
-                                        true);
-                                }
-                                else
-                                {
-                                    // 右のロッド
-                                    lId = PCWaveguideUtils.AddRightRod(
-                                        cad2D,
-                                        baseLoopId,
-                                        vId0,
-                                        vId1,
-                                        vId2,
-                                        x0,
-                                        y0,
-                                        rodRadius,
-                                        rodCircleDiv,
-                                        rodRadiusDiv);
-                                }
-                                rodLoopIds.Add(lId);
-                                if (inputWgNo == 1)
-                                {
-                                    inputWgRodLoopIds1.Add(lId);
-                                }
-                                else if (inputWgNo == 2)
-                                {
-                                    inputWgRodLoopIds2.Add(lId);
-                                }
-                            }
-                        }
-                    }
-                    for (int i = 0; i < rodCntHalf; i++)
-                    {
-                        if (i % 2 == (isShift180 ? 0 : 1))
-                        {
-                            int i2 = i / 2;
-                            int topOfsIndex = 0;
-                            if (isLargeRod
-                                && ((isShift180 && (rodCntHalf % 2 == 1)) || (!isShift180 && (rodCntHalf % 2 == 0))))
-                            {
-                                topOfsIndex = -outofAreaRodPtCntRowTop;
-                            }
-                            bool isQuarterRod = false;
-                            // 右のロッド
-                            {
-                                uint vId0 = 0;
-                                uint vId1 = 0;
-                                uint vId2 = 0;
-                                if (workrodVIdsB == rodVIIdsB1)
-                                {
-                                    int indexV0 =
-                                        (workrodVIdsB.Count / 2 - (rodRadiusDiv * 2 + 1) - i2 * (rodRadiusDiv * 2 + 1));
-                                    int indexV1 =
-                                        (workrodVIdsB.Count / 2 - (rodRadiusDiv + 1) - i2 * (rodRadiusDiv * 2 + 1));
-                                    int indexV2 =
-                                        (workrodVIdsB.Count / 2 - 1 - i2 * (rodRadiusDiv * 2 + 1));
-                                    if (indexV0 < 0)
-                                    {
-                                        isQuarterRod = true;
-                                        vId0 = rodQuarterVIdsF2[rodQuarterVIdsF2.Count - 2 - colIndex * 2]; // 1つ飛ばしで参照
-                                        vId1 = workBBottomRodCenterVId;
-                                        vId2 = workrodVIdsB[indexV2];
-                                    }
-                                    else
-                                    {
-                                        vId0 = workrodVIdsB[indexV0];
-                                        vId1 = workrodVIdsB[indexV1];
-                                        vId2 = workrodVIdsB[indexV2];
-                                    }
-                                }
-                                else
-                                {
-                                    int indexV0 = (workrodVIdsB.Count / 2 + 0 + i2 * (rodRadiusDiv * 2 + 1));
-                                    int indexV1 =
-                                        (workrodVIdsB.Count / 2 + (rodRadiusDiv) + i2 * (rodRadiusDiv * 2 + 1));
-                                    int indexV2 =
-                                        (workrodVIdsB.Count / 2 + (rodRadiusDiv * 2) + i2 * (rodRadiusDiv * 2 + 1));
-                                    if (indexV2 > workrodVIdsB.Count - 1)
-                                    {
-                                        isQuarterRod = true;
-                                        vId0 = workrodVIdsB[indexV0];
-                                        vId1 = workBBottomRodCenterVId;
-                                        vId2 = rodQuarterVIdsF2[rodQuarterVIdsF2.Count - 2 - colIndex * 2]; // 1つ飛ばしで参照
-                                    }
-                                    else
-                                    {
-                                        vId0 = workrodVIdsB[indexV0];
-                                        vId1 = workrodVIdsB[indexV1];
-                                        vId2 = workrodVIdsB[indexV2];
-                                    }
-                                }
-                                double x0 = xB;
-                                double y0 = rodDistanceY * rodCntHalf - i * rodDistanceY - rodDistanceY * 0.5;
-                                if (isLargeRod)
-                                {
-                                    y0 -= rodDistanceY * 0.5;
-                                }
-                                uint lId = 0;
-                                if (isQuarterRod)
-                                {
-                                    // 1/4円を追加する
-                                    lId = PCWaveguideUtils.AddExactlyQuarterRod(
-                                        cad2D,
-                                        baseLoopId,
-                                        x0,
-                                        y0,
-                                        rodRadius,
-                                        rodCircleDiv,
-                                        rodRadiusDiv,
-                                        vId2,
-                                        vId1,
-                                        vId0,
-                                        180.0,
-                                        true);
-                                }
-                                else
-                                {
-                                    // 右のロッド
-                                    lId = PCWaveguideUtils.AddRightRod(
-                                      cad2D,
-                                      baseLoopId,
-                                      vId0,
-                                      vId1,
-                                      vId2,
-                                      x0,
-                                      y0,
-                                      rodRadius,
-                                      rodCircleDiv,
-                                      rodRadiusDiv);
-                                }
-                                rodLoopIds.Add(lId);
-                                if (inputWgNo == 1)
-                                {
-                                    inputWgRodLoopIds1.Add(lId);
-                                }
-                                else if (inputWgNo == 2)
-                                {
-                                    inputWgRodLoopIds2.Add(lId);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // 中央ロッド
-                int periodCntInputWg1 = 1;
-                int periodCntInputWg2 = 1;
-                int periodCntX = periodCntInputWg1 + rodCntDiscon + periodCntInputWg2;
-
-                // 中央のロッド(上下の強制境界と交差する円)と境界の交点
-                IList<uint> vIdsF1 = new List<uint>();
-                IList<uint> vIdsF2 = new List<uint>();
-                for (int col = 1; col <= (periodCntX * 2 - 1); col++)
-                {
-                    if (col == (periodCntInputWg1 * 2)) continue; // 入力導波路内部境界 (既にロッド追加済み)
-                    if (col == (periodCntInputWg1 + rodCntDiscon) * 2) continue; // 出力導波路内部境界  (既にロッド追加済み)
-                    if (col == (periodCntX * 2)) continue; // 出力導波路外側境界  (既にロッド追加済み)
-                    int inputWgNo = 0;
-                    if (col >= 0 && col < (periodCntInputWg1 * 2))
-                    {
-                        inputWgNo = 1;
-                    }
-                    else if (col >= (periodCntInputWg1 * 2 + 1) && col < (periodCntInputWg1 + rodCntDiscon) * 2)
-                    {
-                        inputWgNo = 0;
-                    }
-                    else if (col >= ((periodCntInputWg1 + rodCntDiscon) * 2 + 1) && col < ((periodCntInputWg1 + rodCntDiscon + periodCntInputWg2) * 2))
-                    {
-                        inputWgNo = 2;
-                    }
-                    else
-                    {
-                        System.Diagnostics.Debug.Assert(false);
-                    }
-
-                    // 上の強制境界と交差するロッド
-                    if (isLargeRod
-                           && ((col % 2 == 1 && ((rodCntHalf - 1 - 0) % 2 == (isShift180 ? 1 : 0)))
-                               || (col % 2 == 0 && ((rodCntHalf - 1 - 0) % 2 == (isShift180 ? 0 : 1)))
-                                )
-                        )
-                    {
-                        uint eId = 0;
-                        if (inputWgNo == 1)
-                        {
-                            eId = 8;
-                            //if (!isShift180)
-                            if (F1NewPort1EId != 0)
-                            {
-                                eId = F1NewPort1EId;
-                            }
-                        }
-                        else if (inputWgNo == 0)
-                        {
-                            eId = 7;
-                            //if (!isShift180)
-                            if (F1DisconNewPort1EId != 0)
-                            {
-                                eId = F1DisconNewPort1EId;
-                            }
-                        }
-                        else if (inputWgNo == 2)
-                        {
-                            eId = 6;
-                            //if (!isShift180)
-                            if (F1NewPort2EId != 0)
-                            {
-                                eId = F1NewPort2EId;
-                            }
+                            workVId0 = vId2;
+                            workVId2 = vId0;
                         }
                         else
                         {
-                            System.Diagnostics.Debug.Assert(false);
+                            workVId0 = vId0;
+                            workVId2 = vId2;
                         }
-                        double x0 = rodDistanceX * 0.5 * col;
-                        double y0 = waveguideWidth;
-                        double crossY = waveguideWidth;
-                        double[] crossXs = new double[3];
-                        crossXs[0] = -1.0 * Math.Sqrt(rodRadius * rodRadius - (crossY - y0) * (crossY - y0)) + x0; // 交点
-                        crossXs[1] = x0; // 中心
-                        crossXs[2] = Math.Sqrt(rodRadius * rodRadius - (crossY - y0) * (crossY - y0)) + x0; // 交点
-                        foreach (double x_cross in crossXs)
+                        // 右のロッド
+                        uint lId = PCWaveguideUtils.AddRightRod(
+                            cad2D,
+                            baseLoopId,
+                            workVId0,
+                            vId1,
+                            workVId2,
+                            x0,
+                            y0,
+                            rodRadius,
+                            rodCircleDiv,
+                            rodRadiusDiv);
+
+                        rodLoopIds.Add(lId);
+
+                        if (workInputWgRodLoopIds != null)
                         {
-                            var resAddVertex =
-                                cad2D.AddVertex(CadElementType.Edge, eId, new OpenTK.Vector2d(x_cross, crossY));
-                            uint addVId = resAddVertex.AddVId;
-                            uint addEId = resAddVertex.AddEId;
-                            System.Diagnostics.Debug.Assert(addVId != 0);
-                            System.Diagnostics.Debug.Assert(addEId != 0);
-                            vIdsF1.Add(addVId);
-                            eIdsF1.Add(addEId);
+                            workInputWgRodLoopIds.Add(lId);
                         }
                     }
                 }
 
-                for (int col = (periodCntX * 2 - 1); col >= 1; col--)
-                {
-                    if (col == (periodCntInputWg1 * 2)) continue; // 入力導波路内部境界 (既にロッド追加済み)
-                    if (col == (periodCntInputWg1 + rodCntDiscon) * 2) continue; // 出力導波路内部境界  (既にロッド追加済み)
-                    if (col == (periodCntX * 2)) continue; // 出力導波路外側境界  (既にロッド追加済み)
-                    int inputWgNo = 0;
-                    if (col >= 0 && col < (periodCntInputWg1 * 2))
-                    {
-                        inputWgNo = 1;
-                    }
-                    else if (col >= (periodCntInputWg1 * 2 + 1) && col < (periodCntInputWg1 + rodCntDiscon) * 2)
-                    {
-                        inputWgNo = 0;
-                    }
-                    else if (col >= ((periodCntInputWg1 + rodCntDiscon) * 2 + 1) &&
-                        col < ((periodCntInputWg1 + rodCntDiscon + periodCntInputWg2) * 2))
-                    {
-                        inputWgNo = 2;
-                    }
-                    else
-                    {
-                        System.Diagnostics.Debug.Assert(false);
-                    }
+                /////////////////////////////////////////////////////////////////////////
+                // 領域のロッド
+                int periodicCntInputWg1 = 1;
+                int periodicCntInputWg2 = 1;
+                int periodicCntX = periodicCntInputWg1 + rodCntDiscon + periodicCntInputWg2;
 
-                    // 下の強制境界と交差するロッド
-                    if (isLargeRod
-                           && ((col % 2 == 1 && ((rodCntHalf - 1 - 0) % 2 == (isShift180 ? 1 : 0)))
-                              || (col % 2 == 0 && ((rodCntHalf - 1 - 0) % 2 == (isShift180 ? 0 : 1)))
-                              )
-                        )
-                    {
-                        uint eId = 0;
-                        if (inputWgNo == 1)
-                        {
-                            eId = 2;
-                            //if (!isShift180)
-                            if (F2NewPort1EId != 0)
-                            {
-                                eId = F2NewPort1EId;
-                            }
-                        }
-                        else if (inputWgNo == 0)
-                        {
-                            eId = 3;
-                            //if (!isShift180)
-                            if (F2DisconNewPport1EId != 0)
-                            {
-                                eId = F2DisconNewPport1EId;
-                            }
-                        }
-                        else if (inputWgNo == 2)
-                        {
-                            eId = 4;
-                            //if (!isShift180)
-                            if (F2NewPort2EId != 0)
-                            {
-                                eId = F2NewPort2EId;
-                            }
-                        }
-                        else
-                        {
-                            System.Diagnostics.Debug.Assert(false);
-                        }
-                        double x0 = rodDistanceX * 0.5 * col;
-                        double y0 = 0.0;
-                        double crossY = 0.0;
-                        double[] crossXs = new double[3];
-                        crossXs[0] = Math.Sqrt(rodRadius * rodRadius - (crossY - y0) * (crossY - y0)) + x0; // 交点
-                        crossXs[1] = x0; // 中心
-                        crossXs[2] = -1.0 * Math.Sqrt(rodRadius * rodRadius - (crossY - y0) * (crossY - y0)) + x0; // 交点
-                        foreach (double x_cross in crossXs)
-                        {
-                            var resAddVertex =
-                                cad2D.AddVertex(CadElementType.Edge, eId, new OpenTK.Vector2d(x_cross, crossY));
-                            uint addVId = resAddVertex.AddVId;
-                            uint addEId = resAddVertex.AddEId;
-                            System.Diagnostics.Debug.Assert(addVId != 0);
-                            System.Diagnostics.Debug.Assert(addEId != 0);
-                            vIdsF2.Add(addVId);
-                            eIdsF2.Add(addEId);
-                        }
-                    }
-                }
-
-                // 中央のロッド
-                for (int col = 1; col <= (periodCntX * 2 - 1); col++)
+                for (int iX = 0; iX < periodicCntX; iX++)
                 {
-                    if (col == (periodCntInputWg1 * 2)) continue; // 入力導波路内部境界 (既にロッド追加済み)
-                    if (col == (periodCntInputWg1 + rodCntDiscon) * 2) continue; // 出力導波路内部境界  (既にロッド追加済み)
-                    if (col == (periodCntX * 2)) continue; // 出力導波路外側境界  (既にロッド追加済み)
                     uint baseLoopId = 0;
                     int inputWgNo = 0;
-                    if (col >= 0 && col < (periodCntInputWg1 * 2))
+                    if (iX >= 0 && iX < periodicCntInputWg1)
                     {
                         baseLoopId = 1;
                         inputWgNo = 1;
                     }
-                    else if (col >= (periodCntInputWg1 * 2 + 1) && col < (periodCntInputWg1 + rodCntDiscon) * 2)
+                    else if (iX >= periodicCntInputWg1 &&
+                        iX < (periodicCntInputWg1 + rodCntDiscon))
                     {
                         baseLoopId = 2;
                         inputWgNo = 0;
                     }
-                    else if (col >= ((periodCntInputWg1 + rodCntDiscon) * 2 + 1) &&
-                        col < ((periodCntInputWg1 + rodCntDiscon + periodCntInputWg2) * 2))
+                    else if (iX >= (periodicCntInputWg1 + rodCntDiscon) &&
+                        iX < (periodicCntInputWg1 + rodCntDiscon + periodicCntInputWg2))
                     {
                         baseLoopId = 3;
                         inputWgNo = 2;
@@ -1658,75 +387,34 @@ namespace IvyFEMProtoApp
                         System.Diagnostics.Debug.Assert(false);
                     }
 
-                    // 中央のロッド
-                    for (int i = 0; i < rodCntHalf; i++)
+                    for (int iSubX = 0; iSubX < 2; iSubX++)
                     {
-                        if (isLargeRod &&
-                              ((col % 2 == 1 && ((rodCntHalf - 1 - i) % 2 == (isShift180 ? 1 : 0)))
-                                || (col % 2 == 0 && ((rodCntHalf - 1 - i) % 2 == (isShift180 ? 0 : 1))))
-                            )
+                        IList<double> workRodY0s = null;
+                        double x0 = 0.0;
+                        if (iSubX % 2 == 0)
                         {
-                            if (i == 0)
+                            if (iX == 0 || iX == periodicCntInputWg1)
                             {
-                                {
-                                    // 半円（下半分)を追加
-                                    double x0 = rodDistanceX * 0.5 * col;
-                                    double y0 = waveguideWidth - i * rodDistanceY - rodDistanceY * 0.5;
-                                    if (isLargeRod)
-                                    {
-                                        y0 += rodDistanceY * 0.5; // for isLargeRod
-                                    }
-                                    int col2 = col / 2;
-                                    if (isShift180 &&
-                                        (col % 2 == 0 && ((rodCntHalf - 1 - i) % 2 == (isShift180 ? 0 : 1))))
-                                    {
-                                        col2 = col2 - 2;
-                                    }
-                                    else if (!isShift180 &&
-                                        (col % 2 == 0 && ((rodCntHalf - 1 - i) % 2 == (isShift180 ? 0 : 1))))
-                                    {
-                                        col2 = col2 - 2;
-                                    }
-                                    uint vId0 = vIdsF1[col2 * 3 + 0];
-                                    uint vId1 = vIdsF1[col2 * 3 + 1];
-                                    uint vId2 = vIdsF1[col2 * 3 + 2];
-                                    uint lId = PCWaveguideUtils.AddExactlyHalfRod(
-                                        cad2D,
-                                        baseLoopId,
-                                        vId0,
-                                        vId1,
-                                        vId2,
-                                        x0,
-                                        y0,
-                                        rodRadius,
-                                        rodCircleDiv,
-                                        rodRadiusDiv,
-                                        0.0,
-                                        true);
-                                    rodLoopIds.Add(lId);
-                                    if (inputWgNo == 1)
-                                    {
-                                        inputWgRodLoopIds1.Add(lId);
-                                    }
-                                    else if (inputWgNo == 2)
-                                    {
-                                        inputWgRodLoopIds2.Add(lId);
-                                    }
-                                }
-
+                                // 追加済み
                                 continue;
                             }
-                        }
-                        if ((col % 2 == 1 && ((rodCntHalf - 1 - i) % 2 == (isShift180 ? 1 : 0)))
-                            || (col % 2 == 0 && ((rodCntHalf - 1 - i) % 2 == (isShift180 ? 0 : 1))))
-                        {
-                            // 中央ロッド
-                            double x0 = rodDistanceX * 0.5 * col;
-                            double y0 = waveguideWidth - i * rodDistanceY - rodDistanceY * 0.5;
-                            if (isLargeRod)
+                            if (iX == (periodicCntX - 1))
                             {
-                                y0 += rodDistanceY * 0.5; // for isLargeRod
+                                // 追加済み
+                                continue;
                             }
+                            workRodY0s = rodY0sX1;
+                            x0 = iX * periodicDistance;
+                        }
+                        else
+                        {
+                            workRodY0s = rodY0sX2;
+                            x0 = iX * periodicDistance + 0.5 * periodicDistance;
+                        }
+                        int rodCnt = workRodY0s.Count;
+                        for (int i = 0; i < rodCnt; i++)
+                        {
+                            double y0 = workRodY0s[i];
                             uint lId = PCWaveguideUtils.AddRod(
                                 cad2D, baseLoopId, x0, y0, rodRadius, rodCircleDiv, rodRadiusDiv);
                             rodLoopIds.Add(lId);
@@ -1738,84 +426,9 @@ namespace IvyFEMProtoApp
                             {
                                 inputWgRodLoopIds2.Add(lId);
                             }
-                        }
-                    }
-                    for (int i = 0; i < rodCntHalf; i++)
-                    {
-                        if (isLargeRod
-                               && ((col % 2 == 1 && (i % 2 == (isShift180 ? 1 : 0)))
-                                    || (col % 2 == 0 && (i % 2 == (isShift180 ? 0 : 1))))
-                               )
-                        {
-                            if (i == (rodCntHalf - 1))
+                            else
                             {
-                                {
-                                    // 半円（上半分)を追加
-                                    double x0 = rodDistanceX * 0.5 * col;
-                                    double y0 = rodDistanceY * rodCntHalf - i * rodDistanceY - rodDistanceY * 0.5;
-                                    if (isLargeRod)
-                                    {
-                                        y0 -= rodDistanceY * 0.5; // for isLargeRod
-                                    }
-                                    int col2 = (periodCntX * 2 - 1 - col) / 2;
-                                    if (isShift180 && (col % 2 == 0 && (i % 2 == (isShift180 ? 0 : 1))))
-                                    {
-                                        col2 = col2 - 1;
-                                    }
-                                    else if (!isShift180 && (col % 2 == 0 && (i % 2 == (isShift180 ? 0 : 1))))
-                                    {
-                                        col2 = col2 - 1;
-                                    }
-                                    uint vId0 = vIdsF2[col2 * 3 + 0];
-                                    uint vId1 = vIdsF2[col2 * 3 + 1];
-                                    uint vId2 = vIdsF2[col2 * 3 + 2];
-                                    uint lId = PCWaveguideUtils.AddExactlyHalfRod(
-                                        cad2D,
-                                        baseLoopId,
-                                        vId0,
-                                        vId1,
-                                        vId2,
-                                        x0,
-                                        y0,
-                                        rodRadius,
-                                        rodCircleDiv,
-                                        rodRadiusDiv,
-                                        180.0,
-                                        true);
-                                    rodLoopIds.Add(lId);
-                                    if (inputWgNo == 1)
-                                    {
-                                        inputWgRodLoopIds1.Add(lId);
-                                    }
-                                    else if (inputWgNo == 2)
-                                    {
-                                        inputWgRodLoopIds2.Add(lId);
-                                    }
-                                }
-
-                                continue;
-                            }
-                        }
-                        if ((col % 2 == 1 && (i % 2 == (isShift180 ? 1 : 0)))
-                            || (col % 2 == 0 && (i % 2 == (isShift180 ? 0 : 1))))
-                        {
-                            // 中央ロッド
-                            double x0 = rodDistanceX * 0.5 * col;
-                            double y0 = rodDistanceY * rodCntHalf - i * rodDistanceY - rodDistanceY * 0.5;
-                            if (isLargeRod)
-                            {
-                                y0 -= rodDistanceY * 0.5; // for isLargeRod
-                            }
-                            uint lId = PCWaveguideUtils.AddRod(
-                                cad2D, baseLoopId, x0, y0, rodRadius, rodCircleDiv, rodRadiusDiv);
-                            rodLoopIds.Add(lId);
-                            if (inputWgNo == 1)
-                            {
-                                inputWgRodLoopIds1.Add(lId);
-                            }
-                            else if (inputWgNo == 2)
-                            {
-                                inputWgRodLoopIds2.Add(lId);
+                                // なにもしない
                             }
                         }
                     }
@@ -1860,6 +473,57 @@ namespace IvyFEMProtoApp
             uint coreMaId = uint.MaxValue;
             {
                 world.ClearMaterial();
+
+                // 媒質リスト作成
+                double claddingP = 1.0;
+                double claddingQ = 1.0;
+                double coreP = 1.0;
+                double coreQ = 1.0;
+                if (isAirHole)
+                {
+                    // 誘電体基盤 + 空孔(air hole)
+                    ///////////////////////////////////////
+                    // Note: IvyFEMではTEモードで実装されているが、係数を読み替えればTMモードにも適用できる
+                    ///////////////////////////////////////
+                    {
+                        // TMモード
+                        claddingP = 1.0 / rodEps;
+                        claddingQ = 1.0;
+                        coreP = 1.0 / 1.0;
+                        coreQ = 1.0;
+                    }
+                    /*
+                    {
+                        // TEモード
+                        claddingP = 1.0;
+                        claddingQ = rodEps;
+                        coreP = 1.0;
+                        coreQ = 1.0;
+                    }
+                    */
+                }
+                else
+                {
+                    System.Diagnostics.Debug.Assert(false);
+                }
+                DielectricMaterial claddingMa = new DielectricMaterial
+                {
+                    Epxx = claddingQ,
+                    Epyy = claddingQ,
+                    Epzz = claddingQ,
+                    Muxx = 1.0 / claddingP,
+                    Muyy = 1.0 / claddingP,
+                    Muzz = 1.0 / claddingP
+                };
+                DielectricMaterial coreMa = new DielectricMaterial
+                {
+                    Epxx = coreQ,
+                    Epyy = coreQ,
+                    Epzz = coreQ,
+                    Muxx = 1.0 / coreP,
+                    Muyy = 1.0 / coreP,
+                    Muzz = 1.0 / coreP
+                };
 
                 claddingMaId = world.AddMaterial(claddingMa);
                 coreMaId = world.AddMaterial(coreMa);
@@ -1913,26 +577,32 @@ namespace IvyFEMProtoApp
 
             // 開口条件
             // 周期構造境界1
-            for (int portIndex = 0; portIndex < portCnt; portIndex++)
+            for (int portId = 0; portId < portCnt; portId++)
             {
-                uint[] eIds = new uint[divCnt];
-                uint[] maIds = new uint[eIds.Length];
+                int rodCnt = 0;
+                int divCnt = 0;
+                uint eId0 = 0;
                 IList<uint> workrodEIdsB = null;
-
-                if (portIndex == 0)
+                if (portId == 0)
                 {
-                    eIds[0] = 1;
                     workrodEIdsB = rodEIdsB1;
+                    eId0 = 1;
                 }
-                else if (portIndex == 1)
+                else if (portId == 1)
                 {
-                    eIds[0] = 5;
                     workrodEIdsB = rodEIdsB3;
+                    eId0 = 5;
                 }
                 else
                 {
                     System.Diagnostics.Debug.Assert(false);
                 }
+                rodCnt = workrodEIdsB.Count / 2;
+                divCnt = 3 * rodCnt + 1;
+
+                uint[] eIds = new uint[divCnt];
+                uint[] maIds = new uint[eIds.Length];
+                eIds[0] = eId0;
 
                 if (workrodEIdsB.Contains(eIds[0]))
                 {
@@ -1945,11 +615,11 @@ namespace IvyFEMProtoApp
 
                 for (int i = 1; i <= divCnt - 1; i++)
                 {
-                    if (portIndex == 0)
+                    if (portId == 0)
                     {
                         eIds[i] = (uint)(10 + (divCnt - 1) - (i - 1));
                     }
-                    else if (portIndex == 1)
+                    else if (portId == 1)
                     {
                         eIds[i] = (uint)(10 + (divCnt - 1) * 3 - (i - 1));
                     }
@@ -1975,7 +645,7 @@ namespace IvyFEMProtoApp
                     world.SetCadEdgeMaterial(eId, maId);
                 }
 
-                PCWaveguidePortInfo wgPortInfo = wgPortInfos[portIndex];
+                PCWaveguidePortInfo wgPortInfo = wgPortInfos[portId];
                 wgPortInfo.BcEdgeIds1 = new List<uint>(eIds);
             }
 
@@ -2014,24 +684,30 @@ namespace IvyFEMProtoApp
             // 周期構造境界2
             for (int portId = 0; portId < portCnt; portId++)
             {
-                uint[] eIds = new uint[divCnt];
-                uint[] maIds = new uint[eIds.Length];
+                int rodCnt = 0;
+                int divCnt = 0;
+                uint eId0 = 0;
                 IList<uint> workrodEIdsB = null;
-
                 if (portId == 0)
                 {
-                    eIds[0] = 9;
                     workrodEIdsB = rodEIdsB2;
+                    eId0 = 9;
                 }
                 else if (portId == 1)
                 {
-                    eIds[0] = 10;
                     workrodEIdsB = rodEIdsB4;
+                    eId0 = 10;
                 }
                 else
                 {
                     System.Diagnostics.Debug.Assert(false);
                 }
+                rodCnt = workrodEIdsB.Count / 2;
+                divCnt = 3 * rodCnt + 1;
+
+                uint[] eIds = new uint[divCnt];
+                uint[] maIds = new uint[eIds.Length];
+                eIds[0] = eId0;
 
                 if (workrodEIdsB.Contains(eIds[0]))
                 {
@@ -2098,16 +774,7 @@ namespace IvyFEMProtoApp
             /*
             // 強制境界
             // TMモードの場合磁気壁
-            uint[] zeroEIds = new uint[6 + eIdsF1.Count + eIdsF2.Count];
-            Array.Copy(new uint[]{ 2, 3, 4, 6, 7, 8 }, zeroEIds, 0);
-            for (int i = 0; i < eIdsF1.Count; i++)
-            {
-                zeroEIds[6 + i] = eIdsF1[i];
-            }
-            for (int i = 0; i < eIdsF2.Count; i++)
-            {
-                zeroEIds[6 + eIdsF1.Count + i] = eIdsF2[i];
-            }
+            uint[] zeroEIds = {};
             var zeroFixedCads = world.GetZeroFieldFixedCads(quantityId);
             foreach (uint eId in zeroEIds)
             {
@@ -2196,7 +863,7 @@ namespace IvyFEMProtoApp
                 Position = AxisPosition.Left,
                 Title = "|S|",
                 Minimum = 0.0,
-                Maximum = 1.0
+                //Maximum = 1.0
             };
             model.Axes.Add(axis1);
             model.Axes.Add(axis2);

@@ -153,10 +153,6 @@
     <Compile Include="Problem.EMHWaveguidePMLb2_0.cs" />
     <Compile Include="Problem.EMHWaveguidePMLb1.cs" />
     <Compile Include="Problem.EMHWaveguidePMLb1_0 .cs" />
-    <Compile Include="Problem.EMHWaveguidePMLa3.cs" />
-    <Compile Include="Problem.EMHWaveguidePMLa3_0.cs" />
-    <Compile Include="Problem.EMHWaveguidePMLa2.cs" />
-    <Compile Include="Problem.EMHWaveguidePMLa2_0.cs" />
     <Compile Include="Problem.EMHWaveguidePMLa1.cs" />
     <Compile Include="Problem.EMHWaveguidePMLa1_0.cs" />
     <Compile Include="Problem.EMHWaveguideHigherOrderABCb3.cs" />
@@ -167,8 +163,6 @@
     <Compile Include="Problem.EMHWaveguideHigherOrderABCb1_0 .cs" />
     <Compile Include="Problem.EMHWaveguideHigherOrderABCa1_0.cs" />
     <Compile Include="Problem.EMHWaveguideHigherOrderABCa1.cs" />
-    <Compile Include="Problem.EMHWaveguideHigherOrderABCa2.cs" />
-    <Compile Include="Problem.EMHWaveguideHigherOrderABCa3.cs" />
     <Compile Include="Problem.EMHWaveguidePMLTDb3.cs" />
     <Compile Include="Problem.EMHWaveguidePMLTDb3_0.cs" />
     <Compile Include="Problem.EMHWaveguidePMLTDb2.cs" />
@@ -176,11 +170,9 @@
     <Compile Include="Problem.EMHWaveguidePMLTDb1.cs" />
     <Compile Include="Problem.EMHWaveguidePMLTDb1_0.cs" />
     <Compile Include="Problem.EMHWaveguideHigherOrderABCTDb3.cs" />
-    <Compile Include="Problem.EMHWaveguideHigherOrderABCa3_0.cs" />
     <Compile Include="Problem.EMHWaveguideHigherOrderABCTDb3_0.cs" />
     <Compile Include="Problem.EMHWaveguideFirstOrderABCTDb3_0.cs" />
     <Compile Include="Problem.EMHWaveguideHigherOrderABCTDb2.cs" />
-    <Compile Include="Problem.EMHWaveguideHigherOrderABCa2_0 .cs" />
     <Compile Include="Problem.EMHWaveguideHigherOrderABCTDb2_0.cs" />
     <Compile Include="Problem.EMHWaveguideHigherOrderABCTDb1.cs" />
     <Compile Include="Problem.EMHWaveguideHigherOrderABCTDb1_0.cs" />
