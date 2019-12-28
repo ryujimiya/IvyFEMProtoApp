@@ -4,9 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:OpenTK="clr-namespace:OpenTK;assembly=OpenTK.GLControl"        
-        xmlns:local="clr-namespace:IvyFEM"
+        xmlns:local="clr-namespace:IvyFEMProtoApp"
         mc:Ignorable="d"
-        Title="IvyFEMProtoApp" Height="450" Width="500" Loaded="Window_Loaded" Activated="Window_Activated">
+        Title="IvyFEMProtoApp" Height="450" Width="500" Loaded="Window_Loaded" Activated="Window_Activated" Closing="Window_Closing">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -75,7 +75,7 @@
                     <MenuItem Header="Advection Diffusion (Time Domain)" Click="AdvectionDiffusionTDBtn_Click"/>
                     <MenuItem Header="Helmholtz" Click="HelmholtzBtn_Click"/>
                 </MenuItem>
-                <MenuItem Header="ElectroMagnetic">
+                <MenuItem Header="ElectroMagnetic(Waveguide)">
                     <MenuItem Header="H-Plane Waveguide(1)" Click="HPlaneWaveguide1Btn_Click"/>
                     <MenuItem Header="H-Plane Waveguide(2)" Click="HPlaneWaveguide2Btn_Click"/>
                     <Separator/>
@@ -102,9 +102,31 @@
                     <MenuItem Header="H-Plane Waveguide (Time Domain)(PML)(3,Open)" Click="HPlaneWaveguidePMLTD3Btn_Click"/>
                 </MenuItem>
 
-                <MenuItem Header="Photonic Crystal">
-                    <MenuItem Header="PC Waveguide(Square Lattice)" Click="SquareLatticePCWaveguideBtn_Click"/>
-                    <MenuItem Header="PC Waveguide(Triangle Lattice)" Click="TriangleLatticePCWaveguideBtn_Click"/>
+                <MenuItem Header="Photonic Crystal(Eigen)">
+                    <MenuItem Header="PC Waveguide(Eigen)(Square Lattice)" Click="SquareLatticePCWaveguideEigen1Btn_Click"/>
+                    <MenuItem Header="PC Waveguide(Eigen)(Triangle Lattice)" Click="TriangleLatticePCWaveguideEigen1Btn_Click"/>
+                    <MenuItem Header="PC Waveguide(Eigen)(Triangle Lattice,CROW)" Click="TriangleLatticePCWaveguideEigen2Btn_Click"/>
+                    <Separator/>
+                    <MenuItem Header="PC Waveguide(Photonic Band Gap)(Square Lattice)" Click="SquareLatticePBG1Btn_Click"/>
+                    <MenuItem Header="PC Waveguide(Photonic Band Gap)(Triangle Lattice 60°)" Click="TriangleLatticePBG1Btn_Click"/>
+                    <MenuItem Header="PC Waveguide(Photonic Band Gap)(Triangle Lattice 45°)" Click="TriangleLatticePBG2Btn_Click"/>
+                </MenuItem>
+                <MenuItem Header="Photonic Crystal(Waveguide)">
+                    <MenuItem Header="PC Waveguide(Square Lattice)" Click="SquareLatticePCWaveguide1Btn_Click"/>
+                    <MenuItem Header="PC Waveguide(Triangle Lattice)" Click="TriangleLatticePCWaveguide1Btn_Click"/>
+                    <MenuItem Header="PC Waveguide(Triangle Lattice,CROW(1))" Click="TriangleLatticePCWaveguide2Btn_Click"/>
+                    <MenuItem Header="PC Waveguide(Triangle Lattice,CROW(2))" Click="TriangleLatticePCWaveguide3Btn_Click"/>
+                </MenuItem>
+                <MenuItem Header="Photonic Crystal(ABC)">
+                    <MenuItem Header="PC Waveguide(Modal ABC,Z)(Time Domain)(Square Lattice)" Click="SquareLatticePCWaveguideModalABCZTD1Btn_Click"/>
+                    <MenuItem Header="PC Waveguide(Modal ABC,Z)(Time Domain)(Triangle Lattice)" Click="TriangleLatticePCWaveguideModalABCZTD1Btn_Click"/>
+                </MenuItem>
+                <MenuItem Header="Photonic Crystal(PML)">
+                    <MenuItem Header="PC Waveguide(PML)(Square Lattice)" Click="SquareLatticePCWaveguidePML1Btn_Click"/>
+                    <MenuItem Header="PC Waveguide(PML)(Triangle Lattice)" Click="TriangleLatticePCWaveguidePML1Btn_Click"/>
+                    <Separator/>
+                    <MenuItem Header="PC Waveguide(PML)(Time Domain)(Square Lattice)" Click="SquareLatticePCWaveguidePMLTD1Btn_Click"/>
+                    <MenuItem Header="PC Waveguide(PML)(Time Domain)(Triangle Lattice)" Click="TriangleLatticePCWaveguidePMLTD1Btn_Click"/>
                 </MenuItem>
                 <MenuItem Header="Fluid">
                     <MenuItem Header="Fluid(1)" Click="StdGFluid1Btn_Click"/>
@@ -118,6 +140,7 @@
                     <MenuItem Header="Fluid(SUPG)(2)" Click="SUPGFluid2Btn_Click"/>
                     <MenuItem Header="Fluid(SUPG)(2)(Time Domain)" Click="SUPGFluid2TDBtn_Click"/>
                 </MenuItem>
+                <!--
                 <MenuItem Header="Vorticity">
                     <MenuItem Header="Vorticity(1)" Click="StdGVorticityFluid1Btn_Click"/>
                     <MenuItem Header="Vorticity(1)(Time Domain)" Click="StdGVorticityFluid1TDBtn_Click"/>
@@ -134,16 +157,19 @@
                     <MenuItem Header="Vorticity(RK)(1)(Time Domain)" Click="StdGVorticityFluid1RKTDBtn_Click"/>
                     <MenuItem Header="Vorticity(RK)(2)(Time Domain)" Click="StdGVorticityFluid2RKTDBtn_Click"/>
                 </MenuItem>
+                -->
                 <MenuItem Header="Pressure Poisson">
                     <MenuItem Header="Pressure Poisson(1)" Click="StdGPressurePoissonFluid1Btn_Click"/>
                     <MenuItem Header="Pressure Poisson(1)(Time Domain)" Click="StdGPressurePoissonFluid1TDBtn_Click"/>
                     <MenuItem Header="Pressure Poisson(2)" Click="StdGPressurePoissonFluid2Btn_Click"/>
                     <MenuItem Header="Pressure Poisson(2)(Time Domain)" Click="StdGPressurePoissonFluid2TDBtn_Click"/>
                 </MenuItem>
+                <!--
                 <MenuItem Header="Pressure Poisson(RK)">
                     <MenuItem Header="Pressure Poisson(RK)(1)(Time Domain)" Click="StdGPressurePoissonFluid1RKTDBtn_Click"/>
                     <MenuItem Header="Pressure Poisson(RK)(2)(Time Domain)" Click="StdGPressurePoissonFluid2RKTDBtn_Click"/>
                 </MenuItem>
+                -->
                 <MenuItem Header="Optimizing">
                     <MenuItem Header="H-Plane Waveguide" Click="Optimize1Btn_Click"/>
                 </MenuItem>

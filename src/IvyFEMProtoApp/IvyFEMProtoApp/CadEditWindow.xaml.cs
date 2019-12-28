@@ -248,7 +248,7 @@ namespace IvyFEMProtoApp
             uint zeroEId = portEdges[0].EdgeId;
             uint moveEId = portEdges[1].EdgeId;
             Problem.CalcSampleProblem(
-                CadDesign.Cad2D, CadDesign.Camera, zeroEId, moveEId, this);
+                CadDesign.Cad, CadDesign.Camera, zeroEId, moveEId, this);
         }
 
         private void OpenBtn_Click(object sender, RoutedEventArgs e)
@@ -262,7 +262,7 @@ namespace IvyFEMProtoApp
             }
             CadDesign.Init();
             string cadObjFileName = dialog.FileName;
-            Problem.CadObjLoadFromFile(cadObjFileName, CadDesign.Cad2D, this);
+            Problem.CadObjLoadFromFile(cadObjFileName, CadDesign.Cad, this);
         }
 
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
@@ -275,7 +275,7 @@ namespace IvyFEMProtoApp
                 return;
             }
             string cadObjFileName = dialog.FileName;
-            Problem.CadObjSaveToFile(cadObjFileName, CadDesign.Cad2D);
+            Problem.CadObjSaveToFile(cadObjFileName, CadDesign.Cad);
             CadDesign.IsDirty = false;
             MessageBox.Show("保存しました", "");
         }
@@ -290,7 +290,7 @@ namespace IvyFEMProtoApp
                 return;
             }
             string meshObjFileName = dialog.FileName;
-            Problem.MeshObjFileTest(meshObjFileName, CadDesign.Cad2D);
+            Problem.MeshObjFileTest(meshObjFileName, CadDesign.Cad);
         }
     }
 }

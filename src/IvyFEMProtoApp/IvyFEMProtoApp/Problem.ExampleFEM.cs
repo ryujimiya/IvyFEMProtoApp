@@ -11,26 +11,26 @@ namespace IvyFEMProtoApp
     {
         public void ExampleFEMProblem(MainWindow mainWindow)
         {
-            CadObject2D cad2D = new CadObject2D();
+            CadObject2D cad = new CadObject2D();
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
                 pts.Add(new OpenTK.Vector2d(0.0, 0.0));
                 pts.Add(new OpenTK.Vector2d(1.0, 0.0));
                 pts.Add(new OpenTK.Vector2d(1.0, 1.0));
                 pts.Add(new OpenTK.Vector2d(0.0, 1.0));
-                var res = cad2D.AddPolygon(pts);
+                var res = cad.AddPolygon(pts);
                 uint addLId = res.AddLId;
                 System.Diagnostics.Debug.Assert(addLId == 1);
 
                 // ソース
-                var res2 = cad2D.AddCircle(new OpenTK.Vector2d(0.5, 0.5), 0.1, addLId);
+                var res2 = cad.AddCircle(new OpenTK.Vector2d(0.5, 0.5), 0.1, addLId);
                 System.Diagnostics.Debug.Assert(res2.AddLId == 2);
             }
 
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new CadObject2DDrawer(cad2D);
+            IDrawer drawer = new CadObject2DDrawer(cad);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -39,10 +39,10 @@ namespace IvyFEMProtoApp
             WPFUtils.DoEvents();
 
             double eLen = 0.05;
-            Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
+            Mesher2D mesher = new Mesher2D(cad, eLen);
 
             FEWorld world = new FEWorld();
-            world.Mesh = mesher2D;
+            world.Mesh = mesher;
             uint quantityId;
             {
                 uint dof = 1; // スカラー

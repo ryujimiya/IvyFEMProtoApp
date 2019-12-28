@@ -11,19 +11,19 @@ namespace IvyFEMProtoApp
     {
         public void PoissonProblem(MainWindow mainWindow)
         {
-            CadObject2D cad2D = new CadObject2D();
+            CadObject2D cad = new CadObject2D();
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
                 pts.Add(new OpenTK.Vector2d(0.0, 0.0));
                 pts.Add(new OpenTK.Vector2d(1.0, 0.0));
                 pts.Add(new OpenTK.Vector2d(1.0, 1.0));
                 pts.Add(new OpenTK.Vector2d(0.0, 1.0));
-                var res = cad2D.AddPolygon(pts);
+                var res = cad.AddPolygon(pts);
                 uint addLId = res.AddLId;
                 System.Diagnostics.Debug.Assert(addLId == 1);
 
                 // ソース
-                var res2 = cad2D.AddCircle(new OpenTK.Vector2d(0.5, 0.5), 0.1, addLId);
+                var res2 = cad.AddCircle(new OpenTK.Vector2d(0.5, 0.5), 0.1, addLId);
                 System.Diagnostics.Debug.Assert(res2.AddLId == 2);
 
                 // 導体
@@ -32,14 +32,14 @@ namespace IvyFEMProtoApp
                 pts2.Add(new OpenTK.Vector2d(0.3, 0.2));
                 pts2.Add(new OpenTK.Vector2d(0.3, 0.3));
                 pts2.Add(new OpenTK.Vector2d(0.2, 0.3));
-                var res3 = cad2D.AddPolygon(pts2, addLId);
+                var res3 = cad.AddPolygon(pts2, addLId);
                 System.Diagnostics.Debug.Assert(res3.AddLId == 3);
             }
 
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new CadObject2DDrawer(cad2D);
+            IDrawer drawer = new CadObject2DDrawer(cad);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -48,23 +48,23 @@ namespace IvyFEMProtoApp
             WPFUtils.DoEvents();
 
             double eLen = 0.05;
-            //Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
-            Mesher2D mesher2D = new Mesher2D();
-            mesher2D.SetMeshingModeElemLength();
+            //Mesher2D mesher = new Mesher2D(cad, eLen);
+            Mesher2D mesher = new Mesher2D();
+            mesher.SetMeshingModeElemLength();
             uint hollowLId = 3;
-            IList<uint> lIds = cad2D.GetElementIds(CadElementType.Loop);
+            IList<uint> lIds = cad.GetElementIds(CadElementType.Loop);
             foreach (uint lId in lIds)
             {
                 if (lId == hollowLId)
                 {
                     continue;
                 }
-                mesher2D.AddCutMeshLoopCadId(lId, eLen);
+                mesher.AddCutMeshLoopCadId(lId, eLen);
             }
-            mesher2D.Meshing(cad2D);
+            mesher.Meshing(cad);
 
             FEWorld world = new FEWorld();
-            world.Mesh = mesher2D;
+            world.Mesh = mesher;
             uint quantityId;
             {
                 uint dof = 1; // スカラー

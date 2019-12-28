@@ -15,43 +15,31 @@ namespace IvyFEMProtoApp
         public void PCWaveguideSquareLatticeProblem1_0(MainWindow mainWindow)
         {
             double waveguideWidth = 1.0;
-
-            // 格子定数
-            double latticeA = 0;
-            // 周期構造距離
-            double periodicDistance = 0;
-
             // フォトニック導波路
             // ロッドの数（半分）
             //const int rodCntHalf = 5;
-            const int rodCntHalf = 5;//!!!!!!!!!!!!
+            const int rodCntHalf = 5;
             // 欠陥ロッド数
             const int defectRodCnt = 1;
             // 格子数
             const int latticeCnt = rodCntHalf * 2 + defectRodCnt;
             // 格子定数
-            latticeA = waveguideWidth / (double)latticeCnt;
+            double latticeA = waveguideWidth / (double)latticeCnt;
             // 周期構造距離
-            periodicDistance = latticeA;
+            double periodicDistance = latticeA;
             // ロッドの半径
             double rodRadius = 0.18 * latticeA;
             // ロッドの比誘電率
             double rodEps = 3.4 * 3.4;
             // 格子１辺の分割数
             //const int divForOneLatticeCnt = 6;
-            const int divForOneLatticeCnt = 6; //!!!!!!!!!!
+            const int divForOneLatticeCnt = 6;
             // 境界の総分割数
             const int divCnt = latticeCnt * divForOneLatticeCnt;
             // ロッドの円周分割数
             const int rodCircleDiv = 8;
             // ロッドの半径の分割数
             const int rodRadiusDiv = 1;
-            // 導波路不連続領域の長さ
-            //const int disconRodCnt = 5;
-            const int disconRodCnt = 1; //!!!!!!!!
-            double disconLength = latticeA * disconRodCnt;
-            // 入出力導波路の周期構造部分の長さ
-            double inputWgLength = latticeA;
             // メッシュサイズ
             double eLen = 1.05 * waveguideWidth / divCnt;
             // 最小屈折率
@@ -60,15 +48,23 @@ namespace IvyFEMProtoApp
             double maxEffN = 1.0;
 
             // フォトニック結晶導波路の場合、a/λを規格化周波数とする
-            double sFreq = 0.300;
+            double sFreq = 0.330;
             double eFreq = 0.440;
             int freqDiv = 20;
 
+            const uint portCnt = 2;
+            // 導波路不連続領域の長さ
+            //const int disconRodCnt = 5;
+            const int disconRodCnt = 1;
+            double disconLength = latticeA * disconRodCnt;
+            // 入出力導波路の周期構造部分の長さ
+            double inputWgLength = latticeA;
             IList<uint> rodLoopIds = new List<uint>();
             IList<uint> inputWgRodLoopIds1 = new List<uint>();
             IList<uint> inputWgRodLoopIds2 = new List<uint>();
-            CadObject2D cad2D = new CadObject2D();
-            cad2D.IsSkipAssertValid = true; // AssertValidを無視する
+
+            CadObject2D cad = new CadObject2D();
+            cad.IsSkipAssertValid = true; // AssertValidを無視する
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
                 // 領域追加
@@ -80,11 +76,11 @@ namespace IvyFEMProtoApp
                 pts.Add(new OpenTK.Vector2d(inputWgLength * 2 + disconLength, waveguideWidth));
                 pts.Add(new OpenTK.Vector2d(inputWgLength + disconLength, waveguideWidth));
                 pts.Add(new OpenTK.Vector2d(inputWgLength, waveguideWidth));
-                uint lId = cad2D.AddPolygon(pts).AddLId;
+                uint lId = cad.AddPolygon(pts).AddLId;
+                // 入出力領域を分離
+                uint eIdAdd1 = cad.ConnectVertexLine(3, 8).AddEId;
+                uint eIdAdd2 = cad.ConnectVertexLine(4, 7).AddEId;
             }
-            // 入出力領域を分離
-            uint eIdAdd1 = cad2D.ConnectVertexLine(3, 8).AddEId;
-            uint eIdAdd2 = cad2D.ConnectVertexLine(4, 7).AddEId;
 
             // 入出力導波路の周期構造境界上の頂点を追加
             //  逆から追加しているのは、頂点によって新たに生成される辺に頂点を追加しないようにするため
@@ -94,14 +90,14 @@ namespace IvyFEMProtoApp
                 double x1 = 0.0;
                 double y1 = waveguideWidth;
                 double y2 = 0.0;
-                PCWaveguideUtils.DivideBoundary(cad2D, eId, divCnt, x1, y1, x1, y2);
+                PCWaveguideUtils.DivideBoundary(cad, eId, divCnt, x1, y1, x1, y2);
             }
             {
                 uint eId = 9;
                 double x1 = inputWgLength;
                 double y1 = 0.0;
                 double y2 = waveguideWidth;
-                PCWaveguideUtils.DivideBoundary(cad2D, eId, divCnt, x1, y1, x1, y2);
+                PCWaveguideUtils.DivideBoundary(cad, eId, divCnt, x1, y1, x1, y2);
             }
             // 出力導波路
             {
@@ -109,14 +105,14 @@ namespace IvyFEMProtoApp
                 double x1 = inputWgLength * 2 + disconLength;
                 double y1 = 0.0;
                 double y2 = waveguideWidth;
-                PCWaveguideUtils.DivideBoundary(cad2D, eId, divCnt, x1, y1, x1, y2);
+                PCWaveguideUtils.DivideBoundary(cad, eId, divCnt, x1, y1, x1, y2);
             }
             {
                 uint eId = 10;
                 double x1 = inputWgLength + disconLength;
                 double y1 = 0.0;
                 double y2 = waveguideWidth;
-                PCWaveguideUtils.DivideBoundary(cad2D, eId, divCnt, x1, y1, x1, y2);
+                PCWaveguideUtils.DivideBoundary(cad, eId, divCnt, x1, y1, x1, y2);
             }
             // ロッドを追加
             int rodCntInputWg1 = 1;
@@ -150,7 +146,7 @@ namespace IvyFEMProtoApp
                     double x0 = latticeA * 0.5 + col * latticeA;
                     double y0 = waveguideWidth - row * latticeA - latticeA * 0.5;
                     uint lId = PCWaveguideUtils.AddRod(
-                        cad2D, baseLoopId, x0, y0, rodRadius, rodCircleDiv, rodRadiusDiv);
+                        cad, baseLoopId, x0, y0, rodRadius, rodCircleDiv, rodRadiusDiv);
                     rodLoopIds.Add(lId);
                     if (inputWgNo == 1)
                     {
@@ -166,7 +162,7 @@ namespace IvyFEMProtoApp
                     double x0 = latticeA * 0.5 + col * latticeA;
                     double y0 = latticeA * rodCntHalf - row * latticeA - latticeA * 0.5;
                     uint lId = PCWaveguideUtils.AddRod(
-                        cad2D, baseLoopId, x0, y0, rodRadius, rodCircleDiv, rodRadiusDiv);
+                        cad, baseLoopId, x0, y0, rodRadius, rodCircleDiv, rodRadiusDiv);
                     rodLoopIds.Add(lId);
                     if (inputWgNo == 1)
                     {
@@ -179,10 +175,17 @@ namespace IvyFEMProtoApp
                 }
             }
 
+            // check
+            {
+                foreach (uint lId in rodLoopIds)
+                {
+                    cad.SetLoopColor(lId, new double[] { 1.0, 0.6, 0.6 });
+                }
+            }
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new CadObject2DDrawer(cad2D);
+            IDrawer drawer = new CadObject2DDrawer(cad);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -190,12 +193,12 @@ namespace IvyFEMProtoApp
             mainWindow.GLControl.Update();
             WPFUtils.DoEvents();
 
-            Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
+            Mesher2D mesher = new Mesher2D(cad, eLen);
 
             /*
             mainWindow.IsFieldDraw = false;
             drawerArray.Clear();
-            IDrawer meshDrawer = new Mesher2DDrawer(mesher2D);
+            IDrawer meshDrawer = new Mesher2DDrawer(mesher);
             mainWindow.DrawerArray.Add(meshDrawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -205,7 +208,7 @@ namespace IvyFEMProtoApp
             */
 
             FEWorld world = new FEWorld();
-            world.Mesh = mesher2D;
+            world.Mesh = mesher;
             uint quantityId;
             {
                 uint dof = 1; // 複素数
@@ -213,8 +216,8 @@ namespace IvyFEMProtoApp
                 quantityId = world.AddQuantity(dof, feOrder, FiniteElementType.ScalarLagrange);
             }
 
-            uint claddingMaId = uint.MaxValue;
-            uint coreMaId = uint.MaxValue;
+            uint claddingMaId = 0;
+            uint coreMaId = 0;
             {
                 world.ClearMaterial();
 
@@ -268,8 +271,7 @@ namespace IvyFEMProtoApp
             }
 
             IList<PCWaveguidePortInfo> wgPortInfos = new List<PCWaveguidePortInfo>();
-            // ２ポート情報リスト作成
-            const uint portCnt = 2;
+            // ポート情報リスト作成
             bool[] isPortBc2Reverse = { true, false };
             for (int portId = 0; portId < portCnt; portId++)
             {
@@ -279,60 +281,10 @@ namespace IvyFEMProtoApp
                 wgPortInfo.IsSVEA = true; // 緩慢変化包絡線近似
                 wgPortInfo.IsPortBc2Reverse = isPortBc2Reverse[portId];
                 wgPortInfo.LatticeA = latticeA;
-                wgPortInfo.PeriodicDistance = periodicDistance;
+                wgPortInfo.PeriodicDistanceX = periodicDistance;
                 wgPortInfo.MinEffN = minEffN;
                 wgPortInfo.MaxEffN = maxEffN;
             }
-
-            // 開口条件
-            // 周期構造境界1
-            for (int portIndex = 0; portIndex < portCnt; portIndex++)
-            {
-                uint[] eIds = new uint[divCnt];
-                uint[] maIds = new uint[eIds.Length];
-
-                if (portIndex == 0)
-                {
-                    eIds[0] = 1;
-                }
-                else if (portIndex == 1)
-                {
-                    eIds[0] = 5;
-                }
-                else
-                {
-                    System.Diagnostics.Debug.Assert(false);
-                }
-                maIds[0] = claddingMaId;
-
-                for (int i = 1; i <= divCnt - 1; i++)
-                {
-                    if (portIndex == 0)
-                    {
-                        eIds[i] = (uint)(10 + (divCnt - 1) - (i - 1));
-                    }
-                    else if (portIndex == 1)
-                    {
-                        eIds[i] = (uint)(10 + (divCnt - 1) * 3 - (i - 1));
-                    }
-                    else
-                    {
-                        System.Diagnostics.Debug.Assert(false);
-                    }
-                    maIds[i] = claddingMaId;
-                }
-
-                for (int i = 0; i < eIds.Length; i++)
-                {
-                    uint eId = eIds[i];
-                    uint maId = maIds[i];
-                    world.SetCadEdgeMaterial(eId, maId);
-                }
-
-                PCWaveguidePortInfo wgPortInfo = wgPortInfos[portIndex];
-                wgPortInfo.BcEdgeIds1 = new List<uint>(eIds);
-            }
-
             ////////////////////////////////////////////////////////////////////////////////////////////////////////
             // 周期構造入出力導波路
             for (int portId = 0; portId < portCnt; portId++)
@@ -365,6 +317,53 @@ namespace IvyFEMProtoApp
                 PCWaveguidePortInfo wgPortInfo = wgPortInfos[portId];
                 wgPortInfo.LoopIds = new List<uint>(lIds);
             }
+            // 周期構造境界1
+            for (int portIndex = 0; portIndex < portCnt; portIndex++)
+            {
+                uint[] eIds = new uint[divCnt];
+                uint[] maIds = new uint[eIds.Length];
+
+                if (portIndex == 0)
+                {
+                    eIds[0] = 1;
+                }
+                else if (portIndex == 1)
+                {
+                    eIds[0] = 5;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.Assert(false);
+                }
+                maIds[0] = claddingMaId;
+
+                for (int i = 1; i <= (divCnt - 1); i++)
+                {
+                    if (portIndex == 0)
+                    {
+                        eIds[i] = (uint)(10 + (divCnt - 1) - (i - 1));
+                    }
+                    else if (portIndex == 1)
+                    {
+                        eIds[i] = (uint)(10 + (divCnt - 1) * 3 - (i - 1));
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.Assert(false);
+                    }
+                    maIds[i] = claddingMaId;
+                }
+
+                for (int i = 0; i < eIds.Length; i++)
+                {
+                    uint eId = eIds[i];
+                    uint maId = maIds[i];
+                    world.SetCadEdgeMaterial(eId, maId);
+                }
+
+                PCWaveguidePortInfo wgPortInfo = wgPortInfos[portIndex];
+                wgPortInfo.BcEdgeIds1 = new List<uint>(eIds);
+            }
             // 周期構造境界2
             for (int portId = 0; portId < portCnt; portId++)
             {
@@ -385,7 +384,7 @@ namespace IvyFEMProtoApp
                 }
                 maIds[0] = claddingMaId;
 
-                for (int i = 1; i <= divCnt - 1; i++)
+                for (int i = 1; i <= (divCnt - 1); i++)
                 {
                     if (portId == 0)
                     {
@@ -492,11 +491,17 @@ namespace IvyFEMProtoApp
                 }
             }
 
-            var chartWin = new ChartWindow();
+            if (ChartWindow1 == null)
+            {
+                ChartWindow1 = new ChartWindow();
+                ChartWindow1.Closing += ChartWindow1_Closing;
+            }
+            var chartWin = ChartWindow1;
             chartWin.Owner = mainWindow;
             chartWin.Left = mainWindow.Left + mainWindow.Width;
             chartWin.Top = mainWindow.Top;
             chartWin.Show();
+            chartWin.TextBox1.Text = "";
             var model = new PlotModel();
             chartWin.Plot.Model = model;
             model.Title = "PCWaveguide Example";
@@ -551,7 +556,7 @@ namespace IvyFEMProtoApp
                 //WPFUtils.DoEvents();
             }
 
-            for (int iFreq = 0; iFreq < freqDiv + 1; iFreq++)
+            for (int iFreq = 0; iFreq < (freqDiv + 1); iFreq++)
             {
                 // a/λ
                 double normalizedFreq = sFreq + (iFreq / (double)freqDiv) * (eFreq - sFreq);

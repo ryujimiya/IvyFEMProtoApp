@@ -17,21 +17,20 @@ namespace IvyFEMProtoApp
             double waveguideWidth = 1.0;
             //double eLen = waveguideWidth * (0.95 * 1.0 / 30.0);
             double eLen = waveguideWidth * (0.95 * 1.0 / 30.0);
-
-            // 導波管不連続領域の長さ
-            double disconLength = 1.0 * waveguideWidth;
             // 誘電体スラブ導波路幅
             double coreWidth = waveguideWidth * (4.0 / 30.0);
             // 誘電体スラブ比誘電率
             double coreEps = 3.6 * 3.6;
             double claddingEps = 3.24 * 3.24;
-            double replacedMu0 = Constants.Ep0; // TMモード
+            bool isTMMode = true; // TMモード
 
             double sFreq = 0.0;
             double eFreq = 1.0;
             int freqDiv = 50;
 
             const int portCnt = 2;
+            // 導波管不連続領域の長さ
+            double disconLength = 1.0 * waveguideWidth;
             double coreY1 = (waveguideWidth - coreWidth) * 0.5;
             double coreY2 = coreY1 + coreWidth;
             uint loopCnt = 3;
@@ -53,14 +52,14 @@ namespace IvyFEMProtoApp
                 eLens[i] = workeLen;
             }
 
-            CadObject2D cad2D = new CadObject2D();
+            CadObject2D cad = new CadObject2D();
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
                 pts.Add(new OpenTK.Vector2d(0.0, waveguideWidth));
                 pts.Add(new OpenTK.Vector2d(0.0, 0.0));
                 pts.Add(new OpenTK.Vector2d(disconLength, 0.0));
                 pts.Add(new OpenTK.Vector2d(disconLength, waveguideWidth));
-                uint _lId1 = cad2D.AddPolygon(pts).AddLId;
+                uint _lId1 = cad.AddPolygon(pts).AddLId;
                 System.Diagnostics.Debug.Assert(_lId1 == 1);
             }
             // スラブ導波路と境界の交点
@@ -87,9 +86,9 @@ namespace IvyFEMProtoApp
                         workY1 = coreY2;
                         workY2 = coreY1;
                     }
-                    uint vId1 = cad2D.AddVertex(
+                    uint vId1 = cad.AddVertex(
                         CadElementType.Edge, parentEId, new OpenTK.Vector2d(portX, workY1)).AddVId;
-                    uint vId2 = cad2D.AddVertex(
+                    uint vId2 = cad.AddVertex(
                         CadElementType.Edge, parentEId, new OpenTK.Vector2d(portX, workY2)).AddVId;
                     uint[] workVIds = new uint[2];
                     if (index == 0)
@@ -110,12 +109,12 @@ namespace IvyFEMProtoApp
                     {
                         uint workVId1 = coreVIds[0][0];
                         uint workVId2 = coreVIds[1][0];
-                        uint workEId = cad2D.ConnectVertexLine(workVId1, workVId2).AddEId;
+                        uint workEId = cad.ConnectVertexLine(workVId1, workVId2).AddEId;
                     }
                     {
                         uint workVId1 = coreVIds[0][1];
                         uint workVId2 = coreVIds[1][1];
-                        uint workEId = cad2D.ConnectVertexLine(workVId1, workVId2).AddEId;
+                        uint workEId = cad.ConnectVertexLine(workVId1, workVId2).AddEId;
                     }
                 }
             }
@@ -125,7 +124,7 @@ namespace IvyFEMProtoApp
                 double[] coreColor = { 0.6, 0.0, 0.0 };
                 foreach (uint lId in coreLIds)
                 {
-                    cad2D.SetLoopColor(lId, coreColor);
+                    cad.SetLoopColor(lId, coreColor);
                 }
                 double[] edgeCoreColor = { 0.4, 0.0, 0.0 };
                 uint[][] portCoreEIdss = { port1CoreEIds, port2CoreEIds };
@@ -133,13 +132,13 @@ namespace IvyFEMProtoApp
                 {
                     foreach (uint eId in eIds)
                     {
-                        cad2D.SetEdgeColor(eId, edgeCoreColor);
+                        cad.SetEdgeColor(eId, edgeCoreColor);
                     }
                 }
                 double[] claddingColor = { 0.5, 1.0, 0.5 };
                 foreach (uint lId in claddingLIds)
                 {
-                    cad2D.SetLoopColor(lId, claddingColor);
+                    cad.SetLoopColor(lId, claddingColor);
                 }
                 double[] edgeCladdingColor = { 0.3, 0.8, 0.3 };
                 uint[][] portCladdingEIdss = { port1CladdingEIds, port2CladdingEIds };
@@ -147,7 +146,7 @@ namespace IvyFEMProtoApp
                 {
                     foreach (uint eId in eIds)
                     {
-                        cad2D.SetEdgeColor(eId, edgeCladdingColor);
+                        cad.SetEdgeColor(eId, edgeCladdingColor);
                     }
                 }
             }
@@ -155,7 +154,7 @@ namespace IvyFEMProtoApp
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new CadObject2DDrawer(cad2D);
+            IDrawer drawer = new CadObject2DDrawer(cad);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -163,21 +162,21 @@ namespace IvyFEMProtoApp
             mainWindow.GLControl.Update();
             WPFUtils.DoEvents();
 
-            //Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
-            Mesher2D mesher2D = new Mesher2D();
-            mesher2D.SetMeshingModeElemLength();
+            //Mesher2D mesher = new Mesher2D(cad, eLen);
+            Mesher2D mesher = new Mesher2D();
+            mesher.SetMeshingModeElemLength();
             for (int i = 0; i < loopCnt; i++)
             {
                 uint lId = (uint)(i + 1);
                 double workeLen = eLens[i];
-                mesher2D.AddCutMeshLoopCadId(lId, workeLen);
+                mesher.AddCutMeshLoopCadId(lId, workeLen);
             }
-            mesher2D.Meshing(cad2D);
+            mesher.Meshing(cad);
 
             /*
             mainWindow.IsFieldDraw = false;
             drawerArray.Clear();
-            IDrawer meshDrawer = new Mesher2DDrawer(mesher2D);
+            IDrawer meshDrawer = new Mesher2DDrawer(mesher);
             mainWindow.DrawerArray.Add(meshDrawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -187,7 +186,7 @@ namespace IvyFEMProtoApp
             */
 
             FEWorld world = new FEWorld();
-            world.Mesh = mesher2D;
+            world.Mesh = mesher;
             uint quantityId;
             {
                 uint dof = 1; // 複素数
@@ -209,24 +208,23 @@ namespace IvyFEMProtoApp
                     Muyy = 1.0,
                     Muzz = 1.0
                 };
-                // Note: TMモード(比誘電率は比透磁率のところにセットする)
                 DielectricMaterial claddingMa = new DielectricMaterial
                 {
-                    Epxx = 1.0,
-                    Epyy = 1.0,
-                    Epzz = 1.0,
-                    Muxx = claddingEps,
-                    Muyy = claddingEps,
-                    Muzz = claddingEps
+                    Epxx = claddingEps,
+                    Epyy = claddingEps,
+                    Epzz = claddingEps,
+                    Muxx = 1.0,
+                    Muyy = 1.0,
+                    Muzz = 1.0
                 };
                 DielectricMaterial coreMa = new DielectricMaterial
                 {
-                    Epxx = 1.0,
-                    Epyy = 1.0,
-                    Epzz = 1.0,
-                    Muxx = coreEps,
-                    Muyy = coreEps,
-                    Muzz = coreEps
+                    Epxx = coreEps,
+                    Epyy = coreEps,
+                    Epzz = coreEps,
+                    Muxx = 1.0,
+                    Muyy = 1.0,
+                    Muzz = 1.0
                 };
                 vacuumMaId = world.AddMaterial(vacuumMa);
                 claddingMaId = world.AddMaterial(claddingMa);
@@ -336,13 +334,14 @@ namespace IvyFEMProtoApp
             if (ChartWindow1 == null)
             {
                 ChartWindow1 = new ChartWindow();
-                ChartWindow1.Closed += ChartWindow1_Closed;
+                ChartWindow1.Closing += ChartWindow1_Closing;
             }
             ChartWindow chartWin = ChartWindow1;
             chartWin.Owner = mainWindow;
             chartWin.Left = mainWindow.Left + mainWindow.Width;
             chartWin.Top = mainWindow.Top;
             chartWin.Show();
+            chartWin.TextBox1.Text = "";
             var model = new PlotModel();
             chartWin.Plot.Model = model;
             model.Title = "Waveguide Example";
@@ -397,7 +396,7 @@ namespace IvyFEMProtoApp
                 //WPFUtils.DoEvents();
             }
 
-            for (int iFreq = 0; iFreq < freqDiv + 1; iFreq++)
+            for (int iFreq = 0; iFreq < (freqDiv + 1); iFreq++)
             {
                 double normalizedFreq = sFreq + (iFreq / (double)freqDiv) * (eFreq - sFreq);
                 // 波長
@@ -433,7 +432,7 @@ namespace IvyFEMProtoApp
                     //FEM.Solver = solver;
                 }
                 FEM.Frequency = freq;
-                FEM.ReplacedMu0 = replacedMu0;
+                FEM.IsTMMode = isTMMode;
                 FEM.Solve();
                 System.Numerics.Complex[] Ez = FEM.Ez;
                 System.Numerics.Complex[][] S = FEM.S;

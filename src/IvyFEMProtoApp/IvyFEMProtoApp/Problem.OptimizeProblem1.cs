@@ -71,7 +71,7 @@ namespace IvyFEMProtoApp
             IList<uint> zeroEIds = new List<uint>();
             uint eId1 = 0;
             uint eId2 = 0;
-            CadObject2D cad2D = new CadObject2D();
+            CadObject2D cad = new CadObject2D();
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
                 pts.Add(new OpenTK.Vector2d(0.0, waveguideWidth));
@@ -101,7 +101,7 @@ namespace IvyFEMProtoApp
                     pts.Add(new OpenTK.Vector2d(x, y));
                 }
                 pts.Add(new OpenTK.Vector2d(inputWGLength, waveguideWidth));
-                var res = cad2D.AddPolygon(pts);
+                var res = cad.AddPolygon(pts);
                 IList<uint> eIds = res.EIds;
                 eId1 = eIds[0];
                 eId2 = eIds[3];
@@ -118,7 +118,7 @@ namespace IvyFEMProtoApp
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new CadObject2DDrawer(cad2D);
+            IDrawer drawer = new CadObject2DDrawer(cad);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -127,10 +127,10 @@ namespace IvyFEMProtoApp
             WPFUtils.DoEvents();
 
             double eLen = waveguideWidth * 0.05;
-            Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
+            Mesher2D mesher = new Mesher2D(cad, eLen);
 
             FEWorld world = new FEWorld();
-            world.Mesh = mesher2D;
+            world.Mesh = mesher;
             uint quantityId;
             {
                 uint dof = 1; // 複素数
@@ -200,11 +200,12 @@ namespace IvyFEMProtoApp
             if (ChartWindow1 == null)
             {
                 ChartWindow1 = new ChartWindow();
-                ChartWindow1.Closed += ChartWindow1_Closed;
+                ChartWindow1.Closing += ChartWindow1_Closing;
             }
             ChartWindow chartWin = ChartWindow1;
             chartWin.Owner = mainWindow;
             chartWin.Show();
+            chartWin.TextBox1.Text = "";
             var model = new PlotModel();
             chartWin.Plot.Model = model;
             model.Title = "Waveguide Example";
@@ -260,7 +261,7 @@ namespace IvyFEMProtoApp
             }
 
             totalS11 = 0;
-            for (int iFreq = 0; iFreq < freqDiv + 1; iFreq++)
+            for (int iFreq = 0; iFreq < (freqDiv + 1); iFreq++)
             {
                 double normalizedFreq = sFreq + (iFreq / (double)freqDiv) * (eFreq - sFreq);
                 // 波数
@@ -275,6 +276,7 @@ namespace IvyFEMProtoApp
                 {
                     //var solver = new IvyFEM.Linear.LapackEquationSolver();
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
+                    //solver.IsOrderingToBandMatrix = true;
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
                     //FEM.Solver = solver;

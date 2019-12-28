@@ -98,6 +98,17 @@ namespace IvyFEMProtoApp
         }
 
         /// <summary>
+        /// ウィンドウが閉じられようとしている
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            // リソースの開放が遅いので強制終了
+            System.Environment.Exit(0);
+        }
+
+        /// <summary>
         /// GLControlの起動時に実行される。
         /// </summary>
         /// <param name="sender"></param>
@@ -642,122 +653,149 @@ namespace IvyFEMProtoApp
         {
             SetProblemTitle(e.Source as MenuItem);
 
-            /*
-            //Problem.HWaveguideHigherOrderABCProblema1_0(this);
-            Problem.HWaveguideHigherOrderABCProblema1(this);
-            */
-
-            //Problem.HWaveguideHigherOrderABCProblemb1_0(this);
-            Problem.HWaveguideHigherOrderABCProblemb1(this);
+            //Problem.HWaveguideHigherOrderABCProblem1_0(this);
+            Problem.HWaveguideHigherOrderABCProblem1(this);
         }
 
         private void HPlaneWaveguideHigherOrderABC2Btn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
 
-            //Problem.HWaveguideHigherOrderABCProblemb2_0(this);
-            Problem.HWaveguideHigherOrderABCProblemb2(this);
+            //Problem.HWaveguideHigherOrderABCProblem2_0(this);
+            Problem.HWaveguideHigherOrderABCProblem2(this);
         }
 
         private void HPlaneWaveguideHigherOrderABC3Btn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
 
-            //Problem.HWaveguideHigherOrderABCProblemb3_0(this);
-            Problem.HWaveguideHigherOrderABCProblemb3(this);
+            //Problem.HWaveguideHigherOrderABCProblem3_0(this);
+            Problem.HWaveguideHigherOrderABCProblem3(this);
         }
 
         private void HPlaneWaveguideHigherOrderABCTD1Btn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
 
-            /*
-            //Problem.HWaveguideHigherOrderABCTDProblema1_0(this);
-            Problem.HWaveguideHigherOrderABCTDProblema1(this);
-            */
-
-            //Problem.HWaveguideHigherOrderABCTDProblemb1_0(this);
-            Problem.HWaveguideHigherOrderABCTDProblemb1(this);
+            //Problem.HWaveguideHigherOrderABCTDProblem1_0(this);
+            Problem.HWaveguideHigherOrderABCTDProblem1(this);
         }
 
         private void HPlaneWaveguideHigherOrderABCTD2Btn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
 
-            //Problem.HWaveguideHigherOrderABCTDProblemb2_0(this);
-            Problem.HWaveguideHigherOrderABCTDProblemb2(this);
+            //Problem.HWaveguideHigherOrderABCTDProblem2_0(this);
+            Problem.HWaveguideHigherOrderABCTDProblem2(this);
         }
 
         private void HPlaneWaveguideHigherOrderABCTD3Btn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
 
-            //Problem.HWaveguideHigherOrderABCTDProblemb3_0(this);
-            Problem.HWaveguideHigherOrderABCTDProblemb3(this);
+            //Problem.HWaveguideHigherOrderABCTDProblem3_0(this);
+            Problem.HWaveguideHigherOrderABCTDProblem3(this);
         }
 
         private void HPlaneWaveguideFirstOrderABCTD3Btn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
 
-            //Problem.HWaveguideFirstOrderABCTDProblemb3_0(this);
-            Problem.HWaveguideFirstOrderABCTDProblemb3(this);
+            //Problem.HWaveguideFirstOrderABCTDProblem3_0(this);
+            Problem.HWaveguideFirstOrderABCTDProblem3(this);
         }
 
         private void HPlaneWaveguidePML1Btn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
 
-            /*
-            //Problem.HWaveguidePMLProblema1_0(this);
-            Problem.HWaveguidePMLProblema1(this);
-            */
-
-            //Problem.HWaveguidePMLProblemb1_0(this);
-            Problem.HWaveguidePMLProblemb1(this);
+            //Problem.HWaveguidePMLProblem1_0(this);
+            Problem.HWaveguidePMLProblem1(this);
         }
 
         private void HPlaneWaveguidePML2Btn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
 
-            //Problem.HWaveguidePMLProblemb2_0(this);
-            Problem.HWaveguidePMLProblemb2(this);
+            //Problem.HWaveguidePMLProblem2_0(this);
+            Problem.HWaveguidePMLProblem2(this);
         }
 
         private void HPlaneWaveguidePML3Btn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
 
-            //Problem.HWaveguidePMLProblemb3_0(this);
-            Problem.HWaveguidePMLProblemb3(this);
+            //Problem.HWaveguidePMLProblem3_0(this);
+            Problem.HWaveguidePMLProblem3(this);
         }
 
         private void HPlaneWaveguidePMLTD1Btn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
 
-            //Problem.HWaveguidePMLTDProblemb1_0(this);
-            Problem.HWaveguidePMLTDProblemb1(this);
+            //Problem.HWaveguidePMLTDProblem1_0(this);
+            Problem.HWaveguidePMLTDProblem1(this);
         }
 
         private void HPlaneWaveguidePMLTD2Btn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
 
-            //Problem.HWaveguidePMLTDProblemb2_0(this);
-            Problem.HWaveguidePMLTDProblemb2(this);
+            //Problem.HWaveguidePMLTDProblem2_0(this);
+            Problem.HWaveguidePMLTDProblem2(this);
         }
 
         private void HPlaneWaveguidePMLTD3Btn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
 
-            //Problem.HWaveguidePMLTDProblemb3_0(this);
-            Problem.HWaveguidePMLTDProblemb3(this);
+            //Problem.HWaveguidePMLTDProblem3_0(this);
+            Problem.HWaveguidePMLTDProblem3(this);
         }
 
-        private void SquareLatticePCWaveguideBtn_Click(object sender, RoutedEventArgs e)
+        private void SquareLatticePCWaveguideEigen1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            Problem.PCWaveguideEigenSquareLatticeProblem1(this);
+        }
+
+        private void TriangleLatticePCWaveguideEigen1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            Problem.PCWaveguideEigenTriangleLatticeProblem1(this);
+        }
+
+        private void TriangleLatticePCWaveguideEigen2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            Problem.PCWaveguideEigenTriangleLatticeProblem2(this);
+        }
+
+        private void SquareLatticePBG1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            Problem.PBGSquareLatticeProblem1(this);
+        }
+
+        private void TriangleLatticePBG1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            Problem.PBGTriangleLatticeProblem1(this);
+        }
+
+        private void TriangleLatticePBG2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            Problem.PBGTriangleLatticeProblem2(this);
+        }
+
+        private void SquareLatticePCWaveguide1Btn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
 
@@ -765,12 +803,75 @@ namespace IvyFEMProtoApp
             Problem.PCWaveguideSquareLatticeProblem1(this);
         }
 
-        private void TriangleLatticePCWaveguideBtn_Click(object sender, RoutedEventArgs e)
+        private void TriangleLatticePCWaveguide1Btn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
 
             //Problem.PCWaveguideTriangleLatticeProblem1_0(this);
             Problem.PCWaveguideTriangleLatticeProblem1(this);
+        }
+
+        private void TriangleLatticePCWaveguide2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            //Problem.PCWaveguideTriangleLatticeProblem2_0(this);
+            Problem.PCWaveguideTriangleLatticeProblem2(this);
+        }
+
+        private void TriangleLatticePCWaveguide3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            Problem.PCWaveguideTriangleLatticeProblem3(this);
+        }
+
+        private void SquareLatticePCWaveguideModalABCZTD1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            //Problem.PCWaveguideModalABCZTDSquareLatticeProblem1_0(this);
+            Problem.PCWaveguideModalABCZTDSquareLatticeProblem1(this);
+        }
+
+        private void TriangleLatticePCWaveguideModalABCZTD1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            //Problem.PCWaveguideModalABCZTDTriangleLatticeProblem1_0(this);
+            Problem.PCWaveguideModalABCZTDTriangleLatticeProblem1(this);
+        }
+
+        private void SquareLatticePCWaveguidePML1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            //Problem.PCWaveguidePMLSquareLatticeProblem1_0(this);
+            Problem.PCWaveguidePMLSquareLatticeProblem1(this);
+        }
+
+        private void TriangleLatticePCWaveguidePML1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            //Problem.PCWaveguidePMLTriangleLatticeProblem1_0(this);
+            Problem.PCWaveguidePMLTriangleLatticeProblem1(this);
+        }
+
+        private void SquareLatticePCWaveguidePMLTD1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            //Problem.PCWaveguidePMLTDSquareLatticeProblem1_0(this);
+            Problem.PCWaveguidePMLTDSquareLatticeProblem1(this);
+        }
+
+        private void TriangleLatticePCWaveguidePMLTD1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            //Problem.PCWaveguidePMLTDTriangleLatticeProblem1_0(this);
+            Problem.PCWaveguidePMLTDTriangleLatticeProblem1(this);
         }
 
         // mu = 0.02, 0.002 FluidEquationType.StdGNavierStokes
@@ -840,6 +941,7 @@ namespace IvyFEMProtoApp
             Problem.FluidTDProblem2(this, fluidEquationType);
         }
 
+        /*
         private void StdGVorticityFluid1Btn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
@@ -917,6 +1019,7 @@ namespace IvyFEMProtoApp
 
             Problem.VorticityFluidRKTDProblem2(this);
         }
+        */
 
         private void StdGPressurePoissonFluid1Btn_Click(object sender, RoutedEventArgs e)
         {
@@ -950,6 +1053,7 @@ namespace IvyFEMProtoApp
             Problem.PressurePoissonWithBellFluidTDProblem2(this);
         }
 
+        /*
         private void StdGPressurePoissonFluid1RKTDBtn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
@@ -965,6 +1069,7 @@ namespace IvyFEMProtoApp
             //Problem.PressurePoissonFluidRKTDProblem2(this);
             MessageBox.Show("Not implemented yet!");
         }
+        */
 
         private void Optimize1Btn_Click(object sender, RoutedEventArgs e)
         {

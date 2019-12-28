@@ -14,21 +14,21 @@ namespace IvyFEMProtoApp
     {
         public void HyperelasticContactTDProblem(MainWindow mainWindow, bool isMooney)
         {
-            CadObject2D cad2D = new CadObject2D();
+            CadObject2D cad = new CadObject2D();
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
                 pts.Add(new OpenTK.Vector2d(0.0, 0.0));
                 pts.Add(new OpenTK.Vector2d(1.0, 0.0));
                 pts.Add(new OpenTK.Vector2d(1.0, 5.0));
                 pts.Add(new OpenTK.Vector2d(0.0, 5.0));
-                var res = cad2D.AddPolygon(pts);
+                var res = cad.AddPolygon(pts);
             }
 
             double eLen = 0.1;
-            Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
+            Mesher2D mesher = new Mesher2D(cad, eLen);
 
             FEWorld world = new FEWorld();
-            world.Mesh = mesher2D;
+            world.Mesh = mesher;
             uint uQuantityId;
             uint lQuantityId;
             uint cQuantityId; // constraint
@@ -214,8 +214,8 @@ namespace IvyFEMProtoApp
                     {
                         var solver = new IvyFEM.Linear.LapackEquationSolver();
                         //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
-                        solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
                         solver.IsOrderingToBandMatrix = true;
+                        solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
                         //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
                         FEM.Solver = solver;
                     }
@@ -249,21 +249,21 @@ namespace IvyFEMProtoApp
 
         public void HyperelasticCircleContactTDProblem(MainWindow mainWindow, bool isMooney)
         {
-            CadObject2D cad2D = new CadObject2D();
+            CadObject2D cad = new CadObject2D();
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
                 pts.Add(new OpenTK.Vector2d(0.0, 0.0));
                 pts.Add(new OpenTK.Vector2d(1.0, 0.0));
                 pts.Add(new OpenTK.Vector2d(1.0, 5.0));
                 pts.Add(new OpenTK.Vector2d(0.0, 5.0));
-                var res = cad2D.AddPolygon(pts);
+                var res = cad.AddPolygon(pts);
             }
 
             double eLen = 0.1;
-            Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
+            Mesher2D mesher = new Mesher2D(cad, eLen);
 
             FEWorld world = new FEWorld();
-            world.Mesh = mesher2D;
+            world.Mesh = mesher;
             uint uQuantityId;
             uint lQuantityId;
             uint cQuantityId; // constraint
@@ -423,8 +423,8 @@ namespace IvyFEMProtoApp
                     {
                         var solver = new IvyFEM.Linear.LapackEquationSolver();
                         //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
-                        solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
                         solver.IsOrderingToBandMatrix = true;
+                        solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
                         //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
                         FEM.Solver = solver;
                     }

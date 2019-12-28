@@ -26,16 +26,16 @@ namespace IvyFEMProtoApp
 
         public double BackgroundWidth { get; private set; } = 0;
         public double BackgroundHeight { get; private set; } = 0;
-        public Mesher2D Mesher2D { get; private set; } = null;
+        public Mesher2D Mesher { get; private set; } = null;
 
         public MeshWindow()
         {
             InitializeComponent();
         }
 
-        public void Init(Mesher2D mesher2D, double width, double height)
+        public void Init(Mesher2D mesher, double width, double height)
         {
-            Mesher2D = mesher2D;
+            Mesher = mesher;
             BackgroundWidth = width;
             BackgroundHeight = height;
         }
@@ -45,7 +45,7 @@ namespace IvyFEMProtoApp
             MeshDraw = new MeshDraw2D(GLControl, BackgroundWidth, BackgroundHeight);
 
             GLControl.MakeCurrent();
-            MeshDraw.Init(Mesher2D);
+            MeshDraw.Init(Mesher);
         }
 
         private void Window_GotFocus(object sender, RoutedEventArgs e)

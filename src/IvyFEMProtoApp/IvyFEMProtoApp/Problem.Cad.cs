@@ -17,7 +17,7 @@ namespace IvyFEMProtoApp
     {
         public void MakeBluePrint(MainWindow mainWindow)
         {
-            CadObject2D cad2D = new CadObject2D();
+            CadObject2D cad = new CadObject2D();
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
                 pts.Add(new OpenTK.Vector2d(0.0, 1.0));
@@ -26,18 +26,18 @@ namespace IvyFEMProtoApp
                 pts.Add(new OpenTK.Vector2d(1.0, -1.0));
                 pts.Add(new OpenTK.Vector2d(2.0, -1.0));
                 pts.Add(new OpenTK.Vector2d(2.0, 1.0));
-                var res = cad2D.AddPolygon(pts);
+                var res = cad.AddPolygon(pts);
                 //System.Diagnostics.Debug.WriteLine(res.Dump());
-                //System.Diagnostics.Debug.WriteLine(cad2D.Dump());
+                //System.Diagnostics.Debug.WriteLine(cad.Dump());
                 //AlertWindow.ShowText(res.Dump());
-                //AlertWindow.ShowText(cad2D.Dump());
-                var resCircle = cad2D.AddCircle(new OpenTK.Vector2d(1.5, 0.5), 0.25, res.AddLId);
+                //AlertWindow.ShowText(cad.Dump());
+                var resCircle = cad.AddCircle(new OpenTK.Vector2d(1.5, 0.5), 0.25, res.AddLId);
             }
 
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new CadObject2DDrawer(cad2D);
+            IDrawer drawer = new CadObject2DDrawer(cad);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -47,7 +47,7 @@ namespace IvyFEMProtoApp
 
         public void MakeCoarseMesh(MainWindow mainWindow)
         {
-            CadObject2D cad2D = new CadObject2D();
+            CadObject2D cad = new CadObject2D();
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
                 pts.Add(new OpenTK.Vector2d(0.0, 1.0));
@@ -56,15 +56,15 @@ namespace IvyFEMProtoApp
                 pts.Add(new OpenTK.Vector2d(1.0, -1.0));
                 pts.Add(new OpenTK.Vector2d(2.0, -1.0));
                 pts.Add(new OpenTK.Vector2d(2.0, 1.0));
-                var res = cad2D.AddPolygon(pts);
+                var res = cad.AddPolygon(pts);
             }
 
-            Mesher2D mesher2D = new Mesher2D(cad2D);
+            Mesher2D mesher = new Mesher2D(cad);
 
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new Mesher2DDrawer(mesher2D);
+            IDrawer drawer = new Mesher2DDrawer(mesher);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -74,7 +74,7 @@ namespace IvyFEMProtoApp
 
         public void MakeMesh(MainWindow mainWindow)
         {
-            CadObject2D cad2D = new CadObject2D();
+            CadObject2D cad = new CadObject2D();
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
                 pts.Add(new OpenTK.Vector2d(0.0, 1.0));
@@ -83,16 +83,16 @@ namespace IvyFEMProtoApp
                 pts.Add(new OpenTK.Vector2d(1.0, -1.0));
                 pts.Add(new OpenTK.Vector2d(2.0, -1.0));
                 pts.Add(new OpenTK.Vector2d(2.0, 1.0));
-                var res = cad2D.AddPolygon(pts);
+                var res = cad.AddPolygon(pts);
             }
 
             double eLen = 0.05;
-            Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
+            Mesher2D mesher = new Mesher2D(cad, eLen);
 
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new Mesher2DDrawer(mesher2D);
+            IDrawer drawer = new Mesher2DDrawer(mesher);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -102,7 +102,7 @@ namespace IvyFEMProtoApp
 
         public void MakeMeshHollowLoop(MainWindow mainWindow)
         {
-            CadObject2D cad2D = new CadObject2D();
+            CadObject2D cad = new CadObject2D();
             uint hollowLoopId = 0;
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
@@ -110,16 +110,16 @@ namespace IvyFEMProtoApp
                 pts.Add(new OpenTK.Vector2d(1.0, 0.0));
                 pts.Add(new OpenTK.Vector2d(1.0, 1.0));
                 pts.Add(new OpenTK.Vector2d(0.0, 1.0));
-                var res = cad2D.AddPolygon(pts);
-                var resCircle = cad2D.AddCircle(new OpenTK.Vector2d(0.5, 0.5), 0.25, res.AddLId);
+                var res = cad.AddPolygon(pts);
+                var resCircle = cad.AddCircle(new OpenTK.Vector2d(0.5, 0.5), 0.25, res.AddLId);
                 hollowLoopId = resCircle.AddLId;
             }
 
             double eLen = 0.05;
-            //Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
-            Mesher2D mesher2D = new Mesher2D();
-            mesher2D.SetMeshingModeElemLength();
-            IList<uint> lIds = cad2D.GetElementIds(CadElementType.Loop);
+            //Mesher2D mesher = new Mesher2D(cad, eLen);
+            Mesher2D mesher = new Mesher2D();
+            mesher.SetMeshingModeElemLength();
+            IList<uint> lIds = cad.GetElementIds(CadElementType.Loop);
             foreach (uint lId in lIds)
             {
                 if (lId == hollowLoopId)
@@ -127,14 +127,14 @@ namespace IvyFEMProtoApp
                     // メッシュ切りしない
                     continue;
                 }
-                mesher2D.AddCutMeshLoopCadId(lId, eLen);
+                mesher.AddCutMeshLoopCadId(lId, eLen);
             }
-            mesher2D.Meshing(cad2D);
+            mesher.Meshing(cad);
 
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new Mesher2DDrawer(mesher2D);
+            IDrawer drawer = new Mesher2DDrawer(mesher);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();

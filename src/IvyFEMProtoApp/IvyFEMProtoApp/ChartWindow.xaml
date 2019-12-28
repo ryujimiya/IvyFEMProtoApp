@@ -6,8 +6,9 @@
         xmlns:local="clr-namespace:IvyFEMProtoApp"
         xmlns:oxy="http://oxyplot.org/wpf"
         mc:Ignorable="d"
-        Title="ChartWindow" Height="300" Width="300">
+        Title="ChartWindow" Height="340" Width="300">
     <Grid>
-        <oxy:PlotView x:Name="Plot" Model="{Binding PlotModel}"/>
+        <oxy:PlotView x:Name="Plot" Model="{Binding PlotModel}" Margin="0,0,0,28"/>
+        <TextBox x:Name="TextBox1" TextWrapping="Wrap" Text="" IsReadOnly="True" Height="28" VerticalAlignment="Bottom"/>
     </Grid>
 </Window>

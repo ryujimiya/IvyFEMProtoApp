@@ -9,61 +9,61 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void CadObjLoadFromFile(string cadObjFileName, CadObject2D cad2D, CadEditWindow window)
+        public void CadObjLoadFromFile(string cadObjFileName, CadObject2D cad, CadEditWindow window)
         {
             using (Serializer arch = new Serializer(cadObjFileName, true))
             {
-                cad2D.Serialize(arch);
+                cad.Serialize(arch);
             }
             window.CadDesign.RefreshDrawerAry();
             window.GLControl.Invalidate();
             window.GLControl.Update();
         }
 
-        public void CadObjSaveToFile(string cadObjFileName, CadObject2D cad2D)
+        public void CadObjSaveToFile(string cadObjFileName, CadObject2D cad)
         {
             using (Serializer arch = new Serializer(cadObjFileName, false))
             {
-                cad2D.Serialize(arch);
+                cad.Serialize(arch);
             }
         }
 
-        public void MeshObjLoadFromFile(string meshObjFileName, Mesher2D mesher2D)
+        public void MeshObjLoadFromFile(string meshObjFileName, Mesher2D mesher)
         {
             using (Serializer arch = new Serializer(meshObjFileName, true))
             {
-                mesher2D.Serialize(arch);
+                mesher.Serialize(arch);
             }
         }
 
-        public void MeshObjSaveToFile(string meshObjFileName, Mesher2D mesher2D)
+        public void MeshObjSaveToFile(string meshObjFileName, Mesher2D mesher)
         {
             using (Serializer arch = new Serializer(meshObjFileName, false))
             {
-                mesher2D.Serialize(arch);
+                mesher.Serialize(arch);
             }
         }
 
-        public void MeshObjFileTest(string meshObjFileName, CadObject2D cad2D)
+        public void MeshObjFileTest(string meshObjFileName, CadObject2D cad)
         {
             double eLen = 2.0;
-            Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
-            MeshObjSaveToFile(meshObjFileName, mesher2D);
-            MeshObjLoadFromFile(meshObjFileName, mesher2D);
+            Mesher2D mesher = new Mesher2D(cad, eLen);
+            MeshObjSaveToFile(meshObjFileName, mesher);
+            MeshObjLoadFromFile(meshObjFileName, mesher);
             var meshWindow = new MeshWindow();
-            meshWindow.Init(mesher2D, 100, 100);
+            meshWindow.Init(mesher, 100, 100);
             meshWindow.ShowDialog();
         }
 
         public void CalcSampleProblem(
-            CadObject2D cad2D, Camera camera, uint zeroEId, uint moveEId, CadEditWindow window)
+            CadObject2D cad, Camera camera, uint zeroEId, uint moveEId, CadEditWindow window)
         {
             //double eLen = 0.1;
             double eLen = 0.02 * camera.HalfViewHeight;
-            Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
+            Mesher2D mesher = new Mesher2D(cad, eLen);
 
             FEWorld world = new FEWorld();
-            world.Mesh = mesher2D;
+            world.Mesh = mesher;
             uint quantityId;
             {
                 uint dof = 2; // Vector2

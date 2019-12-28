@@ -14,20 +14,26 @@ namespace IvyFEMProtoApp
     {
         private ChartWindow ChartWindow1 = null;
         private ChartWindow ChartWindow2 = null;
+        private ChartWindow ChartWindow3 = null;
 
         public Problem()
         {
 
         }
 
-        private void ChartWindow1_Closed(object sender, EventArgs e)
+        private void ChartWindow1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             ChartWindow1 = null;
         }
 
-        private void ChartWindow2_Closed(object sender, EventArgs e)
+        private void ChartWindow2_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             ChartWindow2 = null;
+        }
+
+        private void ChartWindow3_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            ChartWindow3 = null;
         }
     }
 }

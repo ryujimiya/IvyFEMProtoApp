@@ -12,7 +12,7 @@ namespace IvyFEMProtoApp
         public void PressurePoissonFluidProblem2(MainWindow mainWindow)
         {
             FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoisson;
-            CadObject2D cad2D = new CadObject2D();
+            CadObject2D cad = new CadObject2D();
             {
                 uint lId1 = 0;
                 uint lId2 = 0;
@@ -26,9 +26,9 @@ namespace IvyFEMProtoApp
                     pts.Add(new OpenTK.Vector2d(2.0, 1.0));
                     pts.Add(new OpenTK.Vector2d(1.5, 1.0));
                     pts.Add(new OpenTK.Vector2d(0.0, 1.0));
-                    lId1 = cad2D.AddPolygon(pts).AddLId;
+                    lId1 = cad.AddPolygon(pts).AddLId;
                     System.Diagnostics.Debug.Assert(lId1 == 1);
-                    lId2 = cad2D.ConnectVertexLine(4, 7).AddLId;
+                    lId2 = cad.ConnectVertexLine(4, 7).AddLId;
                     System.Diagnostics.Debug.Assert(lId2 == 2);
                 }
             }
@@ -36,7 +36,7 @@ namespace IvyFEMProtoApp
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new CadObject2DDrawer(cad2D);
+            IDrawer drawer = new CadObject2DDrawer(cad);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -45,10 +45,10 @@ namespace IvyFEMProtoApp
             WPFUtils.DoEvents();
 
             double eLen = 0.08;
-            Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
+            Mesher2D mesher = new Mesher2D(cad, eLen);
 
             FEWorld world = new FEWorld();
-            world.Mesh = mesher2D;
+            world.Mesh = mesher;
             uint vQuantityId;
             uint pQuantityId;
             {
@@ -283,7 +283,7 @@ namespace IvyFEMProtoApp
         public void PressurePoissonFluidTDProblem2(MainWindow mainWindow)
         {
             FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoisson;
-            CadObject2D cad2D = new CadObject2D();
+            CadObject2D cad = new CadObject2D();
             {
                 uint lId1 = 0;
                 uint lId2 = 0;
@@ -297,9 +297,9 @@ namespace IvyFEMProtoApp
                     pts.Add(new OpenTK.Vector2d(2.0, 1.0));
                     pts.Add(new OpenTK.Vector2d(1.5, 1.0));
                     pts.Add(new OpenTK.Vector2d(0.0, 1.0));
-                    lId1 = cad2D.AddPolygon(pts).AddLId;
+                    lId1 = cad.AddPolygon(pts).AddLId;
                     System.Diagnostics.Debug.Assert(lId1 == 1);
-                    lId2 = cad2D.ConnectVertexLine(4, 7).AddLId;
+                    lId2 = cad.ConnectVertexLine(4, 7).AddLId;
                     System.Diagnostics.Debug.Assert(lId2 == 2);
                 }
             }
@@ -307,7 +307,7 @@ namespace IvyFEMProtoApp
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new CadObject2DDrawer(cad2D);
+            IDrawer drawer = new CadObject2DDrawer(cad);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -316,10 +316,10 @@ namespace IvyFEMProtoApp
             WPFUtils.DoEvents();
 
             double eLen = 0.08;
-            Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
+            Mesher2D mesher = new Mesher2D(cad, eLen);
 
             FEWorld world = new FEWorld();
-            world.Mesh = mesher2D;
+            world.Mesh = mesher;
             uint vQuantityId;
             uint pQuantityId;
             {

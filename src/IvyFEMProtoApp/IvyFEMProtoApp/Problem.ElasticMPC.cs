@@ -14,21 +14,21 @@ namespace IvyFEMProtoApp
     {
         public void ElasticMultipointConstraintTDProblem(MainWindow mainWindow, bool isSaintVenant)
         {
-            CadObject2D cad2D = new CadObject2D();
+            CadObject2D cad = new CadObject2D();
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
                 pts.Add(new OpenTK.Vector2d(0.0, 0.0));
                 pts.Add(new OpenTK.Vector2d(5.0 / Math.Sqrt(2.0), 5.0 / Math.Sqrt(2.0)));
                 pts.Add(new OpenTK.Vector2d(4.0 / Math.Sqrt(2.0), 6.0 / Math.Sqrt(2.0)));
                 pts.Add(new OpenTK.Vector2d(-1.0 / Math.Sqrt(2.0), 1.0 / Math.Sqrt(2.0)));
-                var res = cad2D.AddPolygon(pts);
+                var res = cad.AddPolygon(pts);
             }
 
             double eLen = 0.1;
-            Mesher2D mesher2D = new Mesher2D(cad2D, eLen);
+            Mesher2D mesher = new Mesher2D(cad, eLen);
 
             FEWorld world = new FEWorld();
-            world.Mesh = mesher2D;
+            world.Mesh = mesher;
             uint uQuantityId;
             uint cQuantityId; // constraint
             {

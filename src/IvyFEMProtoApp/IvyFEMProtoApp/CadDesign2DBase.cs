@@ -34,7 +34,7 @@ namespace IvyFEMProtoApp
         /// <summary>
         /// Cad
         /// </summary>
-        public CadObject2DMove Cad2D { get; protected set; } = new CadObject2DMove();
+        public CadObject2DMove Cad { get; protected set; } = new CadObject2DMove();
 
         /// <summary>
         /// Cadのループのリスト
@@ -82,7 +82,7 @@ namespace IvyFEMProtoApp
         {
             _CadMode = CadModeType.None;
 
-            Cad2D.Clear();
+            Cad.Clear();
             LoopIds.Clear();
             PortEdges.Clear();
 
@@ -108,7 +108,7 @@ namespace IvyFEMProtoApp
             // CadモードもUndo/Redo対象に入れる
             _CadMode = src._CadMode;
 
-            Cad2D.Copy(src.Cad2D);
+            Cad.Copy(src.Cad);
 
             LoopIds.Clear();
             foreach (uint srcLoopId in src.LoopIds)
