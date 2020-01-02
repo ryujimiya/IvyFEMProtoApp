@@ -117,7 +117,10 @@
                     <MenuItem Header="PC Waveguide(Triangle Lattice,CROW(1))" Click="TriangleLatticePCWaveguide2Btn_Click"/>
                     <MenuItem Header="PC Waveguide(Triangle Lattice,CROW(2))" Click="TriangleLatticePCWaveguide3Btn_Click"/>
                 </MenuItem>
-                <MenuItem Header="Photonic Crystal(ABC)">
+                <MenuItem Header="Photonic Crystal(PBC,ABC)">
+                    <MenuItem Header="PC Waveguide(PBC)(Square Lattice)" Click="SquareLatticePCWaveguidePBC1Btn_Click"/>
+                    <MenuItem Header="PC Waveguide(PBC)(Triangle Lattice)" Click="TriangleLatticePCWaveguidePBC1Btn_Click"/>
+                    <Separator/>
                     <MenuItem Header="PC Waveguide(Modal ABC,Z)(Time Domain)(Square Lattice)" Click="SquareLatticePCWaveguideModalABCZTD1Btn_Click"/>
                     <MenuItem Header="PC Waveguide(Modal ABC,Z)(Time Domain)(Triangle Lattice)" Click="TriangleLatticePCWaveguideModalABCZTD1Btn_Click"/>
                 </MenuItem>

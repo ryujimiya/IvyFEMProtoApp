@@ -1384,6 +1384,8 @@ namespace IvyFEMProtoApp
             }
 
             {
+                world.SetIncidentPortId(quantityId, 0);
+                world.SetIncidentModeId(quantityId, 0);
                 IList<PortCondition> portConditions = world.GetPortConditions(quantityId);
                 for (int portId = 0; portId < (refPortCnt + 1); portId++)
                 {
@@ -1396,11 +1398,6 @@ namespace IvyFEMProtoApp
                         lIds, bcEIds1, bcEIds2, FieldValueType.ZScalar, new List<uint> { 0 }, 0);
                     portConditions.Add(portCondition);
                 }
-
-                // 入射ポート、モード
-                int incidentPortId = 0;
-                world.SetIncidentPortId(quantityId, incidentPortId);
-                world.SetIncidentModeId(quantityId, 0);
             }
 
             /*

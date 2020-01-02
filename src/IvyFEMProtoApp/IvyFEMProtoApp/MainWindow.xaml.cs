@@ -826,6 +826,22 @@ namespace IvyFEMProtoApp
             Problem.PCWaveguideTriangleLatticeProblem3(this);
         }
 
+        private void SquareLatticePCWaveguidePBC1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            //Problem.PCWaveguidePBCSquareLatticeProblem1_0(this);
+            Problem.PCWaveguidePBCSquareLatticeProblem1(this);
+        }
+
+        private void TriangleLatticePCWaveguidePBC1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            //Problem.PCWaveguidePBCTriangleLatticeProblem1_0(this);
+            Problem.PCWaveguidePBCTriangleLatticeProblem1(this);
+        }
+
         private void SquareLatticePCWaveguideModalABCZTD1Btn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);

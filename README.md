@@ -3,7 +3,7 @@
 
 IvyFEM.dllのサンプルアプリケーションです。  
 　  
-　**バイナリ（2019-12-28更新）**  
+　**バイナリ（2020-01-03更新）**  
 　[IvyFEMProtoAppアプリ](https://github.com/ryujimiya/IvyFEMProtoApp/blob/master/publish/)  
 　  
 　アプリのスクリーンショットが下記のIvyFEMのページにあります。  

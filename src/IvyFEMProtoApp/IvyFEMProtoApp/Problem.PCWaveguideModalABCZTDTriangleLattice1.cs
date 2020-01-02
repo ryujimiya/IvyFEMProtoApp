@@ -249,11 +249,11 @@ namespace IvyFEMProtoApp
             }
 
             IList<uint> rodLoopIds = new List<uint>();
-            IList<uint> inputWgRodLoopIdsPort10 = new List<uint>(); // 1
-            IList<uint> inputWgRodLoopIdsSrc = new List<uint>(); // 5
-            IList<uint> inputWgRodLoopIdsPort1 = new List<uint>(); // 3
-            IList<uint> inputWgRodLoopIdsPort2 = new List<uint>(); // 4
-            IList<uint> inputWgRodLoopIdsPort20 = new List<uint>(); // 2
+            IList<uint> inputWgRodLoopIdsPort10 = new List<uint>();
+            IList<uint> inputWgRodLoopIdsSrc = new List<uint>();
+            IList<uint> inputWgRodLoopIdsPort1 = new List<uint>();
+            IList<uint> inputWgRodLoopIdsPort2 = new List<uint>();
+            IList<uint> inputWgRodLoopIdsPort20 = new List<uint>();
             IList<uint>[] inputWgRodLoopIdss = {
                 inputWgRodLoopIdsPort10, inputWgRodLoopIdsPort20,
                 inputWgRodLoopIdsPort1, inputWgRodLoopIdsPort2,

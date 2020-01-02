@@ -12,7 +12,7 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void PCWaveguidePMLTriangleLatticeProblem1_0(MainWindow mainWindow)
+        public void PCWaveguidePBCTriangleLatticeProblem1_0(MainWindow mainWindow)
         {
             double waveguideWidth = 1.0;
 
@@ -86,64 +86,51 @@ namespace IvyFEMProtoApp
             double eFreq = 0.287;
             int freqDiv = 25;
 
-            // 形状設定で使用する単位長さ
-            double unitLen = periodicDistance;
-            // PML層の厚さ
-            //int pmlRodCnt = 6;
-            int pmlRodCnt = 10;
-            double pmlThickness = pmlRodCnt * unitLen;
-            //int pmlWgRodCnt = 0;
-            int pmlWgRodCnt = pmlRodCnt;
-            double pmlWgRodThickness = pmlWgRodCnt * unitLen;
+            const uint portCnt = 2;
+            // 入出力導波路の周期構造部分の長さ
+            double inputWgLength = periodicDistance;
             // 導波路不連続領域の長さ
-            //const int disconRodCnt = 5; // 最低7必要
+            //const int disconRodCnt = 5; // 最低5必要
             const int disconRodCnt = 5;
             double disconLength = periodicDistance * disconRodCnt;
-            double disconPlusPMLLength = disconLength + 2.0 * pmlThickness;
-            double port1PMLXB1 = 0;
-            double port1PMLXB2 = pmlThickness;
-            double port2PMLXB1 = disconPlusPMLLength;
-            double port2PMLXB2 = disconPlusPMLLength - pmlThickness;
+            double disconPlusInputWgLength = disconLength + 2.0 * inputWgLength;
+            // 形状設定で使用する単位長さ
+            double unitLen = periodicDistance;
+            double port1XB1 = 0;
+            double port1XB2 = periodicDistance;
+            double port2XB1 = disconPlusInputWgLength;
+            double port2XB2 = disconPlusInputWgLength - periodicDistance;
             // 観測点
             int port1OfsX = 1;
             int port2OfsX = 1;
-            double refport1XB1 = port1PMLXB2 + port1OfsX * unitLen;
+            double refport1XB1 = port1XB2 + port1OfsX * unitLen;
             double refport1XB2 = refport1XB1 + periodicDistance;
-            double refport2XB1 = port2PMLXB2 - port2OfsX * unitLen;
+            double refport2XB1 = port2XB2 - port2OfsX * unitLen;
             double refport2XB2 = refport2XB1 - periodicDistance;
             // 観測ポート数
             int refPortCnt = 2;
             IList<uint> rodLoopIds = new List<uint>();
-            IList<uint> pmlRodLoopIdsPort1 = new List<uint>();
+            IList<uint> inputWgRodLoopIdsPort10 = new List<uint>();
             IList<uint> inputWgRodLoopIdsPort1 = new List<uint>();
             IList<uint> inputWgRodLoopIdsPort2 = new List<uint>();
-            IList<uint> pmlRodLoopIdsPort2 = new List<uint>();
+            IList<uint> inputWgRodLoopIdsPort20 = new List<uint>();
             IList<uint>[] inputWgRodLoopIdss = {
-                pmlRodLoopIdsPort1, pmlRodLoopIdsPort2,
+                inputWgRodLoopIdsPort10, inputWgRodLoopIdsPort20,
                 inputWgRodLoopIdsPort1, inputWgRodLoopIdsPort2
             };
             uint[] inputWgBaseLoopIds = { 1, 7, 3, 5 };
-            IList<uint> pmlLIds1 = new List<uint>();
-            IList<uint> pmlLIds2 = new List<uint>();
-            uint[] pmlBaseLoopIds = { 1, 7 };
-            IList<uint>[] pmlLIdss = { pmlLIds1, pmlLIds2 };
-            IList<uint>[] pmlRodLIdss = { pmlRodLoopIdsPort1, pmlRodLoopIdsPort2 };
-            uint[] portInputWgBaseLoopIds = {
-                inputWgBaseLoopIds[2], inputWgBaseLoopIds[3] };
-            IList<uint>[] portInputWgRodLoopIdss = {
-                inputWgRodLoopIdss[2], inputWgRodLoopIdss[3] };
-            IList<uint> rodEIdsPort1PMLB1 = new List<uint>();
-            IList<uint> rodEIdsPort1PMLB2 = new List<uint>();
-            IList<uint> rodEIdsPort2PMLB1 = new List<uint>();
-            IList<uint> rodEIdsPort2PMLB2 = new List<uint>();
+            IList<uint> rodEIdsPort10B1 = new List<uint>();
+            IList<uint> rodEIdsPort10B2 = new List<uint>();
+            IList<uint> rodEIdsPort20B1 = new List<uint>();
+            IList<uint> rodEIdsPort20B2 = new List<uint>();
             IList<uint> rodEIdsPort1B1 = new List<uint>();
             IList<uint> rodEIdsPort1B2 = new List<uint>();
             IList<uint> rodEIdsPort2B1 = new List<uint>();
             IList<uint> rodEIdsPort2B2 = new List<uint>();
-            IList<uint> rodVIdsPort1PMLB1 = new List<uint>();
-            IList<uint> rodVIdsPort1PMLB2 = new List<uint>();
-            IList<uint> rodVIdsPort2PMLB1 = new List<uint>();
-            IList<uint> rodVIdsPort2PMLB2 = new List<uint>();
+            IList<uint> rodVIdsPort10B1 = new List<uint>();
+            IList<uint> rodVIdsPort10B2 = new List<uint>();
+            IList<uint> rodVIdsPort20B1 = new List<uint>();
+            IList<uint> rodVIdsPort20B2 = new List<uint>();
             IList<uint> rodVIdsPort1B1 = new List<uint>();
             IList<uint> rodVIdsPort1B2 = new List<uint>();
             IList<uint> rodVIdsPort2B1 = new List<uint>();
@@ -155,20 +142,20 @@ namespace IvyFEMProtoApp
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
                 pts.Add(new OpenTK.Vector2d(0.0, waveguideWidth));
                 pts.Add(new OpenTK.Vector2d(0.0, 0.0));
-                pts.Add(new OpenTK.Vector2d(port1PMLXB2, 0.0));
+                pts.Add(new OpenTK.Vector2d(port1XB2, 0.0));
                 pts.Add(new OpenTK.Vector2d(refport1XB1, 0.0));
                 pts.Add(new OpenTK.Vector2d(refport1XB2, 0.0));
                 pts.Add(new OpenTK.Vector2d(refport2XB2, 0.0));
                 pts.Add(new OpenTK.Vector2d(refport2XB1, 0.0));
-                pts.Add(new OpenTK.Vector2d(port2PMLXB2, 0.0));
-                pts.Add(new OpenTK.Vector2d(disconPlusPMLLength, 0.0));
-                pts.Add(new OpenTK.Vector2d(disconPlusPMLLength, waveguideWidth));
-                pts.Add(new OpenTK.Vector2d(port2PMLXB2, waveguideWidth));
+                pts.Add(new OpenTK.Vector2d(port2XB2, 0.0));
+                pts.Add(new OpenTK.Vector2d(disconPlusInputWgLength, 0.0));
+                pts.Add(new OpenTK.Vector2d(disconPlusInputWgLength, waveguideWidth));
+                pts.Add(new OpenTK.Vector2d(port2XB2, waveguideWidth));
                 pts.Add(new OpenTK.Vector2d(refport2XB1, waveguideWidth));
                 pts.Add(new OpenTK.Vector2d(refport2XB2, waveguideWidth));
                 pts.Add(new OpenTK.Vector2d(refport1XB2, waveguideWidth));
                 pts.Add(new OpenTK.Vector2d(refport1XB1, waveguideWidth));
-                pts.Add(new OpenTK.Vector2d(port1PMLXB2, waveguideWidth));
+                pts.Add(new OpenTK.Vector2d(port1XB2, waveguideWidth));
                 uint _lId1 = cad.AddPolygon(pts).AddLId;
                 uint _lId2 = cad.ConnectVertexLine(3, 16).AddLId;
                 uint _lId3 = cad.ConnectVertexLine(4, 15).AddLId;
@@ -216,21 +203,21 @@ namespace IvyFEMProtoApp
             // 入力導波路 内部側境界
             // 出力導波路 外側境界
             // 出力導波路 内部側境界
-            uint[] eIdsB = { 
+            uint[] eIdsB = {
                 1, 17, 9, 22,
                 18, 19, 21, 20
             };
-            IList<uint>[] rodVIdsB = { 
-                rodVIdsPort1PMLB1, rodVIdsPort1PMLB2, rodVIdsPort2PMLB1, rodVIdsPort2PMLB2,
+            IList<uint>[] rodVIdsB = {
+                rodVIdsPort10B1, rodVIdsPort10B2, rodVIdsPort20B1, rodVIdsPort20B2,
                 rodVIdsPort1B1, rodVIdsPort1B2, rodVIdsPort2B1, rodVIdsPort2B2
             };
             IList<uint>[] rodEIdsB = {
-                rodEIdsPort1PMLB1, rodEIdsPort1PMLB2, rodEIdsPort2PMLB1, rodEIdsPort2PMLB2,
+                rodEIdsPort10B1, rodEIdsPort10B2, rodEIdsPort20B1, rodEIdsPort20B2,
                 rodEIdsPort1B1, rodEIdsPort1B2, rodEIdsPort2B1, rodEIdsPort2B2
             };
             double[] ptXsB = {
-                port1PMLXB1, port1PMLXB2,
-                port2PMLXB1, port2PMLXB2,
+                port1XB1, port1XB2,
+                port2XB1, port2XB2,
                 refport1XB1, refport1XB2,
                 refport2XB1, refport2XB2
             };
@@ -288,17 +275,12 @@ namespace IvyFEMProtoApp
                 1, 2, 7,
                 3, 4, 6, 5
             };
-            IList<uint>[] leftRodVIdsB = { 
+            IList<uint>[] leftRodVIdsB = {
                 rodVIdsB[0], rodVIdsB[1], rodVIdsB[3],
-                rodVIdsB[4], rodVIdsB[5], rodVIdsB[6], rodVIdsB[7] 
+                rodVIdsB[4], rodVIdsB[5], rodVIdsB[6], rodVIdsB[7]
             };
             for (int index = 0; index < leftRodContainsLIds.Length; index++)
             {
-                if (index == 0)
-                {
-                    // 左端は追加しない
-                    continue;
-                }
                 IList<uint> workrodVIdsB = leftRodVIdsB[index];
                 uint baseLoopId = leftRodContainsLIds[index];
                 IList<uint> workInputWgRodLoopIds = null;
@@ -372,7 +354,7 @@ namespace IvyFEMProtoApp
             // 右のロッドを追加
             uint[] rightRodContainsLIds = {
                 1, 7, 6,
-                2, 3, 5, 4 
+                2, 3, 5, 4
             };
             IList<uint>[] rightRodVIdsB = {
                 rodVIdsB[1], rodVIdsB[2], rodVIdsB[3],
@@ -380,11 +362,6 @@ namespace IvyFEMProtoApp
             };
             for (int index = 0; index < rightRodContainsLIds.Length; index++)
             {
-                if (index == 1)
-                {
-                    // 右端は追加しない
-                    continue;
-                }
                 IList<uint> workrodVIdsB = rightRodVIdsB[index];
                 uint baseLoopId = rightRodContainsLIds[index];
                 IList<uint> workInputWgRodLoopIds = null;
@@ -447,25 +424,20 @@ namespace IvyFEMProtoApp
 
             /////////////////////////////////////////////////////////////////////////
             // 領域のロッド
-            int periodicCntPML1 = pmlRodCnt;
-            int periodicCntPML2 = pmlRodCnt;
-            int periodicCntX1 = periodicCntPML1 + disconRodCnt;
+            int periodicCntInputWg1 = 1;
+            int periodicCntInputWg2 = 1;
+            int periodicCntX = periodicCntInputWg1 + disconRodCnt + periodicCntInputWg2;
 
-            // PML1と不連続領域
-            for (int iX = 0; iX < periodicCntX1; iX++)
+            for (int iX = 0; iX < periodicCntX; iX++)
             {
                 double centerX = periodicDistance * 0.5 + iX * periodicDistance;
                 uint baseLoopId = 0;
                 int inputWgNo = 0;
-                if (centerX >= 0 && centerX < port1PMLXB2)
+                if (centerX >= 0 && centerX < port1XB2)
                 {
                     baseLoopId = 1;
-                    if (centerX < (port1PMLXB2 - pmlWgRodThickness))
-                    {
-                        continue;
-                    }
                 }
-                else if (centerX >= port1PMLXB2 && centerX < refport1XB1)
+                else if (centerX >= port1XB2 && centerX < refport1XB1)
                 {
                     baseLoopId = 2;
                 }
@@ -481,9 +453,13 @@ namespace IvyFEMProtoApp
                 {
                     baseLoopId = 5;
                 }
-                else if (centerX >= refport2XB1 && centerX < port2PMLXB2)
+                else if (centerX >= refport2XB1 && centerX < port2XB2)
                 {
                     baseLoopId = 6;
+                }
+                else if (centerX >= port2XB2 && centerX < port2XB1)
+                {
+                    baseLoopId = 7;
                 }
                 else
                 {
@@ -513,11 +489,11 @@ namespace IvyFEMProtoApp
 
                         // 追加済みチェック
                         double th = 1.0e-12;
-                        if (Math.Abs(x0 - port1PMLXB1) < th)
+                        if (Math.Abs(x0 - port1XB1) < th)
                         {
                             continue;
                         }
-                        if (Math.Abs(x0 - port1PMLXB2) < th)
+                        if (Math.Abs(x0 - port1XB2) < th)
                         {
                             continue;
                         }
@@ -529,11 +505,19 @@ namespace IvyFEMProtoApp
                         {
                             continue;
                         }
+                        if (Math.Abs(x0 - refport2XB1) < th)
+                        {
+                            continue;
+                        }
                         if (Math.Abs(x0 - refport2XB2) < th)
                         {
                             continue;
                         }
-                        if (Math.Abs(x0 - refport2XB1) < th)
+                        if (Math.Abs(x0 - port2XB1) < th)
+                        {
+                            continue;
+                        }
+                        if (Math.Abs(x0 - port2XB2) < th)
                         {
                             continue;
                         }
@@ -562,127 +546,17 @@ namespace IvyFEMProtoApp
                 }
             }
 
-            // PML2
-            int periodicCntX2 = periodicCntPML2;
-            for (int iX = 0; iX < periodicCntX2; iX++)
-            {
-                double baseCenterX = periodicDistance * 0.5 + iX * periodicDistance;
-                uint baseLoopId = 0;
-                int inputWgNo = 0;
-                {
-                    baseLoopId = 7;
-                    if (baseCenterX < (pmlThickness - pmlWgRodThickness))
-                    {
-                        continue;
-                    }
-                }
-
-                {
-                    int index = Array.IndexOf(inputWgBaseLoopIds, baseLoopId);
-                    if (index != -1)
-                    {
-                        inputWgNo = index + 1;
-                    }
-                    else
-                    {
-                        inputWgNo = 0;
-                    }
-                }
-
-                for (int iSubX = 0; iSubX < 2; iSubX++)
-                {
-                    IList<double> workRodY0s = null;
-                    double x0 = 0.0;
-                    if (iSubX % 2 == 0)
-                    {
-                        workRodY0s = rodY0sX1;
-                        x0 = port2PMLXB1 - iX * periodicDistance;
-
-                        // 追加済みチェック
-                        double th = 1.0e-12;
-                        if (Math.Abs(x0 - port2PMLXB1) < th)
-                        {
-                            continue;
-                        }
-                        if (Math.Abs(x0 - port2PMLXB2) < th)
-                        {
-                            continue;
-                        }
-                    }
-                    else
-                    {
-                        workRodY0s = rodY0sX2;
-                        x0 = port2PMLXB1 - iX * periodicDistance - 0.5 * periodicDistance;
-                    }
-                    int rodCnt = workRodY0s.Count;
-                    for (int i = 0; i < rodCnt; i++)
-                    {
-                        double y0 = workRodY0s[i];
-                        uint lId = PCWaveguideUtils.AddRod(
-                            cad, baseLoopId, x0, y0, rodRadius, rodCircleDiv, rodRadiusDiv);
-                        rodLoopIds.Add(lId);
-                        if (inputWgNo != 0)
-                        {
-                            inputWgRodLoopIdss[inputWgNo - 1].Add(lId);
-                        }
-                        else
-                        {
-                            // なにもしない
-                        }
-                    }
-                }
-            }
-
-            // pml
-            for (int pmlIndex = 0; pmlIndex < pmlLIdss.Length; pmlIndex++)
-            {
-                IList<uint> pmlLIds = pmlLIdss[pmlIndex];
-                uint lId0 = pmlBaseLoopIds[pmlIndex];
-                pmlLIds.Add(lId0);
-
-                IList<uint> workrodLIds = pmlRodLIdss[pmlIndex];
-                foreach (uint lId in workrodLIds)
-                {
-                    pmlLIds.Add(lId);
-                }
-            }
-
             // check
             {
-                double[] rodColor = { 1.0, 0.6, 0.6 };
-                double[] pmlColor = { 0.5, 0.5, 0.5 };
-                double[] pmlCoreColor = { 0.6, 0.3, 0.3 };
-                for (int iL = 0; iL < (7 + rodLoopIds.Count); iL++)
+                foreach (uint lId in rodLoopIds)
                 {
-                    uint lId = (uint)(iL + 1);
-                    int hitPMLIndex = -1;
-                    for (int pmlIndex = 0; pmlIndex < pmlLIdss.Length; pmlIndex++)
-                    {
-                        IList<uint> pmlLIds = pmlLIdss[pmlIndex];
-                        IList<uint> pmlRodLIds = pmlRodLIdss[pmlIndex];
-                        if (pmlLIds.Contains(lId))
-                        {
-                            hitPMLIndex = pmlIndex;
-                            if (pmlRodLIds.Contains(lId))
-                            {
-                                cad.SetLoopColor(lId, pmlCoreColor);
-                            }
-                            else
-                            {
-                                cad.SetLoopColor(lId, pmlColor);
-                            }
-                            break;
-                        }
-                    }
-                    if (hitPMLIndex == -1)
-                    {
-                        if (rodLoopIds.Contains(lId))
-                        {
-                            cad.SetLoopColor(lId, rodColor);
-                        }
-                    }
+                    cad.SetLoopColor(lId, new double[] { 1.0, 0.6, 0.6 });
                 }
-                foreach (var rodEIds in rodEIdsB)
+                IList<uint>[] rodEIdss = {
+                    rodEIdsPort10B1, rodEIdsPort10B2, rodEIdsPort20B1, rodEIdsPort20B2,
+                    rodEIdsPort1B1, rodEIdsPort1B2, rodEIdsPort2B1, rodEIdsPort2B2
+                };
+                foreach (var rodEIds in rodEIdss)
                 {
                     foreach (uint eId in rodEIds)
                     {
@@ -726,8 +600,6 @@ namespace IvyFEMProtoApp
 
             uint claddingMaId = 0;
             uint coreMaId = 0;
-            IList<uint> pmlCoreMaIds = new List<uint>();
-            IList<uint> pmlCladdingMaIds = new List<uint>();
             {
                 world.ClearMaterial();
 
@@ -767,76 +639,9 @@ namespace IvyFEMProtoApp
                     Muyy = coreMu,
                     Muzz = coreMu
                 };
-                DielectricPMLMaterial pmlCladdingMa1 = new DielectricPMLMaterial
-                {
-                    Epxx = claddingEp,
-                    Epyy = claddingEp,
-                    Epzz = claddingEp,
-                    Muxx = claddingMu,
-                    Muyy = claddingMu,
-                    Muzz = claddingMu,
-                    // X方向PML
-                    OriginPoint = new OpenTK.Vector2d(port1PMLXB2, 0.0),
-                    XThickness = pmlThickness,
-                    YThickness = 0.0
-                };
-                DielectricPMLMaterial pmlCoreMa1 = new DielectricPMLMaterial
-                {
-                    Epxx = coreEp,
-                    Epyy = coreEp,
-                    Epzz = coreEp,
-                    Muxx = coreMu,
-                    Muyy = coreMu,
-                    Muzz = coreMu,
-                    // X方向PML
-                    OriginPoint = new OpenTK.Vector2d(port1PMLXB2, 0.0),
-                    XThickness = pmlThickness,
-                    YThickness = 0.0
-                };
-                DielectricPMLMaterial pmlCladdingMa2 = new DielectricPMLMaterial
-                {
-                    Epxx = claddingEp,
-                    Epyy = claddingEp,
-                    Epzz = claddingEp,
-                    Muxx = claddingMu,
-                    Muyy = claddingMu,
-                    Muzz = claddingMu,
-                    // X方向PML
-                    OriginPoint = new OpenTK.Vector2d(port2PMLXB2, 0.0),
-                    XThickness = pmlThickness,
-                    YThickness = 0.0
-                };
-                DielectricPMLMaterial pmlCoreMa2 = new DielectricPMLMaterial
-                {
-                    Epxx = coreEp,
-                    Epyy = coreEp,
-                    Epzz = coreEp,
-                    Muxx = coreMu,
-                    Muyy = coreMu,
-                    Muzz = coreMu,
-                    // X方向PML
-                    OriginPoint = new OpenTK.Vector2d(port2PMLXB2, 0.0),
-                    XThickness = pmlThickness,
-                    YThickness = 0.0
-                };
 
                 claddingMaId = world.AddMaterial(claddingMa);
                 coreMaId = world.AddMaterial(coreMa);
-
-                DielectricPMLMaterial[] pmlCladdingMas = { pmlCladdingMa1, pmlCladdingMa2 };
-                DielectricPMLMaterial[] pmlCoreMas = { pmlCoreMa1, pmlCoreMa2 };
-                for (int pmlIndex = 0; pmlIndex < pmlCladdingMas.Length; pmlIndex++)
-                {
-                    var pmlCladdingMa = pmlCladdingMas[pmlIndex];
-                    var pmlCoreMa = pmlCoreMas[pmlIndex];
-                    uint pmlCladdingMaId = world.AddMaterial(pmlCladdingMa);
-                    pmlCladdingMaIds.Add(pmlCladdingMaId);
-                    uint pmlCoreMaId = world.AddMaterial(pmlCoreMa);
-                    pmlCoreMaIds.Add(pmlCoreMaId);
-                }
-
-                System.Diagnostics.Debug.Assert(pmlLIdss.Length == pmlCladdingMaIds.Count);
-                System.Diagnostics.Debug.Assert(pmlLIdss.Length == pmlCoreMaIds.Count);
 
                 uint[] lIds = new uint[7 + rodLoopIds.Count];
                 for (int i = 0; i < 7; i++)
@@ -847,44 +652,16 @@ namespace IvyFEMProtoApp
                 {
                     lIds[i + 7] = rodLoopIds[i];
                 }
-                uint[] maIds = new uint[lIds.Length];
-                for (int i = 0; i < lIds.Length; i++)
+                uint[] maIds = new uint[7 + rodLoopIds.Count];
+                for (int i = 0; i < 7; i++)
                 {
-                    uint lId = lIds[i];
-                    uint maId = claddingMaId;
-                    int hitPMLIndex = -1;
-                    for (int pmlIndex = 0; pmlIndex < pmlLIdss.Length; pmlIndex++)
-                    {
-                        IList<uint> pmlLIds = pmlLIdss[pmlIndex];
-                        IList<uint> pmlRodLIds = pmlRodLIdss[pmlIndex];
-                        if (pmlLIds.Contains(lId))
-                        {
-                            hitPMLIndex = pmlIndex;
-                            if (pmlRodLIds.Contains(lId))
-                            {
-                                maId = pmlCoreMaIds[hitPMLIndex];
-                            }
-                            else
-                            {
-                                maId = pmlCladdingMaIds[hitPMLIndex];
-                            }
-                            break;
-                        }
-                    }
-                    if (hitPMLIndex == -1)
-                    {
-                        if (rodLoopIds.Contains(lId))
-                        {
-                            maId = coreMaId;
-                        }
-                        else
-                        {
-                            maId = claddingMaId;
-                        }
-                    }
-
-                    maIds[i] = maId;
+                    maIds[i] = claddingMaId;
                 }
+                for (int i = 0; i < rodLoopIds.Count; i++)
+                {
+                    maIds[i + 7] = coreMaId;
+                }
+
                 for (int i = 0; i < lIds.Length; i++)
                 {
                     uint lId = lIds[i];
@@ -895,9 +672,9 @@ namespace IvyFEMProtoApp
 
             IList<PCWaveguidePortInfo> wgPortInfos = new List<PCWaveguidePortInfo>();
             // ポート情報リスト作成
-            bool[] isPortBc2Reverse = { false, false, false };
-            System.Diagnostics.Debug.Assert(isPortBc2Reverse.Length == (refPortCnt + 1));
-            for (int portId = 0; portId < (refPortCnt + 1); portId++)
+            bool[] isPortBc2Reverse = { true, false, false, false, false };
+            System.Diagnostics.Debug.Assert(isPortBc2Reverse.Length == (portCnt + refPortCnt + 1));
+            for (int portId = 0; portId < (portCnt + refPortCnt + 1); portId++)
             {
                 var wgPortInfo = new PCWaveguidePortInfo();
                 wgPortInfos.Add(wgPortInfo);
@@ -915,10 +692,10 @@ namespace IvyFEMProtoApp
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////////
             // 周期構造入出力導波路
-            for (int portId = 0; portId < refPortCnt; portId++)
+            for (int portId = 0; portId < (portCnt + refPortCnt); portId++)
             {
-                uint lId0 = portInputWgBaseLoopIds[portId];
-                var inputWgRodLoopIds = portInputWgRodLoopIdss[portId];
+                uint lId0 = inputWgBaseLoopIds[portId];
+                var inputWgRodLoopIds = inputWgRodLoopIdss[portId];
                 // ワールド座標系のループIDを取得
                 uint[] lIds = null;
 
@@ -933,28 +710,28 @@ namespace IvyFEMProtoApp
                 wgPortInfo.LoopIds = new List<uint>(lIds);
             }
             {
-                int srcPortId = refPortCnt;
-                PCWaveguidePortInfo wgPortInfo = wgPortInfos[srcPortId];
-                int port1PortId = 0;
-                PCWaveguidePortInfo wgPortInfoPort1 = wgPortInfos[port1PortId];
-                wgPortInfo.LoopIds = new List<uint>(wgPortInfoPort1.LoopIds);
+                int refPortId1 = (int)portCnt;
+                int srcPortId = (int)(portCnt + refPortCnt);
+                var wgPortInfoRefPort1 = wgPortInfos[refPortId1];
+                var wgPortInfoSrc = wgPortInfos[srcPortId];
+                wgPortInfoSrc.LoopIds = new List<uint>(wgPortInfoRefPort1.LoopIds);
             }
 
             // 周期構造境界1
-            int rodCntPort1PMLB1 = rodEIdsPort1PMLB1.Count / 2;
-            int divCntPort1PMLB1 = 3 * rodCntPort1PMLB1 + 1;
-            int rodCntPort2PMLB1 = rodEIdsPort2PMLB1.Count / 2;
-            int divCntPort2PMLB1 = 3 * rodCntPort2PMLB1 + 1;
+            int rodCntPort10B1 = rodEIdsPort10B1.Count / 2;
+            int divCntPort10B1 = 3 * rodCntPort10B1 + 1;
+            int rodCntPort20B1 = rodEIdsPort20B1.Count / 2;
+            int divCntPort20B1 = 3 * rodCntPort20B1 + 1;
             int rodCntPort1B1 = rodEIdsPort1B1.Count / 2;
             int divCntPort1B1 = 3 * rodCntPort1B1 + 1;
             int rodCntPort2B1 = rodEIdsPort2B1.Count / 2;
             int divCntPort2B1 = 3 * rodCntPort2B1 + 1;
-            int[] divCntsB1 = { divCntPort1B1, divCntPort2B1 };
+            int[] divCntsB1 = { divCntPort10B1, divCntPort20B1, divCntPort1B1, divCntPort2B1 };
             IList<uint>[] rodEIdssB1 = {
-                rodEIdsPort1B1, rodEIdsPort2B1
+                rodEIdsPort10B1, rodEIdsPort20B1, rodEIdsPort1B1, rodEIdsPort2B1
             };
-            uint[] eIds0B1 = { 18, 21 };
-            for (int portId = 0; portId < refPortCnt; portId++)
+            uint[] eIds0B1 = { 1, 9, 18, 21 };
+            for (int portId = 0; portId < (portCnt + refPortCnt); portId++)
             {
                 int divCnt = divCntsB1[portId];
                 uint[] eIds = new uint[divCnt];
@@ -977,18 +754,9 @@ namespace IvyFEMProtoApp
                 {
                     uint eId = 0;
                     eId = 22;
-                    if (portId == 0)
+                    for (int p = 0; p <= (portId - 1); p++)
                     {
-                        eId += (uint)((divCntPort1PMLB1 - 1) * 2 + (divCntPort2PMLB1 - 1) * 2);
-                    }
-                    else if (portId == 1)
-                    {
-                        eId += (uint)((divCntPort1PMLB1 - 1) * 2 + (divCntPort2PMLB1 - 1) * 2);
-                        eId += (uint)((divCntPort1B1 - 1) * 2);
-                    }
-                    else
-                    {
-                        System.Diagnostics.Debug.Assert(false);
+                        eId += (uint)((divCntsB1[p] - 1) * 2);
                     }
                     eId += (uint)((divCntsB1[portId] - 1) - (i - 1));
                     eIds[i] = eId;
@@ -1014,18 +782,18 @@ namespace IvyFEMProtoApp
                 wgPortInfo.BcEdgeIds1 = new List<uint>(eIds);
             }
             {
-                int srcPortId = refPortCnt;
-                PCWaveguidePortInfo wgPortInfo = wgPortInfos[srcPortId];
-                int port1PortId = 0;
-                PCWaveguidePortInfo wgPortInfoPort1 = wgPortInfos[port1PortId];
-                wgPortInfo.BcEdgeIds1 = new List<uint>(wgPortInfoPort1.BcEdgeIds1);
+                int refPortId1 = (int)portCnt;
+                int srcPortId = (int)(portCnt + refPortCnt);
+                var wgPortInfoRefPort1 = wgPortInfos[refPortId1];
+                var wgPortInfoSrc = wgPortInfos[srcPortId];
+                wgPortInfoSrc.BcEdgeIds1 = new List<uint>(wgPortInfoRefPort1.BcEdgeIds1);
             }
             // 周期構造境界2
-            IList<uint>[] rodEIdssB2 = { 
-                rodEIdsPort1B2, rodEIdsPort2B2
+            IList<uint>[] rodEIdssB2 = {
+                rodEIdsPort10B2, rodEIdsPort20B2, rodEIdsPort1B2, rodEIdsPort2B2
             };
-            uint[] eIds0B2 = { 19, 20 };
-            for (int portId = 0; portId < refPortCnt; portId++)
+            uint[] eIds0B2 = { 17, 22, 19, 20 };
+            for (int portId = 0; portId < (portCnt + refPortCnt); portId++)
             {
                 int divCnt = divCntsB1[portId];
                 uint[] eIds = new uint[divCnt];
@@ -1048,18 +816,9 @@ namespace IvyFEMProtoApp
                 {
                     uint eId = 0;
                     eId = 22;
-                    if (portId == 0)
+                    for (int p = 0; p <= (portId - 1); p++)
                     {
-                        eId += (uint)((divCntPort1PMLB1 - 1) * 2 + (divCntPort2PMLB1 - 1) * 2);
-                    }
-                    else if (portId == 1)
-                    {
-                        eId += (uint)((divCntPort1PMLB1 - 1) * 2 + (divCntPort2PMLB1 - 1) * 2);
-                        eId += (uint)((divCntPort1B1 - 1) * 2);
-                    }
-                    else
-                    {
-                        System.Diagnostics.Debug.Assert(false);
+                        eId += (uint)((divCntsB1[p] - 1) * 2);
                     }
                     eId += (uint)((divCntsB1[portId] - 1) * 2 - (i - 1));
                     eIds[i] = eId;
@@ -1085,18 +844,18 @@ namespace IvyFEMProtoApp
                 wgPortInfo.BcEdgeIds2 = new List<uint>(eIds);
             }
             {
-                int srcPortId = refPortCnt;
-                PCWaveguidePortInfo wgPortInfo = wgPortInfos[srcPortId];
-                int port1PortId = 0;
-                PCWaveguidePortInfo wgPortInfoPort1 = wgPortInfos[port1PortId];
-                wgPortInfo.BcEdgeIds2 = new List<uint>(wgPortInfoPort1.BcEdgeIds2);
+                int refPortId1 = (int)portCnt;
+                int srcPortId = (int)(portCnt + refPortCnt);
+                var wgPortInfoRefPort1 = wgPortInfos[refPortId1];
+                var wgPortInfoSrc = wgPortInfos[srcPortId];
+                wgPortInfoSrc.BcEdgeIds2 = new List<uint>(wgPortInfoRefPort1.BcEdgeIds2);
             }
 
             {
-                world.SetIncidentPortId(quantityId, 0);
+                world.SetIncidentPortId(quantityId, (int)portCnt); // refport1
                 world.SetIncidentModeId(quantityId, 0);
                 IList<PortCondition> portConditions = world.GetPortConditions(quantityId);
-                for (int portId = 0; portId < (refPortCnt + 1); portId++)
+                for (int portId = 0; portId < (portCnt + refPortCnt + 1); portId++)
                 {
                     PCWaveguidePortInfo wgPortInfo = wgPortInfos[portId];
                     IList<uint> lIds = wgPortInfo.LoopIds;
@@ -1124,13 +883,13 @@ namespace IvyFEMProtoApp
             world.MakeElements();
 
             // ポートの境界上の節点を準備する
-            for (int portId = 0; portId < (refPortCnt + 1); portId++)
+            for (int portId = 0; portId < (portCnt + refPortCnt + 1); portId++)
             {
                 PCWaveguidePortInfo wgPortInfo = wgPortInfos[portId];
                 wgPortInfo.SetupAfterMakeElements(world, quantityId, (uint)portId);
             }
             // フォトニック結晶導波路チャンネル上節点を取得する
-            for (int portId = 0; portId < (refPortCnt + 1); portId++)
+            for (int portId = 0; portId < (portCnt + refPortCnt + 1); portId++)
             {
                 PCWaveguidePortInfo wgPortInfo = wgPortInfos[portId];
                 wgPortInfo.PCChannelCoIds = new List<IList<int>>();
@@ -1256,7 +1015,7 @@ namespace IvyFEMProtoApp
                 double k0 = omega / Constants.C0;
                 System.Diagnostics.Debug.WriteLine("a / λ: " + normalizedFreq);
 
-                var FEM = new PCWaveguide2DPMLFEM(world);
+                var FEM = new PCWaveguide2DPBCFEM(world);
                 {
                     var solver = new IvyFEM.Linear.LapackEquationSolver();
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
@@ -1278,6 +1037,7 @@ namespace IvyFEMProtoApp
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
                     //FEM.Solver = solver;
                 }
+                FEM.RefPortCount = refPortCnt;
                 FEM.IsTMMode = isTMMode;
                 FEM.WgPortInfos = wgPortInfos;
                 FEM.Frequency = freq;
