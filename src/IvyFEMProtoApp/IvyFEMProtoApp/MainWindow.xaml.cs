@@ -753,6 +753,29 @@ namespace IvyFEMProtoApp
             Problem.HWaveguidePMLTDProblem3(this);
         }
 
+        private void Waveguide2DEigen1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            Problem.Waveguide2DEigenProblem1(this, false);
+            WPFUtils.DoEvents(20 * 1000);
+            Problem.Waveguide2DEigenProblem1(this, true);
+        }
+
+        private void Waveguide2DEigen2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            Problem.Waveguide2DEigenProblem2(this);
+        }
+
+        private void Waveguide2DEigen3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            Problem.Waveguide2DEigenProblem3(this);
+        }
+
         private void SquareLatticePCWaveguideEigen1Btn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);

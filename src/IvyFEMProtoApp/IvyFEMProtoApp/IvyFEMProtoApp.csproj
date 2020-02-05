@@ -172,8 +172,11 @@
     <Compile Include="Problem.EMHWaveguideHigherOrderABCTD2_0.cs" />
     <Compile Include="Problem.EMHWaveguideHigherOrderABCTD1.cs" />
     <Compile Include="Problem.EMHWaveguideHigherOrderABCTD1_0.cs" />
+    <Compile Include="Problem.EMWaveguide2DEigen3.cs" />
+    <Compile Include="Problem.EMWaveguide2DEigen2.cs" />
     <Compile Include="Problem.FFT.cs" />
     <Compile Include="Problem.OptimizeProblem1.cs" />
+    <Compile Include="Problem.EMWaveguide2DEigen1.cs" />
     <Compile Include="Problem.PBGTriangleLattice2.cs" />
     <Compile Include="Problem.PBGTriangleLattice1.cs" />
     <Compile Include="Problem.PBGSquareLattice1.cs" />
