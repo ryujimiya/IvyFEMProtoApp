@@ -105,6 +105,10 @@
                     <MenuItem Header="Waveguide 2D Eigen(1)" Click="Waveguide2DEigen1Btn_Click"/>
                     <MenuItem Header="Waveguide 2D Eigen(2)" Click="Waveguide2DEigen2Btn_Click"/>
                     <MenuItem Header="Waveguide 2D Eigen(3)" Click="Waveguide2DEigen3Btn_Click"/>
+                    <Separator/>
+                    <MenuItem Header="Waveguide 2D Eigen 2nd Order(1)" Click="Waveguide2DEigen2ndOrder1Btn_Click"/>
+                    <MenuItem Header="Waveguide 2D Eigen 2nd Order(2)" Click="Waveguide2DEigen2ndOrder2Btn_Click"/>
+                    <MenuItem Header="Waveguide 2D Eigen 2nd Order(3)" Click="Waveguide2DEigen2ndOrder3Btn_Click"/>
                 </MenuItem>
                 <MenuItem Header="Photonic Crystal(Eigen)">
                     <MenuItem Header="PC Waveguide(Eigen)(Square Lattice)" Click="SquareLatticePCWaveguideEigen1Btn_Click"/>

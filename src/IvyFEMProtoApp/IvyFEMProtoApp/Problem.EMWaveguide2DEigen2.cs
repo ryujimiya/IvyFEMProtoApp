@@ -12,7 +12,7 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void Waveguide2DEigenProblem2(MainWindow mainWindow)
+        public void Waveguide2DEigenProblem2(MainWindow mainWindow, uint feOrder)
         {
             double waveguideWidth = 1.0;
             double waveguideHeight = (3.0 / 4.0) * waveguideWidth;
@@ -25,7 +25,20 @@ namespace IvyFEMProtoApp
             bool isMagneticField = false;
             // ストリップ導体の境界条件が磁界の場合注意を要するので対応しない
             System.Diagnostics.Debug.Assert(!isMagneticField);
-            double eLen = boardHeight * 0.25;
+            //double eLen = boardHeight * 0.25;
+            double eLen = 0.0;
+            if (feOrder == 1)
+            {
+                eLen = boardHeight * 0.25;
+            }
+            else if (feOrder == 2)
+            {
+                eLen = boardHeight * 0.50;
+            }
+            else
+            {
+                System.Diagnostics.Debug.Assert(false);
+            }
             // 規格化周波数: h/λ
             double sFreq = 0.0;
             double eFreq = 1.0;
@@ -95,11 +108,11 @@ namespace IvyFEMProtoApp
             uint zQuantityId;
             {
                 uint tdof = 1; // 複素数(辺方向成分)
-                uint tfeOrder = 1;
+                uint tfeOrder = feOrder;
                 tQuantityId = world.AddQuantity(tdof, tfeOrder, FiniteElementType.Edge);
 
                 uint zdof = 1; // 複素数
-                uint zfeOrder = 1;
+                uint zfeOrder = feOrder;
                 zQuantityId = world.AddQuantity(zdof, zfeOrder, FiniteElementType.ScalarLagrange);
             }
 

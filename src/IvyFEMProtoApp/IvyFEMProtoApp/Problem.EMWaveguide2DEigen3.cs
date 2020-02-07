@@ -12,7 +12,7 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void Waveguide2DEigenProblem3(MainWindow mainWindow)
+        public void Waveguide2DEigenProblem3(MainWindow mainWindow, uint feOrder)
         {
             double waveguideWidth = 1.0;
             double waveguideHeight = 0.75 * waveguideWidth;
@@ -27,7 +27,20 @@ namespace IvyFEMProtoApp
             // true: 磁界
             bool isMagneticField = false;
             System.Diagnostics.Debug.Assert(!isMagneticField);
-            double eLen = coreHeight * 0.25;
+            //double eLen = coreHeight * 0.25;
+            double eLen = 0.0;
+            if (feOrder == 1)
+            {
+                eLen = coreHeight * 0.25;
+            }
+            else if (feOrder == 2)
+            {
+                eLen = coreHeight * 0.50;
+            }
+            else
+            {
+                System.Diagnostics.Debug.Assert(false);
+            }
             // 規格化周波数: h/λ
             double sFreq = 0.0;
             double eFreq = 15.0 / (2.0 * Math.PI);
@@ -90,11 +103,11 @@ namespace IvyFEMProtoApp
             uint zQuantityId;
             {
                 uint tdof = 1; // 複素数(辺方向成分)
-                uint tfeOrder = 1;
+                uint tfeOrder = feOrder;
                 tQuantityId = world.AddQuantity(tdof, tfeOrder, FiniteElementType.Edge);
 
                 uint zdof = 1; // 複素数
-                uint zfeOrder = 1;
+                uint zfeOrder = feOrder;
                 zQuantityId = world.AddQuantity(zdof, zfeOrder, FiniteElementType.ScalarLagrange);
             }
 

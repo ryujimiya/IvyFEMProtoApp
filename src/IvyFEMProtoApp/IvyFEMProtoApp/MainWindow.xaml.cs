@@ -757,23 +757,52 @@ namespace IvyFEMProtoApp
         {
             SetProblemTitle(e.Source as MenuItem);
 
-            Problem.Waveguide2DEigenProblem1(this, false);
+            uint feOrder = 1;
+            Problem.Waveguide2DEigenProblem1(this, false, feOrder);
             WPFUtils.DoEvents(20 * 1000);
-            Problem.Waveguide2DEigenProblem1(this, true);
+            Problem.Waveguide2DEigenProblem1(this, true, feOrder);
         }
 
         private void Waveguide2DEigen2Btn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
 
-            Problem.Waveguide2DEigenProblem2(this);
+            uint feOrder = 1;
+            Problem.Waveguide2DEigenProblem2(this, feOrder);
         }
 
         private void Waveguide2DEigen3Btn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
 
-            Problem.Waveguide2DEigenProblem3(this);
+            uint feOrder = 1;
+            Problem.Waveguide2DEigenProblem3(this, feOrder);
+        }
+
+        private void Waveguide2DEigen2ndOrder1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            uint feOrder = 2;
+            Problem.Waveguide2DEigenProblem1(this, false, feOrder);
+            WPFUtils.DoEvents(20 * 1000);
+            Problem.Waveguide2DEigenProblem1(this, true, feOrder);
+        }
+
+        private void Waveguide2DEigen2ndOrder2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            uint feOrder = 2;
+            Problem.Waveguide2DEigenProblem2(this, feOrder);
+        }
+
+        private void Waveguide2DEigen2ndOrder3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            uint feOrder = 2;
+            Problem.Waveguide2DEigenProblem3(this, feOrder);
         }
 
         private void SquareLatticePCWaveguideEigen1Btn_Click(object sender, RoutedEventArgs e)
