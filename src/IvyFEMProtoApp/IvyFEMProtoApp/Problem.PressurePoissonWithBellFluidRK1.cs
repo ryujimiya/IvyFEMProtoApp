@@ -9,9 +9,9 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void PressurePoissonFluidRKTDProblem1(MainWindow mainWindow)
+        public void PressurePoissonWithBellFluidRKTDProblem1(MainWindow mainWindow)
         {
-            FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoisson;
+            FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoissonWithBell;
             CadObject2D cad = new CadObject2D();
             {
                 uint lId1 = 0;
@@ -37,20 +37,32 @@ namespace IvyFEMProtoApp
             mainWindow.GLControl.Update();
             WPFUtils.DoEvents();
 
-            double eLen = 0.08;
+            //double eLen = 0.08;
+            double eLen = 0.16;
             Mesher2D mesher = new Mesher2D(cad, eLen);
 
             FEWorld world = new FEWorld();
             world.Mesh = mesher;
             uint vQuantityId;
             uint pQuantityId;
+            uint pxQuantityId;
+            uint pyQuantityId;
+            uint pxxQuantityId;
+            uint pxyQuantityId;
+            uint pyyQuantityId;
             {
                 uint vDof = 2; // 2次元ベクトル
                 uint pDof = 1; // スカラー
-                uint vFEOrder = 1;// 2;
-                uint pFEOrder = 1;
+                uint vFEOrder = 2;
+                uint pFEOrder = 5; // Bell's element
                 vQuantityId = world.AddQuantity(vDof, vFEOrder, FiniteElementType.ScalarLagrange);
-                pQuantityId = world.AddQuantity(pDof, pFEOrder, FiniteElementType.ScalarLagrange);
+                int pQuantityBaseOffset = (int)vQuantityId + 1;
+                pQuantityId = world.AddQuantity(pDof, pFEOrder, FiniteElementType.ScalarBell, pQuantityBaseOffset);
+                pxQuantityId = world.AddQuantity(pDof, pFEOrder, FiniteElementType.ScalarBell, pQuantityBaseOffset);
+                pyQuantityId = world.AddQuantity(pDof, pFEOrder, FiniteElementType.ScalarBell, pQuantityBaseOffset);
+                pxxQuantityId = world.AddQuantity(pDof, pFEOrder, FiniteElementType.ScalarBell, pQuantityBaseOffset);
+                pxyQuantityId = world.AddQuantity(pDof, pFEOrder, FiniteElementType.ScalarBell, pQuantityBaseOffset);
+                pyyQuantityId = world.AddQuantity(pDof, pFEOrder, FiniteElementType.ScalarBell, pQuantityBaseOffset);
             }
             world.TriIntegrationPointCount = TriangleIntegrationPointCount.Point7;
 

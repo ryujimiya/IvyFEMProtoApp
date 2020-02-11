@@ -1121,23 +1121,22 @@ namespace IvyFEMProtoApp
             Problem.PressurePoissonWithBellFluidTDProblem2(this);
         }
 
-        /*
         private void StdGPressurePoissonFluid1RKTDBtn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
 
-            //Problem.PressurePoissonFluidRKTDProblem1(this);
-            MessageBox.Show("Not implemented yet!");
+            //Problem.PressurePoissonFluidRKTDProblem1(this); // NG
+            Problem.PressurePoissonWithBellFluidRKTDProblem1(this);
         }
 
         private void StdGPressurePoissonFluid2RKTDBtn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
 
-            //Problem.PressurePoissonFluidRKTDProblem2(this);
-            MessageBox.Show("Not implemented yet!");
+            MessageBox.Show("FIX ME: You won't get results.");
+            //Problem.PressurePoissonFluidRKTDProblem2(this); // NG
+            Problem.PressurePoissonWithBellFluidRKTDProblem2(this); // NG
         }
-        */
 
         private void Optimize1Btn_Click(object sender, RoutedEventArgs e)
         {

@@ -9,20 +9,27 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void PressurePoissonFluidRKTDProblem1(MainWindow mainWindow)
+        public void PressurePoissonWithBellFluidRKTDProblem2(MainWindow mainWindow)
         {
             FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoisson;
             CadObject2D cad = new CadObject2D();
             {
                 uint lId1 = 0;
+                uint lId2 = 0;
                 {
                     IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
-                    pts.Add(new OpenTK.Vector2d(0.0, 0.0));
-                    pts.Add(new OpenTK.Vector2d(1.0, 0.0));
-                    pts.Add(new OpenTK.Vector2d(1.0, 1.0));
+                    pts.Add(new OpenTK.Vector2d(0, 0.7));
+                    pts.Add(new OpenTK.Vector2d(0.5, 0.7));
+                    pts.Add(new OpenTK.Vector2d(0.5, 0.0));
+                    pts.Add(new OpenTK.Vector2d(1.5, 0.0));
+                    pts.Add(new OpenTK.Vector2d(2.0, 0.0));
+                    pts.Add(new OpenTK.Vector2d(2.0, 1.0));
+                    pts.Add(new OpenTK.Vector2d(1.5, 1.0));
                     pts.Add(new OpenTK.Vector2d(0.0, 1.0));
                     lId1 = cad.AddPolygon(pts).AddLId;
                     System.Diagnostics.Debug.Assert(lId1 == 1);
+                    lId2 = cad.ConnectVertexLine(4, 7).AddLId;
+                    System.Diagnostics.Debug.Assert(lId2 == 2);
                 }
             }
 
@@ -44,40 +51,61 @@ namespace IvyFEMProtoApp
             world.Mesh = mesher;
             uint vQuantityId;
             uint pQuantityId;
+            uint pxQuantityId;
+            uint pyQuantityId;
+            uint pxxQuantityId;
+            uint pxyQuantityId;
+            uint pyyQuantityId;
             {
                 uint vDof = 2; // 2次元ベクトル
                 uint pDof = 1; // スカラー
-                uint vFEOrder = 1;// 2;
-                uint pFEOrder = 1;
+                uint vFEOrder = 2;
+                uint pFEOrder = 5; // Bell's element
                 vQuantityId = world.AddQuantity(vDof, vFEOrder, FiniteElementType.ScalarLagrange);
-                pQuantityId = world.AddQuantity(pDof, pFEOrder, FiniteElementType.ScalarLagrange);
+                int pQuantityBaseOffset = (int)vQuantityId + 1;
+                pQuantityId = world.AddQuantity(pDof, pFEOrder, FiniteElementType.ScalarBell, pQuantityBaseOffset);
+                pxQuantityId = world.AddQuantity(pDof, pFEOrder, FiniteElementType.ScalarBell, pQuantityBaseOffset);
+                pyQuantityId = world.AddQuantity(pDof, pFEOrder, FiniteElementType.ScalarBell, pQuantityBaseOffset);
+                pxxQuantityId = world.AddQuantity(pDof, pFEOrder, FiniteElementType.ScalarBell, pQuantityBaseOffset);
+                pxyQuantityId = world.AddQuantity(pDof, pFEOrder, FiniteElementType.ScalarBell, pQuantityBaseOffset);
+                pyyQuantityId = world.AddQuantity(pDof, pFEOrder, FiniteElementType.ScalarBell, pQuantityBaseOffset);
             }
             world.TriIntegrationPointCount = TriangleIntegrationPointCount.Point7;
 
             {
                 world.ClearMaterial();
-
-                NewtonFluidMaterial ma = null;
-                ma = new NewtonFluidMaterial
+                NewtonFluidMaterial ma1 = null;
+                NewtonFluidMaterial ma2 = null;
+                ma1 = new NewtonFluidMaterial
                 {
                     MassDensity = 1.2,
                     GravityX = 0.0,
                     GravityY = 0.0,
                     Mu = 0.02//0.002//0.00002
                 };
-                uint maId = world.AddMaterial(ma);
+                ma2 = new NewtonFluidMaterial(ma1);
+                ma2.Mu = ma1.Mu * 10.0;
+                uint maId1 = world.AddMaterial(ma1);
+                uint maId2 = world.AddMaterial(ma2);
 
                 uint lId1 = 1;
-                world.SetCadLoopMaterial(lId1, maId);
-
-                uint[] eIds1 = { 1, 2, 3, 4 };
+                world.SetCadLoopMaterial(lId1, maId1);
+                uint[] eIds1 = { 1, 2, 3, 7, 8 };
                 foreach (uint eId in eIds1)
                 {
-                    world.SetCadEdgeMaterial(eId, maId);
+                    world.SetCadEdgeMaterial(eId, maId1);
+                }
+
+                uint lId2 = 2;
+                world.SetCadLoopMaterial(lId2, maId2);
+                uint[] eIds2 = { 4, 5, 6 };
+                foreach (uint eId in eIds2)
+                {
+                    world.SetCadEdgeMaterial(eId, maId2);
                 }
             }
 
-            uint[] zeroEIds = { 1, 2, 4 };
+            uint[] zeroEIds = { 1, 2, 3, 4, 6, 7 };
             var zeroFixedCads = world.GetZeroFieldFixedCads(vQuantityId);
             foreach (uint eId in zeroEIds)
             {
@@ -86,20 +114,38 @@ namespace IvyFEMProtoApp
                 zeroFixedCads.Add(fixedCad);
             }
 
+            // TEST Outflow p = 0の条件にすると収束する
+            uint[] pZeroEIds = { 5 };
+            var pZeroFixedCads = world.GetZeroFieldFixedCads(pQuantityId);
+            foreach (uint eId in pZeroEIds)
+            {
+                // Scalar
+                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.Scalar);
+                pZeroFixedCads.Add(fixedCad);
+            }
+
+            ///////////
+            // 分布速度
+            Func<double, double> vFunc = y => -0.4 * 4.0 / (0.3 * 0.3) * (y - 0.7) * (y - 1.0);
+            //////////
+            DistributedFieldFixedCad srcFixedCad;
             {
                 var fixedCadDatas = new[]
                 {
-                    new { CadId = (uint)3, CadElemType = CadElementType.Edge,
-                        FixedDofIndexs = new List<uint> { 0, 1 }, Values = new List<double> { 0.5, 0.0 } }
+                    new { CadId = (uint)8, CadElemType = CadElementType.Edge,
+                        FixedDofIndexs = new List<uint> { 0, 1 }, Values = new List<double> { 0.0, 0.0 } }
                 };
                 IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(vQuantityId);
                 foreach (var data in fixedCadDatas)
                 {
                     // Vector2
-                    var fixedCad = new ConstFieldFixedCad(data.CadId, data.CadElemType,
-                        FieldValueType.Vector2, data.FixedDofIndexs, data.Values);
+                    // Note: 分布速度条件
+                    var fixedCad = new DistributedFieldFixedCad(data.CadId, data.CadElemType,
+                        FieldValueType.Vector2, data.FixedDofIndexs);
                     fixedCads.Add(fixedCad);
                 }
+
+                srcFixedCad = fixedCads[0] as DistributedFieldFixedCad;
             }
 
             // p境界
@@ -112,7 +158,9 @@ namespace IvyFEMProtoApp
                         new { EId = (uint)1 },
                         new { EId = (uint)2 },
                         new { EId = (uint)3 },
-                        new { EId = (uint)4 }
+                        new { EId = (uint)4 },
+                        new { EId = (uint)6 },
+                        new { EId = (uint)7 }
                     };
                     foreach (var data in portDatas)
                     {
@@ -124,6 +172,41 @@ namespace IvyFEMProtoApp
                         portConditions.Add(portCondition);
                     }
                 }
+                {
+                    FlowPressureBCType bcType = FlowPressureBCType.NormalInflow;
+                    var portDatas = new[]
+                    {
+                        new { EId = (uint)8 }
+                    };
+                    foreach (var data in portDatas)
+                    {
+                        // Scalar
+                        IList<uint> eIds = new List<uint>();
+                        eIds.Add(data.EId);
+                        var portCondition = new PortCondition(eIds, FieldValueType.Scalar);
+                        portCondition.IntAdditionalParameters = new List<int> { (int)bcType };
+                        portConditions.Add(portCondition);
+                    }
+                }
+                /*
+                // 収束しない
+                {
+                    FlowPressureBCType bcType = FlowPressureBCType.Outflow;
+                    var portDatas = new[]
+                    {
+                        new { EId = (uint)5 }
+                    };
+                    foreach (var data in portDatas)
+                    {
+                        // Scalar
+                        IList<uint> eIds = new List<uint>();
+                        eIds.Add(data.EId);
+                        var portCondition = new PortCondition(eIds, FieldValueType.Scalar);
+                        portCondition.IntAdditionalParameters = new List<int> { (int)bcType };
+                        portConditions.Add(portCondition);
+                    }
+                }
+                */
             }
 
             world.MakeElements();
@@ -137,7 +220,7 @@ namespace IvyFEMProtoApp
                 world.ClearFieldValue();
                 // Vector2
                 vValueId = world.AddFieldValue(FieldValueType.Vector2,
-                    FieldDerivativeType.Value , vQuantityId, false, FieldShowType.Real);
+                    FieldDerivativeType.Value, vQuantityId, false, FieldShowType.Real);
                 prevVValueId = world.AddFieldValue(FieldValueType.Vector2,
                     FieldDerivativeType.Value, vQuantityId, false, FieldShowType.Real);
                 bubbleVValueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivativeType.Value,
@@ -170,13 +253,25 @@ namespace IvyFEMProtoApp
                 nu = ma.Mu / ma.MassDensity;
             }
             double t = 0;
-            //double dt = 0.02;
+            //double dt = 0.002;
             //int nTime = 100;
-            //double dt = 0.1 * (1.0 / 4.0) * (eLen * eLen / nu);
+            //double dt = 0.02 * (1.0 / 4.0) * (eLen * eLen / nu);
             double dt = 0.002;
             int nTime = 200;
             for (int iTime = 0; iTime <= nTime; iTime++)
             {
+                // 分布速度条件
+                {
+                    srcFixedCad.InitDoubleValues();
+                    foreach (int coId in srcFixedCad.CoIds)
+                    {
+                        double[] coord = world.GetCoord(vQuantityId, coId);
+                        double[] values = srcFixedCad.GetDoubleValues(coId);
+                        values[0] = vFunc(coord[1]);
+                        values[1] = 0;
+                    }
+                }
+
                 var FEM = new Fluid2DRKTDFEM(world, dt, vValueId, prevVValueId);
                 FEM.EquationType = fluidEquationType;
                 {

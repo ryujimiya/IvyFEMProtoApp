@@ -206,6 +206,8 @@
     <Compile Include="Problem.PCWaveguideTriangleLattice1_0.cs" />
     <Compile Include="Problem.PCWaveguideSquareLattice1.cs" />
     <Compile Include="Problem.PCWaveguideSquareLattice1_0.cs" />
+    <Compile Include="Problem.PressurePoissonWithBellFluidRK2.cs" />
+    <Compile Include="Problem.PressurePoissonWithBellFluidRK1.cs" />
     <Compile Include="Problem.PressurePoissonWithBellFluid2.cs" />
     <Compile Include="Problem.PressurePoissonWithBellFluid1.cs" />
     <Compile Include="Problem.PressurePoissonFluidRK2.cs" />
