@@ -11,6 +11,8 @@ namespace IvyFEMProtoApp
     {
         public void VorticityFluidProblem1(MainWindow mainWindow, FluidEquationType fluidEquationType)
         {
+            //FluidEquationType fluidEquationType = FluidEquationType.StdGVorticity;
+            //FluidEquationType fluidEquationType = FluidEquationType.SUPGGVorticity;
             CadObject2D cad = new CadObject2D();
             {
                 uint lId1 = 0;
@@ -281,6 +283,8 @@ namespace IvyFEMProtoApp
 
         public void VorticityFluidTDProblem1(MainWindow mainWindow, FluidEquationType fluidEquationType)
         {
+            //FluidEquationType fluidEquationType = FluidEquationType.StdGVorticity;
+            //FluidEquationType fluidEquationType = FluidEquationType.SUPGGVorticity;
             CadObject2D cad = new CadObject2D();
             {
                 uint lId1 = 0;

@@ -11,6 +11,8 @@ namespace IvyFEMProtoApp
     {
         public void FluidProblem1(MainWindow mainWindow, FluidEquationType fluidEquationType)
         {
+            //FluidEquationType fluidEquationType = FluidEquationType.StdGNavierStokes
+            //FluidEquationType fluidEquationType = FluidEquationType.SUPGNavierStokes;
             CadObject2D cad = new CadObject2D();
             {
                 uint lId1 = 0;
@@ -246,6 +248,8 @@ namespace IvyFEMProtoApp
 
         public void FluidTDProblem1(MainWindow mainWindow, FluidEquationType fluidEquationType)
         {
+            //FluidEquationType fluidEquationType = FluidEquationType.StdGNavierStokes
+            //FluidEquationType fluidEquationType = FluidEquationType.SUPGNavierStokes;
             CadObject2D cad = new CadObject2D();
             {
                 uint lId1 = 0;

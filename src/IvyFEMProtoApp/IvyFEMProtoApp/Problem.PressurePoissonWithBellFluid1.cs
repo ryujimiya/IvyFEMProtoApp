@@ -9,9 +9,10 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void PressurePoissonWithBellFluidProblem1(MainWindow mainWindow)
+        public void PressurePoissonWithBellFluidProblem1(MainWindow mainWindow, FluidEquationType fluidEquationType)
         {
-            FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoissonWithBell;
+            //FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoissonWithBell;
+            //FluidEquationType fluidEquationType = FluidEquationType.SUPGPressurePoissonWithBell;
             CadObject2D cad = new CadObject2D();
             {
                 uint lId1 = 0;
@@ -38,6 +39,18 @@ namespace IvyFEMProtoApp
             WPFUtils.DoEvents();
 
             double eLen = 0.08;
+            if (fluidEquationType == FluidEquationType.StdGPressurePoissonWithBell)
+            {
+                eLen = 0.08;
+            }
+            else if (fluidEquationType == FluidEquationType.SUPGPressurePoissonWithBell)
+            {
+                eLen = 0.04;
+            }
+            else
+            {
+                System.Diagnostics.Debug.Assert(false);
+            }
             Mesher2D mesher = new Mesher2D(cad, eLen);
 
             FEWorld world = new FEWorld();
@@ -68,13 +81,31 @@ namespace IvyFEMProtoApp
             {
                 world.ClearMaterial();
                 NewtonFluidMaterial ma = null;
-                ma = new NewtonFluidMaterial
+                if (fluidEquationType == FluidEquationType.StdGPressurePoissonWithBell)
                 {
-                    MassDensity = 1.2,
-                    GravityX = 0.0,
-                    GravityY = 0.0,
-                    Mu = 0.02//0.002//0.00002
-                };
+                    ma = new NewtonFluidMaterial
+                    {
+                        MassDensity = 1.2,
+                        GravityX = 0.0,
+                        GravityY = 0.0,
+                        Mu = 0.02//0.002//0.00002
+                    };
+                }
+                else if (fluidEquationType == FluidEquationType.SUPGPressurePoissonWithBell)
+                {
+                    ma = new NewtonFluidMaterial
+                    {
+                        MassDensity = 1.2,
+                        GravityX = 0.0,
+                        GravityY = 0.0,
+                        //Mu = 0.0002//0.00002
+                        Mu = 0.0002//DEBUG
+                    };
+                }
+                else
+                {
+                    System.Diagnostics.Debug.Assert(false);
+                }
                 uint maId = world.AddMaterial(ma);
 
                 uint lId1 = 1;
@@ -194,7 +225,20 @@ namespace IvyFEMProtoApp
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
                     //FEM.Solver = solver;
                 }
-                FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6;
+                //FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6;
+                if (fluidEquationType == FluidEquationType.StdGPressurePoissonWithBell)
+                {
+                    FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6;
+                }
+                else if (fluidEquationType == FluidEquationType.SUPGPressurePoissonWithBell)
+                {
+                    //FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6;
+                    FEM.ConvRatioToleranceForNonlinearIter = 1.0e-3;//1.0e-4;//DEBUG
+                }
+                else
+                {
+                    System.Diagnostics.Debug.Assert(false);
+                }
                 FEM.Solve();
                 double[] U = FEM.U;
 
@@ -209,9 +253,10 @@ namespace IvyFEMProtoApp
             }
         }
 
-        public void PressurePoissonWithBellFluidTDProblem1(MainWindow mainWindow)
+        public void PressurePoissonWithBellFluidTDProblem1(MainWindow mainWindow, FluidEquationType fluidEquationType)
         {
-            FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoissonWithBell;
+            //FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoissonWithBell;
+            //FluidEquationType fluidEquationType = FluidEquationType.SUPGPressurePoissonWithBell;
             CadObject2D cad = new CadObject2D();
             {
                 uint lId1 = 0;
@@ -238,6 +283,18 @@ namespace IvyFEMProtoApp
             WPFUtils.DoEvents();
 
             double eLen = 0.08;
+            if (fluidEquationType == FluidEquationType.StdGPressurePoissonWithBell)
+            {
+                eLen = 0.08;
+            }
+            else if (fluidEquationType == FluidEquationType.SUPGPressurePoissonWithBell)
+            {
+                eLen = 0.04;
+            }
+            else
+            {
+                System.Diagnostics.Debug.Assert(false);
+            }
             Mesher2D mesher = new Mesher2D(cad, eLen);
 
             FEWorld world = new FEWorld();
@@ -269,13 +326,31 @@ namespace IvyFEMProtoApp
                 world.ClearMaterial();
 
                 NewtonFluidMaterial ma = null;
-                ma = new NewtonFluidMaterial
+                if (fluidEquationType == FluidEquationType.StdGPressurePoissonWithBell)
                 {
-                    MassDensity = 1.2,
-                    GravityX = 0.0,
-                    GravityY = 0.0,
-                    Mu = 0.02//0.002//0.00002
-                };
+                    ma = new NewtonFluidMaterial
+                    {
+                        MassDensity = 1.2,
+                        GravityX = 0.0,
+                        GravityY = 0.0,
+                        Mu = 0.02//0.002//0.00002
+                    };
+                }
+                else if (fluidEquationType == FluidEquationType.SUPGPressurePoissonWithBell)
+                {
+                    ma = new NewtonFluidMaterial
+                    {
+                        MassDensity = 1.2,
+                        GravityX = 0.0,
+                        GravityY = 0.0,
+                        //Mu = 0.0002//0.00002
+                        Mu = 0.0002//DEBUG
+                    };
+                }
+                else
+                {
+                    System.Diagnostics.Debug.Assert(false);
+                }
                 uint maId = world.AddMaterial(ma);
 
                 uint lId1 = 1;
@@ -409,7 +484,20 @@ namespace IvyFEMProtoApp
                     //FEM.Solver = solver;
                 }
 
-                FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6;
+                //FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6;
+                if (fluidEquationType == FluidEquationType.StdGPressurePoissonWithBell)
+                {
+                    FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6;
+                }
+                else if (fluidEquationType == FluidEquationType.SUPGPressurePoissonWithBell)
+                {
+                    //FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6;
+                    FEM.ConvRatioToleranceForNonlinearIter = 1.0e-4;//DEBUG
+                }
+                else
+                {
+                    System.Diagnostics.Debug.Assert(false);
+                }
                 FEM.Solve();
                 double[] U = FEM.U;
 

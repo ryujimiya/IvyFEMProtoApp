@@ -6,7 +6,7 @@
         xmlns:OpenTK="clr-namespace:OpenTK;assembly=OpenTK.GLControl"        
         xmlns:local="clr-namespace:IvyFEMProtoApp"
         mc:Ignorable="d"
-        Title="IvyFEMProtoApp" Height="450" Width="500" Loaded="Window_Loaded" Activated="Window_Activated" Closing="Window_Closing">
+        Title="IvyFEMProtoApp" Height="460" Width="500" Loaded="Window_Loaded" Activated="Window_Activated" Closing="Window_Closing">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -178,6 +178,15 @@
                 <MenuItem Header="Pressure Poisson(RK)">
                     <MenuItem Header="Pressure Poisson(RK)(1)(Time Domain)" Click="StdGPressurePoissonFluid1RKTDBtn_Click"/>
                     <MenuItem Header="Pressure Poisson(RK)(2)(Time Domain)" Click="StdGPressurePoissonFluid2RKTDBtn_Click"/>
+                </MenuItem>
+                <MenuItem Header="Pressure Poisson(SUPG)">
+                    <MenuItem Header="Pressure Poisson(SUPG)(1)" Click="SUPGPressurePoissonFluid1Btn_Click"/>
+                    <MenuItem Header="Pressure Poisson(SUPG)(1)(Time Domain)" Click="SUPGPressurePoissonFluid1TDBtn_Click"/>
+                    <MenuItem Header="Pressure Poisson(SUPG)(2)" Click="SUPGPressurePoissonFluid2Btn_Click"/>
+                    <MenuItem Header="Pressure Poisson(SUPG)(2)(Time Domain)" Click="SUPGPressurePoissonFluid2TDBtn_Click"/>
+                </MenuItem>
+                <MenuItem Header="Pressure Poisson(SUPG)(RK)">
+                    <MenuItem Header="Pressure Poisson(SUPG)(RK)(1)(Time Domain)" Click="SUPGPressurePoissonFluid1RKTDBtn_Click"/>
                 </MenuItem>
                 <MenuItem Header="Optimizing">
                     <MenuItem Header="H-Plane Waveguide" Click="Optimize1Btn_Click"/>

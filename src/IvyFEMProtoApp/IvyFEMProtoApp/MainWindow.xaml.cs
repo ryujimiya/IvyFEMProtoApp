@@ -1094,7 +1094,9 @@ namespace IvyFEMProtoApp
             SetProblemTitle(e.Source as MenuItem);
 
             //Problem.PressurePoissonFluidProblem1(this);
-            Problem.PressurePoissonWithBellFluidProblem1(this);
+
+            FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoissonWithBell;
+            Problem.PressurePoissonWithBellFluidProblem1(this, fluidEquationType);
         }
 
         private void StdGPressurePoissonFluid1TDBtn_Click(object sender, RoutedEventArgs e)
@@ -1102,7 +1104,9 @@ namespace IvyFEMProtoApp
             SetProblemTitle(e.Source as MenuItem);
 
             //Problem.PressurePoissonFluidTDProblem1(this);
-            Problem.PressurePoissonWithBellFluidTDProblem1(this);
+
+            FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoissonWithBell;
+            Problem.PressurePoissonWithBellFluidTDProblem1(this, fluidEquationType);
         }
 
         private void StdGPressurePoissonFluid2Btn_Click(object sender, RoutedEventArgs e)
@@ -1110,7 +1114,9 @@ namespace IvyFEMProtoApp
             SetProblemTitle(e.Source as MenuItem);
 
             //Problem.PressurePoissonFluidProblem2(this);
-            Problem.PressurePoissonWithBellFluidProblem2(this);
+
+            FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoissonWithBell;
+            Problem.PressurePoissonWithBellFluidProblem2(this, fluidEquationType);
         }
 
         private void StdGPressurePoissonFluid2TDBtn_Click(object sender, RoutedEventArgs e)
@@ -1118,7 +1124,9 @@ namespace IvyFEMProtoApp
             SetProblemTitle(e.Source as MenuItem);
 
             //Problem.PressurePoissonFluidTDProblem2(this);
-            Problem.PressurePoissonWithBellFluidTDProblem2(this);
+
+            FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoissonWithBell;
+            Problem.PressurePoissonWithBellFluidTDProblem2(this, fluidEquationType);
         }
 
         private void StdGPressurePoissonFluid1RKTDBtn_Click(object sender, RoutedEventArgs e)
@@ -1126,7 +1134,9 @@ namespace IvyFEMProtoApp
             SetProblemTitle(e.Source as MenuItem);
 
             //Problem.PressurePoissonFluidRKTDProblem1(this); // NG
-            Problem.PressurePoissonWithBellFluidRKTDProblem1(this);
+
+            FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoissonWithBell;
+            Problem.PressurePoissonWithBellFluidRKTDProblem1(this, fluidEquationType);
         }
 
         private void StdGPressurePoissonFluid2RKTDBtn_Click(object sender, RoutedEventArgs e)
@@ -1136,6 +1146,55 @@ namespace IvyFEMProtoApp
             MessageBox.Show("FIX ME: You won't get results.");
             //Problem.PressurePoissonFluidRKTDProblem2(this); // NG
             Problem.PressurePoissonWithBellFluidRKTDProblem2(this); // NG
+        }
+
+        private void SUPGPressurePoissonFluid1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            //MessageBox.Show("FIX ME: now, conv ratio = 10^-4");
+            MessageBox.Show("FIX ME: now, conv ratio = 10^-3");
+            FluidEquationType fluidEquationType = FluidEquationType.SUPGPressurePoissonWithBell;
+            Problem.PressurePoissonWithBellFluidProblem1(this, fluidEquationType);
+        }
+
+        private void SUPGPressurePoissonFluid1TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            //これは10^-4のまま
+            MessageBox.Show("FIX ME: now, conv ratio = 10^-4");
+            FluidEquationType fluidEquationType = FluidEquationType.SUPGPressurePoissonWithBell;
+            Problem.PressurePoissonWithBellFluidTDProblem1(this, fluidEquationType);
+        }
+
+        private void SUPGPressurePoissonFluid2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            //MessageBox.Show("FIX ME: now, conv ratio = 10^-4");
+            MessageBox.Show("FIX ME: now, conv ratio = 10^-3");
+            FluidEquationType fluidEquationType = FluidEquationType.SUPGPressurePoissonWithBell;
+            Problem.PressurePoissonWithBellFluidProblem2(this, fluidEquationType);
+        }
+
+        private void SUPGPressurePoissonFluid2TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            //MessageBox.Show("FIX ME: now, conv ratio = 10^-4");
+            MessageBox.Show("FIX ME: now, conv ratio = 10^-3");
+            FluidEquationType fluidEquationType = FluidEquationType.SUPGPressurePoissonWithBell;
+            Problem.PressurePoissonWithBellFluidTDProblem2(this, fluidEquationType);
+        }
+
+        private void SUPGPressurePoissonFluid1RKTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            MessageBox.Show("FIXME: Not work! diverge!");
+            FluidEquationType fluidEquationType = FluidEquationType.SUPGPressurePoissonWithBell;
+            Problem.PressurePoissonWithBellFluidRKTDProblem1(this, fluidEquationType);
         }
 
         private void Optimize1Btn_Click(object sender, RoutedEventArgs e)

@@ -9,9 +9,10 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void PressurePoissonWithBellFluidProblem2(MainWindow mainWindow)
+        public void PressurePoissonWithBellFluidProblem2(MainWindow mainWindow, FluidEquationType fluidEquationType)
         {
-            FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoissonWithBell;
+            //FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoissonWithBell;
+            //FluidEquationType fluidEquationType = FluidEquationType.SUPGPressurePoissonWithBell;
             CadObject2D cad = new CadObject2D();
             {
                 uint lId1 = 0;
@@ -61,6 +62,20 @@ namespace IvyFEMProtoApp
                 uint pDof = 1; // スカラー
                 uint vFEOrder = 2;
                 uint pFEOrder = 5; // Bell's element
+                if (fluidEquationType == FluidEquationType.StdGPressurePoissonWithBell)
+                {
+                    vFEOrder = 2;
+                    pFEOrder = 5; // Bell's element
+                }
+                else if (fluidEquationType == FluidEquationType.SUPGPressurePoissonWithBell)
+                {
+                    vFEOrder = 1;
+                    pFEOrder = 5; // Bell's element
+                }
+                else
+                {
+                    System.Diagnostics.Debug.Assert(false);
+                }
                 vQuantityId = world.AddQuantity(vDof, vFEOrder, FiniteElementType.ScalarLagrange);
                 int pQuantityBaseOffset = (int)vQuantityId + 1;
                 pQuantityId = world.AddQuantity(pDof, pFEOrder, FiniteElementType.ScalarBell, pQuantityBaseOffset);
@@ -76,15 +91,34 @@ namespace IvyFEMProtoApp
                 world.ClearMaterial();
                 NewtonFluidMaterial ma1 = null;
                 NewtonFluidMaterial ma2 = null;
-                ma1 = new NewtonFluidMaterial
+                if (fluidEquationType == FluidEquationType.StdGPressurePoissonWithBell)
                 {
-                    MassDensity = 1.2,
-                    GravityX = 0.0,
-                    GravityY = 0.0,
-                    Mu = 0.02//0.002//0.00002
-                };
-                ma2 = new NewtonFluidMaterial(ma1);
-                ma2.Mu = ma1.Mu * 10.0;
+                    ma1 = new NewtonFluidMaterial
+                    {
+                        MassDensity = 1.2,
+                        GravityX = 0.0,
+                        GravityY = 0.0,
+                        Mu = 0.02//0.002//0.00002
+                    };
+                    ma2 = new NewtonFluidMaterial(ma1);
+                    ma2.Mu = ma1.Mu * 10.0;
+                }
+                else if (fluidEquationType == FluidEquationType.SUPGPressurePoissonWithBell)
+                {
+                    ma1 = new NewtonFluidMaterial
+                    {
+                        MassDensity = 1.2,
+                        GravityX = 0.0,
+                        GravityY = 0.0,
+                        Mu = 0.0002//0.00002
+                    };
+                    ma2 = new NewtonFluidMaterial(ma1);
+                    ma2.Mu = ma1.Mu * 10.0;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.Assert(false);
+                }
                 uint maId1 = world.AddMaterial(ma1);
                 uint maId2 = world.AddMaterial(ma2);
 
@@ -292,7 +326,20 @@ namespace IvyFEMProtoApp
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
                     //FEM.Solver = solver;
                 }
-                FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6;
+                //FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6;
+                if (fluidEquationType == FluidEquationType.StdGPressurePoissonWithBell)
+                {
+                    FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6;
+                }
+                else if (fluidEquationType == FluidEquationType.SUPGPressurePoissonWithBell)
+                {
+                    //FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6;
+                    FEM.ConvRatioToleranceForNonlinearIter = 1.0e-3;//1.0e-4;//DEBUG
+                }
+                else
+                {
+                    System.Diagnostics.Debug.Assert(false);
+                }
                 FEM.Solve();
                 double[] U = FEM.U;
 
@@ -307,9 +354,10 @@ namespace IvyFEMProtoApp
             }
         }
 
-        public void PressurePoissonWithBellFluidTDProblem2(MainWindow mainWindow)
+        public void PressurePoissonWithBellFluidTDProblem2(MainWindow mainWindow, FluidEquationType fluidEquationType)
         {
-            FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoissonWithBell;
+            //FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoissonWithBell;
+            //FluidEquationType fluidEquationType = FluidEquationType.SUPGPressurePoissonWithBell;
             CadObject2D cad = new CadObject2D();
             {
                 uint lId1 = 0;
@@ -359,6 +407,20 @@ namespace IvyFEMProtoApp
                 uint pDof = 1; // スカラー
                 uint vFEOrder = 2;
                 uint pFEOrder = 5; // Bell's element
+                if (fluidEquationType == FluidEquationType.StdGPressurePoissonWithBell)
+                {
+                    vFEOrder = 2;
+                    pFEOrder = 5; // Bell's element
+                }
+                else if (fluidEquationType == FluidEquationType.SUPGPressurePoissonWithBell)
+                {
+                    vFEOrder = 1;
+                    pFEOrder = 5; // Bell's element
+                }
+                else
+                {
+                    System.Diagnostics.Debug.Assert(false);
+                }
                 vQuantityId = world.AddQuantity(vDof, vFEOrder, FiniteElementType.ScalarLagrange);
                 int pQuantityBaseOffset = (int)vQuantityId + 1;
                 pQuantityId = world.AddQuantity(pDof, pFEOrder, FiniteElementType.ScalarBell, pQuantityBaseOffset);
@@ -374,15 +436,34 @@ namespace IvyFEMProtoApp
                 world.ClearMaterial();
                 NewtonFluidMaterial ma1 = null;
                 NewtonFluidMaterial ma2 = null;
-                ma1 = new NewtonFluidMaterial
+                if (fluidEquationType == FluidEquationType.StdGPressurePoissonWithBell)
                 {
-                    MassDensity = 1.2,
-                    GravityX = 0.0,
-                    GravityY = 0.0,
-                    Mu = 0.02//0.002//0.00002
-                };
-                ma2 = new NewtonFluidMaterial(ma1);
-                ma2.Mu = ma1.Mu * 10.0;
+                    ma1 = new NewtonFluidMaterial
+                    {
+                        MassDensity = 1.2,
+                        GravityX = 0.0,
+                        GravityY = 0.0,
+                        Mu = 0.02//0.002//0.00002
+                    };
+                    ma2 = new NewtonFluidMaterial(ma1);
+                    ma2.Mu = ma1.Mu * 10.0;
+                }
+                else if (fluidEquationType == FluidEquationType.SUPGPressurePoissonWithBell)
+                {
+                    ma1 = new NewtonFluidMaterial
+                    {
+                        MassDensity = 1.2,
+                        GravityX = 0.0,
+                        GravityY = 0.0,
+                        Mu = 0.0002//0.00002
+                    };
+                    ma2 = new NewtonFluidMaterial(ma1);
+                    ma2.Mu = ma1.Mu * 10.0;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.Assert(false);
+                }
                 uint maId1 = world.AddMaterial(ma1);
                 uint maId2 = world.AddMaterial(ma2);
 
@@ -604,7 +685,20 @@ namespace IvyFEMProtoApp
                     //FEM.Solver = solver;
                 }
 
-                FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6;
+                //FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6;
+                if (fluidEquationType == FluidEquationType.StdGPressurePoissonWithBell)
+                {
+                    FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6;
+                }
+                else if (fluidEquationType == FluidEquationType.SUPGPressurePoissonWithBell)
+                {
+                    //FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6;
+                    FEM.ConvRatioToleranceForNonlinearIter = 1.0e-3;// 1.0e-4;//DEBUG
+                }
+                else
+                {
+                    System.Diagnostics.Debug.Assert(false);
+                }
                 FEM.Solve();
                 double[] U = FEM.U;
 

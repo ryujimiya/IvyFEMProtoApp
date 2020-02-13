@@ -9,9 +9,10 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void PressurePoissonWithBellFluidRKTDProblem1(MainWindow mainWindow)
+        public void PressurePoissonWithBellFluidRKTDProblem1(MainWindow mainWindow, FluidEquationType fluidEquationType)
         {
-            FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoissonWithBell;
+            //FluidEquationType fluidEquationType = FluidEquationType.StdGPressurePoissonWithBell;
+            //FluidEquationType fluidEquationType = FluidEquationType.SUPGPressurePoissonWithBell;
             CadObject2D cad = new CadObject2D();
             {
                 uint lId1 = 0;
@@ -70,13 +71,31 @@ namespace IvyFEMProtoApp
                 world.ClearMaterial();
 
                 NewtonFluidMaterial ma = null;
-                ma = new NewtonFluidMaterial
+                if (fluidEquationType == FluidEquationType.StdGPressurePoissonWithBell)
                 {
-                    MassDensity = 1.2,
-                    GravityX = 0.0,
-                    GravityY = 0.0,
-                    Mu = 0.02//0.002//0.00002
-                };
+                    ma = new NewtonFluidMaterial
+                    {
+                        MassDensity = 1.2,
+                        GravityX = 0.0,
+                        GravityY = 0.0,
+                        Mu = 0.02//0.002//0.00002
+                    };
+                }
+                else if (fluidEquationType == FluidEquationType.SUPGPressurePoissonWithBell)
+                {
+                    ma = new NewtonFluidMaterial
+                    {
+                        MassDensity = 1.2,
+                        GravityX = 0.0,
+                        GravityY = 0.0,
+                        //Mu = 0.0002//0.00002
+                        Mu = 0.0002//DEBUG
+                    };
+                }
+                else
+                {
+                    System.Diagnostics.Debug.Assert(false);
+                }
                 uint maId = world.AddMaterial(ma);
 
                 uint lId1 = 1;
