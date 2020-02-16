@@ -1009,86 +1009,6 @@ namespace IvyFEMProtoApp
             Problem.FluidTDProblem2(this, fluidEquationType);
         }
 
-        /*
-        private void StdGVorticityFluid1Btn_Click(object sender, RoutedEventArgs e)
-        {
-            SetProblemTitle(e.Source as MenuItem);
-
-            FluidEquationType fluidEquationType = FluidEquationType.StdGVorticity;
-            Problem.VorticityFluidProblem1(this, fluidEquationType);
-        }
-
-        private void StdGVorticityFluid1TDBtn_Click(object sender, RoutedEventArgs e)
-        {
-            SetProblemTitle(e.Source as MenuItem);
-
-            FluidEquationType fluidEquationType = FluidEquationType.StdGVorticity;
-            Problem.VorticityFluidTDProblem1(this, fluidEquationType);
-        }
-
-        private void StdGVorticityFluid2Btn_Click(object sender, RoutedEventArgs e)
-        {
-            SetProblemTitle(e.Source as MenuItem);
-
-            FluidEquationType fluidEquationType = FluidEquationType.StdGVorticity;
-            Problem.VorticityFluidProblem2(this, fluidEquationType);
-        }
-
-        private void StdGVorticityFluid2TDBtn_Click(object sender, RoutedEventArgs e)
-        {
-            SetProblemTitle(e.Source as MenuItem);
-
-            FluidEquationType fluidEquationType = FluidEquationType.StdGVorticity;
-            Problem.VorticityFluidTDProblem2(this, fluidEquationType);
-        }
-
-        private void SUPGVorticityFluid1Btn_Click(object sender, RoutedEventArgs e)
-        {
-            SetProblemTitle(e.Source as MenuItem);
-
-            FluidEquationType fluidEquationType = FluidEquationType.SUPGVorticity;
-            Problem.VorticityFluidProblem1(this, fluidEquationType);
-        }
-
-        private void SUPGVorticityFluid1TDBtn_Click(object sender, RoutedEventArgs e)
-        {
-            SetProblemTitle(e.Source as MenuItem);
-
-            FluidEquationType fluidEquationType = FluidEquationType.SUPGVorticity;
-            Problem.VorticityFluidTDProblem1(this, fluidEquationType);
-        }
-
-        private void SUPGVorticityFluid2Btn_Click(object sender, RoutedEventArgs e)
-        {
-            SetProblemTitle(e.Source as MenuItem);
-
-            FluidEquationType fluidEquationType = FluidEquationType.SUPGVorticity;
-            Problem.VorticityFluidProblem2(this, fluidEquationType);
-        }
-
-        private void SUPGVorticityFluid2TDBtn_Click(object sender, RoutedEventArgs e)
-        {
-            SetProblemTitle(e.Source as MenuItem);
-
-            FluidEquationType fluidEquationType = FluidEquationType.SUPGVorticity;
-            Problem.VorticityFluidTDProblem2(this, fluidEquationType);
-        }
-
-        private void StdGVorticityFluid1RKTDBtn_Click(object sender, RoutedEventArgs e)
-        {
-            SetProblemTitle(e.Source as MenuItem);
-
-            Problem.VorticityFluidRKTDProblem1(this);
-        }
-
-        private void StdGVorticityFluid2RKTDBtn_Click(object sender, RoutedEventArgs e)
-        {
-            SetProblemTitle(e.Source as MenuItem);
-
-            Problem.VorticityFluidRKTDProblem2(this);
-        }
-        */
-
         private void StdGPressurePoissonFluid1Btn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);
@@ -1195,6 +1115,84 @@ namespace IvyFEMProtoApp
             MessageBox.Show("FIXME: Not work! diverge!");
             FluidEquationType fluidEquationType = FluidEquationType.SUPGPressurePoissonWithBell;
             Problem.PressurePoissonWithBellFluidRKTDProblem1(this, fluidEquationType);
+        }
+
+        private void StdGVorticityFluid1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            FluidEquationType fluidEquationType = FluidEquationType.StdGVorticity;
+            Problem.VorticityFluidProblem1(this, fluidEquationType);
+        }
+
+        private void StdGVorticityFluid1TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            FluidEquationType fluidEquationType = FluidEquationType.StdGVorticity;
+            Problem.VorticityFluidTDProblem1(this, fluidEquationType);
+        }
+
+        private void StdGVorticityFluid2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            FluidEquationType fluidEquationType = FluidEquationType.StdGVorticity;
+            Problem.VorticityFluidProblem2(this, fluidEquationType);
+        }
+
+        private void StdGVorticityFluid2TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            FluidEquationType fluidEquationType = FluidEquationType.StdGVorticity;
+            Problem.VorticityFluidTDProblem2(this, fluidEquationType);
+        }
+
+        private void SUPGVorticityFluid1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            FluidEquationType fluidEquationType = FluidEquationType.SUPGVorticity;
+            Problem.VorticityFluidProblem1(this, fluidEquationType);
+        }
+
+        private void SUPGVorticityFluid1TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            FluidEquationType fluidEquationType = FluidEquationType.SUPGVorticity;
+            Problem.VorticityFluidTDProblem1(this, fluidEquationType);
+        }
+
+        private void SUPGVorticityFluid2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            FluidEquationType fluidEquationType = FluidEquationType.SUPGVorticity;
+            Problem.VorticityFluidProblem2(this, fluidEquationType);
+        }
+
+        private void SUPGVorticityFluid2TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            FluidEquationType fluidEquationType = FluidEquationType.SUPGVorticity;
+            Problem.VorticityFluidTDProblem2(this, fluidEquationType);
+        }
+
+        private void StdGVorticityFluid1RKTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            Problem.VorticityFluidRKTDProblem1(this);
+        }
+
+        private void StdGVorticityFluid2RKTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            Problem.VorticityFluidRKTDProblem2(this);
         }
 
         private void Optimize1Btn_Click(object sender, RoutedEventArgs e)
