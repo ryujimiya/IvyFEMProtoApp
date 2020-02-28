@@ -22,8 +22,8 @@ namespace IvyFEMProtoApp
             // 誘電体スラブ導波路幅
             double coreWidth = waveguideWidth * (4.0 / 30.0);
             // 誘電体スラブ比誘電率
-            double coreEps = 3.6 * 3.6;
-            double claddingEps = 3.24 * 3.24;
+            double coreEp = 3.6 * 3.6;
+            double claddingEp = 3.24 * 3.24;
             bool isTMMode = true; // TMモード
 
             // 計算する周波数領域
@@ -38,10 +38,10 @@ namespace IvyFEMProtoApp
                 true
             };
             // 1D固有値問題のクラッド比誘電率
-            double[] eigen1DCladdingEps = {
-                claddingEps,
+            double[] eigen1DCladdingEp = {
+                claddingEp,
                 0.0,
-                claddingEps
+                claddingEp
             };
 
             const int portCnt = 2;
@@ -394,18 +394,18 @@ namespace IvyFEMProtoApp
                 };
                 DielectricMaterial claddingMa = new DielectricMaterial
                 {
-                    Epxx = claddingEps,
-                    Epyy = claddingEps,
-                    Epzz = claddingEps,
+                    Epxx = claddingEp,
+                    Epyy = claddingEp,
+                    Epzz = claddingEp,
                     Muxx = 1.0,
                     Muyy = 1.0,
                     Muzz = 1.0
                 };
                 DielectricMaterial coreMa = new DielectricMaterial
                 {
-                    Epxx = coreEps,
-                    Epyy = coreEps,
-                    Epzz = coreEps,
+                    Epxx = coreEp,
+                    Epyy = coreEp,
+                    Epzz = coreEp,
                     Muxx = 1.0,
                     Muyy = 1.0,
                     Muzz = 1.0
@@ -413,9 +413,9 @@ namespace IvyFEMProtoApp
                 DielectricPMLMaterial pmlVacuumMa1 = null;
                 DielectricPMLMaterial pmlCladdingMa1 = new DielectricPMLMaterial
                 {
-                    Epxx = claddingEps,
-                    Epyy = claddingEps,
-                    Epzz = claddingEps,
+                    Epxx = claddingEp,
+                    Epyy = claddingEp,
+                    Epzz = claddingEp,
                     Muxx = 1.0,
                     Muyy = 1.0,
                     Muzz = 1.0,
@@ -426,9 +426,9 @@ namespace IvyFEMProtoApp
                 };
                 DielectricPMLMaterial pmlCoreMa1 = new DielectricPMLMaterial
                 {
-                    Epxx = coreEps,
-                    Epyy = coreEps,
-                    Epzz = coreEps,
+                    Epxx = coreEp,
+                    Epyy = coreEp,
+                    Epzz = coreEp,
                     Muxx = 1.0,
                     Muyy = 1.0,
                     Muzz = 1.0,
@@ -467,9 +467,9 @@ namespace IvyFEMProtoApp
                 };
                 DielectricPMLMaterial pmlCladdingMa3 = new DielectricPMLMaterial
                 {
-                    Epxx = claddingEps,
-                    Epyy = claddingEps,
-                    Epzz = claddingEps,
+                    Epxx = claddingEp,
+                    Epyy = claddingEp,
+                    Epzz = claddingEp,
                     Muxx = 1.0,
                     Muyy = 1.0,
                     Muzz = 1.0,
@@ -494,9 +494,9 @@ namespace IvyFEMProtoApp
                 };
                 DielectricPMLMaterial pmlCladdingMa4 = new DielectricPMLMaterial
                 {
-                    Epxx = claddingEps,
-                    Epyy = claddingEps,
-                    Epzz = claddingEps,
+                    Epxx = claddingEp,
+                    Epyy = claddingEp,
+                    Epzz = claddingEp,
                     Muxx = 1.0,
                     Muyy = 1.0,
                     Muzz = 1.0,
@@ -509,9 +509,9 @@ namespace IvyFEMProtoApp
                 DielectricPMLMaterial pmlVacuumMa5 = null;
                 DielectricPMLMaterial pmlCladdingMa5 = new DielectricPMLMaterial
                 {
-                    Epxx = claddingEps,
-                    Epyy = claddingEps,
-                    Epzz = claddingEps,
+                    Epxx = claddingEp,
+                    Epyy = claddingEp,
+                    Epzz = claddingEp,
                     Muxx = 1.0,
                     Muyy = 1.0,
                     Muzz = 1.0,
@@ -539,9 +539,9 @@ namespace IvyFEMProtoApp
                 DielectricPMLMaterial pmlVacuumMa7 = null;
                 DielectricPMLMaterial pmlCladdingMa7 = new DielectricPMLMaterial
                 {
-                    Epxx = claddingEps,
-                    Epyy = claddingEps,
-                    Epzz = claddingEps,
+                    Epxx = claddingEp,
+                    Epyy = claddingEp,
+                    Epzz = claddingEp,
                     Muxx = 1.0,
                     Muyy = 1.0,
                     Muzz = 1.0,
@@ -803,7 +803,7 @@ namespace IvyFEMProtoApp
             {
                 double normalizedFreq = sFreq + (iFreq / (double)freqDiv) * (eFreq - sFreq);
                 // 波長
-                double waveLength = 2.0 * coreWidth * Math.Sqrt(coreEps - claddingEps) / normalizedFreq;
+                double waveLength = 2.0 * coreWidth * Math.Sqrt(coreEp - claddingEp) / normalizedFreq;
                 // 周波数
                 double freq = Constants.C0 / waveLength;
                 // 角周波数
@@ -835,7 +835,7 @@ namespace IvyFEMProtoApp
                     //FEM.Solver = solver;
                 }
                 FEM.IsEigen1DUseDecayParameters = isEigen1DUseDecayParameters.ToList();
-                FEM.Eigen1DCladdingEps = eigen1DCladdingEps.ToList();
+                FEM.Eigen1DCladdingEp = eigen1DCladdingEp.ToList();
                 FEM.IsTMMode = isTMMode;
                 FEM.Frequency = freq;
                 FEM.Solve();

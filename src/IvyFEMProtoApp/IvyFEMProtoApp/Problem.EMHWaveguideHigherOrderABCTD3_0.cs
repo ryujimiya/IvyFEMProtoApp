@@ -35,8 +35,8 @@ namespace IvyFEMProtoApp
             // 誘電体スラブ導波路幅
             double coreWidth = waveguideWidth * (4.0 / 30.0);
             // 誘電体スラブ比誘電率
-            double coreEps = 3.6 * 3.6;
-            double claddingEps = 3.24 * 3.24;
+            double coreEp = 3.6 * 3.6;
+            double claddingEp = 3.24 * 3.24;
             bool isTMMode = true; // TMモード
 
             // 時間刻み幅の算出
@@ -51,7 +51,7 @@ namespace IvyFEMProtoApp
             //double srcNormalizedFreq = 0.10;
             double srcNormalizedFreq = 0.75;
             // 波長
-            double srcWaveLength = 2.0 * coreWidth * Math.Sqrt(coreEps - claddingEps) / srcNormalizedFreq;
+            double srcWaveLength = 2.0 * coreWidth * Math.Sqrt(coreEp - claddingEp) / srcNormalizedFreq;
             // 周波数
             double srcFreq = Constants.C0 / srcWaveLength;
             // 角周波数
@@ -59,13 +59,13 @@ namespace IvyFEMProtoApp
             // 計算する周波数領域
             double normalizedFreq1 = 0.50;
             double normalizedFreq2 = 1.00;
-            double waveLength1 = 2.0 * coreWidth * Math.Sqrt(coreEps - claddingEps) / normalizedFreq1;
-            double waveLength2 = 2.0 * coreWidth * Math.Sqrt(coreEps - claddingEps) / normalizedFreq2;
+            double waveLength1 = 2.0 * coreWidth * Math.Sqrt(coreEp - claddingEp) / normalizedFreq1;
+            double waveLength2 = 2.0 * coreWidth * Math.Sqrt(coreEp - claddingEp) / normalizedFreq2;
             double freq1 = Constants.C0 / waveLength1;
             double freq2 = Constants.C0 / waveLength2;
             // 規格化周波数変換
             Func<double, double> toNormalizedFreq =
-                waveLength => 2.0 * coreWidth * Math.Sqrt(coreEps - claddingEps) / waveLength; 
+                waveLength => 2.0 * coreWidth * Math.Sqrt(coreEp - claddingEp) / waveLength; 
             // 吸収境界条件の次数
             // Note: 高次だとうまくいかなかった
             int[] abcOrders = { 1, 1, 1, 1 };
@@ -77,8 +77,8 @@ namespace IvyFEMProtoApp
             double[] velocitys = {
                 -1,
                 -1,
-                Constants.C0 / Math.Sqrt(claddingEps),
-                Constants.C0 / Math.Sqrt(claddingEps)
+                Constants.C0 / Math.Sqrt(claddingEp),
+                Constants.C0 / Math.Sqrt(claddingEp)
             };
             // 1D固有値問題で減衰定数を使う?
             bool[] isEigen1DUseDecayParameters = {
@@ -91,14 +91,14 @@ namespace IvyFEMProtoApp
                 true
             };
             // 1D固有値問題のクラッド比誘電率
-            double[] eigen1DCladdingEps = {
-                claddingEps,
-                claddingEps,
+            double[] eigen1DCladdingEp = {
+                claddingEp,
+                claddingEp,
                 0.0,
                 0.0,
-                claddingEps,
-                claddingEps,
-                claddingEps
+                claddingEp,
+                claddingEp,
+                claddingEp
             };
             // 減衰定数を持ってくる1D固有値問題のポート
             int[] decayParameterEigen1DPortIds = {
@@ -340,18 +340,18 @@ namespace IvyFEMProtoApp
                 };
                 DielectricMaterial claddingMa = new DielectricMaterial
                 {
-                    Epxx = claddingEps,
-                    Epyy = claddingEps,
-                    Epzz = claddingEps,
+                    Epxx = claddingEp,
+                    Epyy = claddingEp,
+                    Epzz = claddingEp,
                     Muxx = 1.0,
                     Muyy = 1.0,
                     Muzz = 1.0
                 };
                 DielectricMaterial coreMa = new DielectricMaterial
                 {
-                    Epxx = coreEps,
-                    Epyy = coreEps,
-                    Epzz = coreEps,
+                    Epxx = coreEp,
+                    Epyy = coreEp,
+                    Epzz = coreEp,
                     Muxx = 1.0,
                     Muyy = 1.0,
                     Muzz = 1.0
@@ -533,7 +533,7 @@ namespace IvyFEMProtoApp
             FEM.EndFrequencyForSMatrix = freq2;
             FEM.VelocitysToSet = velocitys.ToList();
             FEM.IsEigen1DUseDecayParameters = isEigen1DUseDecayParameters.ToList();
-            FEM.Eigen1DCladdingEps = eigen1DCladdingEps.ToList();
+            FEM.Eigen1DCladdingEp = eigen1DCladdingEp.ToList();
             FEM.DecayParameterEigen1DPortIds = decayParameterEigen1DPortIds.ToList();
             FEM.IsTMMode = isTMMode;
             // 観測点ポート数

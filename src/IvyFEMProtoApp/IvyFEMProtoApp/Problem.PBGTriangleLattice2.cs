@@ -28,7 +28,7 @@ namespace IvyFEMProtoApp
             // ロッドの半径
             double rodRadiusRatio = 0.18;
             // ロッドの比誘電率
-            double rodEps = 3.4 * 3.4;
+            double rodEp = 3.4 * 3.4;
             // 格子１辺の分割数
             const int divForOneLatticeCnt = 12;
             // 境界の総分割数(目安)
@@ -440,14 +440,14 @@ namespace IvyFEMProtoApp
                 if (isAirHole)
                 {
                     // エアホール型
-                    claddingEp = rodEps;
+                    claddingEp = rodEp;
                     coreEp = 1.0;
                 }
                 else
                 {
                     // ロッド型
                     claddingEp = 1.0;
-                    coreEp = rodEps;
+                    coreEp = rodEp;
                 }
                 DielectricMaterial claddingMa = new DielectricMaterial
                 {

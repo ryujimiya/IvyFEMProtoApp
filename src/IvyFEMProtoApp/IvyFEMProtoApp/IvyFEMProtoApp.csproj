@@ -172,6 +172,8 @@
     <Compile Include="Problem.EMHWaveguideHigherOrderABCTD2_0.cs" />
     <Compile Include="Problem.EMHWaveguideHigherOrderABCTD1.cs" />
     <Compile Include="Problem.EMHWaveguideHigherOrderABCTD1_0.cs" />
+    <Compile Include="Problem.EMWaveguide2DEigenOpen3.cs" />
+    <Compile Include="Problem.EMWaveguide2DEigenOpen2.cs" />
     <Compile Include="Problem.EMWaveguide2DEigen3.cs" />
     <Compile Include="Problem.EMWaveguide2DEigen2.cs" />
     <Compile Include="Problem.FFT.cs" />

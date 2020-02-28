@@ -805,6 +805,38 @@ namespace IvyFEMProtoApp
             Problem.Waveguide2DEigenProblem3(this, feOrder);
         }
 
+        private void Waveguide2DEigenOpen2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            uint feOrder = 1;
+            Problem.Waveguide2DEigenOpenProblem2(this, feOrder);
+        }
+
+        private void Waveguide2DEigenOpen3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            uint feOrder = 1;
+            Problem.Waveguide2DEigenOpenProblem3(this, feOrder);
+        }
+
+        private void Waveguide2DEigenOpen2ndOrder2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            uint feOrder = 2;
+            Problem.Waveguide2DEigenOpenProblem2(this, feOrder);
+        }
+
+        private void Waveguide2DEigenOpen2ndOrder3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SetProblemTitle(e.Source as MenuItem);
+
+            uint feOrder = 2;
+            Problem.Waveguide2DEigenOpenProblem3(this, feOrder);
+        }
+
         private void SquareLatticePCWaveguideEigen1Btn_Click(object sender, RoutedEventArgs e)
         {
             SetProblemTitle(e.Source as MenuItem);

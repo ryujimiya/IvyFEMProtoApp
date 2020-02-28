@@ -45,7 +45,7 @@ namespace IvyFEMProtoApp
             // ロッドの半径
             double rodRadius = 0.18 * latticeA;
             // ロッドの比誘電率
-            double rodEps = 3.4 * 3.4;
+            double rodEp = 3.4 * 3.4;
             // 格子１辺の分割数
             //const int divForOneLatticeCnt = 6;
             const int divForOneLatticeCnt = 6;
@@ -405,9 +405,9 @@ namespace IvyFEMProtoApp
                 };
                 DielectricMaterial coreMa = new DielectricMaterial
                 {
-                    Epxx = rodEps,
-                    Epyy = rodEps,
-                    Epzz = rodEps,
+                    Epxx = rodEp,
+                    Epyy = rodEp,
+                    Epzz = rodEp,
                     Muxx = 1.0,
                     Muyy = 1.0,
                     Muzz = 1.0
@@ -427,9 +427,9 @@ namespace IvyFEMProtoApp
                 };
                 DielectricPMLMaterial pmlCoreMa1 = new DielectricPMLMaterial
                 {
-                    Epxx = rodEps,
-                    Epyy = rodEps,
-                    Epzz = rodEps,
+                    Epxx = rodEp,
+                    Epyy = rodEp,
+                    Epzz = rodEp,
                     Muxx = 1.0,
                     Muyy = 1.0,
                     Muzz = 1.0,
@@ -453,9 +453,9 @@ namespace IvyFEMProtoApp
                 };
                 DielectricPMLMaterial pmlCoreMa2 = new DielectricPMLMaterial
                 {
-                    Epxx = rodEps,
-                    Epyy = rodEps,
-                    Epzz = rodEps,
+                    Epxx = rodEp,
+                    Epyy = rodEp,
+                    Epzz = rodEp,
                     Muxx = 1.0,
                     Muyy = 1.0,
                     Muzz = 1.0,

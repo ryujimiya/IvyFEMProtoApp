@@ -59,7 +59,7 @@ namespace IvyFEMProtoApp
             // ロッドの半径
             double rodRadiusRatio = 0.30;
             // ロッドの比誘電率
-            double rodEps = 3.40 * 3.40;
+            double rodEp = 3.40 * 3.40;
             // 1格子当たりの分割点の数
             //const int divCntForOneLattice = 9;
             const int divCntForOneLattice = 6;
@@ -407,7 +407,7 @@ namespace IvyFEMProtoApp
                 {
                     // 誘電体基盤 + 空孔(air hole)
                     claddingMu = 1.0;
-                    claddingEp = rodEps;
+                    claddingEp = rodEp;
                     coreMu = 1.0;
                     coreEp = 1.0;
                 }
