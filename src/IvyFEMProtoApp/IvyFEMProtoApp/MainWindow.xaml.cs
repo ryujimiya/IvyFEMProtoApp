@@ -622,18 +622,32 @@ namespace IvyFEMProtoApp
             Problem.BeamEigenProblem(this);
         }
 
-        private void FrameBtn_Click(object sender, RoutedEventArgs e)
+        private void Frame0Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.FrameProblem(this);
+            Problem.FrameProblem0(this);
         }
 
-        private void FrameTDBtn_Click(object sender, RoutedEventArgs e)
+        private void Frame0TDBtn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.FrameTDProblem(this);
+            Problem.FrameTDProblem0(this);
+        }
+
+        private void Frame1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.FrameProblem1(this);
+        }
+
+        private void Frame1TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.FrameTDProblem1(this);
         }
 
         private void PoissonBtn_Click(object sender, RoutedEventArgs e)

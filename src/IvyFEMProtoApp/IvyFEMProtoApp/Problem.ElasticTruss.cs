@@ -15,7 +15,8 @@ namespace IvyFEMProtoApp
         public void TrussProblem(MainWindow mainWindow)
         {
             double trussLen = 1.0;
-            double b = Math.Sqrt(0.1);
+            double b = 0.2 * trussLen;
+            double h = 0.25 * b;
             CadObject2D cad = new CadObject2D();
             {
                 uint lId0 = 0;
@@ -81,9 +82,9 @@ namespace IvyFEMProtoApp
                 }
                 {
                     var ma = new TrussMaterial();
-                    ma.Area = b * b;
-                    ma.MassDensity = 1.0;
-                    ma.Young = 70.0e+9;
+                    ma.Area = b * h;
+                    ma.MassDensity = 2.3e+3;
+                    ma.Young = 169.0e+9;
                     trussMaId = world.AddMaterial(ma);
                 }
 
@@ -192,7 +193,8 @@ namespace IvyFEMProtoApp
         public void TrussTDProblem(MainWindow mainWindow)
         {
             double trussLen = 1.0;
-            double b = Math.Sqrt(0.1);
+            double b = 0.2 * trussLen;
+            double h = 0.25 * b;
             CadObject2D cad = new CadObject2D();
             {
                 uint lId0 = 0;
@@ -258,9 +260,9 @@ namespace IvyFEMProtoApp
                 }
                 {
                     var ma = new TrussMaterial();
-                    ma.Area = b * b;
-                    ma.MassDensity = 1.0;
-                    ma.Young = 70.0e+9;
+                    ma.Area = b * h;
+                    ma.MassDensity = 2.3e+3;
+                    ma.Young = 169.0e+9;
                     trussMaId = world.AddMaterial(ma);
                 }
 

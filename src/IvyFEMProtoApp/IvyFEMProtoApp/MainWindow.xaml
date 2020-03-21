@@ -71,11 +71,15 @@
                     <MenuItem Header="Truss/Beam/Frame">
                         <MenuItem Header="Truss" Click="TrussBtn_Click"/>
                         <MenuItem Header="Truss(Time Domain)" Click="TrussTDBtn_Click"/>
+                        <Separator/>
                         <MenuItem Header="Beam" Click="BeamBtn_Click"/>
                         <MenuItem Header="Beam(Time Domain)" Click="BeamTDBtn_Click"/>
                         <MenuItem Header="Beam(Eigen)" Click="BeamEigenBtn_Click"/>
-                        <MenuItem Header="Frame" Click="FrameBtn_Click"/>
-                        <MenuItem Header="Frame(Time Domain)" Click="FrameTDBtn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="Frame(0)" Click="Frame0Btn_Click"/>
+                        <MenuItem Header="Frame(0)(Time Domain)" Click="Frame0TDBtn_Click"/>
+                        <MenuItem Header="Frame(1)" Click="Frame1Btn_Click"/>
+                        <MenuItem Header="Frame(1)(Time Domain)" Click="Frame1TDBtn_Click"/>
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Various Equations">
