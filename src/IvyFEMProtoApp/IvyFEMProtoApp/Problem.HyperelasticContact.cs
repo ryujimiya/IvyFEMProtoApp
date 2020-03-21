@@ -144,6 +144,8 @@ namespace IvyFEMProtoApp
                     lQuantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
+                ConstraintDrawer constraintDrawer = new ConstraintDrawer(lineConstraint);
+                fieldDrawerArray.Add(constraintDrawer);
                 IFieldDrawer faceDrawer = new FaceFieldDrawer(uValueId, FieldDerivativeType.Value, false, world);
                 // Lagrange未定乗数のサーモグラフィ表示
                 //IFieldDrawer faceDrawer = new FaceFieldDrawer(uValueId, FieldDerivativeType.Value, false, world,
@@ -161,12 +163,6 @@ namespace IvyFEMProtoApp
                 //mainWindow.GLControl.Update();
                 //WPFUtils.DoEvents();
             }
-            var constraintDrawerArray = mainWindow.ConstraintDrawerArray;
-            {
-                constraintDrawerArray.Clear();
-                ConstraintDrawer constraintDrawer = new ConstraintDrawer(lineConstraint);
-                constraintDrawerArray.Add(constraintDrawer);
-            }
 
             double t = 0;
             double dt = 0.05;
@@ -178,7 +174,7 @@ namespace IvyFEMProtoApp
                 fixedValueXY[0] = -Math.Sin(t * 2.0 * Math.PI * 0.1);
                 fixedValueXY[1] = 0;
 
-                var FEM = new Hyperelastic2DTDFEM(world, dt,
+                var FEM = new Elastic2DTDFEM(world, dt,
                     newmarkBeta, newmarkGamma,
                     uValueId, prevUValueId, lValueId);
                 if (isMooney)
@@ -358,6 +354,8 @@ namespace IvyFEMProtoApp
                     lQuantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
+                ConstraintDrawer constraintDrawer = new ConstraintDrawer(circleConstraint);
+                fieldDrawerArray.Add(constraintDrawer);
                 IFieldDrawer faceDrawer = new FaceFieldDrawer(uValueId, FieldDerivativeType.Value, false, world);
                 // Lagrange未定乗数のサーモグラフィ表示
                 //IFieldDrawer faceDrawer = new FaceFieldDrawer(uValueId, FieldDerivativeType.Value, false, world,
@@ -375,12 +373,6 @@ namespace IvyFEMProtoApp
                 //mainWindow.GLControl.Update();
                 //WPFUtils.DoEvents();
             }
-            var constraintDrawerArray = mainWindow.ConstraintDrawerArray;
-            {
-                constraintDrawerArray.Clear();
-                ConstraintDrawer constraintDrawer = new ConstraintDrawer(circleConstraint);
-                constraintDrawerArray.Add(constraintDrawer);
-            }
 
             double t = 0;
             double dt = 0.05;
@@ -388,7 +380,7 @@ namespace IvyFEMProtoApp
             double newmarkGamma = 1.0 / 2.0;
             for (int iTime = 0; iTime <= 150; iTime++)
             {
-                var FEM = new Hyperelastic2DTDFEM(world, dt,
+                var FEM = new Elastic2DTDFEM(world, dt,
                     newmarkBeta, newmarkGamma,
                     uValueId, prevUValueId, lValueId);
                 if (isMooney)

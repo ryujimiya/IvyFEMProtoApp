@@ -189,7 +189,7 @@ namespace IvyFEMProtoApp
             double newmarkGamma = 1.0 / 2.0;
             for (int iTime = 0; iTime <= 100; iTime++)
             {
-                var FEM = new Hyperelastic2DTDFEM(world, dt,
+                var FEM = new Elastic2DTDFEM(world, dt,
                     newmarkBeta, newmarkGamma,
                     uValueId, prevUValueId, lValueId);
                 /*

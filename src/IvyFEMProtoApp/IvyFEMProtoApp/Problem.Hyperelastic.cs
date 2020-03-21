@@ -153,7 +153,7 @@ namespace IvyFEMProtoApp
                 fixedValueXY[0] = 0;
                 fixedValueXY[1] = Math.Sin(t * 2.0 * Math.PI * 0.1);
 
-                var FEM = new Hyperelastic2DFEM(world);
+                var FEM = new Elastic2DFEM(world);
                 if (isMooney)
                 {
                     // Mooney-Rivlin
@@ -367,7 +367,7 @@ namespace IvyFEMProtoApp
                 fixedValueXY[0] = 0;
                 fixedValueXY[1] = Math.Sin(t * 2.0 * Math.PI * 0.1);
 
-                var FEM = new Hyperelastic2DTDFEM(world, dt,
+                var FEM = new Elastic2DTDFEM(world, dt,
                     newmarkBeta, newmarkGamma,
                     uValueId, prevUValueId, lValueId);
                 if (isMooney)

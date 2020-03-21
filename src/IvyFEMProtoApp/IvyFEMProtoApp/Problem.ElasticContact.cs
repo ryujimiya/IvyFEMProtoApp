@@ -118,6 +118,8 @@ namespace IvyFEMProtoApp
                     uQuantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
+                ConstraintDrawer constraintDrawer = new ConstraintDrawer(lineConstraint);
+                fieldDrawerArray.Add(constraintDrawer);
                 IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, false, world);
                 fieldDrawerArray.Add(faceDrawer);
                 IFieldDrawer edgeDrawer = new EdgeFieldDrawer(
@@ -131,12 +133,6 @@ namespace IvyFEMProtoApp
                 //mainWindow.GLControl.Invalidate();
                 //mainWindow.GLControl.Update();
                 //WPFUtils.DoEvents();
-            }
-            var constraintDrawerArray = mainWindow.ConstraintDrawerArray;
-            {
-                constraintDrawerArray.Clear();
-                ConstraintDrawer constraintDrawer = new ConstraintDrawer(lineConstraint);
-                constraintDrawerArray.Add(constraintDrawer);
             }
 
             double t = 0;
@@ -273,6 +269,8 @@ namespace IvyFEMProtoApp
                     uQuantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
+                ConstraintDrawer constraintDrawer = new ConstraintDrawer(circleConstraint);
+                fieldDrawerArray.Add(constraintDrawer);
                 IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, false, world);
                 fieldDrawerArray.Add(faceDrawer);
                 IFieldDrawer edgeDrawer = new EdgeFieldDrawer(
@@ -286,12 +284,6 @@ namespace IvyFEMProtoApp
                 //mainWindow.GLControl.Invalidate();
                 //mainWindow.GLControl.Update();
                 //WPFUtils.DoEvents();
-            }
-            var constraintDrawerArray = mainWindow.ConstraintDrawerArray;
-            {
-                constraintDrawerArray.Clear();
-                ConstraintDrawer constraintDrawer = new ConstraintDrawer(circleConstraint);
-                constraintDrawerArray.Add(constraintDrawer);
             }
 
             double t = 0;

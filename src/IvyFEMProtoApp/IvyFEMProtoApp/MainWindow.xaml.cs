@@ -66,7 +66,6 @@ namespace IvyFEMProtoApp
         /// </summary>
         internal DrawerArray DrawerArray { get; private set; } = new DrawerArray();
         internal FieldDrawerArray FieldDrawerArray { get; private set; } = new FieldDrawerArray();
-        internal ConstraintDrawerArray ConstraintDrawerArray { get; private set; } = new ConstraintDrawerArray();
 
         /// <summary>
         /// コンストラクタ
@@ -278,7 +277,6 @@ namespace IvyFEMProtoApp
             GL.LoadIdentity();
             OpenGLUtils.SetModelViewTransform(Camera);
 
-            ConstraintDrawerArray.Draw();
             if (IsFieldDraw)
             {
                 FieldDrawerArray.Draw();
@@ -291,6 +289,12 @@ namespace IvyFEMProtoApp
             GLControl.SwapBuffers();
         }
 
+        private void InitProblem(MenuItem menuItem)
+        {
+            SetProblemTitle(menuItem);
+            Problem.Init(this);
+        }
+        
         private void SetProblemTitle(MenuItem menuItem)
         {
             string menuItemTitle = menuItem.Header.ToString();
@@ -299,42 +303,42 @@ namespace IvyFEMProtoApp
 
         private void Cad2DBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             Problem.MakeBluePrint(this);
         }
 
         private void CoarseMesh2DBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             Problem.MakeCoarseMesh(this);
         }
 
         private void Mesh2DBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             Problem.MakeMesh(this);
         }
 
         private void Mesh2DHollowLoopBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             Problem.MakeMeshHollowLoop(this);
         }
 
         private void DrawStringBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             Problem.DrawStringTest(Camera, GLControl);
         }
 
         private void LapackBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             Problem.InterseMatrixExample();
             Problem.LinearEquationExample();
@@ -343,28 +347,28 @@ namespace IvyFEMProtoApp
 
         private void LisBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             Problem.LisExample();
         }
 
         private void FFTBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             Problem.FFTExample(this);
         }
 
         private void ExampleFEMBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             Problem.ExampleFEMProblem(this);
         }
 
         private void CadEditBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             var cadEditWindow = new CadEditWindow();
             cadEditWindow.Owner = this;
@@ -373,7 +377,7 @@ namespace IvyFEMProtoApp
 
         private void ElasticBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             bool isSaintVenant = false;
             Problem.ElasticProblem(this, false, isSaintVenant);
@@ -382,7 +386,7 @@ namespace IvyFEMProtoApp
 
         private void ElasticTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             bool isSaintVenant = false;
             Problem.ElasticTDProblem(this, isSaintVenant);
@@ -390,7 +394,7 @@ namespace IvyFEMProtoApp
 
         private void SaintVenantHyperelasticBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             bool isSaintVenant = true;
             Problem.ElasticProblem(this, false, isSaintVenant);
@@ -398,7 +402,7 @@ namespace IvyFEMProtoApp
 
         private void SaintVenantHyperelasticTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             bool isSaintVenant = true;
             Problem.ElasticTDProblem(this, isSaintVenant);
@@ -406,7 +410,7 @@ namespace IvyFEMProtoApp
 
         private void MooneyRivlinHyperelasticBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             bool isMooney = true;
             Problem.HyperelasticProblem(this, isMooney);
@@ -414,7 +418,7 @@ namespace IvyFEMProtoApp
 
         private void MooneyRivlinHyperelasticTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             bool isMooney = true;
             Problem.HyperelasticTDProblem(this, isMooney);
@@ -422,7 +426,7 @@ namespace IvyFEMProtoApp
 
         private void OgdenHyperelasticBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             bool isMooney = false; // Ogden
             Problem.HyperelasticProblem(this, isMooney);
@@ -430,7 +434,7 @@ namespace IvyFEMProtoApp
 
         private void OgdenHyperelasticTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             bool isMooney = false; // Ogden
             Problem.HyperelasticTDProblem(this, isMooney);
@@ -438,7 +442,7 @@ namespace IvyFEMProtoApp
 
         private void ElasticMultipointConstraintTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             bool isSaintVenant = false;
             Problem.ElasticMultipointConstraintTDProblem(this, isSaintVenant);
@@ -446,7 +450,7 @@ namespace IvyFEMProtoApp
 
         private void SaintVenantHyperelasticMultipointConstraintTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             bool isSaintVenant = true;
             Problem.ElasticMultipointConstraintTDProblem(this, isSaintVenant);
@@ -454,7 +458,7 @@ namespace IvyFEMProtoApp
 
         private void MooneyRivlinHyperelasticMultipointConstraintTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             bool isMooney = true;
             Problem.HyperelasticMultipointConstraintTDProblem(this, isMooney);
@@ -462,7 +466,7 @@ namespace IvyFEMProtoApp
 
         private void OgdenHyperelasticMultipointConstraintTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             bool isMooney = false; // Ogden
             Problem.HyperelasticMultipointConstraintTDProblem(this, isMooney);
@@ -470,7 +474,7 @@ namespace IvyFEMProtoApp
 
         private void ElasticContactTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             bool isSaintVenant = false;
             Problem.ElasticContactTDProblem(this, isSaintVenant);
@@ -478,7 +482,7 @@ namespace IvyFEMProtoApp
 
         private void SaintVenantHyperelasticContactTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             bool isSaintVenant = true;
             Problem.ElasticContactTDProblem(this, isSaintVenant);
@@ -486,7 +490,7 @@ namespace IvyFEMProtoApp
 
         private void MooneyRivlinHyperelasticContactTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             bool isMooney = true;
             Problem.HyperelasticContactTDProblem(this, isMooney);
@@ -494,7 +498,7 @@ namespace IvyFEMProtoApp
 
         private void OgdenHyperelasticContactTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             // Ogden
             bool isMooney = false;
@@ -503,7 +507,7 @@ namespace IvyFEMProtoApp
 
         private void ElasticCircleContactTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             bool isSaintVenant = false;
             Problem.ElasticCircleContactTDProblem(this, isSaintVenant);
@@ -511,7 +515,7 @@ namespace IvyFEMProtoApp
 
         private void SaintVenantHyperelasticCircleContactTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             bool isSaintVenant = true;
             Problem.ElasticCircleContactTDProblem(this, isSaintVenant);
@@ -519,7 +523,7 @@ namespace IvyFEMProtoApp
 
         private void MooneyRivlinHyperelasticCircleContactTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             bool isMooney = true;
             Problem.HyperelasticCircleContactTDProblem(this, isMooney);
@@ -527,7 +531,7 @@ namespace IvyFEMProtoApp
 
         private void OgdenHyperelasticCircleContactTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             // Ogden
             bool isMooney = false;
@@ -536,7 +540,7 @@ namespace IvyFEMProtoApp
 
         private void ElasticTwoBodyContactBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             bool isSaintVenant = false;
             Problem.ElasticTwoBodyContactProblem(this, isSaintVenant);
@@ -544,7 +548,7 @@ namespace IvyFEMProtoApp
 
         private void ElasticTwoBodyContactTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             bool isSaintVenant = false;
             Problem.ElasticTwoBodyContactTDProblem(this, isSaintVenant);
@@ -552,7 +556,7 @@ namespace IvyFEMProtoApp
 
         private void SaintVenantHyperelasticTwoBodyContactBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             bool isSaintVenant = true;
             Problem.ElasticTwoBodyContactProblem(this, isSaintVenant);
@@ -560,7 +564,7 @@ namespace IvyFEMProtoApp
 
         private void SaintVenantHyperelasticTwoBodyContactTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             bool isSaintVenant = true;
             Problem.ElasticTwoBodyContactTDProblem(this, isSaintVenant);
@@ -568,7 +572,7 @@ namespace IvyFEMProtoApp
 
         private void MooneyRivlinHyperelasticTwoBodyContactTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             bool isMooney = true;
             Problem.HyperelasticTwoBodyContactTDProblem(this, isMooney);
@@ -576,58 +580,107 @@ namespace IvyFEMProtoApp
 
         private void OgdenHyperelasticTwoBodyContactTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             // Ogden
             bool isMooney = false;
             Problem.HyperelasticTwoBodyContactTDProblem(this, isMooney);
         }
 
+        private void TrussBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.TrussProblem(this);
+        }
+
+        private void TrussTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.TrussTDProblem(this);
+        }
+
+        private void BeamBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.BeamProblem(this);
+        }
+
+        private void BeamTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.BeamTDProblem(this);
+        }
+
+        private void BeamEigenBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.BeamEigenProblem(this);
+        }
+
+        private void FrameBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.FrameProblem(this);
+        }
+
+        private void FrameTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.FrameTDProblem(this);
+        }
+
         private void PoissonBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             Problem.PoissonProblem(this);
         }
 
         private void DiffusionBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             Problem.DiffusionProblem(this);
         }
 
         private void DiffusionTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             Problem.DiffusionTDProblem(this);
         }
 
         private void AdvectionDiffusionBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             Problem.AdvectionDiffusionProblem(this);
         }
 
         private void AdvectionDiffusionTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             Problem.AdvectionDiffusionTDProblem(this);
         }
 
         private void HelmholtzBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             Problem.HelmholtzProblem(this);
         }
 
         private void HPlaneWaveguide1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.HWaveguideProblem1_0(this);
             Problem.HWaveguideProblem1(this);
@@ -635,7 +688,7 @@ namespace IvyFEMProtoApp
 
         private void HPlaneWaveguide2Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.HWaveguideProblem2_0(this);
             Problem.HWaveguideProblem2(this);
@@ -643,7 +696,7 @@ namespace IvyFEMProtoApp
 
         private void EPlaneWaveguide1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.EWaveguideProblem1_0(this);
             Problem.EWaveguideProblem1(this);
@@ -651,7 +704,7 @@ namespace IvyFEMProtoApp
 
         private void HPlaneWaveguideHigherOrderABC1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.HWaveguideHigherOrderABCProblem1_0(this);
             Problem.HWaveguideHigherOrderABCProblem1(this);
@@ -659,7 +712,7 @@ namespace IvyFEMProtoApp
 
         private void HPlaneWaveguideHigherOrderABC2Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.HWaveguideHigherOrderABCProblem2_0(this);
             Problem.HWaveguideHigherOrderABCProblem2(this);
@@ -667,7 +720,7 @@ namespace IvyFEMProtoApp
 
         private void HPlaneWaveguideHigherOrderABC3Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.HWaveguideHigherOrderABCProblem3_0(this);
             Problem.HWaveguideHigherOrderABCProblem3(this);
@@ -675,7 +728,7 @@ namespace IvyFEMProtoApp
 
         private void HPlaneWaveguideHigherOrderABCTD1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.HWaveguideHigherOrderABCTDProblem1_0(this);
             Problem.HWaveguideHigherOrderABCTDProblem1(this);
@@ -683,7 +736,7 @@ namespace IvyFEMProtoApp
 
         private void HPlaneWaveguideHigherOrderABCTD2Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.HWaveguideHigherOrderABCTDProblem2_0(this);
             Problem.HWaveguideHigherOrderABCTDProblem2(this);
@@ -691,7 +744,7 @@ namespace IvyFEMProtoApp
 
         private void HPlaneWaveguideHigherOrderABCTD3Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.HWaveguideHigherOrderABCTDProblem3_0(this);
             Problem.HWaveguideHigherOrderABCTDProblem3(this);
@@ -699,7 +752,7 @@ namespace IvyFEMProtoApp
 
         private void HPlaneWaveguideFirstOrderABCTD3Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.HWaveguideFirstOrderABCTDProblem3_0(this);
             Problem.HWaveguideFirstOrderABCTDProblem3(this);
@@ -707,7 +760,7 @@ namespace IvyFEMProtoApp
 
         private void HPlaneWaveguidePML1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.HWaveguidePMLProblem1_0(this);
             Problem.HWaveguidePMLProblem1(this);
@@ -715,7 +768,7 @@ namespace IvyFEMProtoApp
 
         private void HPlaneWaveguidePML2Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.HWaveguidePMLProblem2_0(this);
             Problem.HWaveguidePMLProblem2(this);
@@ -723,7 +776,7 @@ namespace IvyFEMProtoApp
 
         private void HPlaneWaveguidePML3Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.HWaveguidePMLProblem3_0(this);
             Problem.HWaveguidePMLProblem3(this);
@@ -731,7 +784,7 @@ namespace IvyFEMProtoApp
 
         private void HPlaneWaveguidePMLTD1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.HWaveguidePMLTDProblem1_0(this);
             Problem.HWaveguidePMLTDProblem1(this);
@@ -739,7 +792,7 @@ namespace IvyFEMProtoApp
 
         private void HPlaneWaveguidePMLTD2Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.HWaveguidePMLTDProblem2_0(this);
             Problem.HWaveguidePMLTDProblem2(this);
@@ -747,7 +800,7 @@ namespace IvyFEMProtoApp
 
         private void HPlaneWaveguidePMLTD3Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.HWaveguidePMLTDProblem3_0(this);
             Problem.HWaveguidePMLTDProblem3(this);
@@ -755,7 +808,7 @@ namespace IvyFEMProtoApp
 
         private void Waveguide2DEigen1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             uint feOrder = 1;
             Problem.Waveguide2DEigenProblem1(this, false, feOrder);
@@ -765,7 +818,7 @@ namespace IvyFEMProtoApp
 
         private void Waveguide2DEigen2Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             uint feOrder = 1;
             Problem.Waveguide2DEigenProblem2(this, feOrder);
@@ -773,7 +826,7 @@ namespace IvyFEMProtoApp
 
         private void Waveguide2DEigen3Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             uint feOrder = 1;
             Problem.Waveguide2DEigenProblem3(this, feOrder);
@@ -781,7 +834,7 @@ namespace IvyFEMProtoApp
 
         private void Waveguide2DEigen2ndOrder1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             uint feOrder = 2;
             Problem.Waveguide2DEigenProblem1(this, false, feOrder);
@@ -791,7 +844,7 @@ namespace IvyFEMProtoApp
 
         private void Waveguide2DEigen2ndOrder2Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             uint feOrder = 2;
             Problem.Waveguide2DEigenProblem2(this, feOrder);
@@ -799,7 +852,7 @@ namespace IvyFEMProtoApp
 
         private void Waveguide2DEigen2ndOrder3Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             uint feOrder = 2;
             Problem.Waveguide2DEigenProblem3(this, feOrder);
@@ -807,7 +860,7 @@ namespace IvyFEMProtoApp
 
         private void Waveguide2DEigenOpen2Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             uint feOrder = 1;
             Problem.Waveguide2DEigenOpenProblem2(this, feOrder);
@@ -815,7 +868,7 @@ namespace IvyFEMProtoApp
 
         private void Waveguide2DEigenOpen3Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             uint feOrder = 1;
             Problem.Waveguide2DEigenOpenProblem3(this, feOrder);
@@ -823,7 +876,7 @@ namespace IvyFEMProtoApp
 
         private void Waveguide2DEigenOpen2ndOrder2Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             uint feOrder = 2;
             Problem.Waveguide2DEigenOpenProblem2(this, feOrder);
@@ -831,7 +884,7 @@ namespace IvyFEMProtoApp
 
         private void Waveguide2DEigenOpen2ndOrder3Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             uint feOrder = 2;
             Problem.Waveguide2DEigenOpenProblem3(this, feOrder);
@@ -839,49 +892,49 @@ namespace IvyFEMProtoApp
 
         private void SquareLatticePCWaveguideEigen1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             Problem.PCWaveguideEigenSquareLatticeProblem1(this);
         }
 
         private void TriangleLatticePCWaveguideEigen1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             Problem.PCWaveguideEigenTriangleLatticeProblem1(this);
         }
 
         private void TriangleLatticePCWaveguideEigen2Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             Problem.PCWaveguideEigenTriangleLatticeProblem2(this);
         }
 
         private void SquareLatticePBG1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             Problem.PBGSquareLatticeProblem1(this);
         }
 
         private void TriangleLatticePBG1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             Problem.PBGTriangleLatticeProblem1(this);
         }
 
         private void TriangleLatticePBG2Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             Problem.PBGTriangleLatticeProblem2(this);
         }
 
         private void SquareLatticePCWaveguide1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.PCWaveguideSquareLatticeProblem1_0(this);
             Problem.PCWaveguideSquareLatticeProblem1(this);
@@ -889,7 +942,7 @@ namespace IvyFEMProtoApp
 
         private void TriangleLatticePCWaveguide1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.PCWaveguideTriangleLatticeProblem1_0(this);
             Problem.PCWaveguideTriangleLatticeProblem1(this);
@@ -897,7 +950,7 @@ namespace IvyFEMProtoApp
 
         private void TriangleLatticePCWaveguide2Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.PCWaveguideTriangleLatticeProblem2_0(this);
             Problem.PCWaveguideTriangleLatticeProblem2(this);
@@ -905,14 +958,14 @@ namespace IvyFEMProtoApp
 
         private void TriangleLatticePCWaveguide3Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             Problem.PCWaveguideTriangleLatticeProblem3(this);
         }
 
         private void SquareLatticePCWaveguidePBC1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.PCWaveguidePBCSquareLatticeProblem1_0(this);
             Problem.PCWaveguidePBCSquareLatticeProblem1(this);
@@ -920,7 +973,7 @@ namespace IvyFEMProtoApp
 
         private void TriangleLatticePCWaveguidePBC1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.PCWaveguidePBCTriangleLatticeProblem1_0(this);
             Problem.PCWaveguidePBCTriangleLatticeProblem1(this);
@@ -928,7 +981,7 @@ namespace IvyFEMProtoApp
 
         private void SquareLatticePCWaveguideModalABCZTD1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.PCWaveguideModalABCZTDSquareLatticeProblem1_0(this);
             Problem.PCWaveguideModalABCZTDSquareLatticeProblem1(this);
@@ -936,7 +989,7 @@ namespace IvyFEMProtoApp
 
         private void TriangleLatticePCWaveguideModalABCZTD1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.PCWaveguideModalABCZTDTriangleLatticeProblem1_0(this);
             Problem.PCWaveguideModalABCZTDTriangleLatticeProblem1(this);
@@ -944,7 +997,7 @@ namespace IvyFEMProtoApp
 
         private void SquareLatticePCWaveguidePML1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.PCWaveguidePMLSquareLatticeProblem1_0(this);
             Problem.PCWaveguidePMLSquareLatticeProblem1(this);
@@ -952,7 +1005,7 @@ namespace IvyFEMProtoApp
 
         private void TriangleLatticePCWaveguidePML1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.PCWaveguidePMLTriangleLatticeProblem1_0(this);
             Problem.PCWaveguidePMLTriangleLatticeProblem1(this);
@@ -960,7 +1013,7 @@ namespace IvyFEMProtoApp
 
         private void SquareLatticePCWaveguidePMLTD1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.PCWaveguidePMLTDSquareLatticeProblem1_0(this);
             Problem.PCWaveguidePMLTDSquareLatticeProblem1(this);
@@ -968,7 +1021,7 @@ namespace IvyFEMProtoApp
 
         private void TriangleLatticePCWaveguidePMLTD1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.PCWaveguidePMLTDTriangleLatticeProblem1_0(this);
             Problem.PCWaveguidePMLTDTriangleLatticeProblem1(this);
@@ -979,7 +1032,7 @@ namespace IvyFEMProtoApp
         // mu = 0.00002 Not converge
         private void StdGFluid1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             FluidEquationType fluidEquationType = FluidEquationType.StdGNavierStokes;
             Problem.FluidProblem1(this, fluidEquationType);
@@ -987,7 +1040,7 @@ namespace IvyFEMProtoApp
 
         private void StdGFluid1TDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             FluidEquationType fluidEquationType = FluidEquationType.StdGNavierStokes;
             Problem.FluidTDProblem1(this, fluidEquationType);
@@ -995,7 +1048,7 @@ namespace IvyFEMProtoApp
 
         private void StdGFluid2Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             FluidEquationType fluidEquationType = FluidEquationType.StdGNavierStokes;
             Problem.FluidProblem2(this, fluidEquationType);
@@ -1003,7 +1056,7 @@ namespace IvyFEMProtoApp
 
         private void StdGFluid2TDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             FluidEquationType fluidEquationType = FluidEquationType.StdGNavierStokes;
             Problem.FluidTDProblem2(this, fluidEquationType);
@@ -1011,7 +1064,7 @@ namespace IvyFEMProtoApp
 
         private void SUPGFluid1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             FluidEquationType fluidEquationType = FluidEquationType.SUPGNavierStokes;
             Problem.FluidProblem1(this, fluidEquationType);
@@ -1019,7 +1072,7 @@ namespace IvyFEMProtoApp
 
         private void SUPGFluid1TDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             FluidEquationType fluidEquationType = FluidEquationType.SUPGNavierStokes;
             Problem.FluidTDProblem1(this, fluidEquationType);
@@ -1027,7 +1080,7 @@ namespace IvyFEMProtoApp
 
         private void SUPGFluid2Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             FluidEquationType fluidEquationType = FluidEquationType.SUPGNavierStokes;
             Problem.FluidProblem2(this, fluidEquationType);
@@ -1035,7 +1088,7 @@ namespace IvyFEMProtoApp
 
         private void SUPGFluid2TDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             FluidEquationType fluidEquationType = FluidEquationType.SUPGNavierStokes;
             Problem.FluidTDProblem2(this, fluidEquationType);
@@ -1043,7 +1096,7 @@ namespace IvyFEMProtoApp
 
         private void StdGPressurePoissonFluid1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.PressurePoissonFluidProblem1(this);
 
@@ -1053,7 +1106,7 @@ namespace IvyFEMProtoApp
 
         private void StdGPressurePoissonFluid1TDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.PressurePoissonFluidTDProblem1(this);
 
@@ -1063,7 +1116,7 @@ namespace IvyFEMProtoApp
 
         private void StdGPressurePoissonFluid2Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.PressurePoissonFluidProblem2(this);
 
@@ -1073,7 +1126,7 @@ namespace IvyFEMProtoApp
 
         private void StdGPressurePoissonFluid2TDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.PressurePoissonFluidTDProblem2(this);
 
@@ -1083,7 +1136,7 @@ namespace IvyFEMProtoApp
 
         private void StdGPressurePoissonFluid1RKTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //Problem.PressurePoissonFluidRKTDProblem1(this); // NG
 
@@ -1093,7 +1146,7 @@ namespace IvyFEMProtoApp
 
         private void StdGPressurePoissonFluid2RKTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             MessageBox.Show("FIX ME: You won't get results.");
             //Problem.PressurePoissonFluidRKTDProblem2(this); // NG
@@ -1102,7 +1155,7 @@ namespace IvyFEMProtoApp
 
         private void SUPGPressurePoissonFluid1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //MessageBox.Show("FIX ME: now, conv ratio = 10^-4");
             MessageBox.Show("FIX ME: now, conv ratio = 10^-3");
@@ -1112,7 +1165,7 @@ namespace IvyFEMProtoApp
 
         private void SUPGPressurePoissonFluid1TDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //これは10^-4のまま
             MessageBox.Show("FIX ME: now, conv ratio = 10^-4");
@@ -1122,7 +1175,7 @@ namespace IvyFEMProtoApp
 
         private void SUPGPressurePoissonFluid2Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //MessageBox.Show("FIX ME: now, conv ratio = 10^-4");
             MessageBox.Show("FIX ME: now, conv ratio = 10^-3");
@@ -1132,7 +1185,7 @@ namespace IvyFEMProtoApp
 
         private void SUPGPressurePoissonFluid2TDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             //MessageBox.Show("FIX ME: now, conv ratio = 10^-4");
             MessageBox.Show("FIX ME: now, conv ratio = 10^-3");
@@ -1142,7 +1195,7 @@ namespace IvyFEMProtoApp
 
         private void SUPGPressurePoissonFluid1RKTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             MessageBox.Show("FIXME: Not work! diverge!");
             FluidEquationType fluidEquationType = FluidEquationType.SUPGPressurePoissonWithBell;
@@ -1151,7 +1204,7 @@ namespace IvyFEMProtoApp
 
         private void StdGVorticityFluid1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             FluidEquationType fluidEquationType = FluidEquationType.StdGVorticity;
             Problem.VorticityFluidProblem1(this, fluidEquationType);
@@ -1159,7 +1212,7 @@ namespace IvyFEMProtoApp
 
         private void StdGVorticityFluid1TDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             FluidEquationType fluidEquationType = FluidEquationType.StdGVorticity;
             Problem.VorticityFluidTDProblem1(this, fluidEquationType);
@@ -1167,7 +1220,7 @@ namespace IvyFEMProtoApp
 
         private void StdGVorticityFluid2Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             FluidEquationType fluidEquationType = FluidEquationType.StdGVorticity;
             Problem.VorticityFluidProblem2(this, fluidEquationType);
@@ -1175,7 +1228,7 @@ namespace IvyFEMProtoApp
 
         private void StdGVorticityFluid2TDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             FluidEquationType fluidEquationType = FluidEquationType.StdGVorticity;
             Problem.VorticityFluidTDProblem2(this, fluidEquationType);
@@ -1183,7 +1236,7 @@ namespace IvyFEMProtoApp
 
         private void SUPGVorticityFluid1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             FluidEquationType fluidEquationType = FluidEquationType.SUPGVorticity;
             Problem.VorticityFluidProblem1(this, fluidEquationType);
@@ -1191,7 +1244,7 @@ namespace IvyFEMProtoApp
 
         private void SUPGVorticityFluid1TDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             FluidEquationType fluidEquationType = FluidEquationType.SUPGVorticity;
             Problem.VorticityFluidTDProblem1(this, fluidEquationType);
@@ -1199,7 +1252,7 @@ namespace IvyFEMProtoApp
 
         private void SUPGVorticityFluid2Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             FluidEquationType fluidEquationType = FluidEquationType.SUPGVorticity;
             Problem.VorticityFluidProblem2(this, fluidEquationType);
@@ -1207,7 +1260,7 @@ namespace IvyFEMProtoApp
 
         private void SUPGVorticityFluid2TDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             FluidEquationType fluidEquationType = FluidEquationType.SUPGVorticity;
             Problem.VorticityFluidTDProblem2(this, fluidEquationType);
@@ -1215,21 +1268,21 @@ namespace IvyFEMProtoApp
 
         private void StdGVorticityFluid1RKTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             Problem.VorticityFluidRKTDProblem1(this);
         }
 
         private void StdGVorticityFluid2RKTDBtn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             Problem.VorticityFluidRKTDProblem2(this);
         }
 
         private void Optimize1Btn_Click(object sender, RoutedEventArgs e)
         {
-            SetProblemTitle(e.Source as MenuItem);
+            InitProblem(e.Source as MenuItem);
 
             Problem.Optimize1Problem(this);
         }

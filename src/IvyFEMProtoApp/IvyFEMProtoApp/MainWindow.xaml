@@ -6,7 +6,7 @@
         xmlns:OpenTK="clr-namespace:OpenTK;assembly=OpenTK.GLControl"        
         xmlns:local="clr-namespace:IvyFEMProtoApp"
         mc:Ignorable="d"
-        Title="IvyFEMProtoApp" Height="480" Width="500" Loaded="Window_Loaded" Activated="Window_Activated" Closing="Window_Closing">
+        Title="IvyFEMProtoApp" Height="440" Width="500" Loaded="Window_Loaded" Activated="Window_Activated" Closing="Window_Closing">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -34,164 +34,179 @@
                     <MenuItem Header="CadEdit" Click="CadEditBtn_Click"/>
                 </MenuItem>
                 <MenuItem Header="Elastic">
-                    <MenuItem Header="Elastic" Click="ElasticBtn_Click"/>
-                    <MenuItem Header="Elastic Time Domain" Click="ElasticTDBtn_Click"/>
-                    <MenuItem Header="Saint Venant" Click="SaintVenantHyperelasticBtn_Click"/>
-                    <MenuItem Header="Saint Venant Time Domain" Click="SaintVenantHyperelasticTDBtn_Click"/>
-                    <MenuItem Header="Mooney-Rivlin" Click="MooneyRivlinHyperelasticBtn_Click"/>
-                    <MenuItem Header="Mooney-Rivlin Time Domain" Click="MooneyRivlinHyperelasticTDBtn_Click"/>
-                    <MenuItem Header="Ogden" Click="OgdenHyperelasticBtn_Click"/>
-                    <MenuItem Header="Ogden Time Domain" Click="OgdenHyperelasticTDBtn_Click"/>
-                </MenuItem>
-                <MenuItem Header="Elastic(MPC)">
-                    <MenuItem Header="Elastic(MPC) Time Domain" Click="ElasticMultipointConstraintTDBtn_Click"/>
-                    <MenuItem Header="Saint Venant(MPC) Time Domain" Click="SaintVenantHyperelasticMultipointConstraintTDBtn_Click"/>
-                    <MenuItem Header="Mooney-Rivlin(MPC) Time Domain" Click="MooneyRivlinHyperelasticMultipointConstraintTDBtn_Click"/>
-                    <MenuItem Header="Ogden(MPC) Time Domain" Click="OgdenHyperelasticMultipointConstraintTDBtn_Click"/>
-                </MenuItem>
-                <MenuItem Header="Elastic(Contact)">
-                    <MenuItem Header="Elastic(Contact) Time Domain" Click="ElasticContactTDBtn_Click"/>
-                    <MenuItem Header="Saint Venant(Contact) Time Domain" Click="SaintVenantHyperelasticContactTDBtn_Click"/>
-                    <MenuItem Header="Mooney-Rivlin(Contact) Time Domain" Click="MooneyRivlinHyperelasticContactTDBtn_Click"/>
-                    <MenuItem Header="Ogden(Contact) Time Domain" Click="OgdenHyperelasticContactTDBtn_Click"/>
-                    <MenuItem Header="Elastic(Circle Contact) Time Domain" Click="ElasticCircleContactTDBtn_Click"/>
-                    <MenuItem Header="Saint Venant(Circle Contact) Time Domain" Click="SaintVenantHyperelasticCircleContactTDBtn_Click"/>
-                    <MenuItem Header="Mooney-Rivlin(Circle Contact) Time Domain" Click="MooneyRivlinHyperelasticCircleContactTDBtn_Click"/>
-                    <MenuItem Header="Ogden(Circle Contact) Time Domain" Click="OgdenHyperelasticCircleContactTDBtn_Click"/>
-                </MenuItem>
-                <MenuItem Header="Elastic(2 Body Contact)">
-                    <MenuItem Header="Elastic(2 Body Contact)" Click="ElasticTwoBodyContactBtn_Click"/>
-                    <MenuItem Header="Elastic(2 Body Contact) Time Domain" Click="ElasticTwoBodyContactTDBtn_Click"/>
-                    <MenuItem Header="Saint Venant(2 Body Contact)" Click="SaintVenantHyperelasticTwoBodyContactBtn_Click"/>
-                    <MenuItem Header="Saint Venant(2 Body Contact) Time Domain" Click="SaintVenantHyperelasticTwoBodyContactTDBtn_Click"/>
-                    <MenuItem Header="Mooney-Rivlin(2 Body Contact) Time Domain" Click="MooneyRivlinHyperelasticTwoBodyContactTDBtn_Click"/>
-                    <MenuItem Header="Ogden(2 Body Contact) Time Domain" Click="OgdenHyperelasticTwoBodyContactTDBtn_Click"/>
+                    <MenuItem Header="Elastic">
+                        <MenuItem Header="Elastic" Click="ElasticBtn_Click"/>
+                        <MenuItem Header="Elastic(Time Domain)" Click="ElasticTDBtn_Click"/>
+                        <MenuItem Header="Saint Venant" Click="SaintVenantHyperelasticBtn_Click"/>
+                        <MenuItem Header="Saint Venant(Time Domain)" Click="SaintVenantHyperelasticTDBtn_Click"/>
+                        <MenuItem Header="Mooney-Rivlin" Click="MooneyRivlinHyperelasticBtn_Click"/>
+                        <MenuItem Header="Mooney-Rivlin(Time Domain)" Click="MooneyRivlinHyperelasticTDBtn_Click"/>
+                        <MenuItem Header="Ogden" Click="OgdenHyperelasticBtn_Click"/>
+                        <MenuItem Header="Ogden(Time Domain)" Click="OgdenHyperelasticTDBtn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Elastic(MPC)">
+                        <MenuItem Header="Elastic(MPC)(Time Domain)" Click="ElasticMultipointConstraintTDBtn_Click"/>
+                        <MenuItem Header="Saint Venant(MPC)(Time Domain)" Click="SaintVenantHyperelasticMultipointConstraintTDBtn_Click"/>
+                        <MenuItem Header="Mooney-Rivlin(MPC)(Time Domain)" Click="MooneyRivlinHyperelasticMultipointConstraintTDBtn_Click"/>
+                        <MenuItem Header="Ogden(MPC)(Time Domain)" Click="OgdenHyperelasticMultipointConstraintTDBtn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Elastic(Contact)">
+                        <MenuItem Header="Elastic(Contact)(Time Domain)" Click="ElasticContactTDBtn_Click"/>
+                        <MenuItem Header="Saint Venant(Contact)(Time Domain)" Click="SaintVenantHyperelasticContactTDBtn_Click"/>
+                        <MenuItem Header="Mooney-Rivlin(Contact)(Time Domain)" Click="MooneyRivlinHyperelasticContactTDBtn_Click"/>
+                        <MenuItem Header="Ogden(Contact)(Time Domain)" Click="OgdenHyperelasticContactTDBtn_Click"/>
+                        <MenuItem Header="Elastic(Circle Contact)(Time Domain)" Click="ElasticCircleContactTDBtn_Click"/>
+                        <MenuItem Header="Saint Venant(Circle Contact)(Time Domain)" Click="SaintVenantHyperelasticCircleContactTDBtn_Click"/>
+                        <MenuItem Header="Mooney-Rivlin(Circle Contact)(Time Domain)" Click="MooneyRivlinHyperelasticCircleContactTDBtn_Click"/>
+                        <MenuItem Header="Ogden(Circle Contact)(Time Domain)" Click="OgdenHyperelasticCircleContactTDBtn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Elastic(2 Body Contact)">
+                        <MenuItem Header="Elastic(2 Body Contact)" Click="ElasticTwoBodyContactBtn_Click"/>
+                        <MenuItem Header="Elastic(2 Body Contact)(Time Domain)" Click="ElasticTwoBodyContactTDBtn_Click"/>
+                        <MenuItem Header="Saint Venant(2 Body Contact)" Click="SaintVenantHyperelasticTwoBodyContactBtn_Click"/>
+                        <MenuItem Header="Saint Venant(2 Body Contact)(Time Domain)" Click="SaintVenantHyperelasticTwoBodyContactTDBtn_Click"/>
+                        <MenuItem Header="Mooney-Rivlin(2 Body Contact)(Time Domain)" Click="MooneyRivlinHyperelasticTwoBodyContactTDBtn_Click"/>
+                        <MenuItem Header="Ogden(2 Body Contact)(Time Domain)" Click="OgdenHyperelasticTwoBodyContactTDBtn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Truss/Beam/Frame">
+                        <MenuItem Header="Truss" Click="TrussBtn_Click"/>
+                        <MenuItem Header="Truss(Time Domain)" Click="TrussTDBtn_Click"/>
+                        <MenuItem Header="Beam" Click="BeamBtn_Click"/>
+                        <MenuItem Header="Beam(Time Domain)" Click="BeamTDBtn_Click"/>
+                        <MenuItem Header="Beam(Eigen)" Click="BeamEigenBtn_Click"/>
+                        <MenuItem Header="Frame" Click="FrameBtn_Click"/>
+                        <MenuItem Header="Frame(Time Domain)" Click="FrameTDBtn_Click"/>
+                    </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Various Equations">
                     <MenuItem Header="Poisson" Click="PoissonBtn_Click"/>
-                    <MenuItem Header="Heat Diffusion (Poisson)" Click="DiffusionBtn_Click"/>
+                    <MenuItem Header="Heat Diffusion(Poisson)" Click="DiffusionBtn_Click"/>
                     <MenuItem Header="Heat Diffusion(Time Domain)" Click="DiffusionTDBtn_Click"/>
                     <MenuItem Header="Advection Diffusion" Click="AdvectionDiffusionBtn_Click"/>
-                    <MenuItem Header="Advection Diffusion (Time Domain)" Click="AdvectionDiffusionTDBtn_Click"/>
+                    <MenuItem Header="Advection Diffusion(Time Domain)" Click="AdvectionDiffusionTDBtn_Click"/>
                     <MenuItem Header="Helmholtz" Click="HelmholtzBtn_Click"/>
                 </MenuItem>
-                <MenuItem Header="ElectroMagnetic(Waveguide)">
-                    <MenuItem Header="H-Plane Waveguide(1)" Click="HPlaneWaveguide1Btn_Click"/>
-                    <MenuItem Header="H-Plane Waveguide(2)" Click="HPlaneWaveguide2Btn_Click"/>
-                    <Separator/>
-                    <MenuItem Header="E-Plane Waveguide(1)" Click="EPlaneWaveguide1Btn_Click"/>
-                </MenuItem>
-                <MenuItem Header="ElectroMagnetic(ABC)">
-                    <MenuItem Header="H-Plane Waveguide (Higher Order ABC)(1)" Click="HPlaneWaveguideHigherOrderABC1Btn_Click"/>
-                    <MenuItem Header="H-Plane Waveguide (Higher Order ABC)(2)" Click="HPlaneWaveguideHigherOrderABC2Btn_Click"/>
-                    <MenuItem Header="H-Plane Waveguide (Higher Order ABC)(3,Open)" Click="HPlaneWaveguideHigherOrderABC3Btn_Click"/>
-                    <Separator/>
-                    <MenuItem Header="H-Plane Waveguide (Time Domain)(Higher Order ABC)(1)" Click="HPlaneWaveguideHigherOrderABCTD1Btn_Click"/>
-                    <MenuItem Header="H-Plane Waveguide (Time Domain)(Higher Order ABC)(2)" Click="HPlaneWaveguideHigherOrderABCTD2Btn_Click"/>
-                    <MenuItem Header="H-Plane Waveguide (Time Domain)(Higher Order ABC)(3,Open)" Click="HPlaneWaveguideHigherOrderABCTD3Btn_Click"/>
-                    <Separator/>
-                    <MenuItem Header="H-Plane Waveguide (Time Domain)(First Order ABC)(3,Open)" Click="HPlaneWaveguideFirstOrderABCTD3Btn_Click"/>
-                </MenuItem>
-                <MenuItem Header="ElectroMagnetic(PML)">
-                    <MenuItem Header="H-Plane Waveguide (PML)(1)" Click="HPlaneWaveguidePML1Btn_Click"/>
-                    <MenuItem Header="H-Plane Waveguide (PML)(2)" Click="HPlaneWaveguidePML2Btn_Click"/>
-                    <MenuItem Header="H-Plane Waveguide (PML)(3,Open)" Click="HPlaneWaveguidePML3Btn_Click"/>
-                    <Separator/>
-                    <MenuItem Header="H-Plane Waveguide (Time Domain)(PML)(1)" Click="HPlaneWaveguidePMLTD1Btn_Click"/>
-                    <MenuItem Header="H-Plane Waveguide (Time Domain)(PML)(2)" Click="HPlaneWaveguidePMLTD2Btn_Click"/>
-                    <MenuItem Header="H-Plane Waveguide (Time Domain)(PML)(3,Open)" Click="HPlaneWaveguidePMLTD3Btn_Click"/>
-                </MenuItem>
-                <MenuItem Header="ElectroMagnetic(Waveguide2D Eigen)">
-                    <MenuItem Header="Waveguide 2D Eigen(1)" Click="Waveguide2DEigen1Btn_Click"/>
-                    <MenuItem Header="Waveguide 2D Eigen(2)" Click="Waveguide2DEigen2Btn_Click"/>
-                    <MenuItem Header="Waveguide 2D Eigen(3)" Click="Waveguide2DEigen3Btn_Click"/>
-                    <Separator/>
-                    <MenuItem Header="Waveguide 2D Eigen 2nd Order(1)" Click="Waveguide2DEigen2ndOrder1Btn_Click"/>
-                    <MenuItem Header="Waveguide 2D Eigen 2nd Order(2)" Click="Waveguide2DEigen2ndOrder2Btn_Click"/>
-                    <MenuItem Header="Waveguide 2D Eigen 2nd Order(3)" Click="Waveguide2DEigen2ndOrder3Btn_Click"/>
-                </MenuItem>
-                <MenuItem Header="ElectroMagnetic(Waveguide2D Eigen,Open)">
-                    <MenuItem Header="Waveguide 2D Eigen Open(2)" Click="Waveguide2DEigenOpen2Btn_Click"/>
-                    <MenuItem Header="Waveguide 2D Eigen Open(3)" Click="Waveguide2DEigenOpen3Btn_Click"/>
-                    <Separator/>
-                    <MenuItem Header="Waveguide 2D Eigen 2nd Order(2)" Click="Waveguide2DEigenOpen2ndOrder2Btn_Click"/>
-                    <MenuItem Header="Waveguide 2D Eigen 2nd Order(3)" Click="Waveguide2DEigenOpen2ndOrder3Btn_Click"/>
-                </MenuItem>
-                <MenuItem Header="Photonic Crystal(Eigen)">
-                    <MenuItem Header="PC Waveguide(Eigen)(Square Lattice)" Click="SquareLatticePCWaveguideEigen1Btn_Click"/>
-                    <MenuItem Header="PC Waveguide(Eigen)(Triangle Lattice)" Click="TriangleLatticePCWaveguideEigen1Btn_Click"/>
-                    <MenuItem Header="PC Waveguide(Eigen)(Triangle Lattice,CROW)" Click="TriangleLatticePCWaveguideEigen2Btn_Click"/>
-                    <Separator/>
-                    <MenuItem Header="PC Waveguide(Photonic Band Gap)(Square Lattice)" Click="SquareLatticePBG1Btn_Click"/>
-                    <MenuItem Header="PC Waveguide(Photonic Band Gap)(Triangle Lattice 60°)" Click="TriangleLatticePBG1Btn_Click"/>
-                    <MenuItem Header="PC Waveguide(Photonic Band Gap)(Triangle Lattice 45°)" Click="TriangleLatticePBG2Btn_Click"/>
-                </MenuItem>
-                <MenuItem Header="Photonic Crystal(Waveguide)">
-                    <MenuItem Header="PC Waveguide(Square Lattice)" Click="SquareLatticePCWaveguide1Btn_Click"/>
-                    <MenuItem Header="PC Waveguide(Triangle Lattice)" Click="TriangleLatticePCWaveguide1Btn_Click"/>
-                    <MenuItem Header="PC Waveguide(Triangle Lattice,CROW(1))" Click="TriangleLatticePCWaveguide2Btn_Click"/>
-                    <MenuItem Header="PC Waveguide(Triangle Lattice,CROW(2))" Click="TriangleLatticePCWaveguide3Btn_Click"/>
-                </MenuItem>
-                <MenuItem Header="Photonic Crystal(PBC,ABC)">
-                    <MenuItem Header="PC Waveguide(PBC)(Square Lattice)" Click="SquareLatticePCWaveguidePBC1Btn_Click"/>
-                    <MenuItem Header="PC Waveguide(PBC)(Triangle Lattice)" Click="TriangleLatticePCWaveguidePBC1Btn_Click"/>
-                    <Separator/>
-                    <MenuItem Header="PC Waveguide(Modal ABC,Z)(Time Domain)(Square Lattice)" Click="SquareLatticePCWaveguideModalABCZTD1Btn_Click"/>
-                    <MenuItem Header="PC Waveguide(Modal ABC,Z)(Time Domain)(Triangle Lattice)" Click="TriangleLatticePCWaveguideModalABCZTD1Btn_Click"/>
-                </MenuItem>
-                <MenuItem Header="Photonic Crystal(PML)">
-                    <MenuItem Header="PC Waveguide(PML)(Square Lattice)" Click="SquareLatticePCWaveguidePML1Btn_Click"/>
-                    <MenuItem Header="PC Waveguide(PML)(Triangle Lattice)" Click="TriangleLatticePCWaveguidePML1Btn_Click"/>
-                    <Separator/>
-                    <MenuItem Header="PC Waveguide(PML)(Time Domain)(Square Lattice)" Click="SquareLatticePCWaveguidePMLTD1Btn_Click"/>
-                    <MenuItem Header="PC Waveguide(PML)(Time Domain)(Triangle Lattice)" Click="TriangleLatticePCWaveguidePMLTD1Btn_Click"/>
+                <MenuItem Header="ElectroMagnetic">
+                    <MenuItem Header="ElectroMagnetic(Waveguide)">
+                        <MenuItem Header="H-Plane Waveguide(1)" Click="HPlaneWaveguide1Btn_Click"/>
+                        <MenuItem Header="H-Plane Waveguide(2)" Click="HPlaneWaveguide2Btn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="E-Plane Waveguide(1)" Click="EPlaneWaveguide1Btn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="ElectroMagnetic(ABC)">
+                        <MenuItem Header="H-Plane Waveguide(Higher Order ABC)(1)" Click="HPlaneWaveguideHigherOrderABC1Btn_Click"/>
+                        <MenuItem Header="H-Plane Waveguide(Higher Order ABC)(2)" Click="HPlaneWaveguideHigherOrderABC2Btn_Click"/>
+                        <MenuItem Header="H-Plane Waveguide(Higher Order ABC)(3,Open)" Click="HPlaneWaveguideHigherOrderABC3Btn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="H-Plane Waveguide(Higher Order ABC)(1)(Time Domain)" Click="HPlaneWaveguideHigherOrderABCTD1Btn_Click"/>
+                        <MenuItem Header="H-Plane Waveguide(Higher Order ABC)(2)(Time Domain)" Click="HPlaneWaveguideHigherOrderABCTD2Btn_Click"/>
+                        <MenuItem Header="H-Plane Waveguide(Higher Order ABC)(3,Open)(Time Domain)" Click="HPlaneWaveguideHigherOrderABCTD3Btn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="H-Plane Waveguide (Time Domain)(First Order ABC)(3,Open)" Click="HPlaneWaveguideFirstOrderABCTD3Btn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="ElectroMagnetic(PML)">
+                        <MenuItem Header="H-Plane Waveguide(PML)(1)" Click="HPlaneWaveguidePML1Btn_Click"/>
+                        <MenuItem Header="H-Plane Waveguide(PML)(2)" Click="HPlaneWaveguidePML2Btn_Click"/>
+                        <MenuItem Header="H-Plane Waveguide(PML)(3,Open)" Click="HPlaneWaveguidePML3Btn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="H-Plane Waveguide(PML)(1)(Time Domain)" Click="HPlaneWaveguidePMLTD1Btn_Click"/>
+                        <MenuItem Header="H-Plane Waveguide(PML)(2)(Time Domain)" Click="HPlaneWaveguidePMLTD2Btn_Click"/>
+                        <MenuItem Header="H-Plane Waveguide(PML)(3,Open)(Time Domain)" Click="HPlaneWaveguidePMLTD3Btn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="ElectroMagnetic(Waveguide2D Eigen)">
+                        <MenuItem Header="Waveguide 2D Eigen(1)" Click="Waveguide2DEigen1Btn_Click"/>
+                        <MenuItem Header="Waveguide 2D Eigen(2)" Click="Waveguide2DEigen2Btn_Click"/>
+                        <MenuItem Header="Waveguide 2D Eigen(3)" Click="Waveguide2DEigen3Btn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="Waveguide 2D Eigen 2nd Order(1)" Click="Waveguide2DEigen2ndOrder1Btn_Click"/>
+                        <MenuItem Header="Waveguide 2D Eigen 2nd Order(2)" Click="Waveguide2DEigen2ndOrder2Btn_Click"/>
+                        <MenuItem Header="Waveguide 2D Eigen 2nd Order(3)" Click="Waveguide2DEigen2ndOrder3Btn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="ElectroMagnetic(Waveguide2D Eigen,Open)">
+                        <MenuItem Header="Waveguide 2D Eigen Open(2)" Click="Waveguide2DEigenOpen2Btn_Click"/>
+                        <MenuItem Header="Waveguide 2D Eigen Open(3)" Click="Waveguide2DEigenOpen3Btn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="Waveguide 2D Eigen 2nd Order(2)" Click="Waveguide2DEigenOpen2ndOrder2Btn_Click"/>
+                        <MenuItem Header="Waveguide 2D Eigen 2nd Order(3)" Click="Waveguide2DEigenOpen2ndOrder3Btn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Photonic Crystal(Eigen)">
+                        <MenuItem Header="PC Waveguide(Eigen)(Square Lattice)" Click="SquareLatticePCWaveguideEigen1Btn_Click"/>
+                        <MenuItem Header="PC Waveguide(Eigen)(Triangle Lattice)" Click="TriangleLatticePCWaveguideEigen1Btn_Click"/>
+                        <MenuItem Header="PC Waveguide(Eigen)(Triangle Lattice,CROW)" Click="TriangleLatticePCWaveguideEigen2Btn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="PC Waveguide(Photonic Band Gap)(Square Lattice)" Click="SquareLatticePBG1Btn_Click"/>
+                        <MenuItem Header="PC Waveguide(Photonic Band Gap)(Triangle Lattice 60°)" Click="TriangleLatticePBG1Btn_Click"/>
+                        <MenuItem Header="PC Waveguide(Photonic Band Gap)(Triangle Lattice 45°)" Click="TriangleLatticePBG2Btn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Photonic Crystal(Waveguide)">
+                        <MenuItem Header="PC Waveguide(Square Lattice)" Click="SquareLatticePCWaveguide1Btn_Click"/>
+                        <MenuItem Header="PC Waveguide(Triangle Lattice)" Click="TriangleLatticePCWaveguide1Btn_Click"/>
+                        <MenuItem Header="PC Waveguide(Triangle Lattice,CROW(1))" Click="TriangleLatticePCWaveguide2Btn_Click"/>
+                        <MenuItem Header="PC Waveguide(Triangle Lattice,CROW(2))" Click="TriangleLatticePCWaveguide3Btn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Photonic Crystal(PBC,ABC)">
+                        <MenuItem Header="PC Waveguide(PBC)(Square Lattice)" Click="SquareLatticePCWaveguidePBC1Btn_Click"/>
+                        <MenuItem Header="PC Waveguide(PBC)(Triangle Lattice)" Click="TriangleLatticePCWaveguidePBC1Btn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="PC Waveguide(Modal ABC,Z)(Square Lattice)(Time Domain)" Click="SquareLatticePCWaveguideModalABCZTD1Btn_Click"/>
+                        <MenuItem Header="PC Waveguide(Modal ABC,Z)(Triangle Lattice)(Time Domain)" Click="TriangleLatticePCWaveguideModalABCZTD1Btn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Photonic Crystal(PML)">
+                        <MenuItem Header="PC Waveguide(PML)(Square Lattice)" Click="SquareLatticePCWaveguidePML1Btn_Click"/>
+                        <MenuItem Header="PC Waveguide(PML)(Triangle Lattice)" Click="TriangleLatticePCWaveguidePML1Btn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="PC Waveguide(PML)(Square Lattice)(Time Domain)" Click="SquareLatticePCWaveguidePMLTD1Btn_Click"/>
+                        <MenuItem Header="PC Waveguide(PML)(Triangle Lattice)(Time Domain)" Click="TriangleLatticePCWaveguidePMLTD1Btn_Click"/>
+                    </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Fluid">
-                    <MenuItem Header="Fluid(1)" Click="StdGFluid1Btn_Click"/>
-                    <MenuItem Header="Fluid(1)(Time Domain)" Click="StdGFluid1TDBtn_Click"/>
-                    <MenuItem Header="Fluid(2)" Click="StdGFluid2Btn_Click"/>
-                    <MenuItem Header="Fluid(2)(Time Domain)" Click="StdGFluid2TDBtn_Click"/>
-                </MenuItem>
-                <MenuItem Header="Fluid(SUPG)">
-                    <MenuItem Header="Fluid(SUPG)(1)" Click="SUPGFluid1Btn_Click"/>
-                    <MenuItem Header="Fluid(SUPG)(1)(Time Domain)" Click="SUPGFluid1TDBtn_Click"/>
-                    <MenuItem Header="Fluid(SUPG)(2)" Click="SUPGFluid2Btn_Click"/>
-                    <MenuItem Header="Fluid(SUPG)(2)(Time Domain)" Click="SUPGFluid2TDBtn_Click"/>
-                </MenuItem>
-                <MenuItem Header="Pressure Poisson">
-                    <MenuItem Header="Pressure Poisson(1)" Click="StdGPressurePoissonFluid1Btn_Click"/>
-                    <MenuItem Header="Pressure Poisson(1)(Time Domain)" Click="StdGPressurePoissonFluid1TDBtn_Click"/>
-                    <MenuItem Header="Pressure Poisson(2)" Click="StdGPressurePoissonFluid2Btn_Click"/>
-                    <MenuItem Header="Pressure Poisson(2)(Time Domain)" Click="StdGPressurePoissonFluid2TDBtn_Click"/>
-                </MenuItem>
-                <MenuItem Header="Pressure Poisson(RK)">
-                    <MenuItem Header="Pressure Poisson(RK)(1)(Time Domain)" Click="StdGPressurePoissonFluid1RKTDBtn_Click"/>
-                    <MenuItem Header="Pressure Poisson(RK)(2)(Time Domain)" Click="StdGPressurePoissonFluid2RKTDBtn_Click"/>
-                </MenuItem>
-                <MenuItem Header="Pressure Poisson(SUPG)">
-                    <MenuItem Header="Pressure Poisson(SUPG)(1)" Click="SUPGPressurePoissonFluid1Btn_Click"/>
-                    <MenuItem Header="Pressure Poisson(SUPG)(1)(Time Domain)" Click="SUPGPressurePoissonFluid1TDBtn_Click"/>
-                    <MenuItem Header="Pressure Poisson(SUPG)(2)" Click="SUPGPressurePoissonFluid2Btn_Click"/>
-                    <MenuItem Header="Pressure Poisson(SUPG)(2)(Time Domain)" Click="SUPGPressurePoissonFluid2TDBtn_Click"/>
-                </MenuItem>
-                <MenuItem Header="Pressure Poisson(SUPG)(RK)">
-                    <MenuItem Header="Pressure Poisson(SUPG)(RK)(1)(Time Domain)" Click="SUPGPressurePoissonFluid1RKTDBtn_Click"/>
-                </MenuItem>
-                <MenuItem Header="Vorticity">
-                    <MenuItem Header="Vorticity(1)" Click="StdGVorticityFluid1Btn_Click"/>
-                    <MenuItem Header="Vorticity(1)(Time Domain)" Click="StdGVorticityFluid1TDBtn_Click"/>
-                    <MenuItem Header="Vorticity(2)" Click="StdGVorticityFluid2Btn_Click"/>
-                    <MenuItem Header="Vorticity(2)(Time Domain)" Click="StdGVorticityFluid2TDBtn_Click"/>
-                </MenuItem>
-                <MenuItem Header="Vorticity(SUPG)">
-                    <MenuItem Header="Vorticity(SUPG)(1)" Click="SUPGVorticityFluid1Btn_Click"/>
-                    <MenuItem Header="Vorticity(SUPG)(1)(Time Domain)" Click="SUPGVorticityFluid1TDBtn_Click"/>
-                    <MenuItem Header="Vorticity(SUPG)(2)" Click="SUPGVorticityFluid2Btn_Click"/>
-                    <MenuItem Header="Vorticity(SUPG)(2)(Time Domain)" Click="SUPGVorticityFluid2TDBtn_Click"/>
-                </MenuItem>
-                <MenuItem Header="Vorticity(RK)">
-                    <MenuItem Header="Vorticity(RK)(1)(Time Domain)" Click="StdGVorticityFluid1RKTDBtn_Click"/>
-                    <MenuItem Header="Vorticity(RK)(2)(Time Domain)" Click="StdGVorticityFluid2RKTDBtn_Click"/>
+                    <MenuItem Header="Fluid">
+                        <MenuItem Header="Fluid(1)" Click="StdGFluid1Btn_Click"/>
+                        <MenuItem Header="Fluid(1)(Time Domain)" Click="StdGFluid1TDBtn_Click"/>
+                        <MenuItem Header="Fluid(2)" Click="StdGFluid2Btn_Click"/>
+                        <MenuItem Header="Fluid(2)(Time Domain)" Click="StdGFluid2TDBtn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Fluid(SUPG)">
+                        <MenuItem Header="Fluid(SUPG)(1)" Click="SUPGFluid1Btn_Click"/>
+                        <MenuItem Header="Fluid(SUPG)(1)(Time Domain)" Click="SUPGFluid1TDBtn_Click"/>
+                        <MenuItem Header="Fluid(SUPG)(2)" Click="SUPGFluid2Btn_Click"/>
+                        <MenuItem Header="Fluid(SUPG)(2)(Time Domain)" Click="SUPGFluid2TDBtn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Pressure Poisson">
+                        <MenuItem Header="Pressure Poisson(1)" Click="StdGPressurePoissonFluid1Btn_Click"/>
+                        <MenuItem Header="Pressure Poisson(1)(Time Domain)" Click="StdGPressurePoissonFluid1TDBtn_Click"/>
+                        <MenuItem Header="Pressure Poisson(2)" Click="StdGPressurePoissonFluid2Btn_Click"/>
+                        <MenuItem Header="Pressure Poisson(2)(Time Domain)" Click="StdGPressurePoissonFluid2TDBtn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Pressure Poisson(RK)">
+                        <MenuItem Header="Pressure Poisson(RK)(1)(Time Domain)" Click="StdGPressurePoissonFluid1RKTDBtn_Click"/>
+                        <MenuItem Header="Pressure Poisson(RK)(2)(Time Domain)" Click="StdGPressurePoissonFluid2RKTDBtn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Pressure Poisson(SUPG)">
+                        <MenuItem Header="Pressure Poisson(SUPG)(1)" Click="SUPGPressurePoissonFluid1Btn_Click"/>
+                        <MenuItem Header="Pressure Poisson(SUPG)(1)(Time Domain)" Click="SUPGPressurePoissonFluid1TDBtn_Click"/>
+                        <MenuItem Header="Pressure Poisson(SUPG)(2)" Click="SUPGPressurePoissonFluid2Btn_Click"/>
+                        <MenuItem Header="Pressure Poisson(SUPG)(2)(Time Domain)" Click="SUPGPressurePoissonFluid2TDBtn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Pressure Poisson(SUPG)(RK)">
+                        <MenuItem Header="Pressure Poisson(SUPG)(RK)(1)(Time Domain)" Click="SUPGPressurePoissonFluid1RKTDBtn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Vorticity">
+                        <MenuItem Header="Vorticity(1)" Click="StdGVorticityFluid1Btn_Click"/>
+                        <MenuItem Header="Vorticity(1)(Time Domain)" Click="StdGVorticityFluid1TDBtn_Click"/>
+                        <MenuItem Header="Vorticity(2)" Click="StdGVorticityFluid2Btn_Click"/>
+                        <MenuItem Header="Vorticity(2)(Time Domain)" Click="StdGVorticityFluid2TDBtn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Vorticity(SUPG)">
+                        <MenuItem Header="Vorticity(SUPG)(1)" Click="SUPGVorticityFluid1Btn_Click"/>
+                        <MenuItem Header="Vorticity(SUPG)(1)(Time Domain)" Click="SUPGVorticityFluid1TDBtn_Click"/>
+                        <MenuItem Header="Vorticity(SUPG)(2)" Click="SUPGVorticityFluid2Btn_Click"/>
+                        <MenuItem Header="Vorticity(SUPG)(2)(Time Domain)" Click="SUPGVorticityFluid2TDBtn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Vorticity(RK)">
+                        <MenuItem Header="Vorticity(RK)(1)(Time Domain)" Click="StdGVorticityFluid1RKTDBtn_Click"/>
+                        <MenuItem Header="Vorticity(RK)(2)(Time Domain)" Click="StdGVorticityFluid2RKTDBtn_Click"/>
+                    </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Optimizing">
                     <MenuItem Header="H-Plane Waveguide" Click="Optimize1Btn_Click"/>

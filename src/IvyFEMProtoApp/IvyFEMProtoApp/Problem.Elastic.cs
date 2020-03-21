@@ -324,7 +324,7 @@ namespace IvyFEMProtoApp
                 }
                 {
                     var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
-                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
+                    solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
