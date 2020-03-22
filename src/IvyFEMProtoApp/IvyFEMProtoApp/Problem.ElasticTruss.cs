@@ -136,6 +136,9 @@ namespace IvyFEMProtoApp
                     quantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
+                var edgeDrawer0 = new EdgeFieldDrawer(
+                    valueId, FieldDerivativeType.Value, true, true, world);
+                fieldDrawerArray.Add(edgeDrawer0);
                 var edgeDrawer = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, false, true, world);
                 edgeDrawer.LineWidth = 4;
@@ -320,6 +323,9 @@ namespace IvyFEMProtoApp
                     quantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
+                var edgeDrawer0 = new EdgeFieldDrawer(
+                    valueId, FieldDerivativeType.Value, true, true, world);
+                fieldDrawerArray.Add(edgeDrawer0);
                 var edgeDrawer = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, false, true, world);
                 edgeDrawer.LineWidth = 4;

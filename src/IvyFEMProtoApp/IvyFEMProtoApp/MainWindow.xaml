@@ -77,9 +77,10 @@
                         <MenuItem Header="Beam(Eigen)" Click="BeamEigenBtn_Click"/>
                         <Separator/>
                         <MenuItem Header="Frame(0)" Click="Frame0Btn_Click"/>
-                        <MenuItem Header="Frame(0)(Time Domain)" Click="Frame0TDBtn_Click"/>
+                        <MenuItem Header="Frame(0)(Time Domain)" Click="FrameTD0Btn_Click"/>
+                        <MenuItem Header="Frame(0)(Eigen)" Click="FrameEigen0Btn_Click"/>
                         <MenuItem Header="Frame(1)" Click="Frame1Btn_Click"/>
-                        <MenuItem Header="Frame(1)(Time Domain)" Click="Frame1TDBtn_Click"/>
+                        <MenuItem Header="Frame(1)(Time Domain)" Click="FrameTD1Btn_Click"/>
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Various Equations">

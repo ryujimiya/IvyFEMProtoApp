@@ -20,7 +20,7 @@ namespace IvyFEMProtoApp
             int divCnt = 10;
             double eLen = 0.95 * beamLen / (double)divCnt;
             //double loadX = beamLen * 0.5;
-            double loadX = beamLen * 0.25;
+            double loadX = beamLen * 0.75;
             CadObject2D cad = new CadObject2D();
             {
                 uint lId0 = 0;
@@ -97,7 +97,7 @@ namespace IvyFEMProtoApp
                 {
                     var ma = new BeamMaterial();
                     ma.Area = b * h;
-                    ma.SecondMomentOfArea = (1.0 / 12.0) * b * h * h * h;
+                    ma.SecondMomentOfArea = (1.0 / 12.0) * b * b * b * h;
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
                     beamMaId = world.AddMaterial(ma);
@@ -182,6 +182,9 @@ namespace IvyFEMProtoApp
                     dQuantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
+                var edgeDrawer0 = new EdgeFieldDrawer(
+                    valueId, FieldDerivativeType.Value, true, true, world);
+                fieldDrawerArray.Add(edgeDrawer0);
                 var edgeDrawer = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, false, true, world);
                 edgeDrawer.LineWidth = 4;
@@ -268,7 +271,7 @@ namespace IvyFEMProtoApp
             int divCnt = 10;
             double eLen = 0.95 * beamLen / (double)divCnt;
             //double loadX = beamLen * 0.5;
-            double loadX = beamLen * 0.25;
+            double loadX = beamLen * 0.75;
             CadObject2D cad = new CadObject2D();
             {
                 uint lId0 = 0;
@@ -345,7 +348,7 @@ namespace IvyFEMProtoApp
                 {
                     var ma = new BeamMaterial();
                     ma.Area = b * h;
-                    ma.SecondMomentOfArea = (1.0 / 12.0) * b * h * h * h;
+                    ma.SecondMomentOfArea = (1.0 / 12.0) * b * b * b * h;
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
                     beamMaId = world.AddMaterial(ma);
@@ -450,6 +453,9 @@ namespace IvyFEMProtoApp
 
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
+                var edgeDrawer0 = new EdgeFieldDrawer(
+                    valueId, FieldDerivativeType.Value, true, true, world);
+                fieldDrawerArray.Add(edgeDrawer0);
                 var edgeDrawer = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, false, true, world);
                 edgeDrawer.LineWidth = 4;

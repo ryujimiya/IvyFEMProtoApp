@@ -116,7 +116,7 @@ namespace IvyFEMProtoApp
                 {
                     var ma = new FrameMaterial();
                     ma.Area = b * h;
-                    ma.SecondMomentOfArea = (1.0 / 12.0) * b * h * h * h;
+                    ma.SecondMomentOfArea = (1.0 / 12.0) * b * b * b * h;
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
                     beamMaId = world.AddMaterial(ma);
@@ -228,6 +228,9 @@ namespace IvyFEMProtoApp
                     d1QuantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
+                var edgeDrawer0 = new EdgeFieldDrawer(
+                    valueId, FieldDerivativeType.Value, true, true, world);
+                fieldDrawerArray.Add(edgeDrawer0);
                 var edgeDrawer = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, false, true, world);
                 edgeDrawer.LineWidth = 4;
@@ -250,12 +253,12 @@ namespace IvyFEMProtoApp
 
                 var FEM = new Elastic2DFEM(world);                
                 {
-                    //var solver = new IvyFEM.Linear.LapackEquationSolver();
+                    var solver = new IvyFEM.Linear.LapackEquationSolver();
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
-                    //solver.IsOrderingToBandMatrix = true;
-                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
+                    solver.IsOrderingToBandMatrix = true;
+                    solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
-                    //FEM.Solver = solver;
+                    FEM.Solver = solver;
                 }
                 {
                     //var solver = new IvyFEM.Linear.LisEquationSolver();
@@ -263,12 +266,12 @@ namespace IvyFEMProtoApp
                     //FEM.Solver = solver;
                 }
                 {
-                    var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
+                    //var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
-                    solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
-                    FEM.Solver = solver;
+                    //FEM.Solver = solver;
                 }
                 FEM.DisplacementQuantityIds = dQuantityIds.ToList();
                 FEM.Solve();
@@ -323,7 +326,6 @@ namespace IvyFEMProtoApp
         public void FrameTDProblem1(MainWindow mainWindow)
         {
             double beamLen = 1.0;
-            double groundY = -1.0;
             int beamCntX = 2;
             double beamsLen = beamLen * beamCntX;
             double b = 0.2 * beamLen;
@@ -425,7 +427,7 @@ namespace IvyFEMProtoApp
                 {
                     var ma = new FrameMaterial();
                     ma.Area = b * h;
-                    ma.SecondMomentOfArea = (1.0 / 12.0) * b * h * h * h;
+                    ma.SecondMomentOfArea = (1.0 / 12.0) * b * b * b * h;
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
                     beamMaId = world.AddMaterial(ma);
@@ -566,6 +568,9 @@ namespace IvyFEMProtoApp
 
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
+                var edgeDrawer0 = new EdgeFieldDrawer(
+                    valueId, FieldDerivativeType.Value, true, true, world);
+                fieldDrawerArray.Add(edgeDrawer0);
                 var edgeDrawer = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, false, true, world);
                 edgeDrawer.LineWidth = 4;
@@ -594,12 +599,12 @@ namespace IvyFEMProtoApp
                     newmarkBeta, newmarkGamma,
                     valueIds, prevValueIds);
                 {
-                    //var solver = new IvyFEM.Linear.LapackEquationSolver();
+                    var solver = new IvyFEM.Linear.LapackEquationSolver();
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
-                    //solver.IsOrderingToBandMatrix = true;
-                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
+                    solver.IsOrderingToBandMatrix = true;
+                    solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
-                    //FEM.Solver = solver;
+                    FEM.Solver = solver;
                 }
                 {
                     //var solver = new IvyFEM.Linear.LisEquationSolver();
@@ -607,12 +612,12 @@ namespace IvyFEMProtoApp
                     //FEM.Solver = solver;
                 }
                 {
-                    var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
+                    //var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
-                    solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
-                    FEM.Solver = solver;
+                    //FEM.Solver = solver;
                 }
                 FEM.DisplacementQuantityIds = dQuantityIds.ToList();
                 FEM.Solve();

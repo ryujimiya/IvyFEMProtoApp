@@ -12,13 +12,13 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void BeamEigenProblem(MainWindow mainWindow)
+        public void FrameEigenProblem0(MainWindow mainWindow)
         {
             double beamLen = 1.0;
             double b = 0.2 * beamLen;
             double h = 0.25 * b;
             // 規格化周波数 fn = b/λ
-            Func<double, double> toNormalizedFreq = freq => b * freq / Constants.C0; 
+            Func<double, double> toNormalizedFreq = freq => b * freq / Constants.C0;
             int divCnt = 10;
             double eLen = 0.95 * beamLen / (double)divCnt;
             CadObject2D cad = new CadObject2D();
@@ -26,19 +26,18 @@ namespace IvyFEMProtoApp
                 uint lId0 = 0;
                 uint vId1 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(0.0, 0.0)).AddVId;
                 uint vId2 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(beamLen, 0.0)).AddVId;
+
                 uint eId1 = cad.ConnectVertexLine(vId1, vId2).AddEId;
             }
 
-            /*
             {
                 double[] nullLoopColor = { 1.0, 1.0, 1.0 };
-                uint[] lIds = { };
+                uint[] lIds = cad.GetElementIds(CadElementType.Loop).ToArray();
                 foreach (uint lId in lIds)
                 {
                     cad.SetLoopColor(lId, nullLoopColor);
                 }
             }
-            */
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
@@ -75,16 +74,21 @@ namespace IvyFEMProtoApp
 
             FEWorld world = new FEWorld();
             world.Mesh = mesher;
-            uint dQuantityId; // displacement
+            uint d1QuantityId; // displacement1
+            uint d2QuantityId; // displacement2
             uint rQuantityId; // rotation
             {
-                uint dDof = 1; // Scalar (w)
+                uint d1Dof = 1; // Scalar (u)
+                uint d2Dof = 1; // Scalar (v)
                 uint rDof = 1; // Scalar (θ)
-                uint dFEOrder = 3;
+                uint d1FEOrder = 1;
+                uint d2FEOrder = 3;
                 uint rFEOrder = 3;
-                dQuantityId = world.AddQuantity(dDof, dFEOrder, FiniteElementType.ScalarHermite);
+                d1QuantityId = world.AddQuantity(d1Dof, d1FEOrder, FiniteElementType.ScalarLagrange);
+                d2QuantityId = world.AddQuantity(d2Dof, d2FEOrder, FiniteElementType.ScalarHermite);
                 rQuantityId = world.AddQuantity(rDof, rFEOrder, FiniteElementType.ScalarHermite);
             }
+            uint[] dQuantityIds = { d1QuantityId, d2QuantityId };
 
             {
                 world.ClearMaterial();
@@ -95,7 +99,7 @@ namespace IvyFEMProtoApp
                     nullMaId = world.AddMaterial(ma);
                 }
                 {
-                    var ma = new BeamMaterial();
+                    var ma = new FrameMaterial();
                     ma.Area = b * h;
                     ma.SecondMomentOfArea = (1.0 / 12.0) * b * b * b * h;
                     ma.MassDensity = 2.3e+3;
@@ -103,13 +107,11 @@ namespace IvyFEMProtoApp
                     beamMaId = world.AddMaterial(ma);
                 }
 
-                /*
-                uint[] lIds = { };
+                uint[] lIds = cad.GetElementIds(CadElementType.Loop).ToArray();
                 foreach (uint lId in lIds)
                 {
                     world.SetCadLoopMaterial(lId, nullMaId);
                 }
-                */
                 uint[] eIds = cad.GetElementIds(CadElementType.Edge).ToArray();
                 foreach (uint eId in eIds)
                 {
@@ -117,13 +119,21 @@ namespace IvyFEMProtoApp
                 }
             }
 
-            uint[] dZeroVIds = { 1, 2 };
-            var dZeroFixedCads = world.GetZeroFieldFixedCads(dQuantityId);
-            foreach (uint vId in dZeroVIds)
+            uint[] d1ZeroVIds = { 1, 2 };
+            var d1ZeroFixedCads = world.GetZeroFieldFixedCads(d1QuantityId);
+            foreach (uint vId in d1ZeroVIds)
             {
                 // スカラー
                 var fixedCad = new FieldFixedCad(vId, CadElementType.Vertex, FieldValueType.Scalar);
-                dZeroFixedCads.Add(fixedCad);
+                d1ZeroFixedCads.Add(fixedCad);
+            }
+            uint[] d2ZeroVIds = { 1, 2 };
+            var d2ZeroFixedCads = world.GetZeroFieldFixedCads(d2QuantityId);
+            foreach (uint vId in d2ZeroVIds)
+            {
+                // スカラー
+                var fixedCad = new FieldFixedCad(vId, CadElementType.Vertex, FieldValueType.Scalar);
+                d2ZeroFixedCads.Add(fixedCad);
             }
             uint[] rZeroVIds = { 1, 2 };
             var rZeroFixedCads = world.GetZeroFieldFixedCads(rQuantityId);
@@ -142,7 +152,7 @@ namespace IvyFEMProtoApp
                 world.ClearFieldValue();
                 // Vector2
                 valueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivativeType.Value,
-                    dQuantityId, false, FieldShowType.Real);
+                    d1QuantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
                 var edgeDrawer0 = new EdgeFieldDrawer(
@@ -161,6 +171,7 @@ namespace IvyFEMProtoApp
 
             {
                 var FEM = new Elastic2DEigenFEM(world);
+                FEM.DisplacementQuantityIds = dQuantityIds.ToList();
                 FEM.Solve();
                 System.Numerics.Complex[] freqZs = FEM.FrequencyZs;
                 System.Numerics.Complex[][] eVecZs = FEM.EVecZs;
@@ -186,30 +197,42 @@ namespace IvyFEMProtoApp
                     }
                 }
 
-                double[] Uwt = eVec;
+                double[] Uuvt = eVec;
+
                 // 変位(u,w)へ変換する
-                int coCnt = (int)world.GetCoordCount(dQuantityId);
-                int dNodeCnt = (int)world.GetNodeCount(dQuantityId);
+                int coCnt = (int)world.GetCoordCount(d1QuantityId);
+                int d1Dof = (int)world.GetDof(d1QuantityId);
+                int d2Dof = (int)world.GetDof(d2QuantityId);
+                int rDof = (int)world.GetDof(rQuantityId);
+                int d1NodeCnt = (int)world.GetNodeCount(d1QuantityId);
+                int d2NodeCnt = (int)world.GetNodeCount(d2QuantityId);
                 int rNodeCnt = (int)world.GetNodeCount(rQuantityId);
-                int offset = dNodeCnt;
+                int d2Offset = d1NodeCnt * d1Dof;
+                int rOffset = d2Offset + d2NodeCnt * d2Dof;
                 int dof = 2;
                 double[] U = new double[coCnt * dof];
                 for (int coId = 0; coId < coCnt; coId++)
                 {
-                    int dNodeId = world.Coord2Node(dQuantityId, coId);
+                    int d1NodeId = world.Coord2Node(d1QuantityId, coId);
+                    int d2NodeId = world.Coord2Node(d2QuantityId, coId);
                     int rNodeId = world.Coord2Node(rQuantityId, coId);
-                    double w = 0;
+                    double u = 0;
+                    double v = 0;
                     double theta = 0;
-                    if (dNodeId != -1)
+                    if (d1NodeId != -1)
                     {
-                        w = Uwt[dNodeId];
+                        u = Uuvt[d1NodeId];
+                    }
+                    if (d2NodeId != -1)
+                    {
+                        v = Uuvt[d2NodeId + d2Offset];
                     }
                     if (rNodeId != -1)
                     {
-                        theta = Uwt[rNodeId + offset];
+                        theta = Uuvt[rNodeId + rOffset];
                     }
-                    U[coId * dof + 0] = 0.0;
-                    U[coId * dof + 1] = w;
+                    U[coId * dof + 0] = u;
+                    U[coId * dof + 1] = v;
                 }
                 // Note: from CoordValues
                 world.UpdateFieldValueValuesFromCoordValues(valueId, FieldDerivativeType.Value, U);

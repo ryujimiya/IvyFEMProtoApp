@@ -141,6 +141,7 @@
     </Compile>
     <Compile Include="NonlinerOptimizingProblem.cs" />
     <Compile Include="PortEdge.cs" />
+    <Compile Include="Problem.ElasticFrameEigen0.cs" />
     <Compile Include="Problem.ElasticFrame0.cs" />
     <Compile Include="Problem.ElasticFrame1.cs" />
     <Compile Include="Problem.ElasticBeamEigen.cs" />

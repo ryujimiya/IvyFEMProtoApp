@@ -629,11 +629,18 @@ namespace IvyFEMProtoApp
             Problem.FrameProblem0(this);
         }
 
-        private void Frame0TDBtn_Click(object sender, RoutedEventArgs e)
+        private void FrameTD0Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
             Problem.FrameTDProblem0(this);
+        }
+
+        private void FrameEigen0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.FrameEigenProblem0(this);
         }
 
         private void Frame1Btn_Click(object sender, RoutedEventArgs e)
@@ -643,7 +650,7 @@ namespace IvyFEMProtoApp
             Problem.FrameProblem1(this);
         }
 
-        private void Frame1TDBtn_Click(object sender, RoutedEventArgs e)
+        private void FrameTD1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 

@@ -15,27 +15,20 @@ namespace IvyFEMProtoApp
         public void FrameProblem0(MainWindow mainWindow)
         {
             double beamLen = 1.0;
-            int beamCntX = 2;
-            double beamsLen = beamLen * beamCntX;
             double b = 0.2 * beamLen;
             double h = 0.25 * b;
             int divCnt = 10;
             double eLen = 0.95 * beamLen / (double)divCnt;
-            double loadX = beamLen + beamLen * 0.5;
-            double offsetX = beamLen * (1.0 / 2.0);
-            double offsetY = beamLen * (Math.Sqrt(3.0) / 2.0);
-            double endX = offsetX + beamLen * (beamCntX - 1); 
+            double loadX = beamLen * 0.75;
             CadObject2D cad = new CadObject2D();
             {
                 uint lId0 = 0;
                 uint vId1 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(0.0, 0.0)).AddVId;
-                uint vId2 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(beamLen, 0.0)).AddVId;
-                uint vId3 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(loadX, 0.0)).AddVId;
-                uint vId4 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(beamsLen, 0.0)).AddVId;
+                uint vId2 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(loadX, 0.0)).AddVId;
+                uint vId3 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(beamLen, 0.0)).AddVId;
 
                 uint eId1 = cad.ConnectVertexLine(vId1, vId2).AddEId;
                 uint eId2 = cad.ConnectVertexLine(vId2, vId3).AddEId;
-                uint eId3 = cad.ConnectVertexLine(vId3, vId4).AddEId;
             }
 
             {
@@ -109,7 +102,7 @@ namespace IvyFEMProtoApp
                 {
                     var ma = new FrameMaterial();
                     ma.Area = b * h;
-                    ma.SecondMomentOfArea = (1.0 / 12.0) * b * h * h * h;
+                    ma.SecondMomentOfArea = (1.0 / 12.0) * b * b * b * h;
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
                     beamMaId = world.AddMaterial(ma);
@@ -127,7 +120,7 @@ namespace IvyFEMProtoApp
                 }
             }
 
-            uint[] d1ZeroVIds = { 1, 4 };
+            uint[] d1ZeroVIds = { 1, 3 };
             var d1ZeroFixedCads = world.GetZeroFieldFixedCads(d1QuantityId);
             foreach (uint vId in d1ZeroVIds)
             {
@@ -135,7 +128,7 @@ namespace IvyFEMProtoApp
                 var fixedCad = new FieldFixedCad(vId, CadElementType.Vertex, FieldValueType.Scalar);
                 d1ZeroFixedCads.Add(fixedCad);
             }
-            uint[] d2ZeroVIds = { 1, 4 };
+            uint[] d2ZeroVIds = { 1, 3 };
             var d2ZeroFixedCads = world.GetZeroFieldFixedCads(d2QuantityId);
             foreach (uint vId in d2ZeroVIds)
             {
@@ -143,7 +136,7 @@ namespace IvyFEMProtoApp
                 var fixedCad = new FieldFixedCad(vId, CadElementType.Vertex, FieldValueType.Scalar);
                 d2ZeroFixedCads.Add(fixedCad);
             }
-            uint[] rZeroVIds = { 1, 4 };
+            uint[] rZeroVIds = { 1, 3 };
             var rZeroFixedCads = world.GetZeroFieldFixedCads(rQuantityId);
             foreach (uint vId in rZeroVIds)
             {
@@ -178,7 +171,7 @@ namespace IvyFEMProtoApp
                 var fixedCadDatas = new[]
                 {
                     // 可動部
-                    new { CadId = (uint)3, CadElemType = CadElementType.Vertex,
+                    new { CadId = (uint)2, CadElemType = CadElementType.Vertex,
                         FixedDofIndexs = new List<uint> { 0 }, Values = new List<double> { 0.0 } },
                 };
                 IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(d2QuantityId);
@@ -197,7 +190,7 @@ namespace IvyFEMProtoApp
                 var fixedCadDatas = new[]
                 {
                     // 可動部
-                    new { CadId = (uint)3, CadElemType = CadElementType.Vertex,
+                    new { CadId = (uint)2, CadElemType = CadElementType.Vertex,
                         FixedDofIndexs = new List<uint> { 0 }, Values = new List<double> { 0.0 } },
                 };
                 IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(rQuantityId);
@@ -221,6 +214,9 @@ namespace IvyFEMProtoApp
                     d1QuantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
+                var edgeDrawer0 = new EdgeFieldDrawer(
+                    valueId, FieldDerivativeType.Value, true, true, world);
+                fieldDrawerArray.Add(edgeDrawer0);
                 var edgeDrawer = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, false, true, world);
                 edgeDrawer.LineWidth = 4;
@@ -243,12 +239,12 @@ namespace IvyFEMProtoApp
 
                 var FEM = new Elastic2DFEM(world);                
                 {
-                    //var solver = new IvyFEM.Linear.LapackEquationSolver();
+                    var solver = new IvyFEM.Linear.LapackEquationSolver();
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
-                    //solver.IsOrderingToBandMatrix = true;
-                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
+                    solver.IsOrderingToBandMatrix = true;
+                    solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
-                    //FEM.Solver = solver;
+                    FEM.Solver = solver;
                 }
                 {
                     //var solver = new IvyFEM.Linear.LisEquationSolver();
@@ -256,12 +252,12 @@ namespace IvyFEMProtoApp
                     //FEM.Solver = solver;
                 }
                 {
-                    var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
+                    //var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
-                    solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
-                    FEM.Solver = solver;
+                    //FEM.Solver = solver;
                 }
                 FEM.DisplacementQuantityIds = dQuantityIds.ToList();
                 FEM.Solve();
@@ -316,28 +312,20 @@ namespace IvyFEMProtoApp
         public void FrameTDProblem0(MainWindow mainWindow)
         {
             double beamLen = 1.0;
-            double groundY = -1.0;
-            int beamCntX = 2;
-            double beamsLen = beamLen * beamCntX;
             double b = 0.2 * beamLen;
             double h = 0.25 * b;
             int divCnt = 10;
             double eLen = 0.95 * beamLen / (double)divCnt;
-            double loadX = beamLen + beamLen * 0.5;
-            double offsetX = beamLen * (1.0 / 2.0);
-            double offsetY = beamLen * (Math.Sqrt(3.0) / 2.0);
-            double endX = offsetX + beamLen * (beamCntX - 1);
+            double loadX = beamLen * 0.75;
             CadObject2D cad = new CadObject2D();
             {
                 uint lId0 = 0;
                 uint vId1 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(0.0, 0.0)).AddVId;
-                uint vId2 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(beamLen, 0.0)).AddVId;
-                uint vId3 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(loadX, 0.0)).AddVId;
-                uint vId4 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(beamsLen, 0.0)).AddVId;
+                uint vId2 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(loadX, 0.0)).AddVId;
+                uint vId3 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(beamLen, 0.0)).AddVId;
 
                 uint eId1 = cad.ConnectVertexLine(vId1, vId2).AddEId;
                 uint eId2 = cad.ConnectVertexLine(vId2, vId3).AddEId;
-                uint eId3 = cad.ConnectVertexLine(vId3, vId4).AddEId;
             }
 
             {
@@ -411,7 +399,7 @@ namespace IvyFEMProtoApp
                 {
                     var ma = new FrameMaterial();
                     ma.Area = b * h;
-                    ma.SecondMomentOfArea = (1.0 / 12.0) * b * h * h * h;
+                    ma.SecondMomentOfArea = (1.0 / 12.0) * b * b * b * h;
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
                     beamMaId = world.AddMaterial(ma);
@@ -429,7 +417,7 @@ namespace IvyFEMProtoApp
                 }
             }
 
-            uint[] d1ZeroVIds = { 1, 4 };
+            uint[] d1ZeroVIds = { 1, 3 };
             var d1ZeroFixedCads = world.GetZeroFieldFixedCads(d1QuantityId);
             foreach (uint vId in d1ZeroVIds)
             {
@@ -437,7 +425,7 @@ namespace IvyFEMProtoApp
                 var fixedCad = new FieldFixedCad(vId, CadElementType.Vertex, FieldValueType.Scalar);
                 d1ZeroFixedCads.Add(fixedCad);
             }
-            uint[] d2ZeroVIds = { 1, 4 };
+            uint[] d2ZeroVIds = { 1, 3 };
             var d2ZeroFixedCads = world.GetZeroFieldFixedCads(d2QuantityId);
             foreach (uint vId in d2ZeroVIds)
             {
@@ -445,7 +433,7 @@ namespace IvyFEMProtoApp
                 var fixedCad = new FieldFixedCad(vId, CadElementType.Vertex, FieldValueType.Scalar);
                 d2ZeroFixedCads.Add(fixedCad);
             }
-            uint[] rZeroVIds = { 1, 4 };
+            uint[] rZeroVIds = { 1, 3 };
             var rZeroFixedCads = world.GetZeroFieldFixedCads(rQuantityId);
             foreach (uint vId in rZeroVIds)
             {
@@ -461,7 +449,7 @@ namespace IvyFEMProtoApp
                 var fixedCadDatas = new[]
                 {
                     // 可動部
-                    new { CadId = (uint)3, CadElemType = CadElementType.Vertex,
+                    new { CadId = (uint)2, CadElemType = CadElementType.Vertex,
                         FixedDofIndexs = new List<uint> { 0 }, Values = new List<double> { 0.0 } },
                 };
                 IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(d1QuantityId);
@@ -480,7 +468,7 @@ namespace IvyFEMProtoApp
                 var fixedCadDatas = new[]
                 {
                     // 可動部
-                    new { CadId = (uint)3, CadElemType = CadElementType.Vertex,
+                    new { CadId = (uint)2, CadElemType = CadElementType.Vertex,
                         FixedDofIndexs = new List<uint> { 0 }, Values = new List<double> { 0.0 } },
                 };
                 IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(d2QuantityId);
@@ -499,7 +487,7 @@ namespace IvyFEMProtoApp
                 var fixedCadDatas = new[]
                 {
                     // 可動部
-                    new { CadId = (uint)3, CadElemType = CadElementType.Vertex,
+                    new { CadId = (uint)2, CadElemType = CadElementType.Vertex,
                         FixedDofIndexs = new List<uint> { 0 }, Values = new List<double> { 0.0 } },
                 };
                 IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(rQuantityId);
@@ -552,6 +540,9 @@ namespace IvyFEMProtoApp
 
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
+                var edgeDrawer0 = new EdgeFieldDrawer(
+                    valueId, FieldDerivativeType.Value, true, true, world);
+                fieldDrawerArray.Add(edgeDrawer0);
                 var edgeDrawer = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, false, true, world);
                 edgeDrawer.LineWidth = 4;
@@ -580,12 +571,12 @@ namespace IvyFEMProtoApp
                     newmarkBeta, newmarkGamma,
                     valueIds, prevValueIds);
                 {
-                    //var solver = new IvyFEM.Linear.LapackEquationSolver();
+                    var solver = new IvyFEM.Linear.LapackEquationSolver();
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
-                    //solver.IsOrderingToBandMatrix = true;
-                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
+                    solver.IsOrderingToBandMatrix = true;
+                    solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
-                    //FEM.Solver = solver;
+                    FEM.Solver = solver;
                 }
                 {
                     //var solver = new IvyFEM.Linear.LisEquationSolver();
@@ -593,12 +584,12 @@ namespace IvyFEMProtoApp
                     //FEM.Solver = solver;
                 }
                 {
-                    var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
+                    //var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
-                    solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
-                    FEM.Solver = solver;
+                    //FEM.Solver = solver;
                 }
                 FEM.DisplacementQuantityIds = dQuantityIds.ToList();
                 FEM.Solve();
