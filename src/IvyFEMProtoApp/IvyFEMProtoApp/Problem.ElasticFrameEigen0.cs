@@ -12,7 +12,7 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void FrameEigenProblem0(MainWindow mainWindow)
+        public void FrameEigenProblem0(MainWindow mainWindow, bool isTimoshenko)
         {
             double beamLen = 1.0;
             double b = 0.2 * beamLen;
@@ -77,6 +77,19 @@ namespace IvyFEMProtoApp
             uint d1QuantityId; // displacement1
             uint d2QuantityId; // displacement2
             uint rQuantityId; // rotation
+            if (isTimoshenko)
+            {
+                uint d1Dof = 1; // Scalar (u)
+                uint d2Dof = 1; // Scalar (v)
+                uint rDof = 1; // Scalar (θ)
+                uint d1FEOrder = 1;
+                uint d2FEOrder = 1;
+                uint rFEOrder = 1;
+                d1QuantityId = world.AddQuantity(d1Dof, d1FEOrder, FiniteElementType.ScalarLagrange);
+                d2QuantityId = world.AddQuantity(d2Dof, d2FEOrder, FiniteElementType.ScalarLagrange);
+                rQuantityId = world.AddQuantity(rDof, rFEOrder, FiniteElementType.ScalarLagrange);
+            }
+            else
             {
                 uint d1Dof = 1; // Scalar (u)
                 uint d2Dof = 1; // Scalar (v)
@@ -98,10 +111,23 @@ namespace IvyFEMProtoApp
                     var ma = new NullMaterial();
                     nullMaId = world.AddMaterial(ma);
                 }
+                if (isTimoshenko)
+                {
+                    var ma = new TimoshenkoFrameMaterial();
+                    ma.Area = b * h;
+                    ma.SecondMomentOfArea = (1.0 / 12.0) * b * h * h * h;
+                    ma.PolarSecondMomentOfArea = (1.0 / 12.0) * b * h * h * h + (1.0 / 12.0) * b * b * b * h;
+                    ma.MassDensity = 2.3e+3;
+                    ma.Young = 169.0e+9;
+                    ma.Poisson = 0.262;
+                    ma.TimoshenkoShearCoefficent = 5.0 / 6.0; // 長方形断面
+                    beamMaId = world.AddMaterial(ma);
+                }
+                else
                 {
                     var ma = new FrameMaterial();
                     ma.Area = b * h;
-                    ma.SecondMomentOfArea = (1.0 / 12.0) * b * b * b * h;
+                    ma.SecondMomentOfArea = (1.0 / 12.0) * b * h * h * h;
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
                     beamMaId = world.AddMaterial(ma);
@@ -176,19 +202,66 @@ namespace IvyFEMProtoApp
                 System.Numerics.Complex[] freqZs = FEM.FrequencyZs;
                 System.Numerics.Complex[][] eVecZs = FEM.EVecZs;
 
+                int coCnt = (int)world.GetCoordCount(d1QuantityId);
+                int d1Dof = (int)world.GetDof(d1QuantityId);
+                int d2Dof = (int)world.GetDof(d2QuantityId);
+                int rDof = (int)world.GetDof(rQuantityId);
+                int d1NodeCnt = (int)world.GetNodeCount(d1QuantityId);
+                int d2NodeCnt = (int)world.GetNodeCount(d2QuantityId);
+                int rNodeCnt = (int)world.GetNodeCount(rQuantityId);
+                int d2Offset = d1NodeCnt * d1Dof;
+                int rOffset = d2Offset + d2NodeCnt * d2Dof;
                 double freq;
                 double[] eVec;
+                int targetModeIndex = -1;
                 {
                     System.Numerics.Complex freqZ;
                     System.Numerics.Complex[] eVecZ;
+                    // Timoshenko Frame: 軸方向だけ変位するモードが見られる
+                    int skippedAxialVibrationCnt = 0;
+                    if (isTimoshenko)
+                    {
+                        for (int iMode = 0; iMode < freqZs.Length; iMode++)
+                        {
+                            var workFreqZ = freqZs[iMode];
+                            var workEVecZ = eVecZs[iMode];
+                            // 軸方向振動を除去
+                            bool isAxialVibration = true;
+                            for (int i = 0; i < d2NodeCnt; i++)
+                            {
+                                if (Math.Abs(workEVecZ[i + d2Offset].Real) >= 1.0e-12)
+                                {
+                                    isAxialVibration = false;
+                                    break;
+                                }
+                            }
+                            if (!isAxialVibration)
+                            {
+                                targetModeIndex = iMode;
+                                break;
+                            }
+                            skippedAxialVibrationCnt++;
+                        }
+                    }
+                    else
                     {
                         int iMode = 0;
                         freqZ = freqZs[iMode];
                         eVecZ = eVecZs[iMode];
-                        System.Diagnostics.Debug.Assert(Math.Abs(freqZ.Imaginary) < 1.0e-12);
-                        double fn = toNormalizedFreq(freqZ.Real);
-                        System.Diagnostics.Debug.WriteLine("b/λ = {1}", iMode, fn);
+                        skippedAxialVibrationCnt = 0;
+                        targetModeIndex = iMode;
                     }
+                    System.Diagnostics.Debug.Assert(targetModeIndex != -1);
+                    freqZ = freqZs[targetModeIndex];
+                    eVecZ = eVecZs[targetModeIndex];
+                    System.Diagnostics.Debug.Assert(Math.Abs(freqZ.Imaginary) < 1.0e-12);
+                    double fn = toNormalizedFreq(freqZ.Real);
+                    System.Diagnostics.Debug.WriteLine("iMode = {0} b/λ = {1}", targetModeIndex, fn);
+                    if (skippedAxialVibrationCnt != 0)
+                    {
+                        System.Diagnostics.Debug.WriteLine("!!!! skipped axial vibration cnt = {0} ", skippedAxialVibrationCnt);
+                    }
+
                     freq = freqZ.Real;
                     eVec = new double[eVecZ.Length];
                     for (int i = 0; i < eVecZ.Length; i++)
@@ -200,15 +273,6 @@ namespace IvyFEMProtoApp
                 double[] Uuvt = eVec;
 
                 // 変位(u,w)へ変換する
-                int coCnt = (int)world.GetCoordCount(d1QuantityId);
-                int d1Dof = (int)world.GetDof(d1QuantityId);
-                int d2Dof = (int)world.GetDof(d2QuantityId);
-                int rDof = (int)world.GetDof(rQuantityId);
-                int d1NodeCnt = (int)world.GetNodeCount(d1QuantityId);
-                int d2NodeCnt = (int)world.GetNodeCount(d2QuantityId);
-                int rNodeCnt = (int)world.GetNodeCount(rQuantityId);
-                int d2Offset = d1NodeCnt * d1Dof;
-                int rOffset = d2Offset + d2NodeCnt * d2Dof;
                 int dof = 2;
                 double[] U = new double[coCnt * dof];
                 for (int coId = 0; coId < coCnt; coId++)
@@ -249,6 +313,10 @@ namespace IvyFEMProtoApp
                 for (int i = 0; i < freqZs.Length; i++)
                 {
                     double fn = toNormalizedFreq(freqZs[i].Real);
+                    if (i == targetModeIndex)
+                    {
+                        resStr += "▶ ";
+                    }
                     resStr += string.Format("{0}: {1}", i + 1, fn) + CR;
                 }
                 if (AlertWindow1 != null)

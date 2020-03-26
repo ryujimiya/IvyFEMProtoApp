@@ -375,16 +375,16 @@ namespace IvyFEMProtoApp
             cadEditWindow.ShowDialog();
         }
 
-        private void ElasticBtn_Click(object sender, RoutedEventArgs e)
+        private void ElasticLinearBtn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
             bool isSaintVenant = false;
-            Problem.ElasticProblem(this, false, isSaintVenant);
-            Problem.ElasticProblem(this, true, isSaintVenant);
+            Problem.ElasticLinearStVenantProblem(this, false, isSaintVenant);
+            Problem.ElasticLinearStVenantProblem(this, true, isSaintVenant);
         }
 
-        private void ElasticTDBtn_Click(object sender, RoutedEventArgs e)
+        private void ElasticLinearTDBtn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
@@ -392,12 +392,20 @@ namespace IvyFEMProtoApp
             Problem.ElasticTDProblem(this, isSaintVenant);
         }
 
+        private void ElasticLinearEigenBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isSaintVenant = false;
+            Problem.ElasticLinearStVenantEigenProblem(this, isSaintVenant);
+        }
+
         private void SaintVenantHyperelasticBtn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
             bool isSaintVenant = true;
-            Problem.ElasticProblem(this, false, isSaintVenant);
+            Problem.ElasticLinearStVenantProblem(this, false, isSaintVenant);
         }
 
         private void SaintVenantHyperelasticTDBtn_Click(object sender, RoutedEventArgs e)
@@ -406,6 +414,14 @@ namespace IvyFEMProtoApp
 
             bool isSaintVenant = true;
             Problem.ElasticTDProblem(this, isSaintVenant);
+        }
+
+        private void SaintVenantHyperelasticEigenBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isSaintVenant = true;
+            Problem.ElasticLinearStVenantEigenProblem(this, isSaintVenant);
         }
 
         private void MooneyRivlinHyperelasticBtn_Click(object sender, RoutedEventArgs e)
@@ -587,74 +603,288 @@ namespace IvyFEMProtoApp
             Problem.HyperelasticTwoBodyContactTDProblem(this, isMooney);
         }
 
-        private void TrussBtn_Click(object sender, RoutedEventArgs e)
+        private void Truss1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.TrussProblem(this);
+            Problem.TrussProblem1(this);
         }
 
-        private void TrussTDBtn_Click(object sender, RoutedEventArgs e)
+        private void TrussTD1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.TrussTDProblem(this);
+            Problem.TrussTDProblem1(this);
         }
 
-        private void BeamBtn_Click(object sender, RoutedEventArgs e)
+        private void Truss2Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.BeamProblem(this);
+            Problem.TrussProblem2(this);
         }
 
-        private void BeamTDBtn_Click(object sender, RoutedEventArgs e)
+        private void TrussTD2Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.BeamTDProblem(this);
+            Problem.TrussTDProblem2(this);
         }
 
-        private void BeamEigenBtn_Click(object sender, RoutedEventArgs e)
+        private void Beam1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.BeamEigenProblem(this);
+            bool isTimoshenko = false;
+            Problem.BeamProblem1(this, isTimoshenko);
+        }
+
+        private void BeamTD1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = false;
+            Problem.BeamTDProblem1(this, isTimoshenko);
+        }
+
+        private void BeamEigen1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = false;
+            Problem.BeamEigenProblem1(this, isTimoshenko);
+        }
+
+        private void Beam2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = false;
+            Problem.BeamProblem2(this, isTimoshenko);
+        }
+
+        private void BeamTD2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = false;
+            Problem.BeamTDProblem2(this, isTimoshenko);
+        }
+
+        private void Beam3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = false;
+            Problem.BeamProblem3(this, isTimoshenko);
+        }
+
+        private void BeamTD3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = false;
+            Problem.BeamTDProblem3(this, isTimoshenko);
         }
 
         private void Frame0Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.FrameProblem0(this);
+            bool isTimoshenko = false;
+            Problem.FrameProblem0(this, isTimoshenko);
         }
 
         private void FrameTD0Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.FrameTDProblem0(this);
+            bool isTimoshenko = false;
+            Problem.FrameTDProblem0(this, isTimoshenko);
         }
 
         private void FrameEigen0Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.FrameEigenProblem0(this);
+            bool isTimoshenko = false;
+            Problem.FrameEigenProblem0(this, isTimoshenko);
         }
 
         private void Frame1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.FrameProblem1(this);
+            bool isTimoshenko = false;
+            Problem.FrameProblem1(this, isTimoshenko);
         }
 
         private void FrameTD1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.FrameTDProblem1(this);
+            bool isTimoshenko = false;
+            Problem.FrameTDProblem1(this, isTimoshenko);
+        }
+
+        private void Frame2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = false;
+            Problem.FrameProblem2(this, isTimoshenko);
+        }
+
+        private void FrameTD2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = false;
+            Problem.FrameTDProblem2(this, isTimoshenko);
+        }
+
+        private void Frame3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = false;
+            Problem.FrameProblem3(this, isTimoshenko);
+        }
+
+        private void FrameTD3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = false;
+            Problem.FrameTDProblem3(this, isTimoshenko);
+        }
+
+        private void TimoshenkoBeam1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = true;
+            Problem.BeamProblem1(this, isTimoshenko);
+        }
+
+        private void TimoshenkoBeamTD1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = true;
+            Problem.BeamTDProblem1(this, isTimoshenko);
+        }
+
+        private void TimoshenkoBeamEigen1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = true;
+            Problem.BeamEigenProblem1(this, isTimoshenko);
+        }
+
+        private void TimoshenkoBeam2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = true;
+            Problem.BeamProblem2(this, isTimoshenko);
+        }
+
+        private void TimoshenkoBeamTD2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = true;
+            Problem.BeamTDProblem2(this, isTimoshenko);
+        }
+
+        private void TimoshenkoBeam3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = true;
+            Problem.BeamProblem3(this, isTimoshenko);
+        }
+
+        private void TimoshenkoBeamTD3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = true;
+            Problem.BeamTDProblem3(this, isTimoshenko);
+        }
+
+        private void TimoshenkoFrame0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = true;
+            Problem.FrameProblem0(this, isTimoshenko);
+        }
+
+        private void TimoshenkoFrameTD0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = true;
+            Problem.FrameTDProblem0(this, isTimoshenko);
+        }
+
+        private void TimoshenkoFrameEigen0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = true;
+            Problem.FrameEigenProblem0(this, isTimoshenko);
+        }
+
+        private void TimoshenkoFrame1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = true;
+            Problem.FrameProblem1(this, isTimoshenko);
+        }
+
+        private void TimoshenkoFrameTD1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = true;
+            Problem.FrameTDProblem1(this, isTimoshenko);
+        }
+
+        private void TimoshenkoFrame2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = true;
+            Problem.FrameProblem2(this, isTimoshenko);
+        }
+
+        private void TimoshenkoFrameTD2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = true;
+            Problem.FrameTDProblem2(this, isTimoshenko);
+        }
+
+        private void TimoshenkoFrame3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = true;
+            Problem.FrameProblem3(this, isTimoshenko);
+        }
+
+        private void TimoshenkoFrameTD3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = true;
+            Problem.FrameTDProblem3(this, isTimoshenko);
         }
 
         private void PoissonBtn_Click(object sender, RoutedEventArgs e)

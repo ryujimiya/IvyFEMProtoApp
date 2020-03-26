@@ -141,12 +141,18 @@
     </Compile>
     <Compile Include="NonlinerOptimizingProblem.cs" />
     <Compile Include="PortEdge.cs" />
+    <Compile Include="Problem.ElasticBeam3.cs" />
+    <Compile Include="Problem.ElasticBeam2.cs" />
+    <Compile Include="Problem.ElasticFrame3.cs" />
+    <Compile Include="Problem.ElasticFrame2.cs" />
+    <Compile Include="Problem.ElasticLinearStVenantEigen.cs" />
     <Compile Include="Problem.ElasticFrameEigen0.cs" />
     <Compile Include="Problem.ElasticFrame0.cs" />
     <Compile Include="Problem.ElasticFrame1.cs" />
-    <Compile Include="Problem.ElasticBeamEigen.cs" />
-    <Compile Include="Problem.ElasticBeam.cs" />
-    <Compile Include="Problem.ElasticTruss.cs" />
+    <Compile Include="Problem.ElasticBeamEigen1.cs" />
+    <Compile Include="Problem.ElasticBeam1.cs" />
+    <Compile Include="Problem.ElasticTruss2.cs" />
+    <Compile Include="Problem.ElasticTruss1.cs" />
     <Compile Include="Problem.EMEWaveguide1_0.cs" />
     <Compile Include="Problem.EMEWaveguide1.cs" />
     <Compile Include="Problem.EMHWaveguide1_0.cs" />
@@ -235,7 +241,7 @@
     <Compile Include="Problem.HyperelasticMPC.cs" />
     <Compile Include="Problem.Hyperelastic.cs" />
     <Compile Include="Problem.ElasticMPC.cs" />
-    <Compile Include="Problem.Elastic.cs" />
+    <Compile Include="Problem.ElasticLinearStVenant.cs" />
     <Compile Include="Problem.EMHWaveguide1.cs" />
     <Compile Include="Problem.Helmholtz.cs" />
     <Compile Include="Problem.ExampleFEM.cs" />

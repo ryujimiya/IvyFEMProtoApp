@@ -12,7 +12,7 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void FrameProblem0(MainWindow mainWindow)
+        public void FrameProblem0(MainWindow mainWindow, bool isTimoshenko)
         {
             double beamLen = 1.0;
             double b = 0.2 * beamLen;
@@ -78,6 +78,19 @@ namespace IvyFEMProtoApp
             uint d1QuantityId; // displacement1
             uint d2QuantityId; // displacement2
             uint rQuantityId; // rotation
+            if (isTimoshenko)
+            {
+                uint d1Dof = 1; // Scalar (u)
+                uint d2Dof = 1; // Scalar (v)
+                uint rDof = 1; // Scalar (θ)
+                uint d1FEOrder = 1;
+                uint d2FEOrder = 1;
+                uint rFEOrder = 1;
+                d1QuantityId = world.AddQuantity(d1Dof, d1FEOrder, FiniteElementType.ScalarLagrange);
+                d2QuantityId = world.AddQuantity(d2Dof, d2FEOrder, FiniteElementType.ScalarLagrange);
+                rQuantityId = world.AddQuantity(rDof, rFEOrder, FiniteElementType.ScalarLagrange);
+            }
+            else
             {
                 uint d1Dof = 1; // Scalar (u)
                 uint d2Dof = 1; // Scalar (v)
@@ -99,10 +112,23 @@ namespace IvyFEMProtoApp
                     var ma = new NullMaterial();
                     nullMaId = world.AddMaterial(ma);
                 }
+                if (isTimoshenko)
+                {
+                    var ma = new TimoshenkoFrameMaterial();
+                    ma.Area = b * h;
+                    ma.SecondMomentOfArea = (1.0 / 12.0) * b * h * h * h;
+                    ma.PolarSecondMomentOfArea = (1.0 / 12.0) * b * h * h * h + (1.0 / 12.0) * b * b * b * h;
+                    ma.MassDensity = 2.3e+3;
+                    ma.Young = 169.0e+9;
+                    ma.Poisson = 0.262;
+                    ma.TimoshenkoShearCoefficent = 5.0 / 6.0; // 長方形断面
+                    beamMaId = world.AddMaterial(ma);
+                }
+                else
                 {
                     var ma = new FrameMaterial();
                     ma.Area = b * h;
-                    ma.SecondMomentOfArea = (1.0 / 12.0) * b * b * b * h;
+                    ma.SecondMomentOfArea = (1.0 / 12.0) * b * h * h * h;
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
                     beamMaId = world.AddMaterial(ma);
@@ -152,7 +178,7 @@ namespace IvyFEMProtoApp
                 var fixedCadDatas = new[]
                 {
                     // 可動部
-                    new { CadId = (uint)3, CadElemType = CadElementType.Vertex,
+                    new { CadId = (uint)2, CadElemType = CadElementType.Vertex,
                         FixedDofIndexs = new List<uint> { 0 }, Values = new List<double> { 0.0 } },
                 };
                 IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(d1QuantityId);
@@ -309,7 +335,7 @@ namespace IvyFEMProtoApp
             }
         }
 
-        public void FrameTDProblem0(MainWindow mainWindow)
+        public void FrameTDProblem0(MainWindow mainWindow, bool isTimoshenko)
         {
             double beamLen = 1.0;
             double b = 0.2 * beamLen;
@@ -375,6 +401,19 @@ namespace IvyFEMProtoApp
             uint d1QuantityId; // displacement1
             uint d2QuantityId; // displacement2
             uint rQuantityId; // rotation
+            if (isTimoshenko)
+            {
+                uint d1Dof = 1; // Scalar (u)
+                uint d2Dof = 1; // Scalar (v)
+                uint rDof = 1; // Scalar (θ)
+                uint d1FEOrder = 1;
+                uint d2FEOrder = 1;
+                uint rFEOrder = 1;
+                d1QuantityId = world.AddQuantity(d1Dof, d1FEOrder, FiniteElementType.ScalarLagrange);
+                d2QuantityId = world.AddQuantity(d2Dof, d2FEOrder, FiniteElementType.ScalarLagrange);
+                rQuantityId = world.AddQuantity(rDof, rFEOrder, FiniteElementType.ScalarLagrange);
+            }
+            else
             {
                 uint d1Dof = 1; // Scalar (u)
                 uint d2Dof = 1; // Scalar (v)
@@ -396,10 +435,23 @@ namespace IvyFEMProtoApp
                     var ma = new NullMaterial();
                     nullMaId = world.AddMaterial(ma);
                 }
+                if (isTimoshenko)
+                {
+                    var ma = new TimoshenkoFrameMaterial();
+                    ma.Area = b * h;
+                    ma.SecondMomentOfArea = (1.0 / 12.0) * b * h * h * h;
+                    ma.PolarSecondMomentOfArea = (1.0 / 12.0) * b * h * h * h + (1.0 / 12.0) * b * b * b * h;
+                    ma.MassDensity = 2.3e+3;
+                    ma.Young = 169.0e+9;
+                    ma.Poisson = 0.262;
+                    ma.TimoshenkoShearCoefficent = 5.0 / 6.0; // 長方形断面
+                    beamMaId = world.AddMaterial(ma);
+                }
+                else
                 {
                     var ma = new FrameMaterial();
                     ma.Area = b * h;
-                    ma.SecondMomentOfArea = (1.0 / 12.0) * b * b * b * h;
+                    ma.SecondMomentOfArea = (1.0 / 12.0) * b * h * h * h;
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
                     beamMaId = world.AddMaterial(ma);
