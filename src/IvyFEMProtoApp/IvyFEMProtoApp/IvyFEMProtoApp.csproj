@@ -143,6 +143,10 @@
     <Compile Include="PortEdge.cs" />
     <Compile Include="Problem.ElasticBeam3.cs" />
     <Compile Include="Problem.ElasticBeam2.cs" />
+    <Compile Include="Problem.ElasticCorotationalFrame3.cs" />
+    <Compile Include="Problem.ElasticCorotationalFrame2.cs" />
+    <Compile Include="Problem.ElasticCorotationalFrame1.cs" />
+    <Compile Include="Problem.ElasticCorotationalFrame0.cs" />
     <Compile Include="Problem.ElasticFrame3.cs" />
     <Compile Include="Problem.ElasticFrame2.cs" />
     <Compile Include="Problem.ElasticLinearStVenantEigen.cs" />

@@ -120,7 +120,7 @@ namespace IvyFEMProtoApp
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
                     ma.Poisson = 0.262;
-                    ma.TimoshenkoShearCoefficent = 5.0 / 6.0; // 長方形断面
+                    ma.TimoshenkoShearCoefficient = 5.0 / 6.0; // 長方形断面
                     beamMaId = world.AddMaterial(ma);
                 }
                 else
@@ -213,54 +213,15 @@ namespace IvyFEMProtoApp
                 int rOffset = d2Offset + d2NodeCnt * d2Dof;
                 double freq;
                 double[] eVec;
-                int targetModeIndex = -1;
                 {
+                    int iMode = 0;
                     System.Numerics.Complex freqZ;
                     System.Numerics.Complex[] eVecZ;
-                    // Timoshenko Frame: 軸方向だけ変位するモードが見られる
-                    int skippedAxialVibrationCnt = 0;
-                    if (isTimoshenko)
-                    {
-                        for (int iMode = 0; iMode < freqZs.Length; iMode++)
-                        {
-                            var workFreqZ = freqZs[iMode];
-                            var workEVecZ = eVecZs[iMode];
-                            // 軸方向振動を除去
-                            bool isAxialVibration = true;
-                            for (int i = 0; i < d2NodeCnt; i++)
-                            {
-                                if (Math.Abs(workEVecZ[i + d2Offset].Real) >= 1.0e-12)
-                                {
-                                    isAxialVibration = false;
-                                    break;
-                                }
-                            }
-                            if (!isAxialVibration)
-                            {
-                                targetModeIndex = iMode;
-                                break;
-                            }
-                            skippedAxialVibrationCnt++;
-                        }
-                    }
-                    else
-                    {
-                        int iMode = 0;
-                        freqZ = freqZs[iMode];
-                        eVecZ = eVecZs[iMode];
-                        skippedAxialVibrationCnt = 0;
-                        targetModeIndex = iMode;
-                    }
-                    System.Diagnostics.Debug.Assert(targetModeIndex != -1);
-                    freqZ = freqZs[targetModeIndex];
-                    eVecZ = eVecZs[targetModeIndex];
+                    freqZ = freqZs[iMode];
+                    eVecZ = eVecZs[iMode];
                     System.Diagnostics.Debug.Assert(Math.Abs(freqZ.Imaginary) < 1.0e-12);
                     double fn = toNormalizedFreq(freqZ.Real);
-                    System.Diagnostics.Debug.WriteLine("iMode = {0} b/λ = {1}", targetModeIndex, fn);
-                    if (skippedAxialVibrationCnt != 0)
-                    {
-                        System.Diagnostics.Debug.WriteLine("!!!! skipped axial vibration cnt = {0} ", skippedAxialVibrationCnt);
-                    }
+                    System.Diagnostics.Debug.WriteLine("iMode = {0} b/λ = {1}", iMode, fn);
 
                     freq = freqZ.Real;
                     eVec = new double[eVecZ.Length];
@@ -313,10 +274,6 @@ namespace IvyFEMProtoApp
                 for (int i = 0; i < freqZs.Length; i++)
                 {
                     double fn = toNormalizedFreq(freqZs[i].Real);
-                    if (i == targetModeIndex)
-                    {
-                        resStr += "▶ ";
-                    }
                     resStr += string.Format("{0}: {1}", i + 1, fn) + CR;
                 }
                 if (AlertWindow1 != null)

@@ -135,7 +135,7 @@ namespace IvyFEMProtoApp
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
                     ma.Poisson = 0.262;
-                    ma.TimoshenkoShearCoefficent = 5.0 / 6.0; // 長方形断面
+                    ma.TimoshenkoShearCoefficient = 5.0 / 6.0; // 長方形断面
                     beamMaId = world.AddMaterial(ma);
                 }
                 else
@@ -176,7 +176,7 @@ namespace IvyFEMProtoApp
                 var fixedCad = new FieldFixedCad(vId, CadElementType.Vertex, FieldValueType.Scalar);
                 d2ZeroFixedCads.Add(fixedCad);
             }
-            uint[] rZeroVIds = { 1, 4 };
+            uint[] rZeroVIds = { 1, 4, 2, 5, 6 };
             var rZeroFixedCads = world.GetZeroFieldFixedCads(rQuantityId);
             foreach (uint vId in rZeroVIds)
             {
@@ -472,7 +472,7 @@ namespace IvyFEMProtoApp
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
                     ma.Poisson = 0.262;
-                    ma.TimoshenkoShearCoefficent = 5.0 / 6.0; // 長方形断面
+                    ma.TimoshenkoShearCoefficient = 5.0 / 6.0; // 長方形断面
                     beamMaId = world.AddMaterial(ma);
                 }
                 else
@@ -513,7 +513,7 @@ namespace IvyFEMProtoApp
                 var fixedCad = new FieldFixedCad(vId, CadElementType.Vertex, FieldValueType.Scalar);
                 d2ZeroFixedCads.Add(fixedCad);
             }
-            uint[] rZeroVIds = { 1, 4 };
+            uint[] rZeroVIds = { 1, 4, 2, 5, 6 };
             var rZeroFixedCads = world.GetZeroFieldFixedCads(rQuantityId);
             foreach (uint vId in rZeroVIds)
             {

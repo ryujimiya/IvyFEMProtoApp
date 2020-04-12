@@ -114,6 +114,16 @@
                         <MenuItem Header="Frame(3)(Timoshenko)" Click="TimoshenkoFrame3Btn_Click"/>
                         <MenuItem Header="Frame(3)(Timoshenko)(Time Domain)" Click="TimoshenkoFrameTD3Btn_Click"/>
                     </MenuItem>
+                    <MenuItem Header="Corotational Frame">
+                        <MenuItem Header="Corotational Frame(0)" Click="CorotationalFrame0Btn_Click"/>
+                        <MenuItem Header="Corotational Frame(0)(Time Domain)" Click="CorotationalFrameTD0Btn_Click"/>
+                        <MenuItem Header="Corotational Frame(1)" Click="CorotationalFrame1Btn_Click"/>
+                        <MenuItem Header="Corotational Frame(1)(Time Domain)" Click="CorotationalFrameTD1Btn_Click"/>
+                        <MenuItem Header="Corotational Frame(2)" Click="CorotationalFrame2Btn_Click"/>
+                        <MenuItem Header="Corotational Frame(2)(Time Domain)" Click="CorotationalFrameTD2Btn_Click"/>
+                        <MenuItem Header="Corotational Frame(3)" Click="CorotationalFrame3Btn_Click"/>
+                        <MenuItem Header="Corotational Frame(3)(Time Domain)" Click="CorotationalFrameTD3Btn_Click"/>
+                    </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Various Equations">
                     <MenuItem Header="Poisson" Click="PoissonBtn_Click"/>

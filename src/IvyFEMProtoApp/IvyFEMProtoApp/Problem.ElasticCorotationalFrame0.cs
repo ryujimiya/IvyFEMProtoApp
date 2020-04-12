@@ -12,19 +12,23 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void BeamProblem3(MainWindow mainWindow, bool isTimoshenko)
+        public void CorotationalFrameProblem0(MainWindow mainWindow)
         {
             double beamLen = 1.0;
             double b = 0.2 * beamLen;
             double h = 0.25 * b;
             int divCnt = 10;
             double eLen = 0.95 * beamLen / (double)divCnt;
+            double loadX = beamLen * 0.75;
             CadObject2D cad = new CadObject2D();
             {
                 uint lId0 = 0;
                 uint vId1 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(0.0, 0.0)).AddVId;
-                uint vId2 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(beamLen, 0.0)).AddVId;
+                uint vId2 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(loadX, 0.0)).AddVId;
+                uint vId3 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(beamLen, 0.0)).AddVId;
+
                 uint eId1 = cad.ConnectVertexLine(vId1, vId2).AddEId;
+                uint eId2 = cad.ConnectVertexLine(vId2, vId3).AddEId;
             }
 
             {
@@ -71,26 +75,21 @@ namespace IvyFEMProtoApp
 
             FEWorld world = new FEWorld();
             world.Mesh = mesher;
-            uint dQuantityId; // displacement
+            uint d1QuantityId; // displacement1
+            uint d2QuantityId; // displacement2
             uint rQuantityId; // rotation
-            if (isTimoshenko)
             {
-                uint dDof = 1; // Scalar (w)
+                uint d1Dof = 1; // Scalar (u)
+                uint d2Dof = 1; // Scalar (v)
                 uint rDof = 1; // Scalar (θ)
-                uint dFEOrder = 1;
+                uint d1FEOrder = 1;
+                uint d2FEOrder = 1;
                 uint rFEOrder = 1;
-                dQuantityId = world.AddQuantity(dDof, dFEOrder, FiniteElementType.ScalarLagrange);
+                d1QuantityId = world.AddQuantity(d1Dof, d1FEOrder, FiniteElementType.ScalarLagrange);
+                d2QuantityId = world.AddQuantity(d2Dof, d2FEOrder, FiniteElementType.ScalarLagrange);
                 rQuantityId = world.AddQuantity(rDof, rFEOrder, FiniteElementType.ScalarLagrange);
             }
-            else
-            {
-                uint dDof = 1; // Scalar (w)
-                uint rDof = 1; // Scalar (θ)
-                uint dFEOrder = 3;
-                uint rFEOrder = 3;
-                dQuantityId = world.AddQuantity(dDof, dFEOrder, FiniteElementType.ScalarHermite);
-                rQuantityId = world.AddQuantity(rDof, rFEOrder, FiniteElementType.ScalarHermite);
-            }
+            uint[] dQuantityIds = { d1QuantityId, d2QuantityId };
 
             {
                 world.ClearMaterial();
@@ -100,21 +99,8 @@ namespace IvyFEMProtoApp
                     var ma = new NullMaterial();
                     nullMaId = world.AddMaterial(ma);
                 }
-                if (isTimoshenko)
                 {
-                    var ma = new TimoshenkoBeamMaterial();
-                    ma.Area = b * h;
-                    ma.SecondMomentOfArea = (1.0 / 12.0) * b * h * h * h;
-                    ma.PolarSecondMomentOfArea = (1.0 / 12.0) * b * h * h * h + (1.0 / 12.0) * b * b * b * h;
-                    ma.MassDensity = 2.3e+3;
-                    ma.Young = 169.0e+9;
-                    ma.Poisson = 0.262;
-                    ma.TimoshenkoShearCoefficient = 5.0 / 6.0; // 長方形断面
-                    beamMaId = world.AddMaterial(ma);
-                }
-                else
-                {
-                    var ma = new BeamMaterial();
+                    var ma = new CorotationalFrameMaterial();
                     ma.Area = b * h;
                     ma.SecondMomentOfArea = (1.0 / 12.0) * b * h * h * h;
                     ma.MassDensity = 2.3e+3;
@@ -134,15 +120,23 @@ namespace IvyFEMProtoApp
                 }
             }
 
-            uint[] dZeroVIds = { 1 };
-            var dZeroFixedCads = world.GetZeroFieldFixedCads(dQuantityId);
-            foreach (uint vId in dZeroVIds)
+            uint[] d1ZeroVIds = { 1, 3 };
+            var d1ZeroFixedCads = world.GetZeroFieldFixedCads(d1QuantityId);
+            foreach (uint vId in d1ZeroVIds)
             {
                 // スカラー
                 var fixedCad = new FieldFixedCad(vId, CadElementType.Vertex, FieldValueType.Scalar);
-                dZeroFixedCads.Add(fixedCad);
+                d1ZeroFixedCads.Add(fixedCad);
             }
-            uint[] rZeroVIds = { 1 };
+            uint[] d2ZeroVIds = { 1, 3 };
+            var d2ZeroFixedCads = world.GetZeroFieldFixedCads(d2QuantityId);
+            foreach (uint vId in d2ZeroVIds)
+            {
+                // スカラー
+                var fixedCad = new FieldFixedCad(vId, CadElementType.Vertex, FieldValueType.Scalar);
+                d2ZeroFixedCads.Add(fixedCad);
+            }
+            uint[] rZeroVIds = { 1, 3 };
             var rZeroFixedCads = world.GetZeroFieldFixedCads(rQuantityId);
             foreach (uint vId in rZeroVIds)
             {
@@ -151,18 +145,17 @@ namespace IvyFEMProtoApp
                 rZeroFixedCads.Add(fixedCad);
             }
 
-            // load
             // displacement
-            FieldFixedCad forceFixedCadD;
+            FieldFixedCad fixedCadD1;
             {
-                // FixedDofIndex 0: w
+                // FixedDofIndex 0: u
                 var fixedCadDatas = new[]
                 {
                     // 可動部
                     new { CadId = (uint)2, CadElemType = CadElementType.Vertex,
                         FixedDofIndexs = new List<uint> { 0 }, Values = new List<double> { 0.0 } },
                 };
-                IList<FieldFixedCad> fixedCads = world.GetForceFieldFixedCads(dQuantityId);
+                IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(d1QuantityId);
                 foreach (var data in fixedCadDatas)
                 {
                     // Scalar
@@ -170,10 +163,28 @@ namespace IvyFEMProtoApp
                         FieldValueType.Scalar, data.FixedDofIndexs, data.Values);
                     fixedCads.Add(fixedCad);
                 }
-                forceFixedCadD = world.GetForceFieldFixedCads(dQuantityId)[0];
+                fixedCadD1 = world.GetFieldFixedCads(d1QuantityId)[0];
             }
-            // rotation(moment)
-            FieldFixedCad forceFixedCadR;
+            FieldFixedCad fixedCadD2;
+            {
+                // FixedDofIndex 0: v
+                var fixedCadDatas = new[]
+                {
+                    // 可動部
+                    new { CadId = (uint)2, CadElemType = CadElementType.Vertex,
+                        FixedDofIndexs = new List<uint> { 0 }, Values = new List<double> { 0.0 } },
+                };
+                IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(d2QuantityId);
+                foreach (var data in fixedCadDatas)
+                {
+                    // Scalar
+                    var fixedCad = new ConstFieldFixedCad(data.CadId, data.CadElemType,
+                        FieldValueType.Scalar, data.FixedDofIndexs, data.Values);
+                    fixedCads.Add(fixedCad);
+                }
+                fixedCadD2 = world.GetFieldFixedCads(d2QuantityId)[0];
+            }
+            // rotation
             {
                 // FixedDofIndex 0: θ
                 var fixedCadDatas = new[]
@@ -182,7 +193,7 @@ namespace IvyFEMProtoApp
                     new { CadId = (uint)2, CadElemType = CadElementType.Vertex,
                         FixedDofIndexs = new List<uint> { 0 }, Values = new List<double> { 0.0 } },
                 };
-                IList<FieldFixedCad> fixedCads = world.GetForceFieldFixedCads(rQuantityId);
+                IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(rQuantityId);
                 foreach (var data in fixedCadDatas)
                 {
                     // Scalar
@@ -190,7 +201,6 @@ namespace IvyFEMProtoApp
                         FieldValueType.Scalar, data.FixedDofIndexs, data.Values);
                     fixedCads.Add(fixedCad);
                 }
-                forceFixedCadR = world.GetForceFieldFixedCads(rQuantityId)[0];
             }
 
             world.MakeElements();
@@ -201,7 +211,7 @@ namespace IvyFEMProtoApp
                 world.ClearFieldValue();
                 // Vector2
                 valueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivativeType.Value,
-                    dQuantityId, false, FieldShowType.Real);
+                    d1QuantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
                 var edgeDrawer0 = new EdgeFieldDrawer(
@@ -222,19 +232,19 @@ namespace IvyFEMProtoApp
             double dt = 0.05;
             for (int iTime = 0; iTime <= 200; iTime++)
             {
-                double[] forceFixedValueD = forceFixedCadD.GetDoubleValues();
-                double[] forceFixedValueR = forceFixedCadR.GetDoubleValues();
-                forceFixedValueD[0] = -0.5e+6 * Math.Sin(t * 2.0 * Math.PI * 0.1);
-                forceFixedValueR[0] = 0.0; // moment
+                double[] fixedValue01 = fixedCadD1.GetDoubleValues();
+                double[] fixedValueD2 = fixedCadD2.GetDoubleValues();
+                fixedValue01[0] = 0.0;
+                fixedValueD2[0] = -0.2 * beamLen * Math.Sin(t * 2.0 * Math.PI * 0.1);
 
-                var FEM = new Elastic2DFEM(world);
+                var FEM = new Elastic2DFEM(world);                
                 {
-                    //var solver = new IvyFEM.Linear.LapackEquationSolver();
+                    var solver = new IvyFEM.Linear.LapackEquationSolver();
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
-                    //solver.IsOrderingToBandMatrix = true;
-                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
+                    solver.IsOrderingToBandMatrix = true;
+                    solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
-                    //FEM.Solver = solver;
+                    FEM.Solver = solver;
                 }
                 {
                     //var solver = new IvyFEM.Linear.LisEquationSolver();
@@ -242,39 +252,52 @@ namespace IvyFEMProtoApp
                     //FEM.Solver = solver;
                 }
                 {
-                    var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
-                    solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
+                    //var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
-                    FEM.Solver = solver;
+                    //FEM.Solver = solver;
                 }
+                FEM.DisplacementQuantityIds = dQuantityIds.ToList();
+                FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6; // 収束条件を緩めている
                 FEM.Solve();
-                double[] Uwt = FEM.U;
+                double[] Uuvt = FEM.U;
 
                 // 変位(u,w)へ変換する
-                int coCnt = (int)world.GetCoordCount(dQuantityId);
-                int dNodeCnt = (int)world.GetNodeCount(dQuantityId);
+                int coCnt = (int)world.GetCoordCount(d1QuantityId);
+                int d1Dof = (int)world.GetDof(d1QuantityId);
+                int d2Dof = (int)world.GetDof(d2QuantityId);
+                int rDof = (int)world.GetDof(rQuantityId);
+                int d1NodeCnt = (int)world.GetNodeCount(d1QuantityId);
+                int d2NodeCnt = (int)world.GetNodeCount(d2QuantityId);
                 int rNodeCnt = (int)world.GetNodeCount(rQuantityId);
-                int offset = dNodeCnt;
+                int d2Offset = d1NodeCnt * d1Dof;
+                int rOffset = d2Offset + d2NodeCnt * d2Dof;
                 int dof = 2;
                 double[] U = new double[coCnt * dof];
                 for (int coId = 0; coId < coCnt; coId++)
                 {
-                    int dNodeId = world.Coord2Node(dQuantityId, coId);
+                    int d1NodeId = world.Coord2Node(d1QuantityId, coId);
+                    int d2NodeId = world.Coord2Node(d2QuantityId, coId);
                     int rNodeId = world.Coord2Node(rQuantityId, coId);
-                    double w = 0;
+                    double u = 0;
+                    double v = 0;
                     double theta = 0;
-                    if (dNodeId != -1)
+                    if (d1NodeId != -1)
                     {
-                        w = Uwt[dNodeId];
+                        u = Uuvt[d1NodeId];
+                    }
+                    if (d2NodeId != -1)
+                    {
+                        v = Uuvt[d2NodeId + d2Offset];
                     }
                     if (rNodeId != -1)
                     {
-                        theta = Uwt[rNodeId + offset];
+                        theta = Uuvt[rNodeId + rOffset];
                     }
-                    U[coId * dof + 0] = 0.0;
-                    U[coId * dof + 1] = w;
+                    U[coId * dof + 0] = u;
+                    U[coId * dof + 1] = v;
                 }
                 // Note: from CoordValues
                 world.UpdateFieldValueValuesFromCoordValues(valueId, FieldDerivativeType.Value, U);
@@ -287,21 +310,23 @@ namespace IvyFEMProtoApp
             }
         }
 
-        public void BeamTDProblem3(MainWindow mainWindow, bool isTimoshenko)
+        public void CorotationalFrameTDProblem0(MainWindow mainWindow)
         {
             double beamLen = 1.0;
             double b = 0.2 * beamLen;
             double h = 0.25 * b;
             int divCnt = 10;
             double eLen = 0.95 * beamLen / (double)divCnt;
-            //double loadX = beamLen * 0.5;
             double loadX = beamLen * 0.75;
             CadObject2D cad = new CadObject2D();
             {
                 uint lId0 = 0;
                 uint vId1 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(0.0, 0.0)).AddVId;
-                uint vId2 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(beamLen, 0.0)).AddVId;
+                uint vId2 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(loadX, 0.0)).AddVId;
+                uint vId3 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(beamLen, 0.0)).AddVId;
+
                 uint eId1 = cad.ConnectVertexLine(vId1, vId2).AddEId;
+                uint eId2 = cad.ConnectVertexLine(vId2, vId3).AddEId;
             }
 
             {
@@ -348,26 +373,21 @@ namespace IvyFEMProtoApp
 
             FEWorld world = new FEWorld();
             world.Mesh = mesher;
-            uint dQuantityId; // displacement
+            uint d1QuantityId; // displacement1
+            uint d2QuantityId; // displacement2
             uint rQuantityId; // rotation
-            if (isTimoshenko)
             {
-                uint dDof = 1; // Scalar (w)
+                uint d1Dof = 1; // Scalar (u)
+                uint d2Dof = 1; // Scalar (v)
                 uint rDof = 1; // Scalar (θ)
-                uint dFEOrder = 1;
+                uint d1FEOrder = 1;
+                uint d2FEOrder = 1;
                 uint rFEOrder = 1;
-                dQuantityId = world.AddQuantity(dDof, dFEOrder, FiniteElementType.ScalarLagrange);
+                d1QuantityId = world.AddQuantity(d1Dof, d1FEOrder, FiniteElementType.ScalarLagrange);
+                d2QuantityId = world.AddQuantity(d2Dof, d2FEOrder, FiniteElementType.ScalarLagrange);
                 rQuantityId = world.AddQuantity(rDof, rFEOrder, FiniteElementType.ScalarLagrange);
             }
-            else
-            {
-                uint dDof = 1; // Scalar (w)
-                uint rDof = 1; // Scalar (θ)
-                uint dFEOrder = 3;
-                uint rFEOrder = 3;
-                dQuantityId = world.AddQuantity(dDof, dFEOrder, FiniteElementType.ScalarHermite);
-                rQuantityId = world.AddQuantity(rDof, rFEOrder, FiniteElementType.ScalarHermite);
-            }
+            uint[] dQuantityIds = { d1QuantityId, d2QuantityId };
 
             {
                 world.ClearMaterial();
@@ -377,21 +397,8 @@ namespace IvyFEMProtoApp
                     var ma = new NullMaterial();
                     nullMaId = world.AddMaterial(ma);
                 }
-                if (isTimoshenko)
                 {
-                    var ma = new TimoshenkoBeamMaterial();
-                    ma.Area = b * h;
-                    ma.SecondMomentOfArea = (1.0 / 12.0) * b * h * h * h;
-                    ma.PolarSecondMomentOfArea = (1.0 / 12.0) * b * h * h * h + (1.0 / 12.0) * b * b * b * h;
-                    ma.MassDensity = 2.3e+3;
-                    ma.Young = 169.0e+9;
-                    ma.Poisson = 0.262;
-                    ma.TimoshenkoShearCoefficient = 5.0 / 6.0; // 長方形断面
-                    beamMaId = world.AddMaterial(ma);
-                }
-                else
-                {
-                    var ma = new BeamMaterial();
+                    var ma = new CorotationalFrameMaterial();
                     ma.Area = b * h;
                     ma.SecondMomentOfArea = (1.0 / 12.0) * b * h * h * h;
                     ma.MassDensity = 2.3e+3;
@@ -411,15 +418,23 @@ namespace IvyFEMProtoApp
                 }
             }
 
-            uint[] dZeroVIds = { 1 };
-            var dZeroFixedCads = world.GetZeroFieldFixedCads(dQuantityId);
-            foreach (uint vId in dZeroVIds)
+            uint[] d1ZeroVIds = { 1, 3 };
+            var d1ZeroFixedCads = world.GetZeroFieldFixedCads(d1QuantityId);
+            foreach (uint vId in d1ZeroVIds)
             {
                 // スカラー
                 var fixedCad = new FieldFixedCad(vId, CadElementType.Vertex, FieldValueType.Scalar);
-                dZeroFixedCads.Add(fixedCad);
+                d1ZeroFixedCads.Add(fixedCad);
             }
-            uint[] rZeroVIds = { 1 };
+            uint[] d2ZeroVIds = { 1, 3 };
+            var d2ZeroFixedCads = world.GetZeroFieldFixedCads(d2QuantityId);
+            foreach (uint vId in d2ZeroVIds)
+            {
+                // スカラー
+                var fixedCad = new FieldFixedCad(vId, CadElementType.Vertex, FieldValueType.Scalar);
+                d2ZeroFixedCads.Add(fixedCad);
+            }
+            uint[] rZeroVIds = { 1, 3 };
             var rZeroFixedCads = world.GetZeroFieldFixedCads(rQuantityId);
             foreach (uint vId in rZeroVIds)
             {
@@ -428,18 +443,17 @@ namespace IvyFEMProtoApp
                 rZeroFixedCads.Add(fixedCad);
             }
 
-            // load
             // displacement
-            FieldFixedCad forceFixedCadD;
+            FieldFixedCad fixedCadD1;
             {
-                // FixedDofIndex 0: w
+                // FixedDofIndex 0: u
                 var fixedCadDatas = new[]
                 {
                     // 可動部
                     new { CadId = (uint)2, CadElemType = CadElementType.Vertex,
                         FixedDofIndexs = new List<uint> { 0 }, Values = new List<double> { 0.0 } },
                 };
-                IList<FieldFixedCad> fixedCads = world.GetForceFieldFixedCads(dQuantityId);
+                IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(d1QuantityId);
                 foreach (var data in fixedCadDatas)
                 {
                     // Scalar
@@ -447,10 +461,28 @@ namespace IvyFEMProtoApp
                         FieldValueType.Scalar, data.FixedDofIndexs, data.Values);
                     fixedCads.Add(fixedCad);
                 }
-                forceFixedCadD = world.GetForceFieldFixedCads(dQuantityId)[0];
+                fixedCadD1 = world.GetFieldFixedCads(d1QuantityId)[0];
             }
-            // rotation(moment)
-            FieldFixedCad forceFixedCadR;
+            FieldFixedCad fixedCadD2;
+            {
+                // FixedDofIndex 0: v
+                var fixedCadDatas = new[]
+                {
+                    // 可動部
+                    new { CadId = (uint)2, CadElemType = CadElementType.Vertex,
+                        FixedDofIndexs = new List<uint> { 0 }, Values = new List<double> { 0.0 } },
+                };
+                IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(d2QuantityId);
+                foreach (var data in fixedCadDatas)
+                {
+                    // Scalar
+                    var fixedCad = new ConstFieldFixedCad(data.CadId, data.CadElemType,
+                        FieldValueType.Scalar, data.FixedDofIndexs, data.Values);
+                    fixedCads.Add(fixedCad);
+                }
+                fixedCadD2 = world.GetFieldFixedCads(d2QuantityId)[0];
+            }
+            // rotation
             {
                 // FixedDofIndex 0: θ
                 var fixedCadDatas = new[]
@@ -459,7 +491,7 @@ namespace IvyFEMProtoApp
                     new { CadId = (uint)2, CadElemType = CadElementType.Vertex,
                         FixedDofIndexs = new List<uint> { 0 }, Values = new List<double> { 0.0 } },
                 };
-                IList<FieldFixedCad> fixedCads = world.GetForceFieldFixedCads(rQuantityId);
+                IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(rQuantityId);
                 foreach (var data in fixedCadDatas)
                 {
                     // Scalar
@@ -467,13 +499,14 @@ namespace IvyFEMProtoApp
                         FieldValueType.Scalar, data.FixedDofIndexs, data.Values);
                     fixedCads.Add(fixedCad);
                 }
-                forceFixedCadR = world.GetForceFieldFixedCads(rQuantityId)[0];
             }
 
             world.MakeElements();
 
-            uint dValueId = 0;
-            uint dPrevValueId = 0;
+            uint d1ValueId = 0;
+            uint d1PrevValueId = 0;
+            uint d2ValueId = 0;
+            uint d2PrevValueId = 0;
             uint rValueId = 0;
             uint rPrevValueId = 0;
             uint valueId = 0;
@@ -483,15 +516,22 @@ namespace IvyFEMProtoApp
                 // 表示用
                 // Vector2
                 valueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivativeType.Value,
-                    dQuantityId, false, FieldShowType.Real);
+                    d1QuantityId, false, FieldShowType.Real);
+
                 // Newmarkβ
                 // Scalar
-                dValueId = world.AddFieldValue(FieldValueType.Scalar,
+                d1ValueId = world.AddFieldValue(FieldValueType.Scalar,
                     FieldDerivativeType.Value | FieldDerivativeType.Velocity | FieldDerivativeType.Acceleration,
-                    dQuantityId, false, FieldShowType.Real);
-                dPrevValueId = world.AddFieldValue(FieldValueType.Scalar,
+                    d1QuantityId, false, FieldShowType.Real);
+                d1PrevValueId = world.AddFieldValue(FieldValueType.Scalar,
                     FieldDerivativeType.Value | FieldDerivativeType.Velocity | FieldDerivativeType.Acceleration,
-                    dQuantityId, false, FieldShowType.Real);
+                    d1QuantityId, false, FieldShowType.Real);
+                d2ValueId = world.AddFieldValue(FieldValueType.Scalar,
+                    FieldDerivativeType.Value | FieldDerivativeType.Velocity | FieldDerivativeType.Acceleration,
+                    d2QuantityId, false, FieldShowType.Real);
+                d2PrevValueId = world.AddFieldValue(FieldValueType.Scalar,
+                    FieldDerivativeType.Value | FieldDerivativeType.Velocity | FieldDerivativeType.Acceleration,
+                    d2QuantityId, false, FieldShowType.Real);
                 rValueId = world.AddFieldValue(FieldValueType.Scalar,
                     FieldDerivativeType.Value | FieldDerivativeType.Velocity | FieldDerivativeType.Acceleration,
                     rQuantityId, false, FieldShowType.Real);
@@ -514,8 +554,8 @@ namespace IvyFEMProtoApp
                 //mainWindow.GLControl.Update();
                 //WPFUtils.DoEvents();
             }
-            IList<uint> valueIds = new List<uint> { dValueId, rValueId };
-            IList<uint> prevValueIds = new List<uint> { dPrevValueId, rPrevValueId };
+            IList<uint> valueIds = new List<uint> { d1ValueId, d2ValueId, rValueId };
+            IList<uint> prevValueIds = new List<uint> { d1PrevValueId, d2PrevValueId, rPrevValueId };
 
             double t = 0;
             double dt = 0.5;
@@ -523,21 +563,21 @@ namespace IvyFEMProtoApp
             double newmarkGamma = 1.0 / 2.0;
             for (int iTime = 0; iTime <= 200; iTime++)
             {
-                double[] forceFixedValueD = forceFixedCadD.GetDoubleValues();
-                double[] forceFixedValueR = forceFixedCadR.GetDoubleValues();
-                forceFixedValueD[0] = -0.5e+6 * Math.Sin(t * 2.0 * Math.PI * 0.1);
-                forceFixedValueR[0] = 0.0; // moment
+                double[] fixedValue01 = fixedCadD1.GetDoubleValues();
+                double[] fixedValueD2 = fixedCadD2.GetDoubleValues();
+                fixedValue01[0] = 0.0;
+                fixedValueD2[0] = -0.2 * beamLen * Math.Sin(t * 2.0 * Math.PI * 0.01);
 
                 var FEM = new Elastic2DTDFEM(world, dt,
                     newmarkBeta, newmarkGamma,
                     valueIds, prevValueIds);
                 {
-                    //var solver = new IvyFEM.Linear.LapackEquationSolver();
+                    var solver = new IvyFEM.Linear.LapackEquationSolver();
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
-                    //solver.IsOrderingToBandMatrix = true;
-                    //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
+                    solver.IsOrderingToBandMatrix = true;
+                    solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
-                    //FEM.Solver = solver;
+                    FEM.Solver = solver;
                 }
                 {
                     //var solver = new IvyFEM.Linear.LisEquationSolver();
@@ -545,39 +585,52 @@ namespace IvyFEMProtoApp
                     //FEM.Solver = solver;
                 }
                 {
-                    var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
-                    solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
+                    //var solver = new IvyFEM.Linear.IvyFEMEquationSolver();
+                    //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconCG;
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.CG;
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.ICCG;
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
-                    FEM.Solver = solver;
+                    //FEM.Solver = solver;
                 }
+                FEM.DisplacementQuantityIds = dQuantityIds.ToList();
+                FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6; // 収束条件を緩めている
                 FEM.Solve();
-                double[] Uwt = FEM.U;
+                double[] Uuvt = FEM.U;
 
                 // 変位(u,w)へ変換する
-                int coCnt = (int)world.GetCoordCount(dQuantityId);
-                int dNodeCnt = (int)world.GetNodeCount(dQuantityId);
+                int coCnt = (int)world.GetCoordCount(d1QuantityId);
+                int d1Dof = (int)world.GetDof(d1QuantityId);
+                int d2Dof = (int)world.GetDof(d2QuantityId);
+                int rDof = (int)world.GetDof(rQuantityId);
+                int d1NodeCnt = (int)world.GetNodeCount(d1QuantityId);
+                int d2NodeCnt = (int)world.GetNodeCount(d2QuantityId);
                 int rNodeCnt = (int)world.GetNodeCount(rQuantityId);
-                int offset = dNodeCnt;
+                int d2Offset = d1NodeCnt * d1Dof;
+                int rOffset = d2Offset + d2NodeCnt * d2Dof;
                 int dof = 2;
                 double[] U = new double[coCnt * dof];
                 for (int coId = 0; coId < coCnt; coId++)
                 {
-                    int dNodeId = world.Coord2Node(dQuantityId, coId);
+                    int d1NodeId = world.Coord2Node(d1QuantityId, coId);
+                    int d2NodeId = world.Coord2Node(d2QuantityId, coId);
                     int rNodeId = world.Coord2Node(rQuantityId, coId);
-                    double w = 0;
+                    double u = 0;
+                    double v = 0;
                     double theta = 0;
-                    if (dNodeId != -1)
+                    if (d1NodeId != -1)
                     {
-                        w = Uwt[dNodeId];
+                        u = Uuvt[d1NodeId];
+                    }
+                    if (d2NodeId != -1)
+                    {
+                        v = Uuvt[d2NodeId + d2Offset];
                     }
                     if (rNodeId != -1)
                     {
-                        theta = Uwt[rNodeId + offset];
+                        theta = Uuvt[rNodeId + rOffset];
                     }
-                    U[coId * dof + 0] = 0.0;
-                    U[coId * dof + 1] = w;
+                    U[coId * dof + 0] = u;
+                    U[coId * dof + 1] = v;
                 }
                 // Note: from CoordValues
                 world.UpdateFieldValueValuesFromCoordValues(valueId, FieldDerivativeType.Value, U);

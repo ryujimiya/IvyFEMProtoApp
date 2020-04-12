@@ -887,6 +887,62 @@ namespace IvyFEMProtoApp
             Problem.FrameTDProblem3(this, isTimoshenko);
         }
 
+        private void CorotationalFrame0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.CorotationalFrameProblem0(this);
+        }
+
+        private void CorotationalFrameTD0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.CorotationalFrameTDProblem0(this);
+        }
+
+        private void CorotationalFrame1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.CorotationalFrameProblem1(this);
+        }
+
+        private void CorotationalFrameTD1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.CorotationalFrameTDProblem1(this);
+        }
+
+        private void CorotationalFrame2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.CorotationalFrameProblem2(this);
+        }
+
+        private void CorotationalFrameTD2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.CorotationalFrameTDProblem2(this);
+        }
+
+        private void CorotationalFrame3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.CorotationalFrameProblem3(this);
+        }
+
+        private void CorotationalFrameTD3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.CorotationalFrameTDProblem3(this);
+        }
+
         private void PoissonBtn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
