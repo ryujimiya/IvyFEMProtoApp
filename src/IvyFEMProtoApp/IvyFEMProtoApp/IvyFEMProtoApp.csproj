@@ -143,12 +143,17 @@
     <Compile Include="PortEdge.cs" />
     <Compile Include="Problem.ElasticBeam3.cs" />
     <Compile Include="Problem.ElasticBeam2.cs" />
+    <Compile Include="Problem.ElasticFieldConsistentTLFrame1.cs" />
+    <Compile Include="Problem.ElasticFieldConsistentTLFrame0.cs" />
+    <Compile Include="Problem.ElasticFieldConsistentTLFrame2.cs" />
+    <Compile Include="Problem.ElasticFieldConsistentTLFrame3.cs" />
     <Compile Include="Problem.ElasticCorotationalFrame3.cs" />
     <Compile Include="Problem.ElasticCorotationalFrame2.cs" />
     <Compile Include="Problem.ElasticCorotationalFrame1.cs" />
     <Compile Include="Problem.ElasticCorotationalFrame0.cs" />
     <Compile Include="Problem.ElasticFrame3.cs" />
     <Compile Include="Problem.ElasticFrame2.cs" />
+    <Compile Include="Problem.ElasticLinearStVenant2.cs" />
     <Compile Include="Problem.ElasticLinearStVenantEigen.cs" />
     <Compile Include="Problem.ElasticFrameEigen0.cs" />
     <Compile Include="Problem.ElasticFrame0.cs" />
@@ -245,7 +250,7 @@
     <Compile Include="Problem.HyperelasticMPC.cs" />
     <Compile Include="Problem.Hyperelastic.cs" />
     <Compile Include="Problem.ElasticMPC.cs" />
-    <Compile Include="Problem.ElasticLinearStVenant.cs" />
+    <Compile Include="Problem.ElasticLinearStVenant1.cs" />
     <Compile Include="Problem.EMHWaveguide1.cs" />
     <Compile Include="Problem.Helmholtz.cs" />
     <Compile Include="Problem.ExampleFEM.cs" />

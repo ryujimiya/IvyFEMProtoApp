@@ -35,14 +35,21 @@
                 </MenuItem>
                 <MenuItem Header="Elastic">
                     <MenuItem Header="Elastic">
-                        <MenuItem Header="Linear" Click="ElasticLinearBtn_Click"/>
-                        <MenuItem Header="Linear(Time Domain)" Click="ElasticLinearTDBtn_Click"/>
+                        <MenuItem Header="Linear(1)" Click="ElasticLinear1Btn_Click"/>
+                        <MenuItem Header="Linear(1)(Time Domain)" Click="ElasticLinearTD1Btn_Click"/>
+                        <MenuItem Header="Linear(2)" Click="ElasticLinear2Btn_Click"/>
+                        <MenuItem Header="Linear(2)(Time Domain)" Click="ElasticLinearTD2Btn_Click"/>
                         <MenuItem Header="Linear(Eigen)" Click="ElasticLinearEigenBtn_Click"/>
-                        <MenuItem Header="Saint Venant" Click="SaintVenantHyperelasticBtn_Click"/>
-                        <MenuItem Header="Saint Venant(Time Domain)" Click="SaintVenantHyperelasticTDBtn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="Saint Venant(1)" Click="SaintVenantHyperelastic1Btn_Click"/>
+                        <MenuItem Header="Saint Venant(1)(Time Domain)" Click="SaintVenantHyperelasticTD1Btn_Click"/>
+                        <MenuItem Header="Saint Venant(2)" Click="SaintVenantHyperelastic2Btn_Click"/>
+                        <MenuItem Header="Saint Venant(2)(Time Domain)" Click="SaintVenantHyperelasticTD2Btn_Click"/>
                         <MenuItem Header="Saint Venant(Eigen)" Click="SaintVenantHyperelasticEigenBtn_Click"/>
+                        <Separator/>
                         <MenuItem Header="Mooney-Rivlin" Click="MooneyRivlinHyperelasticBtn_Click"/>
                         <MenuItem Header="Mooney-Rivlin(Time Domain)" Click="MooneyRivlinHyperelasticTDBtn_Click"/>
+                        <Separator/>
                         <MenuItem Header="Ogden" Click="OgdenHyperelasticBtn_Click"/>
                         <MenuItem Header="Ogden(Time Domain)" Click="OgdenHyperelasticTDBtn_Click"/>
                     </MenuItem>
@@ -57,6 +64,7 @@
                         <MenuItem Header="Saint Venant(Contact)(Time Domain)" Click="SaintVenantHyperelasticContactTDBtn_Click"/>
                         <MenuItem Header="Mooney-Rivlin(Contact)(Time Domain)" Click="MooneyRivlinHyperelasticContactTDBtn_Click"/>
                         <MenuItem Header="Ogden(Contact)(Time Domain)" Click="OgdenHyperelasticContactTDBtn_Click"/>
+                        <Separator/>
                         <MenuItem Header="Elastic(Circle Contact)(Time Domain)" Click="ElasticCircleContactTDBtn_Click"/>
                         <MenuItem Header="Saint Venant(Circle Contact)(Time Domain)" Click="SaintVenantHyperelasticCircleContactTDBtn_Click"/>
                         <MenuItem Header="Mooney-Rivlin(Circle Contact)(Time Domain)" Click="MooneyRivlinHyperelasticCircleContactTDBtn_Click"/>
@@ -123,6 +131,12 @@
                         <MenuItem Header="Corotational Frame(2)(Time Domain)" Click="CorotationalFrameTD2Btn_Click"/>
                         <MenuItem Header="Corotational Frame(3)" Click="CorotationalFrame3Btn_Click"/>
                         <MenuItem Header="Corotational Frame(3)(Time Domain)" Click="CorotationalFrameTD3Btn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Field Consistent TL Frame">
+                        <MenuItem Header="Field Consistent TL Frame(0)" Click="FieldConsistentTLFrame0Btn_Click"/>
+                        <MenuItem Header="Field Consistent TL Frame(1)" Click="FieldConsistentTLFrame1Btn_Click"/>
+                        <MenuItem Header="Field Consistent TL Frame(2)" Click="FieldConsistentTLFrame2Btn_Click"/>
+                        <MenuItem Header="Field Consistent TL Frame(3)" Click="FieldConsistentTLFrame3Btn_Click"/>
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Various Equations">

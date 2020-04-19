@@ -375,21 +375,37 @@ namespace IvyFEMProtoApp
             cadEditWindow.ShowDialog();
         }
 
-        private void ElasticLinearBtn_Click(object sender, RoutedEventArgs e)
+        private void ElasticLinear1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
             bool isSaintVenant = false;
-            Problem.ElasticLinearStVenantProblem(this, false, isSaintVenant);
-            Problem.ElasticLinearStVenantProblem(this, true, isSaintVenant);
+            Problem.ElasticLinearStVenantProblem1(this, false, isSaintVenant);
+            Problem.ElasticLinearStVenantProblem1(this, true, isSaintVenant);
         }
 
-        private void ElasticLinearTDBtn_Click(object sender, RoutedEventArgs e)
+        private void ElasticLinearTD1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
             bool isSaintVenant = false;
-            Problem.ElasticTDProblem(this, isSaintVenant);
+            Problem.ElasticTDProblem1(this, isSaintVenant);
+        }
+
+        private void ElasticLinear2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isSaintVenant = false;
+            Problem.ElasticLinearStVenantProblem2(this, isSaintVenant);
+        }
+
+        private void ElasticLinearTD2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isSaintVenant = false;
+            Problem.ElasticTDProblem2(this, isSaintVenant);
         }
 
         private void ElasticLinearEigenBtn_Click(object sender, RoutedEventArgs e)
@@ -400,20 +416,36 @@ namespace IvyFEMProtoApp
             Problem.ElasticLinearStVenantEigenProblem(this, isSaintVenant);
         }
 
-        private void SaintVenantHyperelasticBtn_Click(object sender, RoutedEventArgs e)
+        private void SaintVenantHyperelastic1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
             bool isSaintVenant = true;
-            Problem.ElasticLinearStVenantProblem(this, false, isSaintVenant);
+            Problem.ElasticLinearStVenantProblem1(this, false, isSaintVenant);
         }
 
-        private void SaintVenantHyperelasticTDBtn_Click(object sender, RoutedEventArgs e)
+        private void SaintVenantHyperelasticTD1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
             bool isSaintVenant = true;
-            Problem.ElasticTDProblem(this, isSaintVenant);
+            Problem.ElasticTDProblem1(this, isSaintVenant);
+        }
+
+        private void SaintVenantHyperelastic2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isSaintVenant = true;
+            Problem.ElasticLinearStVenantProblem2(this, isSaintVenant);
+        }
+
+        private void SaintVenantHyperelasticTD2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isSaintVenant = true;
+            Problem.ElasticTDProblem2(this, isSaintVenant);
         }
 
         private void SaintVenantHyperelasticEigenBtn_Click(object sender, RoutedEventArgs e)
@@ -941,6 +973,34 @@ namespace IvyFEMProtoApp
             InitProblem(e.Source as MenuItem);
 
             Problem.CorotationalFrameTDProblem3(this);
+        }
+
+        private void FieldConsistentTLFrame0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.FieldConsistentTLFrameProblem0(this);
+        }
+
+        private void FieldConsistentTLFrame1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.FieldConsistentTLFrameProblem1(this);
+        }
+
+        private void FieldConsistentTLFrame2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.FieldConsistentTLFrameProblem2(this);
+        }
+
+        private void FieldConsistentTLFrame3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.FieldConsistentTLFrameProblem3(this);
         }
 
         private void PoissonBtn_Click(object sender, RoutedEventArgs e)

@@ -155,8 +155,8 @@ namespace IvyFEMProtoApp
             for (int iTime = 0; iTime <= 200; iTime++)
             {
                 double[] fixedValueD = fixedCadD.GetDoubleValues();
-                fixedValueD[0] = -0.5e-1 * Math.Sin(t * 2.0 * Math.PI * 0.1);
-                fixedValueD[1] = -1.0e-1 * Math.Sin(t * 2.0 * Math.PI * 0.1);
+                fixedValueD[0] = 0.0;
+                fixedValueD[1] = -0.2 * trussLen * Math.Sin(t * 2.0 * Math.PI * 0.1);
 
                 var FEM = new Elastic2DFEM(world);
                 {
@@ -344,8 +344,8 @@ namespace IvyFEMProtoApp
             for (int iTime = 0; iTime <= 200; iTime++)
             {
                 double[] fixedValueD = fixedCadD.GetDoubleValues();
-                fixedValueD[0] = -0.5e-1 * Math.Sin(t * 2.0 * Math.PI * 0.01);
-                fixedValueD[1] = -1.0e-1 * Math.Sin(t * 2.0 * Math.PI * 0.01);
+                fixedValueD[0] = 0.0;
+                fixedValueD[1] = -0.2 * trussLen * Math.Sin(t * 2.0 * Math.PI * 0.01);
 
                 var FEM = new Elastic2DTDFEM(world, dt,
                     newmarkBeta, newmarkGamma,
