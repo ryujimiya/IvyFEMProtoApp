@@ -85,6 +85,7 @@ namespace IvyFEMProtoApp
                     ma.Area = b * h;
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
+                    ma.Poisson = 0.262;
                     trussMaId = world.AddMaterial(ma);
                 }
 
@@ -282,6 +283,7 @@ namespace IvyFEMProtoApp
                     ma.Area = b * h;
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
+                    ma.Poisson = 0.262;
                     trussMaId = world.AddMaterial(ma);
                 }
 

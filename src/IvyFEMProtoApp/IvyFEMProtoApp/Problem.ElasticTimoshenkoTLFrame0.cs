@@ -12,20 +12,23 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void FieldConsistentTLFrameProblem3(MainWindow mainWindow)
+        public void TimoshenkoTLFrameProblem0(MainWindow mainWindow)
         {
             double beamLen = 1.0;
             double b = 0.2 * beamLen;
             double h = 0.25 * b;
             int divCnt = 10;
             double eLen = 0.95 * beamLen / (double)divCnt;
+            double loadX = beamLen * 0.75;
             CadObject2D cad = new CadObject2D();
             {
                 uint lId0 = 0;
                 uint vId1 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(0.0, 0.0)).AddVId;
-                uint vId2 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(beamLen, 0.0)).AddVId;
+                uint vId2 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(loadX, 0.0)).AddVId;
+                uint vId3 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(beamLen, 0.0)).AddVId;
 
                 uint eId1 = cad.ConnectVertexLine(vId1, vId2).AddEId;
+                uint eId2 = cad.ConnectVertexLine(vId2, vId3).AddEId;
             }
 
             {
@@ -79,8 +82,7 @@ namespace IvyFEMProtoApp
                 uint d1Dof = 1; // Scalar (u)
                 uint d2Dof = 1; // Scalar (v)
                 uint rDof = 1; // Scalar (θ)
-                // field-consistent frameではu:3点線要素
-                uint d1FEOrder = 2;
+                uint d1FEOrder = 1;
                 uint d2FEOrder = 1;
                 uint rFEOrder = 1;
                 d1QuantityId = world.AddQuantity(d1Dof, d1FEOrder, FiniteElementType.ScalarLagrange);
@@ -98,13 +100,14 @@ namespace IvyFEMProtoApp
                     nullMaId = world.AddMaterial(ma);
                 }
                 {
-                    var ma = new FieldConsistentTLFrameMaterial();
+                    var ma = new TimoshenkoTLFrameMaterial();
                     ma.Area = b * h;
                     ma.SecondMomentOfArea = (1.0 / 12.0) * b * h * h * h;
                     ma.PolarSecondMomentOfArea = (1.0 / 12.0) * b * h * h * h + (1.0 / 12.0) * b * b * b * h;
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
                     ma.Poisson = 0.262;
+                    ma.TimoshenkoShearCoefficient = 5.0 / 6.0; // 長方形断面
                     beamMaId = world.AddMaterial(ma);
                 }
 
@@ -120,7 +123,7 @@ namespace IvyFEMProtoApp
                 }
             }
 
-            uint[] d1ZeroVIds = { 1 };
+            uint[] d1ZeroVIds = { 1, 3 };
             var d1ZeroFixedCads = world.GetZeroFieldFixedCads(d1QuantityId);
             foreach (uint vId in d1ZeroVIds)
             {
@@ -128,7 +131,7 @@ namespace IvyFEMProtoApp
                 var fixedCad = new FieldFixedCad(vId, CadElementType.Vertex, FieldValueType.Scalar);
                 d1ZeroFixedCads.Add(fixedCad);
             }
-            uint[] d2ZeroVIds = { 1 };
+            uint[] d2ZeroVIds = { 1, 3 };
             var d2ZeroFixedCads = world.GetZeroFieldFixedCads(d2QuantityId);
             foreach (uint vId in d2ZeroVIds)
             {
@@ -136,7 +139,7 @@ namespace IvyFEMProtoApp
                 var fixedCad = new FieldFixedCad(vId, CadElementType.Vertex, FieldValueType.Scalar);
                 d2ZeroFixedCads.Add(fixedCad);
             }
-            uint[] rZeroVIds = { 1 };
+            uint[] rZeroVIds = { 1, 3 };
             var rZeroFixedCads = world.GetZeroFieldFixedCads(rQuantityId);
             foreach (uint vId in rZeroVIds)
             {
@@ -145,9 +148,8 @@ namespace IvyFEMProtoApp
                 rZeroFixedCads.Add(fixedCad);
             }
 
-            // load
             // displacement
-            FieldFixedCad forceFixedCadD1;
+            FieldFixedCad fixedCadD1;
             {
                 // FixedDofIndex 0: u
                 var fixedCadDatas = new[]
@@ -156,7 +158,7 @@ namespace IvyFEMProtoApp
                     new { CadId = (uint)2, CadElemType = CadElementType.Vertex,
                         FixedDofIndexs = new List<uint> { 0 }, Values = new List<double> { 0.0 } },
                 };
-                IList<FieldFixedCad> fixedCads = world.GetForceFieldFixedCads(d1QuantityId);
+                IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(d1QuantityId);
                 foreach (var data in fixedCadDatas)
                 {
                     // Scalar
@@ -164,9 +166,9 @@ namespace IvyFEMProtoApp
                         FieldValueType.Scalar, data.FixedDofIndexs, data.Values);
                     fixedCads.Add(fixedCad);
                 }
-                forceFixedCadD1 = world.GetForceFieldFixedCads(d1QuantityId)[0];
+                fixedCadD1 = world.GetFieldFixedCads(d1QuantityId)[0];
             }
-            FieldFixedCad forceFixedCadD2;
+            FieldFixedCad fixedCadD2;
             {
                 // FixedDofIndex 0: v
                 var fixedCadDatas = new[]
@@ -175,7 +177,7 @@ namespace IvyFEMProtoApp
                     new { CadId = (uint)2, CadElemType = CadElementType.Vertex,
                         FixedDofIndexs = new List<uint> { 0 }, Values = new List<double> { 0.0 } },
                 };
-                IList<FieldFixedCad> fixedCads = world.GetForceFieldFixedCads(d2QuantityId);
+                IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(d2QuantityId);
                 foreach (var data in fixedCadDatas)
                 {
                     // Scalar
@@ -183,10 +185,9 @@ namespace IvyFEMProtoApp
                         FieldValueType.Scalar, data.FixedDofIndexs, data.Values);
                     fixedCads.Add(fixedCad);
                 }
-                forceFixedCadD2 = world.GetForceFieldFixedCads(d2QuantityId)[0];
+                fixedCadD2 = world.GetFieldFixedCads(d2QuantityId)[0];
             }
-            // rotation(moment)
-            FieldFixedCad forceFixedCadR;
+            // rotation
             {
                 // FixedDofIndex 0: θ
                 var fixedCadDatas = new[]
@@ -195,7 +196,7 @@ namespace IvyFEMProtoApp
                     new { CadId = (uint)2, CadElemType = CadElementType.Vertex,
                         FixedDofIndexs = new List<uint> { 0 }, Values = new List<double> { 0.0 } },
                 };
-                IList<FieldFixedCad> fixedCads = world.GetForceFieldFixedCads(rQuantityId);
+                IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(rQuantityId);
                 foreach (var data in fixedCadDatas)
                 {
                     // Scalar
@@ -203,65 +204,17 @@ namespace IvyFEMProtoApp
                         FieldValueType.Scalar, data.FixedDofIndexs, data.Values);
                     fixedCads.Add(fixedCad);
                 }
-                forceFixedCadR = world.GetForceFieldFixedCads(rQuantityId)[0];
             }
 
             world.MakeElements();
-
-            if (ChartWindow1 == null)
-            {
-                ChartWindow1 = new ChartWindow();
-                ChartWindow1.Closing += ChartWindow1_Closing;
-            }
-            ChartWindow chartWin = ChartWindow1;
-            chartWin.Owner = mainWindow;
-            chartWin.Left = mainWindow.Left + mainWindow.Width;
-            chartWin.Top = mainWindow.Top;
-            chartWin.Show();
-            chartWin.TextBox1.Text = "";
-            var model = new PlotModel();
-            chartWin.Plot.Model = model;
-            model.Title = "Frame Example";
-            var axis1 = new LinearAxis
-            {
-                Position = AxisPosition.Bottom,
-                Title = "u,v",
-                Minimum = -beamLen / 2.0,
-                Maximum = beamLen / 2.0
-            };
-            var axis2 = new LinearAxis
-            {
-                Position = AxisPosition.Left,
-                Title = "m"
-            };
-            model.Axes.Add(axis1);
-            model.Axes.Add(axis2);
-            var series1 = new LineSeries
-            {
-                Title = "u",
-                LineStyle = LineStyle.None,
-                MarkerType = MarkerType.Circle
-            };
-            var series2 = new LineSeries
-            {
-                Title = "v",
-                LineStyle = LineStyle.None,
-                MarkerType = MarkerType.Circle
-            };
-            model.Series.Add(series1);
-            model.Series.Add(series2);
-            model.InvalidatePlot(true);
-            WPFUtils.DoEvents();
 
             uint valueId = 0;
             var fieldDrawerArray = mainWindow.FieldDrawerArray;
             {
                 world.ClearFieldValue();
                 // Vector2
-                //valueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivativeType.Value,
-                //    d1QuantityId, false, FieldShowType.Real); // 中点を含む
                 valueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivativeType.Value,
-                    d2QuantityId, false, FieldShowType.Real);
+                    d1QuantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
                 var edgeDrawer0 = new EdgeFieldDrawer(
@@ -278,18 +231,14 @@ namespace IvyFEMProtoApp
                 //WPFUtils.DoEvents();
             }
 
-            uint endVId = 2;
-            int endCoId = world.GetCoordIdsFromCadId(d2QuantityId, endVId, CadElementType.Vertex)[0];
             double t = 0;
             double dt = 0.05;
             for (int iTime = 0; iTime <= 200; iTime++)
             {
-                double[] forceFixedValueD1 = forceFixedCadD1.GetDoubleValues();
-                double[] forceFixedValueD2 = forceFixedCadD2.GetDoubleValues();
-                double[] forceFixedValueR = forceFixedCadR.GetDoubleValues();
-                forceFixedValueD1[0] = 0.0;
-                forceFixedValueD2[0] = -0.5e+6 * Math.Sin(t * 2.0 * Math.PI * 0.1);
-                forceFixedValueR[0] = 0.0; // moment
+                double[] fixedValue01 = fixedCadD1.GetDoubleValues();
+                double[] fixedValueD2 = fixedCadD2.GetDoubleValues();
+                fixedValue01[0] = 0.0;
+                fixedValueD2[0] = -0.2 * beamLen * Math.Sin(t * 2.0 * Math.PI * 0.1);
 
                 var FEM = new Elastic2DFEM(world);                
                 {
@@ -319,8 +268,7 @@ namespace IvyFEMProtoApp
                 double[] Uuvt = FEM.U;
 
                 // 変位(u,w)へ変換する
-                //int coCnt = (int)world.GetCoordCount(d1QuantityId); // 中点を含む
-                int coCnt = (int)world.GetCoordCount(d2QuantityId);
+                int coCnt = (int)world.GetCoordCount(d1QuantityId);
                 int d1Dof = (int)world.GetDof(d1QuantityId);
                 int d2Dof = (int)world.GetDof(d2QuantityId);
                 int rDof = (int)world.GetDof(rQuantityId);
@@ -361,16 +309,6 @@ namespace IvyFEMProtoApp
                 mainWindow.GLControl.Invalidate();
                 mainWindow.GLControl.Update();
                 WPFUtils.DoEvents();
-
-                {
-                    double u = U[endCoId * dof];
-                    double v = U[endCoId * dof + 1];
-                    double m = forceFixedValueD2[0];
-                    series1.Points.Add(new DataPoint(u, m));
-                    series2.Points.Add(new DataPoint(v, m));
-                    model.InvalidatePlot(true);
-                    WPFUtils.DoEvents();
-                }
                 t += dt;
             }
         }

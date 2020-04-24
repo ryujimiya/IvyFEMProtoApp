@@ -12,7 +12,7 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void CorotationalFrameProblem0(MainWindow mainWindow)
+        public void CorotationalFrameProblem0(MainWindow mainWindow, bool isTimoshenko)
         {
             double beamLen = 1.0;
             double b = 0.2 * beamLen;
@@ -99,12 +99,27 @@ namespace IvyFEMProtoApp
                     var ma = new NullMaterial();
                     nullMaId = world.AddMaterial(ma);
                 }
+                if (isTimoshenko)
+                {
+                    var ma = new TimoshenkoCorotationalFrameMaterial();
+                    ma.Area = b * h;
+                    ma.SecondMomentOfArea = (1.0 / 12.0) * b * h * h * h;
+                    ma.PolarSecondMomentOfArea = (1.0 / 12.0) * b * h * h * h + (1.0 / 12.0) * b * b * b * h;
+                    ma.MassDensity = 2.3e+3;
+                    ma.Young = 169.0e+9;
+                    ma.Poisson = 0.262;
+                    ma.TimoshenkoShearCoefficient = 5.0 / 6.0; // 長方形断面
+                    beamMaId = world.AddMaterial(ma);
+                }
+                else
                 {
                     var ma = new CorotationalFrameMaterial();
                     ma.Area = b * h;
                     ma.SecondMomentOfArea = (1.0 / 12.0) * b * h * h * h;
+                    ma.PolarSecondMomentOfArea = (1.0 / 12.0) * b * h * h * h + (1.0 / 12.0) * b * b * b * h;
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
+                    ma.Poisson = 0.262;
                     beamMaId = world.AddMaterial(ma);
                 }
 
@@ -310,7 +325,7 @@ namespace IvyFEMProtoApp
             }
         }
 
-        public void CorotationalFrameTDProblem0(MainWindow mainWindow)
+        public void CorotationalFrameTDProblem0(MainWindow mainWindow, bool isTimoshenko)
         {
             double beamLen = 1.0;
             double b = 0.2 * beamLen;
@@ -397,12 +412,27 @@ namespace IvyFEMProtoApp
                     var ma = new NullMaterial();
                     nullMaId = world.AddMaterial(ma);
                 }
+                if (isTimoshenko)
+                {
+                    var ma = new TimoshenkoCorotationalFrameMaterial();
+                    ma.Area = b * h;
+                    ma.SecondMomentOfArea = (1.0 / 12.0) * b * h * h * h;
+                    ma.PolarSecondMomentOfArea = (1.0 / 12.0) * b * h * h * h + (1.0 / 12.0) * b * b * b * h;
+                    ma.MassDensity = 2.3e+3;
+                    ma.Young = 169.0e+9;
+                    ma.Poisson = 0.262;
+                    ma.TimoshenkoShearCoefficient = 5.0 / 6.0; // 長方形断面
+                    beamMaId = world.AddMaterial(ma);
+                }
+                else
                 {
                     var ma = new CorotationalFrameMaterial();
                     ma.Area = b * h;
                     ma.SecondMomentOfArea = (1.0 / 12.0) * b * h * h * h;
+                    ma.PolarSecondMomentOfArea = (1.0 / 12.0) * b * h * h * h + (1.0 / 12.0) * b * b * b * h;
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
+                    ma.Poisson = 0.262;
                     beamMaId = world.AddMaterial(ma);
                 }
 

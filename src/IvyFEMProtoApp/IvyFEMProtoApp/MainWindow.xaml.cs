@@ -923,56 +923,128 @@ namespace IvyFEMProtoApp
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.CorotationalFrameProblem0(this);
+            bool isTimoshenko = false;
+            Problem.CorotationalFrameProblem0(this, isTimoshenko);
         }
 
         private void CorotationalFrameTD0Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.CorotationalFrameTDProblem0(this);
+            bool isTimoshenko = false;
+            Problem.CorotationalFrameTDProblem0(this, isTimoshenko);
         }
 
         private void CorotationalFrame1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.CorotationalFrameProblem1(this);
+            bool isTimoshenko = false;
+            Problem.CorotationalFrameProblem1(this, isTimoshenko);
         }
 
         private void CorotationalFrameTD1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.CorotationalFrameTDProblem1(this);
+            bool isTimoshenko = false;
+            Problem.CorotationalFrameTDProblem1(this, isTimoshenko);
         }
 
         private void CorotationalFrame2Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.CorotationalFrameProblem2(this);
+            bool isTimoshenko = false;
+            Problem.CorotationalFrameProblem2(this, isTimoshenko);
         }
 
         private void CorotationalFrameTD2Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.CorotationalFrameTDProblem2(this);
+            bool isTimoshenko = false;
+            Problem.CorotationalFrameTDProblem2(this, isTimoshenko);
         }
 
         private void CorotationalFrame3Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.CorotationalFrameProblem3(this);
+            bool isTimoshenko = false;
+            Problem.CorotationalFrameProblem3(this, isTimoshenko);
         }
 
         private void CorotationalFrameTD3Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.CorotationalFrameTDProblem3(this);
+            bool isTimoshenko = false;
+            Problem.CorotationalFrameTDProblem3(this, isTimoshenko);
+        }
+
+        private void TimoshenkoCorotationalFrame0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = true;
+            Problem.CorotationalFrameProblem0(this, isTimoshenko);
+        }
+
+        private void TimoshenkoCorotationalFrameTD0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = true;
+            Problem.CorotationalFrameTDProblem0(this, isTimoshenko);
+        }
+
+        private void TimoshenkoCorotationalFrame1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = true;
+            Problem.CorotationalFrameProblem1(this, isTimoshenko);
+        }
+
+        private void TimoshenkoCorotationalFrameTD1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = true;
+            Problem.CorotationalFrameTDProblem1(this, isTimoshenko);
+        }
+
+        private void TimoshenkoCorotationalFrame2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = true;
+            Problem.CorotationalFrameProblem2(this, isTimoshenko);
+        }
+
+        private void TimoshenkoCorotationalFrameTD2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = true;
+            Problem.CorotationalFrameTDProblem2(this, isTimoshenko);
+        }
+
+        private void TimoshenkoCorotationalFrame3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = true;
+            Problem.CorotationalFrameProblem3(this, isTimoshenko);
+        }
+
+        private void TimoshenkoCorotationalFrameTD3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isTimoshenko = true;
+            Problem.CorotationalFrameTDProblem3(this, isTimoshenko);
         }
 
         private void FieldConsistentTLFrame0Btn_Click(object sender, RoutedEventArgs e)
@@ -1001,6 +1073,35 @@ namespace IvyFEMProtoApp
             InitProblem(e.Source as MenuItem);
 
             Problem.FieldConsistentTLFrameProblem3(this);
+        }
+
+
+        private void TimoshenkoTLFrame0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.TimoshenkoTLFrameProblem0(this);
+        }
+
+        private void TimoshenkoTLFrame1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.TimoshenkoTLFrameProblem1(this);
+        }
+
+        private void TimoshenkoTLFrame2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.TimoshenkoTLFrameProblem2(this);
+        }
+
+        private void TimoshenkoTLFrame3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.TimoshenkoTLFrameProblem3(this);
         }
 
         private void PoissonBtn_Click(object sender, RoutedEventArgs e)

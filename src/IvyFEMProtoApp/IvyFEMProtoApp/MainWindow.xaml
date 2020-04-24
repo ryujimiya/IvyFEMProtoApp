@@ -132,11 +132,27 @@
                         <MenuItem Header="Corotational Frame(3)" Click="CorotationalFrame3Btn_Click"/>
                         <MenuItem Header="Corotational Frame(3)(Time Domain)" Click="CorotationalFrameTD3Btn_Click"/>
                     </MenuItem>
+                    <MenuItem Header="Timoshenko Corotational Frame">
+                        <MenuItem Header="Timoshenko Corotational Frame(0)" Click="TimoshenkoCorotationalFrame0Btn_Click"/>
+                        <MenuItem Header="Timoshenko Corotational Frame(0)(Time Domain)" Click="TimoshenkoCorotationalFrameTD0Btn_Click"/>
+                        <MenuItem Header="Timoshenko Corotational Frame(1)" Click="TimoshenkoCorotationalFrame1Btn_Click"/>
+                        <MenuItem Header="Timoshenko Corotational Frame(1)(Time Domain)" Click="TimoshenkoCorotationalFrameTD1Btn_Click"/>
+                        <MenuItem Header="Timoshenko Corotational Frame(2)" Click="TimoshenkoCorotationalFrame2Btn_Click"/>
+                        <MenuItem Header="Timoshenko Corotational Frame(2)(Time Domain)" Click="TimoshenkoCorotationalFrameTD2Btn_Click"/>
+                        <MenuItem Header="Timoshenko Corotational Frame(3)" Click="TimoshenkoCorotationalFrame3Btn_Click"/>
+                        <MenuItem Header="Timoshenko Corotational Frame(3)(Time Domain)" Click="TimoshenkoCorotationalFrameTD3Btn_Click"/>
+                    </MenuItem>
                     <MenuItem Header="Field Consistent TL Frame">
                         <MenuItem Header="Field Consistent TL Frame(0)" Click="FieldConsistentTLFrame0Btn_Click"/>
                         <MenuItem Header="Field Consistent TL Frame(1)" Click="FieldConsistentTLFrame1Btn_Click"/>
                         <MenuItem Header="Field Consistent TL Frame(2)" Click="FieldConsistentTLFrame2Btn_Click"/>
                         <MenuItem Header="Field Consistent TL Frame(3)" Click="FieldConsistentTLFrame3Btn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Timoshenko TL Frame">
+                        <MenuItem Header="Timoshenko TL Frame(0)" Click="TimoshenkoTLFrame0Btn_Click"/>
+                        <MenuItem Header="Timoshenko TL Frame(1)" Click="TimoshenkoTLFrame1Btn_Click"/>
+                        <MenuItem Header="Timoshenko TL Frame(2)" Click="TimoshenkoTLFrame2Btn_Click"/>
+                        <MenuItem Header="Timoshenko TL Frame(3)" Click="TimoshenkoTLFrame3Btn_Click"/>
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Various Equations">

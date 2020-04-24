@@ -12,7 +12,7 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void FieldConsistentTLFrameProblem3(MainWindow mainWindow)
+        public void TimoshenkoTLFrameProblem3(MainWindow mainWindow)
         {
             double beamLen = 1.0;
             double b = 0.2 * beamLen;
@@ -79,8 +79,7 @@ namespace IvyFEMProtoApp
                 uint d1Dof = 1; // Scalar (u)
                 uint d2Dof = 1; // Scalar (v)
                 uint rDof = 1; // Scalar (θ)
-                // field-consistent frameではu:3点線要素
-                uint d1FEOrder = 2;
+                uint d1FEOrder = 1;
                 uint d2FEOrder = 1;
                 uint rFEOrder = 1;
                 d1QuantityId = world.AddQuantity(d1Dof, d1FEOrder, FiniteElementType.ScalarLagrange);
@@ -98,13 +97,14 @@ namespace IvyFEMProtoApp
                     nullMaId = world.AddMaterial(ma);
                 }
                 {
-                    var ma = new FieldConsistentTLFrameMaterial();
+                    var ma = new TimoshenkoTLFrameMaterial();
                     ma.Area = b * h;
                     ma.SecondMomentOfArea = (1.0 / 12.0) * b * h * h * h;
                     ma.PolarSecondMomentOfArea = (1.0 / 12.0) * b * h * h * h + (1.0 / 12.0) * b * b * b * h;
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
                     ma.Poisson = 0.262;
+                    ma.TimoshenkoShearCoefficient = 5.0 / 6.0; // 長方形断面
                     beamMaId = world.AddMaterial(ma);
                 }
 
@@ -258,10 +258,8 @@ namespace IvyFEMProtoApp
             {
                 world.ClearFieldValue();
                 // Vector2
-                //valueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivativeType.Value,
-                //    d1QuantityId, false, FieldShowType.Real); // 中点を含む
                 valueId = world.AddFieldValue(FieldValueType.Vector2, FieldDerivativeType.Value,
-                    d2QuantityId, false, FieldShowType.Real);
+                    d1QuantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
                 var edgeDrawer0 = new EdgeFieldDrawer(
@@ -319,8 +317,7 @@ namespace IvyFEMProtoApp
                 double[] Uuvt = FEM.U;
 
                 // 変位(u,w)へ変換する
-                //int coCnt = (int)world.GetCoordCount(d1QuantityId); // 中点を含む
-                int coCnt = (int)world.GetCoordCount(d2QuantityId);
+                int coCnt = (int)world.GetCoordCount(d1QuantityId);
                 int d1Dof = (int)world.GetDof(d1QuantityId);
                 int d2Dof = (int)world.GetDof(d2QuantityId);
                 int rDof = (int)world.GetDof(rQuantityId);

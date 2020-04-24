@@ -143,9 +143,13 @@
     <Compile Include="PortEdge.cs" />
     <Compile Include="Problem.ElasticBeam3.cs" />
     <Compile Include="Problem.ElasticBeam2.cs" />
+    <Compile Include="Problem.ElasticTimoshenkoTLFrame1.cs" />
+    <Compile Include="Problem.ElasticTimoshenkoTLFrame0.cs" />
     <Compile Include="Problem.ElasticFieldConsistentTLFrame1.cs" />
     <Compile Include="Problem.ElasticFieldConsistentTLFrame0.cs" />
+    <Compile Include="Problem.ElasticTimoshenkoTLFrame2.cs" />
     <Compile Include="Problem.ElasticFieldConsistentTLFrame2.cs" />
+    <Compile Include="Problem.ElasticTimoshenkoTLFrame3.cs" />
     <Compile Include="Problem.ElasticFieldConsistentTLFrame3.cs" />
     <Compile Include="Problem.ElasticCorotationalFrame3.cs" />
     <Compile Include="Problem.ElasticCorotationalFrame2.cs" />

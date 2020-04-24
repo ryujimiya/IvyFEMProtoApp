@@ -128,8 +128,10 @@ namespace IvyFEMProtoApp
                     var ma = new FrameMaterial();
                     ma.Area = b * h;
                     ma.SecondMomentOfArea = (1.0 / 12.0) * b * h * h * h;
+                    ma.PolarSecondMomentOfArea = (1.0 / 12.0) * b * h * h * h + (1.0 / 12.0) * b * b * b * h;
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
+                    ma.Poisson = 0.262;
                     beamMaId = world.AddMaterial(ma);
                 }
 
