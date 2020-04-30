@@ -131,28 +131,34 @@
                         <MenuItem Header="Corotational Frame(2)(Time Domain)" Click="CorotationalFrameTD2Btn_Click"/>
                         <MenuItem Header="Corotational Frame(3)" Click="CorotationalFrame3Btn_Click"/>
                         <MenuItem Header="Corotational Frame(3)(Time Domain)" Click="CorotationalFrameTD3Btn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="Corotational Frame(0)(Timoshenko)" Click="TimoshenkoCorotationalFrame0Btn_Click"/>
+                        <MenuItem Header="Corotational Frame(0)(Timoshenko)(Time Domain)" Click="TimoshenkoCorotationalFrameTD0Btn_Click"/>
+                        <MenuItem Header="Corotational Frame(1)(Timoshenko)" Click="TimoshenkoCorotationalFrame1Btn_Click"/>
+                        <MenuItem Header="Corotational Frame(1)(Timoshenko)(Time Domain)" Click="TimoshenkoCorotationalFrameTD1Btn_Click"/>
+                        <MenuItem Header="Corotational Frame(2)(Timoshenko)" Click="TimoshenkoCorotationalFrame2Btn_Click"/>
+                        <MenuItem Header="Corotational Frame(2)(Timoshenko)(Time Domain)" Click="TimoshenkoCorotationalFrameTD2Btn_Click"/>
+                        <MenuItem Header="Corotational Frame(3)(Timoshenko)" Click="TimoshenkoCorotationalFrame3Btn_Click"/>
+                        <MenuItem Header="Corotational Frame(3)(Timoshenko)(Time Domain)" Click="TimoshenkoCorotationalFrameTD3Btn_Click"/>
                     </MenuItem>
-                    <MenuItem Header="Timoshenko Corotational Frame">
-                        <MenuItem Header="Timoshenko Corotational Frame(0)" Click="TimoshenkoCorotationalFrame0Btn_Click"/>
-                        <MenuItem Header="Timoshenko Corotational Frame(0)(Time Domain)" Click="TimoshenkoCorotationalFrameTD0Btn_Click"/>
-                        <MenuItem Header="Timoshenko Corotational Frame(1)" Click="TimoshenkoCorotationalFrame1Btn_Click"/>
-                        <MenuItem Header="Timoshenko Corotational Frame(1)(Time Domain)" Click="TimoshenkoCorotationalFrameTD1Btn_Click"/>
-                        <MenuItem Header="Timoshenko Corotational Frame(2)" Click="TimoshenkoCorotationalFrame2Btn_Click"/>
-                        <MenuItem Header="Timoshenko Corotational Frame(2)(Time Domain)" Click="TimoshenkoCorotationalFrameTD2Btn_Click"/>
-                        <MenuItem Header="Timoshenko Corotational Frame(3)" Click="TimoshenkoCorotationalFrame3Btn_Click"/>
-                        <MenuItem Header="Timoshenko Corotational Frame(3)(Time Domain)" Click="TimoshenkoCorotationalFrameTD3Btn_Click"/>
-                    </MenuItem>
-                    <MenuItem Header="Field Consistent TL Frame">
-                        <MenuItem Header="Field Consistent TL Frame(0)" Click="FieldConsistentTLFrame0Btn_Click"/>
-                        <MenuItem Header="Field Consistent TL Frame(1)" Click="FieldConsistentTLFrame1Btn_Click"/>
-                        <MenuItem Header="Field Consistent TL Frame(2)" Click="FieldConsistentTLFrame2Btn_Click"/>
-                        <MenuItem Header="Field Consistent TL Frame(3)" Click="FieldConsistentTLFrame3Btn_Click"/>
-                    </MenuItem>
-                    <MenuItem Header="Timoshenko TL Frame">
-                        <MenuItem Header="Timoshenko TL Frame(0)" Click="TimoshenkoTLFrame0Btn_Click"/>
-                        <MenuItem Header="Timoshenko TL Frame(1)" Click="TimoshenkoTLFrame1Btn_Click"/>
-                        <MenuItem Header="Timoshenko TL Frame(2)" Click="TimoshenkoTLFrame2Btn_Click"/>
-                        <MenuItem Header="Timoshenko TL Frame(3)" Click="TimoshenkoTLFrame3Btn_Click"/>
+                    <MenuItem Header="Total Lagrangian Frame">
+                        <MenuItem Header="TL Frame(0)(Field Consistent)" Click="FieldConsistentTLFrame0Btn_Click"/>
+                        <MenuItem Header="TL Frame(0)(Field Consistent)(Time Domain)" Click="FieldConsistentTLFrameTD0Btn_Click"/>
+                        <MenuItem Header="TL Frame(1)(Field Consistent)" Click="FieldConsistentTLFrame1Btn_Click"/>
+                        <MenuItem Header="TL Frame(1)(Field Consistent)(Time Domain)" Click="FieldConsistentTLFrameTD1Btn_Click"/>
+                        <MenuItem Header="TL Frame(2)(Field Consistent)" Click="FieldConsistentTLFrame2Btn_Click"/>
+                        <MenuItem Header="TL Frame(2)(Field Consistent)(Time Domain)" Click="FieldConsistentTLFrameTD2Btn_Click"/>
+                        <MenuItem Header="TL Frame(3)(Field Consistent)" Click="FieldConsistentTLFrame3Btn_Click"/>
+                        <MenuItem Header="TL Frame(3)(Field Consistent)(Time Domain)" Click="FieldConsistentTLFrameTD3Btn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="TL Frame(0)(Timoshenko)" Click="TimoshenkoTLFrame0Btn_Click"/>
+                        <MenuItem Header="TL Frame(0)(Timoshenko)(Time Domain)" Click="TimoshenkoTLFrameTD0Btn_Click"/>
+                        <MenuItem Header="TL Frame(1)(Timoshenko)" Click="TimoshenkoTLFrame1Btn_Click"/>
+                        <MenuItem Header="TL Frame(1)(Timoshenko)(Time Domain)" Click="TimoshenkoTLFrameTD1Btn_Click"/>
+                        <MenuItem Header="TL Frame(2)(Timoshenko)" Click="TimoshenkoTLFrame2Btn_Click"/>
+                        <MenuItem Header="TL Frame(2)(Timoshenko)(Time Domain)" Click="TimoshenkoTLFrameTD2Btn_Click"/>
+                        <MenuItem Header="TL Frame(3)(Timoshenko)" Click="TimoshenkoTLFrame3Btn_Click"/>
+                        <MenuItem Header="TL Frame(3)(Timoshenko)(Time Domain)" Click="TimoshenkoTLFrameTD3Btn_Click"/>
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Various Equations">

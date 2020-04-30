@@ -173,7 +173,8 @@ namespace IvyFEMProtoApp
             {
                 double[] forceFixedValueD = forceFixedCadD.GetDoubleValues();
                 forceFixedValueD[0] = 0.0;
-                forceFixedValueD[1] = -0.5e-1 * Math.Sin(t * 2.0 * Math.PI * 0.1);
+                //forceFixedValueD[1] = -0.5e+6 * Math.Sin(t * 2.0 * Math.PI * 0.1);
+                forceFixedValueD[1] = -0.5e+8 * Math.Sin(t * 2.0 * Math.PI * 0.1);
 
                 var FEM = new Elastic2DFEM(world);
                 {
@@ -372,14 +373,15 @@ namespace IvyFEMProtoApp
             }
 
             double t = 0;
-            double dt = 0.5;
+            double dt = 0.05;
             double newmarkBeta = 1.0 / 4.0;
             double newmarkGamma = 1.0 / 2.0;
             for (int iTime = 0; iTime <= 200; iTime++)
             {
                 double[] forceFixedValueD = forceFixedCadD.GetDoubleValues();
                 forceFixedValueD[0] = 0.0;
-                forceFixedValueD[1] = -0.5e-1 * Math.Sin(t * 2.0 * Math.PI * 0.1);
+                //forceFixedValueD[1] = -0.5e+6 * Math.Sin(t * 2.0 * Math.PI * 0.1);
+                forceFixedValueD[1] = -0.5e+8 * Math.Sin(t * 2.0 * Math.PI * 0.1);
 
                 var FEM = new Elastic2DTDFEM(world, dt,
                     newmarkBeta, newmarkGamma,

@@ -1054,11 +1054,25 @@ namespace IvyFEMProtoApp
             Problem.FieldConsistentTLFrameProblem0(this);
         }
 
+        private void FieldConsistentTLFrameTD0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.FieldConsistentTLFrameTDProblem0(this);
+        }
+
         private void FieldConsistentTLFrame1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
             Problem.FieldConsistentTLFrameProblem1(this);
+        }
+
+        private void FieldConsistentTLFrameTD1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.FieldConsistentTLFrameTDProblem1(this);
         }
 
         private void FieldConsistentTLFrame2Btn_Click(object sender, RoutedEventArgs e)
@@ -1068,6 +1082,13 @@ namespace IvyFEMProtoApp
             Problem.FieldConsistentTLFrameProblem2(this);
         }
 
+        private void FieldConsistentTLFrameTD2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.FieldConsistentTLFrameTDProblem2(this);
+        }
+
         private void FieldConsistentTLFrame3Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
@@ -1075,12 +1096,25 @@ namespace IvyFEMProtoApp
             Problem.FieldConsistentTLFrameProblem3(this);
         }
 
+        private void FieldConsistentTLFrameTD3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.FieldConsistentTLTDFrameProblem3(this);
+        }
 
         private void TimoshenkoTLFrame0Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
             Problem.TimoshenkoTLFrameProblem0(this);
+        }
+
+        private void TimoshenkoTLFrameTD0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.TimoshenkoTLFrameTDProblem0(this);
         }
 
         private void TimoshenkoTLFrame1Btn_Click(object sender, RoutedEventArgs e)
@@ -1090,6 +1124,13 @@ namespace IvyFEMProtoApp
             Problem.TimoshenkoTLFrameProblem1(this);
         }
 
+        private void TimoshenkoTLFrameTD1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.TimoshenkoTLFrameTDProblem1(this);
+        }
+
         private void TimoshenkoTLFrame2Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
@@ -1097,11 +1138,25 @@ namespace IvyFEMProtoApp
             Problem.TimoshenkoTLFrameProblem2(this);
         }
 
+        private void TimoshenkoTLFrameTD2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.TimoshenkoTLFrameTDProblem2(this);
+        }
+
         private void TimoshenkoTLFrame3Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
             Problem.TimoshenkoTLFrameProblem3(this);
+        }
+
+        private void TimoshenkoTLFrameTD3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.TimoshenkoTLFrameTDProblem3(this);
         }
 
         private void PoissonBtn_Click(object sender, RoutedEventArgs e)
