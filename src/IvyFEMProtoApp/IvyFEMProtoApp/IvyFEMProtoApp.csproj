@@ -135,14 +135,21 @@
     <Compile Include="ChartWindow.xaml.cs">
       <DependentUpon>ChartWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MainWindow.xaml.3D.cs" />
+    <Compile Include="MainWindow.xaml.2D.cs" />
     <Compile Include="MeshDraw2D.cs" />
     <Compile Include="MeshWindow.xaml.cs">
       <DependentUpon>MeshWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="NonlinerOptimizingProblem.cs" />
     <Compile Include="PortEdge.cs" />
+    <Compile Include="Problem.Cad3D.cs" />
     <Compile Include="Problem.ElasticBeam3.cs" />
     <Compile Include="Problem.ElasticBeam2.cs" />
+    <Compile Include="Problem.ElasticDKTPlateEigen2.cs" />
+    <Compile Include="Problem.ElasticDKTPlateEigen1.cs" />
+    <Compile Include="Problem.ElasticDKTPlate2.cs" />
+    <Compile Include="Problem.ElasticDKTPlate1.cs" />
     <Compile Include="Problem.ElasticTimoshenkoTLFrame1.cs" />
     <Compile Include="Problem.ElasticTimoshenkoTLFrame0.cs" />
     <Compile Include="Problem.ElasticFieldConsistentTLFrame1.cs" />

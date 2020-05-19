@@ -21,7 +21,7 @@ namespace IvyFEMProtoApp
             Func<double, double> toNormalizedFreq = freq => b * freq / Constants.C0;
             int divCnt = 10;
             double eLen = 0.95 * beamLen / (double)divCnt;
-            CadObject2D cad = new CadObject2D();
+            Cad2D cad = new Cad2D();
             {
                 uint lId0 = 0;
                 uint vId1 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(0.0, 0.0)).AddVId;
@@ -41,7 +41,7 @@ namespace IvyFEMProtoApp
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new CadObject2DDrawer(cad);
+            var drawer = new Cad2DDrawer(cad);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -55,15 +55,15 @@ namespace IvyFEMProtoApp
                 IList<uint> eIds = cad.GetElementIds(CadElementType.Edge);
                 foreach (uint eId in eIds)
                 {
-                    mesher.AddCutMeshEdgeCadId(eId, eLen);
+                    mesher.AddMeshingEdgeCadId(eId, eLen);
                 }
             }
-            mesher.Meshing(cad);
+            mesher.MakeMesh(cad);
 
             /*
             mainWindow.IsFieldDraw = false;
             drawerArray.Clear();
-            IDrawer meshDrawer = new Mesher2DDrawer(mesher);
+            var meshDrawer = new Mesher2DDrawer(mesher);
             mainWindow.DrawerArray.Add(meshDrawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -119,7 +119,7 @@ namespace IvyFEMProtoApp
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
                     ma.Poisson = 0.262;
-                    ma.TimoshenkoShearCoefficient = 5.0 / 6.0; // 長方形断面
+                    ma.ShearCorrectionFactor = 5.0 / 6.0; // 長方形断面
                     beamMaId = world.AddMaterial(ma);
                 }
                 else
@@ -233,7 +233,7 @@ namespace IvyFEMProtoApp
 
                 double[] Uuvt = eVec;
 
-                // 変位(u,w)へ変換する
+                // 変位(u,v)へ変換する
                 int dof = 2;
                 double[] U = new double[coCnt * dof];
                 for (int coId = 0; coId < coCnt; coId++)

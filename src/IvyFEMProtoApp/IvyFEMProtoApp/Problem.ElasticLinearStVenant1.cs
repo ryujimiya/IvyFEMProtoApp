@@ -14,14 +14,14 @@ namespace IvyFEMProtoApp
     {
         public void ElasticLinearStVenantProblem1(MainWindow mainWindow, bool isCalcStress, bool isSaintVenant)
         {
-            CadObject2D cad = new CadObject2D();
+            Cad2D cad = new Cad2D();
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
                 pts.Add(new OpenTK.Vector2d(0.0, 0.0));
                 pts.Add(new OpenTK.Vector2d(5.0, 0.0));
                 pts.Add(new OpenTK.Vector2d(5.0, 1.0));
                 pts.Add(new OpenTK.Vector2d(0.0, 1.0));
-                var res = cad.AddPolygon(pts);
+                uint lId1 = cad.AddPolygon(pts).AddLId;
             }
 
             double eLen = 0.1;
@@ -43,7 +43,8 @@ namespace IvyFEMProtoApp
                 if (isSaintVenant)
                 {
                     var ma = new SaintVenantHyperelasticMaterial();
-                    ma.SetYoungPoisson(10.0, 0.3);
+                    ma.Young = 10.0;
+                    ma.Poisson = 0.3;
                     ma.GravityX = 0;
                     ma.GravityY = 0;
                     ma.MassDensity = 1.0;
@@ -52,7 +53,8 @@ namespace IvyFEMProtoApp
                 else
                 {
                     var ma = new LinearElasticMaterial();
-                    ma.SetYoungPoisson(10.0, 0.3);
+                    ma.Young = 10.0;
+                    ma.Poisson = 0.3;
                     ma.GravityX = 0;
                     ma.GravityY = 0;
                     ma.MassDensity = 1.0;
@@ -80,7 +82,7 @@ namespace IvyFEMProtoApp
                     new { CadId = (uint)2, CadElemType = CadElementType.Edge,
                         FixedDofIndexs = new List<uint> { 0, 1 }, Values = new List<double> { 0.0, 0.0 } }
                 };
-                IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(quantityId);
+                var fixedCads = world.GetFieldFixedCads(quantityId);
                 foreach (var data in fixedCadDatas)
                 {
                     // Vector2
@@ -115,22 +117,22 @@ namespace IvyFEMProtoApp
                 fieldDrawerArray.Clear();
                 if (isCalcStress)
                 {
-                    IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, false, world,
+                    var faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, false, world,
                         eqStressValueId, FieldDerivativeType.Value, 0, 0.5);
                     fieldDrawerArray.Add(faceDrawer);
-                    IFieldDrawer vectorDrawer = new VectorFieldDrawer(
+                    var vectorDrawer = new VectorFieldDrawer(
                         stressValueId, FieldDerivativeType.Value, world);
                     fieldDrawerArray.Add(vectorDrawer);
                 }
                 else
                 {
-                    IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, false, world);
+                    var faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, false, world);
                     fieldDrawerArray.Add(faceDrawer);
                 }
-                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(
+                var edgeDrawer = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, false, true, world);
                 fieldDrawerArray.Add(edgeDrawer);
-                IFieldDrawer edgeDrawer2 = new EdgeFieldDrawer(
+                var edgeDrawer2 = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, true, true, world);
                 fieldDrawerArray.Add(edgeDrawer2);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
@@ -189,14 +191,14 @@ namespace IvyFEMProtoApp
 
         public void ElasticTDProblem1(MainWindow mainWindow, bool isSaintVenant)
         {
-            CadObject2D cad = new CadObject2D();
+            Cad2D cad = new Cad2D();
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
                 pts.Add(new OpenTK.Vector2d(0.0, 0.0));
                 pts.Add(new OpenTK.Vector2d(5.0, 0.0));
                 pts.Add(new OpenTK.Vector2d(5.0, 1.0));
                 pts.Add(new OpenTK.Vector2d(0.0, 1.0));
-                var res = cad.AddPolygon(pts);
+                uint lId1 = cad.AddPolygon(pts).AddLId;
             }
 
             double eLen = 0.1;
@@ -217,7 +219,8 @@ namespace IvyFEMProtoApp
                 if (isSaintVenant)
                 {
                     var ma = new SaintVenantHyperelasticMaterial();
-                    ma.SetYoungPoisson(50.0, 0.3);
+                    ma.Young = 50.0;
+                    ma.Poisson = 0.3;
                     ma.GravityX = 0;
                     ma.GravityY = 0;
                     ma.MassDensity = 1.0;
@@ -226,7 +229,8 @@ namespace IvyFEMProtoApp
                 else
                 {
                     var ma = new LinearElasticMaterial();
-                    ma.SetYoungPoisson(50.0, 0.3);
+                    ma.Young = 50.0;
+                    ma.Poisson = 0.3;
                     ma.GravityX = 0;
                     ma.GravityY = 0;
                     ma.MassDensity = 1.0;
@@ -254,7 +258,7 @@ namespace IvyFEMProtoApp
                     new { CadId = (uint)2, CadElemType = CadElementType.Edge,
                         FixedDofIndexs = new List<uint> { 0, 1 }, Values = new List<double> { 0.0, 0.0 } }
                 };
-                IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(quantityId);
+                var fixedCads = world.GetFieldFixedCads(quantityId);
                 foreach (var data in fixedCadDatas)
                 {
                     // Vector2
@@ -281,12 +285,12 @@ namespace IvyFEMProtoApp
                     quantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
-                IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, false, world);
+                var faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, false, world);
                 fieldDrawerArray.Add(faceDrawer);
-                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(
+                var edgeDrawer = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, false, true, world);
                 fieldDrawerArray.Add(edgeDrawer);
-                IFieldDrawer edgeDrawer2 = new EdgeFieldDrawer(
+                var edgeDrawer2 = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, true, true, world);
                 fieldDrawerArray.Add(edgeDrawer2);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));

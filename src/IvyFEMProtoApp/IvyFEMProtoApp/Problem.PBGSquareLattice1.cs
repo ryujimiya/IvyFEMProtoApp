@@ -98,14 +98,14 @@ namespace IvyFEMProtoApp
                 double[] ePt = GetBetaXY((iR + 1) * betaDiv);
                 double[][] pts = { sPt, ePt };
                 regionCriticalPointss[iR] = pts;
-                regionWavenumbers[iR] = CadUtils.GetDistance2D(sPt, ePt);
+                regionWavenumbers[iR] = CadUtils2D.GetDistance2D(sPt, ePt);
             }
 
             double normalizedFreq1 = 0.000;
             double normalizedFreq2 = 1.000;
 
             IList<uint> rodLoopIds = new List<uint>();
-            CadObject2D cad = new CadObject2D();
+            Cad2D cad = new Cad2D();
             cad.IsSkipAssertValid = true; // AssertValidを無視する
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
@@ -175,7 +175,7 @@ namespace IvyFEMProtoApp
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new CadObject2DDrawer(cad);
+            var drawer = new Cad2DDrawer(cad);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -188,7 +188,7 @@ namespace IvyFEMProtoApp
             /*
             mainWindow.IsFieldDraw = false;
             drawerArray.Clear();
-            IDrawer meshDrawer = new Mesher2DDrawer(mesher);
+            var meshDrawer = new Mesher2DDrawer(mesher);
             mainWindow.DrawerArray.Add(meshDrawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -428,10 +428,10 @@ namespace IvyFEMProtoApp
                     quantityId, false, FieldShowType.ZReal);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
-                IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, true, world,
+                var faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, true, world,
                     valueId, FieldDerivativeType.Value);
                 fieldDrawerArray.Add(faceDrawer);
-                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(
+                var edgeDrawer = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, true, false, world);
                 fieldDrawerArray.Add(edgeDrawer);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
@@ -486,7 +486,7 @@ namespace IvyFEMProtoApp
                 }
 
                 int curRegionIndex = iBeta / betaDiv;
-                double beta = CadUtils.GetDistance2D(regionCriticalPointss[curRegionIndex][0], betaXY);
+                double beta = CadUtils2D.GetDistance2D(regionCriticalPointss[curRegionIndex][0], betaXY);
                 for (int iRegion = 1; iRegion <= curRegionIndex; iRegion++)
                 {
                     beta += regionWavenumbers[iRegion - 1];

@@ -34,7 +34,7 @@ namespace IvyFEMProtoApp
         /// <summary>
         /// Cad
         /// </summary>
-        public CadObject2DMove Cad { get; protected set; } = new CadObject2DMove();
+        public Cad2DMove Cad { get; protected set; } = new Cad2DMove();
 
         /// <summary>
         /// Cadのループのリスト

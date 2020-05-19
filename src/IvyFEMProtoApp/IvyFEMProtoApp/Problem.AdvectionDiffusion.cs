@@ -11,7 +11,7 @@ namespace IvyFEMProtoApp
     {
         public void AdvectionDiffusionProblem(MainWindow mainWindow)
         {
-            CadObject2D cad = new CadObject2D();
+            Cad2D cad = new Cad2D();
             {
                 uint lId1 = 0;
                 {
@@ -38,7 +38,7 @@ namespace IvyFEMProtoApp
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new CadObject2DDrawer(cad);
+            var drawer = new Cad2DDrawer(cad);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -89,7 +89,7 @@ namespace IvyFEMProtoApp
                     new { CadId = (uint)4, CadElemType = CadElementType.Edge,
                         FixedDofIndexs = new List<uint> { 0 }, Values = new List<double> { -1.0 } }
                 };
-                IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(quantityId);
+                var fixedCads = world.GetFieldFixedCads(quantityId);
                 foreach (var data in fixedCadDatas)
                 {
                     // Scalar
@@ -114,10 +114,10 @@ namespace IvyFEMProtoApp
                     quantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
-                IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, true, world,
+                var faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, true, world,
                     valueId, FieldDerivativeType.Value);
                 fieldDrawerArray.Add(faceDrawer);
-                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(
+                var edgeDrawer = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, true, false, world);
                 fieldDrawerArray.Add(edgeDrawer);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
@@ -179,7 +179,7 @@ namespace IvyFEMProtoApp
 
         public void AdvectionDiffusionTDProblem(MainWindow mainWindow)
         {
-            CadObject2D cad = new CadObject2D();
+            Cad2D cad = new Cad2D();
             {
                 uint lId1 = 0;
                 {
@@ -206,7 +206,7 @@ namespace IvyFEMProtoApp
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new CadObject2DDrawer(cad);
+            var drawer = new Cad2DDrawer(cad);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -267,7 +267,7 @@ namespace IvyFEMProtoApp
                     new { CadId = (uint)4, CadElemType = CadElementType.Edge,
                         FixedDofIndexs = new List<uint> { 0 }, Values = new List<double> { -1.0 } }
                 };
-                IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(quantityId);
+                var fixedCads = world.GetFieldFixedCads(quantityId);
                 foreach (var data in fixedCadDatas)
                 {
                     // Scalar
@@ -297,10 +297,10 @@ namespace IvyFEMProtoApp
                     quantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
-                IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, true, world,
+                var faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, true, world,
                     valueId, FieldDerivativeType.Value);
                 fieldDrawerArray.Add(faceDrawer);
-                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(
+                var edgeDrawer = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, true, false, world);
                 fieldDrawerArray.Add(edgeDrawer);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));

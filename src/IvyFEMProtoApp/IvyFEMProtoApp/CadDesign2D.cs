@@ -216,7 +216,7 @@ namespace IvyFEMProtoApp
             MinDistance = width / 100.0 * 2.0;
 
             // 色の設定
-            CadDesign2D.TmpEdgeColor = this.GLControl.ForeColor;
+            TmpEdgeColor = this.GLControl.ForeColor;
 
             // 図面背景
             BackgroundDrawer = new BackgroundDrawer(BackgroundWidth, BackgroundHeight);
@@ -251,8 +251,8 @@ namespace IvyFEMProtoApp
             DrawerArray.Add(BackgroundDrawer);
 
             // Cad図面
-            CadObject2DDrawer drawer = new CadObject2DDrawer(Cad);
-            uint lineWidth = (uint)(CadDesign2D.LineWidth * GLControl.Width / (double)400);
+            Cad2DDrawer drawer = new Cad2DDrawer(Cad);
+            uint lineWidth = (uint)(LineWidth * GLControl.Width / (double)400);
             drawer.LineWidth = lineWidth;
             DrawerArray.Add(drawer);
         }
@@ -921,7 +921,7 @@ namespace IvyFEMProtoApp
         /// <param name="objId"></param>
         /// <param name="screenPt"></param>
         private static bool MoveObject(
-            CadObject2DMove cad,
+            Cad2DMove cad,
             Camera Camera,
             CadElementType elemType,
             uint objId,
@@ -1057,7 +1057,7 @@ namespace IvyFEMProtoApp
                     uint parentEdgeId = partId;
                     uint sVid;
                     uint eVId;
-                    Cad.GetEdgeVertexId(out sVid, out eVId, parentEdgeId);
+                    Cad.GetEdgeVertexId(parentEdgeId, out sVid, out eVId);
                     if (EditVertexIds.IndexOf(sVid) >= 0 ||
                         EditVertexIds.IndexOf(eVId) >= 0)
                     {
@@ -1133,7 +1133,7 @@ namespace IvyFEMProtoApp
                             // 前に追加したループと共有している頂点かチェックする
                             IList<uint> hitLoopIds = null;
                             uint hitVId = 0;
-                            CadDesign2D.GetVertexIdBelongToLoopByCoord(
+                            GetVertexIdBelongToLoopByCoord(
                                 Cad, pp, LoopIds, out hitVId, out hitLoopIds);
                             if (hitVId != 0 && hitLoopIds != null && hitLoopIds.Count > 0)
                             {
@@ -1178,7 +1178,7 @@ namespace IvyFEMProtoApp
                 {
                     //// ループの色を指定（指定しなければ(0.9,0.8,0.8)になる
                     Color backColor = LoopBackColor;
-                    SetupColorOfCadObjectsForOneLoop(Cad, lId, backColor);
+                    SetupCadObjectsColorForOneLoop(Cad, lId, backColor);
                     // ループ情報の追加
                     LoopIds.Add(lId);
 
@@ -1187,7 +1187,7 @@ namespace IvyFEMProtoApp
                         Cad, lId, LoopIds, PortEdges);
 
                     //ループの色をすべて再設定する
-                    SetupColorOfCadObjectsForAllLoops(Cad, LoopIds);
+                    SetupCadObjectsColorForAllLoops(Cad, LoopIds);
 
                     executed = true;
                 }
@@ -1220,7 +1220,7 @@ namespace IvyFEMProtoApp
         /// <param name="showErrorFlg"></param>
         /// <returns></returns>
         private static bool AddEdgeConnectedToStandAloneVertex(
-            CadObject2D cad, OpenTK.Vector2d pp, uint hitVId, int indexPP, IList<uint> LoopIds,
+            Cad2D cad, OpenTK.Vector2d pp, uint hitVId, int indexPP, IList<uint> LoopIds,
             IList<OpenTK.Vector2d> EditPts, IList<uint> EditVertexIds, IList<uint> EditEdgeIds,
             IList<uint> addLoopIds, bool showErrorFlg)
         {
@@ -1232,17 +1232,17 @@ namespace IvyFEMProtoApp
             uint existEId = 0;
             {
                 // １つ前の点に関して、前に追加したループと共有している頂点かチェックする
-                IList<uint> prevHitLoopIdList = null;
+                IList<uint> prevHitLoopIds = null;
                 uint prevHitVId = 0;
                 if (indexPP >= 1)
                 {
                     //CVector2D prevPt = pps[indexPP - 1];
                     OpenTK.Vector2d prevPt = EditPts[EditPts.Count - 1];
-                    CadDesign2D.GetVertexIdBelongToLoopByCoord(
-                        cad, prevPt, LoopIds, out prevHitVId, out prevHitLoopIdList);
+                    GetVertexIdBelongToLoopByCoord(
+                        cad, prevPt, LoopIds, out prevHitVId, out prevHitLoopIds);
                     if (prevHitVId != 0)
                     {
-                        existEId = GetEdgeIdOfVertexIds(cad, hitVId, prevHitVId);
+                        existEId = GetEdgeIdByVertexIds(cad, hitVId, prevHitVId);
                     }
                 }
             }
@@ -1260,7 +1260,7 @@ namespace IvyFEMProtoApp
 
                 uint eId = 0;
                 uint loopIdAddByConnectVertex = 0;
-                bool ret = CadDesign2D.AddEdgeByLastEditPts(
+                bool ret = AddEdgeByLastEditPts(
                     cad, parentLoopId,
                     EditVertexIds, EditEdgeIds, out eId, out loopIdAddByConnectVertex, 
                     showErrorFlg);
@@ -1299,7 +1299,7 @@ namespace IvyFEMProtoApp
         /// <param name="showErrorFlg"></param>
         /// <returns></returns>
         private static bool AddVertexAndEdgeAtStandAloneEdge(
-            CadObject2D cad, OpenTK.Vector2d pp, uint hitEId, int indexPP, IList<uint> LoopIds,
+            Cad2D cad, OpenTK.Vector2d pp, uint hitEId, int indexPP, IList<uint> LoopIds,
             IList<OpenTK.Vector2d> EditPts, IList<uint> EditVertexIds, IList<uint> EditEdgeIds,
             IList<uint> addLoopIds, bool showErrorFlg)
         {
@@ -1315,7 +1315,7 @@ namespace IvyFEMProtoApp
             uint edgeIdAdd = 0;
             uint edgeIdAddByAddVertex = 0;
             uint loopIdAddByConnectVertex = 0;
-            bool ret = CadDesign2D.AddVertexAndEdge(cad, parentElemType, parentId, pp,
+            bool ret = AddVertexAndEdge(cad, parentElemType, parentId, pp,
                 EditPts, EditVertexIds, EditEdgeIds, out vertexIdAdd, out edgeIdAdd,
                 out edgeIdAddByAddVertex, out loopIdAddByConnectVertex, showErrorFlg);
             if (ret)
@@ -1367,7 +1367,7 @@ namespace IvyFEMProtoApp
         /// <param name="showErrorFlg"></param>
         /// <returns></returns>
         private static bool DoMakeDisconAreaCore(
-            CadObject2D cad, OpenTK.Vector2d pp, int indexPP, IList<uint> LoopIds,
+            Cad2D cad, OpenTK.Vector2d pp, int indexPP, IList<uint> LoopIds,
             IList<OpenTK.Vector2d> EditPts, IList<uint> EditVertexIds, IList<uint> EditEdgeIds,
             IList<uint> addLoopIds, bool showErrorFlg)
         {
@@ -1384,10 +1384,10 @@ namespace IvyFEMProtoApp
                 OpenTK.Vector2d prevPP = EditPts[EditPts.Count - 1];
                 // 最後の辺の追加
                 // 前に追加したループと共有している頂点かチェックする
-                IList<uint> hitLoopIdList = null;
+                IList<uint> hitLoopIds = null;
                 uint hitVId = 0;
-                CadDesign2D.GetVertexIdBelongToLoopByCoord(
-                    cad, prevPP, LoopIds, out hitVId, out hitLoopIdList);
+                GetVertexIdBelongToLoopByCoord(
+                    cad, prevPP, LoopIds, out hitVId, out hitLoopIds);
 
                 uint parentLoopId = 0;
 
@@ -1395,20 +1395,20 @@ namespace IvyFEMProtoApp
                 EditPts.Add(EditPts[0]);
                 addedCnt++;
                 EditVertexIds.Add(EditVertexIds[0]);
-                parentLoopId = CadDesign2D.GetLoopIdOfVertex(cad, EditVertexIds[0]);
+                parentLoopId = GetVertexLoopId(cad, EditVertexIds[0]);
 
                 uint existEId = 0;
                 {
                     // 先頭の点に関して、前に追加したループと共有している頂点かチェックする
-                    IList<uint> nextHitLoopIdList = null;
+                    IList<uint> nextHitLoopIds = null;
                     uint nextHitVId = 0;
                     if (indexPP >= 1)
                     {
-                        CadDesign2D.GetVertexIdBelongToLoopByCoord(
-                            cad, EditPts[0], LoopIds, out nextHitVId, out nextHitLoopIdList);
+                        GetVertexIdBelongToLoopByCoord(
+                            cad, EditPts[0], LoopIds, out nextHitVId, out nextHitLoopIds);
                         if (nextHitVId != 0)
                         {
-                            existEId = GetEdgeIdOfVertexIds(cad, hitVId, nextHitVId);
+                            existEId = GetEdgeIdByVertexIds(cad, hitVId, nextHitVId);
                         }
                     }
                 }
@@ -1418,7 +1418,7 @@ namespace IvyFEMProtoApp
                     // １つ前の点と現在の点が既に辺を作っていなければ辺を追加
                     uint eId = 0;
                     uint loopIdAddByConnectVertex = 0;
-                    bool ret = CadDesign2D.AddEdgeByLastEditPts(
+                    bool ret = AddEdgeByLastEditPts(
                         cad, parentLoopId,
                         EditVertexIds, EditEdgeIds, out eId, out loopIdAddByConnectVertex, showErrorFlg);
                     if (ret)
@@ -1452,7 +1452,7 @@ namespace IvyFEMProtoApp
                     // これから作成する辺に含まれる辺の開始頂点、終了頂点を取得する
                     uint minVId = 0;
                     uint maxVId = 0;
-                    GetIncludedEdgesStEndVId(cad, prevPP, pp, LoopIds, out minVId, out maxVId);
+                    GetIncludedEdgesSartEndVId(cad, prevPP, pp, LoopIds, out minVId, out maxVId);
                     if (minVId != 0 && maxVId != 0)
                     {
                         addVertexAndEdgeFlg = false;
@@ -1485,7 +1485,7 @@ namespace IvyFEMProtoApp
                             // １つ前の点と現在の点が既に辺を作っていなければ辺を追加
                             uint eId = 0;
                             uint loopIdAddByConnectVertex = 0;
-                            bool ret = CadDesign2D.AddEdgeByLastEditPts(
+                            bool ret = AddEdgeByLastEditPts(
                                 cad, parentLoopId,
                                 EditVertexIds, EditEdgeIds, out eId, out loopIdAddByConnectVertex,
                                 showErrorFlg);
@@ -1552,17 +1552,17 @@ namespace IvyFEMProtoApp
                         //System.Diagnostics.Debug.Assert(CVector2D.Distance(pp, EditPts[EditPts.Count - 1]) < Constants.PrecisionLowerLimit);
                     }
                     // 前に追加したループと共有している頂点かチェックする
-                    IList<uint> hitLoopIdList = null;
+                    IList<uint> hitLoopIds = null;
                     uint hitVId = 0;
-                    CadDesign2D.GetVertexIdBelongToLoopByCoord(
-                        cad, pp, LoopIds, out hitVId, out hitLoopIdList);
+                    GetVertexIdBelongToLoopByCoord(
+                        cad, pp, LoopIds, out hitVId, out hitLoopIds);
                     if (hitVId > 0)
                     {
                         // 共有する頂点の場合
                         uint parentLoopId = 0;
-                        if (hitLoopIdList.Count > 0)
+                        if (hitLoopIds.Count > 0)
                         {
-                            parentLoopId = hitLoopIdList[0];
+                            parentLoopId = hitLoopIds[0];
                         }
 
                         // 頂点は作成せず、辺だけ作成する
@@ -1570,17 +1570,17 @@ namespace IvyFEMProtoApp
                         uint existEId = 0;
                         {
                             // １つ前の点に関して、前に追加したループと共有している頂点かチェックする
-                            IList<uint> prevHitLoopIdList = null;
+                            IList<uint> prevHitLoopIds = null;
                             uint prevHitVId = 0;
                             if (indexPP >= 1)
                             {
                                 //CVector2D prevPt = pps[indexPP - 1];
                                 OpenTK.Vector2d prevPt = EditPts[EditPts.Count - 1];
-                                CadDesign2D.GetVertexIdBelongToLoopByCoord(
-                                    cad, prevPt, LoopIds, out prevHitVId, out prevHitLoopIdList);
+                                GetVertexIdBelongToLoopByCoord(
+                                    cad, prevPt, LoopIds, out prevHitVId, out prevHitLoopIds);
                                 if (prevHitVId != 0)
                                 {
-                                    existEId = GetEdgeIdOfVertexIds(cad, hitVId, prevHitVId);
+                                    existEId = GetEdgeIdByVertexIds(cad, hitVId, prevHitVId);
                                 }
                             }
                         }
@@ -1598,7 +1598,7 @@ namespace IvyFEMProtoApp
 
                             uint eId = 0;
                             uint loopIdAddByConnectVertex = 0;
-                            bool ret = CadDesign2D.AddEdgeByLastEditPts(
+                            bool ret = AddEdgeByLastEditPts(
                                 cad, parentLoopId, EditVertexIds, EditEdgeIds,
                                 out eId, out loopIdAddByConnectVertex, showErrorFlg);
                             if (ret)
@@ -1664,7 +1664,7 @@ namespace IvyFEMProtoApp
                             uint edgeIdAdd = 0;
                             uint edgeIdAddByAddVertex = 0;
                             uint loopIdAddByConnectVertex = 0;
-                            bool ret = CadDesign2D.AddVertexAndEdge(
+                            bool ret = AddVertexAndEdge(
                                 cad, parentElemType, parentId, pp,
                                 EditPts, EditVertexIds, EditEdgeIds,
                                 out vertexIdAdd, out edgeIdAdd, out edgeIdAddByAddVertex,
@@ -1706,7 +1706,7 @@ namespace IvyFEMProtoApp
                             // 頂点のみ追加
                             uint vertexIdAdd = 0;
                             uint edgeIdAddByAddVertex = 0;
-                            bool ret = CadDesign2D.AddVertex(
+                            bool ret = AddVertex(
                                 cad, parentElemType, parentId, pp,
                                 EditPts, EditVertexIds, EditEdgeIds,
                                 out vertexIdAdd, out edgeIdAddByAddVertex,
@@ -1765,7 +1765,7 @@ namespace IvyFEMProtoApp
         /// <param name="loopIdAddByConnectVertex"></param>
         /// <returns></returns>
         private static bool AddVertexAndEdge(
-            CadObject2D cad, CadElementType parentElemType, uint parentId, OpenTK.Vector2d pp,
+            Cad2D cad, CadElementType parentElemType, uint parentId, OpenTK.Vector2d pp,
             IList<OpenTK.Vector2d> editPts, IList<uint> editVertexIds, IList<uint> editEdgeIds,
             out uint vertexIdAdd, out uint edgeIdAdd, out uint edgeIdAddByAddVertex,
             out uint loopIdAddByConnectVertex,
@@ -1797,7 +1797,7 @@ namespace IvyFEMProtoApp
                 else if (parentElemType == CadElementType.Edge && eIdAddByAddVertex != 0)
                 {
                     lIdOfAddVertex = 0;
-                    lIdOfAddVertex = GetLoopIdOfEdge(cad, eIdAddByAddVertex);
+                    lIdOfAddVertex = GetEdgeLoopId(cad, eIdAddByAddVertex);
 
                     // Note: 今回作成した頂点が辺上にある場合、前の頂点も辺上ならば辺の作成はできない
                 }
@@ -1810,7 +1810,7 @@ namespace IvyFEMProtoApp
                 if (editVertexIds.Count >= 2)
                 {
                     // 辺を作成
-                    success = CadDesign2D.AddEdgeByLastEditPts(cad, lIdOfAddVertex,
+                    success = AddEdgeByLastEditPts(cad, lIdOfAddVertex,
                         editVertexIds,
                         editEdgeIds,
                         out eId, out lIdAddByConnectVertex,
@@ -1848,7 +1848,7 @@ namespace IvyFEMProtoApp
         /// <param name="edgeIdAddByAddVertex"></param>
         /// <param name="showErrorFlg"></param>
         /// <returns></returns>
-        private static bool AddVertex(CadObject2D cad, CadElementType parentElemType, uint parentId,
+        private static bool AddVertex(Cad2D cad, CadElementType parentElemType, uint parentId,
             OpenTK.Vector2d pp,
             IList<OpenTK.Vector2d> editPts, IList<uint> editVertexIds, IList<uint> editEdgeIds,
             out uint vertexIdAdd, out uint edgeIdAddByAddVertex,
@@ -1894,7 +1894,7 @@ namespace IvyFEMProtoApp
                 if (eIdAddByAddVertex != 0)
                 {
                     cad.SetEdgeColor(eIdAddByAddVertex, 
-                        CadDesign2D.ColorToColorDouble(CadDesign2D.TmpEdgeColor));
+                        ColorToColorDouble(TmpEdgeColor));
                 }
             }
             vertexIdAdd = vId;
@@ -1912,7 +1912,7 @@ namespace IvyFEMProtoApp
         /// <param name="eId"></param>
         /// <param name="lIdAddByConnectVertex"></param>
         /// <returns></returns>
-        private static bool AddEdgeByLastEditPts(CadObject2D cad, uint lIdOfAddVertex,
+        private static bool AddEdgeByLastEditPts(Cad2D cad, uint lIdOfAddVertex,
             IList<uint> editVertexIds, IList<uint> editEdgeIds,
             out uint eId, out uint lIdAddByConnectVertex, bool showErrorFlg)
         {
@@ -1923,7 +1923,7 @@ namespace IvyFEMProtoApp
             lIdAddByConnectVertex = 0;
 
             // 作成しようとしている辺がすでに作成されているかチェックする
-            uint existedEId = CadDesign2D.GetEdgeIdOfVertexIds(
+            uint existedEId = GetEdgeIdByVertexIds(
                 cad, editVertexIds[editVertexIds.Count - 2], editVertexIds[editVertexIds.Count - 1]);
             if (existedEId != 0)
             {
@@ -1973,7 +1973,7 @@ namespace IvyFEMProtoApp
                 editEdgeIds.Add(eId);
 
                 // 一時作成の辺の色をセットする
-                cad.SetEdgeColor(eId, CadDesign2D.ColorToColorDouble(CadDesign2D.TmpEdgeColor));
+                cad.SetEdgeColor(eId, ColorToColorDouble(TmpEdgeColor));
 
                 success = true;
             }
@@ -1996,7 +1996,7 @@ namespace IvyFEMProtoApp
             OpenGLUtils.PickPre(sizeBuffer, pickSelectBuffer, (uint)pt.X, (uint)pt.Y, 5, 5, Camera);
             DrawerArray.DrawSelection();
             List<SelectedObject> selecObjs = 
-                (List < SelectedObject >)
+                (List<SelectedObject>)
                 OpenGLUtils.PickPost(pickSelectBuffer, (uint)pt.X, (uint)pt.Y, Camera);
 
             DrawerArray.ClearSelected();
@@ -2004,7 +2004,7 @@ namespace IvyFEMProtoApp
             {
                 if (DrawerArray.Drawers.Count >= 2)
                 {
-                    CadObject2DDrawer drawer = DrawerArray.Drawers[1] as CadObject2DDrawer;
+                    Cad2DDrawer drawer = DrawerArray.Drawers[1] as Cad2DDrawer;
                     if (drawer != null)
                     {
                         int ctrlIndex;
@@ -2090,7 +2090,7 @@ namespace IvyFEMProtoApp
         /// <param name="portEdges"></param>
         /// <returns></returns>
         private static bool DelLoop(
-            CadObject2D cad, uint tagtLoopId,
+            Cad2D cad, uint tagtLoopId,
             IList<uint> loopIds, IList<PortEdge> portEdges)
         {
             bool executed = false;
@@ -2101,26 +2101,26 @@ namespace IvyFEMProtoApp
             }
 
             // ループの頂点、辺のIDのリストを取得する
-            IList<uint> vIdList = null;
-            IList<uint> eIdList = null;
-            CadDesign2D.GetEdgeVertexListOfLoop(cad, tagtLoopId, out vIdList, out eIdList);
+            IList<uint> vIds = null;
+            IList<uint> eIds = null;
+            GetLoopVertexsAndEdges(cad, tagtLoopId, out vIds, out eIds);
 
-            IList<uint> otherLoopVIdList = new List<uint>();
-            IList<uint> otherLoopEIdList = new List<uint>();
+            IList<uint> otherLoopVIds = new List<uint>();
+            IList<uint> otherLoopEIds = new List<uint>();
             foreach (uint workLoopId in loopIds)
             {
                 if (workLoopId != tagtLoopId)
                 {
-                    IList<uint> workVIdList = null;
-                    IList<uint> workEIdList = null;
-                    CadDesign2D.GetEdgeVertexListOfLoop(cad, workLoopId, out workVIdList, out workEIdList);
-                    foreach (uint workVId in workVIdList)
+                    IList<uint> workVIds = null;
+                    IList<uint> workEIds = null;
+                    GetLoopVertexsAndEdges(cad, workLoopId, out workVIds, out workEIds);
+                    foreach (uint workVId in workVIds)
                     {
-                        otherLoopVIdList.Add(workVId);
+                        otherLoopVIds.Add(workVId);
                     }
-                    foreach (uint workEId in workEIdList)
+                    foreach (uint workEId in workEIds)
                     {
-                        otherLoopEIdList.Add(workEId);
+                        otherLoopEIds.Add(workEId);
                     }
                 }
             }
@@ -2129,17 +2129,17 @@ namespace IvyFEMProtoApp
             DelPortBelongToLoop(cad, tagtLoopId, portEdges);
 
             // エラーチェック用
-            Dictionary<uint, IList<uint>> saveLoopEdgesList = null;
-            ChkLoopEdgesPreProc(cad, loopIds, out saveLoopEdgesList);
+            Dictionary<uint, IList<uint>> saveLoopEdgess = null;
+            ChkLoopEdgesPreProc(cad, loopIds, out saveLoopEdgess);
 
             // ループ削除
             //   辺と頂点も削除してくれているはず? -->してくれない-->というかループの場合なにもしないらしい
             //cad.RemoveElement(CadElementType.Loop, tagtLoopId);
             // ループを構成する辺と頂点を削除
             // 辺を削除
-            foreach (uint eId in eIdList)
+            foreach (uint eId in eIds)
             {
-                if (otherLoopEIdList.IndexOf(eId) >= 0)
+                if (otherLoopEIds.IndexOf(eId) >= 0)
                 {
                     // 他のループと共有している辺の場合(領域分割で作成された辺)
                     continue;
@@ -2155,9 +2155,9 @@ namespace IvyFEMProtoApp
             if (executed)
             {
                 // 頂点削除
-                foreach (uint vId in vIdList)
+                foreach (uint vId in vIds)
                 {
-                    if (otherLoopVIdList.IndexOf(vId) >= 0)
+                    if (otherLoopVIds.IndexOf(vId) >= 0)
                     {
                         // 他のループと共有している頂点の場合(領域分割で作成された頂点)
                         continue;
@@ -2173,10 +2173,10 @@ namespace IvyFEMProtoApp
 
                 // チェック用
                 // ループIDが変更されているかチェックし、変更されていればループ情報を更新する
-                ChkLoopEdgesPostProc(cad, saveLoopEdgesList, tagtLoopId, 0, loopIds);
+                ChkLoopEdgesPostProc(cad, saveLoopEdgess, tagtLoopId, 0, loopIds);
 
                 // 全ループの色を再設定する
-                SetupColorOfCadObjectsForAllLoops(cad, loopIds);
+                SetupCadObjectsColorForAllLoops(cad, loopIds);
 
             }
 
@@ -2188,38 +2188,39 @@ namespace IvyFEMProtoApp
         /// </summary>
         /// <param name="cad"></param>
         /// <param name="loopIds">ループ情報リスト</param>
-        /// <param name="saveLoopEdgesList"></param>
-        private static void ChkLoopEdgesPreProc(CadObject2D cad, IList<uint> loopIds, out Dictionary<uint, IList<uint>> saveLoopEdgesList)
+        /// <param name="saveLoopEdgess"></param>
+        private static void ChkLoopEdgesPreProc(
+            Cad2D cad, IList<uint> loopIds, out Dictionary<uint, IList<uint>> saveLoopEdgess)
         {
-            saveLoopEdgesList = new Dictionary<uint, IList<uint>>();
+            saveLoopEdgess = new Dictionary<uint, IList<uint>>();
             foreach (uint workLoopId in loopIds)
             {
-                IList<uint> workVIdList = null;
-                IList<uint> workEIdList = null;
-                GetEdgeVertexListOfLoop(cad, workLoopId, out workVIdList, out workEIdList);
-                saveLoopEdgesList.Add(workLoopId, workEIdList);
+                IList<uint> workVIds = null;
+                IList<uint> workEIds = null;
+                GetLoopVertexsAndEdges(cad, workLoopId, out workVIds, out workEIds);
+                saveLoopEdgess.Add(workLoopId, workEIds);
             }
         }
         /// <summary>
         /// ループIDが変更されているかチェックし、変更されていればループ情報を更新する
         /// </summary>
         /// <param name="cad"></param>
-        /// <param name="saveLoopEdgesList"></param>
+        /// <param name="saveLoopEdgess"></param>
         /// <param name="delLoopId">削除されたループID</param>
         /// <param name="delEId">削除された辺ID</param>
         /// <param name="loopIds">ループ情報リスト</param>
         private static void ChkLoopEdgesPostProc(
-            CadObject2D cad, Dictionary<uint, IList<uint>> saveLoopEdgesList, uint delLoopId, uint delEId,
+            Cad2D cad, Dictionary<uint, IList<uint>> saveLoopEdgess, uint delLoopId, uint delEId,
             IList<uint> loopIds)
         {
             if (delLoopId != 0)
             {
                 // まず削除されたループは除外するためマップから削除
-                saveLoopEdgesList.Remove(delLoopId);
+                saveLoopEdgess.Remove(delLoopId);
             }
 
             // エラーチェック：ループIDが変更される??
-            foreach (var loopEdgesPair in saveLoopEdgesList)
+            foreach (var loopEdgesPair in saveLoopEdgess)
             {
                 uint prevLoopId = loopEdgesPair.Key;
                 IList<uint> eIds = loopEdgesPair.Value;
@@ -2232,7 +2233,7 @@ namespace IvyFEMProtoApp
                     {
                         continue;
                     }
-                    uint curLoopId = GetLoopIdOfEdge(cad, eId);
+                    uint curLoopId = GetEdgeLoopId(cad, eId);
                     if (curLoopId == 0)
                     {
                         continue;
@@ -2296,7 +2297,7 @@ namespace IvyFEMProtoApp
         /// <param name="tagtLoopId"></param>
         /// <param name="portEdges"></param>
         /// <returns>実行された場合true、実行されなかった場合false</returns>
-        public static bool DelPortBelongToLoop(CadObject2D cad, uint tagtLoopId,
+        public static bool DelPortBelongToLoop(Cad2D cad, uint tagtLoopId,
             IList<PortEdge> portEdges)
         {
             bool executed = false;
@@ -2307,27 +2308,27 @@ namespace IvyFEMProtoApp
             }
 
             // ループの頂点、辺のIDのリストを取得する
-            IList<uint> vIdList = null;
-            IList<uint> eIdList = null;
-            CadDesign2D.GetEdgeVertexListOfLoop(cad, tagtLoopId, out vIdList, out eIdList);
+            IList<uint> vIds = null;
+            IList<uint> eIds = null;
+            GetLoopVertexsAndEdges(cad, tagtLoopId, out vIds, out eIds);
 
             // ポート境界があれば削除する
-            IList<PortEdge> delEdgeList = new List<PortEdge>();
+            IList<PortEdge> delEdges = new List<PortEdge>();
             // すべてのポートについて検査
             foreach (PortEdge work in portEdges)
             {
                 // 削除対象の辺集合か調べる
-                foreach (uint eId in eIdList)
+                foreach (uint eId in eIds)
                 {
                     if (work.EdgeId == eId)
                     {
-                        delEdgeList.Add(work);
+                        delEdges.Add(work);
                         break;
                     }
                 }
             }
             // ポート削除処理
-            foreach (PortEdge deltarget in delEdgeList)
+            foreach (PortEdge deltarget in delEdges)
             {
                 // 削除前検査：ポート削除対象が、ほかのループと共有しているか検査する
                 bool isSharedPort = false;
@@ -2342,7 +2343,7 @@ namespace IvyFEMProtoApp
                     continue;
                 }
                 // ポート削除
-                CadDesign2D.DoErasePortCore(cad, deltarget, portEdges);
+                DoErasePortCore(cad, deltarget, portEdges);
                 executed = true;
             }
             return executed;
@@ -2523,7 +2524,7 @@ namespace IvyFEMProtoApp
                 {
                     uint tagtEdgeId = partId;
                     // 辺がループに属しているかチェック
-                    uint parentLoopId = GetLoopIdOfEdge(Cad, tagtEdgeId);
+                    uint parentLoopId = GetEdgeLoopId(Cad, tagtEdgeId);
                     if (parentLoopId == 0)
                     {
                         // 辺がループに属していない
@@ -2549,7 +2550,7 @@ namespace IvyFEMProtoApp
                         {
                             // 辺に色を付ける
                             Color portColor = PortColor;
-                            double[] portColorDouble = CadDesign2D.ColorToColorDouble(portColor);
+                            double[] portColorDouble = ColorToColorDouble(portColor);
                             uint eId = edge.EdgeId;
                             Cad.SetEdgeColor(eId, portColorDouble);
                         }
@@ -2630,7 +2631,7 @@ namespace IvyFEMProtoApp
         /// <param name="hitEdge"></param>
         /// <param name="portEdges"></param>
         private static void DoErasePortCore(
-            CadObject2D cad, PortEdge hitEdge, IList<PortEdge> portEdges)
+            Cad2D cad, PortEdge hitEdge, IList<PortEdge> portEdges)
         {
             // ヒットしたポート番号
             int hitPortNo = hitEdge.No;
@@ -2640,12 +2641,12 @@ namespace IvyFEMProtoApp
             uint eId = hitEdge.EdgeId;
 
             //辺が属するループを取得する
-            uint lId = GetLoopIdOfEdge(cad, eId);
+            uint lId = GetEdgeLoopId(cad, eId);
             // ループの背景色を取得する
             double[] loopColorDouble = cad.GetLoopColor(lId);
-            Color loopColor = CadDesign2D.ColorDoubleToColor(loopColorDouble);
-            Color loopLineColor = CadDesign2D.GetLoopLineColor(loopColor);
-            double[] loopLineColorDouble = CadDesign2D.ColorToColorDouble(loopLineColor);
+            Color loopColor = ColorDoubleToColor(loopColorDouble);
+            Color loopLineColor = GetLoopLineColor(loopColor);
+            double[] loopLineColorDouble = ColorToColorDouble(loopLineColor);
             cad.SetEdgeColor(eId, loopLineColorDouble);
 
             // ポートを削除
@@ -2695,7 +2696,7 @@ namespace IvyFEMProtoApp
                     uint brokenLoopId = 0;
                     {
                         // 辺のループIDを取得する
-                        uint workLoopId = GetLoopIdOfEdge(Cad, tagtEdgeId);
+                        uint workLoopId = GetEdgeLoopId(Cad, tagtEdgeId);
                         // 辺を削除するとループが壊れるかチェックする
                         // 辺の両端に別の辺が接続していれば壊れる
                         // ＜壊れない例（除外したい）＞
@@ -2709,10 +2710,10 @@ namespace IvyFEMProtoApp
                         {
                             uint workVId1;
                             uint workVId2;
-                            GetVertexIdsOfEdgeId(Cad, tagtEdgeId, out workVId1, out workVId2);
-                            IList<uint> workEIdsOfVId1 = GetEdgeIdsByVertexId(Cad, workVId1);
-                            IList<uint> workEIdsOfVId2 = GetEdgeIdsByVertexId(Cad, workVId2);
-                            if (workEIdsOfVId1.Count >= 2 && workEIdsOfVId2.Count >= 2)
+                            GetEdgeVertexId(Cad, tagtEdgeId, out workVId1, out workVId2);
+                            IList<uint> workEIds1 = GetEdgeIdsByVertexId(Cad, workVId1);
+                            IList<uint> workEIds2 = GetEdgeIdsByVertexId(Cad, workVId2);
+                            if (workEIds1.Count >= 2 && workEIds2.Count >= 2)
                             {
                                 brokenLoopId = workLoopId;
                             }
@@ -2721,14 +2722,14 @@ namespace IvyFEMProtoApp
                     // 辺の頂点を取得する
                     uint vId1 = 0;
                     uint vId2 = 0;
-                    GetVertexIdsOfEdgeId(Cad, tagtEdgeId, out vId1, out vId2);
+                    GetEdgeVertexId(Cad, tagtEdgeId, out vId1, out vId2);
 
                     // エラーチェック用
                     // ループの辺IDを１つ取得しておく
                     uint exceptEId = tagtEdgeId; // 削除対象辺IDは除外して取得
                     // エラーチェック用
-                    Dictionary<uint, IList<uint>> saveLoopEdgesList = null;
-                    ChkLoopEdgesPreProc(Cad, LoopIds, out saveLoopEdgesList);
+                    Dictionary<uint, IList<uint>> saveLoopEdgess = null;
+                    ChkLoopEdgesPreProc(Cad, LoopIds, out saveLoopEdgess);
 
                     if (brokenLoopId != 0)
                     {
@@ -2779,12 +2780,12 @@ namespace IvyFEMProtoApp
 
                         // チェック用
                         // ループIDが変更されているかチェックし、変更されていればループ情報を更新する
-                        ChkLoopEdgesPostProc(Cad, saveLoopEdgesList, brokenLoopId, tagtEdgeId, LoopIds);
+                        ChkLoopEdgesPostProc(Cad, saveLoopEdgess, brokenLoopId, tagtEdgeId, LoopIds);
                     }
                     if (executed)
                     {
                         // 全ループの色を再設定する
-                        SetupColorOfCadObjectsForAllLoops(Cad, LoopIds);
+                        SetupCadObjectsColorForAllLoops(Cad, LoopIds);
                     }
                 }
             }
@@ -2834,13 +2835,13 @@ namespace IvyFEMProtoApp
         /// </summary>
         /// <param name="cad"></param>
         /// <param name="loopIds"></param>
-        private static void SetupColorOfCadObjectsForAllLoops(CadObject2D cad, IList<uint> loopIds)
+        private static void SetupCadObjectsColorForAllLoops(Cad2D cad, IList<uint> loopIds)
         {
             //ループの色をすべて再設定する
             foreach (uint workLoopId in loopIds)
             {
                 Color backColor = LoopBackColor;
-                SetupColorOfCadObjectsForOneLoop(cad, workLoopId, backColor);
+                SetupCadObjectsColorForOneLoop(cad, workLoopId, backColor);
             }
         }
 
@@ -2850,26 +2851,26 @@ namespace IvyFEMProtoApp
         /// <param name="cad"></param>
         /// <param name="lId"></param>
         /// <param name="backColor"></param>
-        private static void SetupColorOfCadObjectsForOneLoop(CadObject2D cad, uint lId, Color backColor)
+        private static void SetupCadObjectsColorForOneLoop(Cad2D cad, uint lId, Color backColor)
         {
             // ループの頂点と辺のリストを取得する
-            IList<uint> vIdList = null;
-            IList<uint> eIdList = null;
-            CadDesign2D.GetEdgeVertexListOfLoop(cad, lId, out vIdList, out eIdList);
+            IList<uint> vIds = null;
+            IList<uint> eIds = null;
+            GetLoopVertexsAndEdges(cad, lId, out vIds, out eIds);
 
             // ループの色を指定（指定しなければ(0.9,0.8,0.8)になる
-            double[] backColorDouble = CadDesign2D.ColorToColorDouble(backColor);
+            double[] backColorDouble = ColorToColorDouble(backColor);
             cad.SetLoopColor(lId, backColorDouble);
             // 辺、頂点の色の変更
-            Color loopLineColor = CadDesign2D.GetLoopLineColor(backColor);
-            double[] lineColorDouble = CadDesign2D.ColorToColorDouble(loopLineColor);
+            Color loopLineColor = GetLoopLineColor(backColor);
+            double[] lineColorDouble = ColorToColorDouble(loopLineColor);
             // 辺の色
-            foreach (uint eId in eIdList)
+            foreach (uint eId in eIds)
             {
                 cad.SetEdgeColor(eId, lineColorDouble);
             }
             // 頂点の色
-            //foreach (uint vId in vIdList)
+            //foreach (uint vId in vIds)
             //{
             //    cad.SetVertexColor(vId, lineColorDouble);
             //}
@@ -2883,9 +2884,9 @@ namespace IvyFEMProtoApp
         /// <param name="cad"></param>
         /// <param name="loopId"></param>
         /// <param name="loopIds"></param>
-        /// <param name="edgeCollectionList"></param>
-        private static void ReconstructLoopsInsideLoopAsChild(CadObject2D cad, uint loopId,
-            IList<uint> loopIds, IList<PortEdge> edgeCollectionList)
+        /// <param name="edgeCollections"></param>
+        private static void ReconstructLoopsInsideLoopAsChild(Cad2D cad, uint loopId,
+            IList<uint> loopIds, IList<PortEdge> edgeCollections)
         {
             if (loopId == 0)
             {
@@ -2898,7 +2899,7 @@ namespace IvyFEMProtoApp
             //  子ループに設定
             foreach (uint childLoopId in insideLoopIds)
             {
-                SetLoopParentLoopId(cad, childLoopId, loopId, loopIds, edgeCollectionList);
+                SetLoopParentLoopId(cad, childLoopId, loopId, loopIds, edgeCollections);
             }
         }
 
@@ -2909,7 +2910,7 @@ namespace IvyFEMProtoApp
         /// <param name="loopId"></param>
         /// <param name="loopIds"></param>
         /// <returns></returns>
-        private static IList<uint> GetLoopIdsInsideLoop(CadObject2D cad, uint loopId, IList<uint> loopIds)
+        private static IList<uint> GetLoopIdsInsideLoop(Cad2D cad, uint loopId, IList<uint> loopIds)
         {
             IList<uint> hitLoopIds = new List<uint>();
             if (loopId == 0)
@@ -2927,12 +2928,12 @@ namespace IvyFEMProtoApp
                 //   先ず頂点を取得
                 uint vId = 0;
                 {
-                    IList<uint> vIdList = null;
-                    IList<uint> eIdList = null;
-                    GetEdgeVertexListOfLoop(cad, workLoopId, out vIdList, out eIdList);
-                    if (vIdList.Count > 0)
+                    IList<uint> vIds = null;
+                    IList<uint> eIds = null;
+                    GetLoopVertexsAndEdges(cad, workLoopId, out vIds, out eIds);
+                    if (vIds.Count > 0)
                     {
-                        vId = vIdList[0];
+                        vId = vIds[0];
                     }
                 }
                 System.Diagnostics.Debug.Assert(vId != 0);
@@ -2956,10 +2957,10 @@ namespace IvyFEMProtoApp
         /// <param name="childLoopId">子ループID</param>
         /// <param name="parentLoopId">親ループID</param>
         /// <param name="loopIds">ループ情報リスト</param>
-        /// <param name="edgeCollectionList">ポート境界エッジコレクションのリスト</param>
+        /// <param name="edgeCollections">ポート境界エッジコレクションのリスト</param>
         private static void SetLoopParentLoopId(
-            CadObject2D cad, uint childLoopId, uint parentLoopId,
-            IList<uint> loopIds, IList<PortEdge> edgeCollectionList)
+            Cad2D cad, uint childLoopId, uint parentLoopId,
+            IList<uint> loopIds, IList<PortEdge> edgeCollections)
         {
             if (childLoopId == 0 || parentLoopId == 0)
             {
@@ -2974,17 +2975,17 @@ namespace IvyFEMProtoApp
             // 子ループの頂点座標を取得する
             IList<OpenTK.Vector2d> vPPs = new List<OpenTK.Vector2d>();
             {
-                IList<uint> vIdList = null;
-                IList<uint> eIdList = null;
-                GetEdgeVertexListOfLoop(cad, childLoopId, out vIdList, out eIdList);
-                foreach (uint vId in vIdList)
+                IList<uint> vIds = null;
+                IList<uint> eIds = null;
+                GetLoopVertexsAndEdges(cad, childLoopId, out vIds, out eIds);
+                foreach (uint vId in vIds)
                 {
                     OpenTK.Vector2d vPP = cad.GetVertexCoord(vId);
                     vPPs.Add(vPP);
                 }
             }
             // 子ループを削除
-            bool delRet = DelLoop(cad, childLoopId, loopIds, edgeCollectionList);
+            bool delRet = DelLoop(cad, childLoopId, loopIds, edgeCollections);
             if (!delRet)
             {
                 MessageBoxShowError("子ループの設定に失敗しました", "");
@@ -3007,7 +3008,7 @@ namespace IvyFEMProtoApp
 
                     // ループの色を設定
                     Color backColor = LoopBackColor;
-                    SetupColorOfCadObjectsForOneLoop(cad, addLId, backColor);
+                    SetupCadObjectsColorForOneLoop(cad, addLId, backColor);
                 }
             }
         }
@@ -3019,7 +3020,7 @@ namespace IvyFEMProtoApp
         /// <param name="eId1"></param>
         /// <param name="eId2"></param>
         /// <returns></returns>
-        private static bool IsNextDoorEdge(CadObject2D cad, uint eId1, uint eId2)
+        private static bool IsNextDoorEdge(Cad2D cad, uint eId1, uint eId2)
         {
             bool isNextDoor = false;
             // ここで隣の辺のみに限定したい
@@ -3039,19 +3040,18 @@ namespace IvyFEMProtoApp
         /// ループの頂点と辺のIDのリストを取得する
         /// </summary>
         /// <param name="lId"></param>
-        /// <param name="vIdList"></param>
-        /// <param name="eIdList"></param>
-        public void GetEdgeVertexListOfLoop(uint lId, out IList<uint> vIdList, out IList<uint> eIdList)
+        /// <param name="vIds"></param>
+        /// <param name="eIds"></param>
+        public void GetLoopVertexsAndEdges(uint lId, out IList<uint> vIds, out IList<uint> eIds)
         {
-            CadDesign2D.GetEdgeVertexListOfLoop(Cad, lId, out vIdList, out eIdList);
+            GetLoopVertexsAndEdges(Cad, lId, out vIds, out eIds);
         }
 
-        private static void GetEdgeVertexListOfLoop(
-            CadObject2D cad, uint lId, out IList<uint> vIdList, out IList<uint> eIdList)
+        private static void GetLoopVertexsAndEdges(
+            Cad2D cad, uint lId, out IList<uint> vIds, out IList<uint> eIds)
         {
-            //System.Diagnostics.Debug.WriteLine("GetEdgeVertexListOfLoop:id_l = {0}", id_l);
-            vIdList = new List<uint>();
-            eIdList = new List<uint>();
+            vIds = new List<uint>();
+            eIds = new List<uint>();
             if (lId == 0)
             {
                 System.Diagnostics.Debug.Assert(false);
@@ -3066,13 +3066,17 @@ namespace IvyFEMProtoApp
                 }
                 for (lItr.Begin(); !lItr.IsEnd(); lItr.Next())
                 {
+                    uint vId = lItr.GetVertexId();
+                    vIds.Add(vId);
+
                     uint eId;
                     bool isSameDir;
                     lItr.GetEdgeId(out eId, out isSameDir);
-                    uint vId = lItr.GetVertexId();
-                    eIdList.Add(eId);
-                    vIdList.Add(vId);
-                    //System.Diagnostics.Debug.WriteLine("    id_v = {0} id_e = {1}", id_v, id_e);
+                    if (!cad.IsElementId(CadElementType.Edge, eId))
+                    {
+                        continue;
+                    }
+                    eIds.Add(eId);
                 }
             }
         }
@@ -3082,7 +3086,7 @@ namespace IvyFEMProtoApp
         /// </summary>
         /// <param name="vId"></param>
         /// <returns></returns>
-        private static uint GetLoopIdOfVertex(CadObject2D cad, uint vId)
+        private static uint GetVertexLoopId(Cad2D cad, uint vId)
         {
             uint loopId = 0;
 
@@ -3104,12 +3108,12 @@ namespace IvyFEMProtoApp
         /// </summary>
         /// <param name="eId">辺ID</param>
         /// <returns>ループID</returns>
-        private static uint GetLoopIdOfEdge(CadObject2D cad, uint eId)
+        private static uint GetEdgeLoopId(Cad2D cad, uint eId)
         {
             uint loopId = 0;
             uint lLId;
             uint rLId;
-            cad.GetEdgeLoopId(out lLId, out rLId, eId);
+            cad.GetEdgeLoopId(eId, out lLId, out rLId);
             // ループから見て孤立した辺は除外する
             if (lLId != 0 && IsStandAloneEdgeInsideLoop(cad, eId, lLId))
             {
@@ -3120,7 +3124,7 @@ namespace IvyFEMProtoApp
                 rLId = 0;
             }
 
-            //System.Diagnostics.Debug.Assert(id_l_l != 0 || id_l_r != 0);
+            //System.Diagnostics.Debug.Assert(lLId != 0 || rLId != 0);
             if (lLId != 0)
             {
                 loopId = lLId;
@@ -3132,7 +3136,7 @@ namespace IvyFEMProtoApp
             else
             {
                 // 不完全な辺の作成も許可するようにしたので、Assertを外す
-                System.Diagnostics.Debug.WriteLine("[Warn]getLoopIdOfEdge: id_l_l == 0 && id_l_r == 0");
+                System.Diagnostics.Debug.WriteLine("[Warn]getLoopIdOfEdge: lLId == 0 && rLId == 0");
                 //System.Diagnostics.Debug.Assert(false);
                 loopId = 0;
             }
@@ -3148,7 +3152,7 @@ namespace IvyFEMProtoApp
         /// <param name="eId"></param>
         /// <param name="loopId"></param>
         /// <returns></returns>
-        private static bool IsStandAloneEdgeInsideLoop(CadObject2D cad, uint eId, uint loopId)
+        private static bool IsStandAloneEdgeInsideLoop(Cad2D cad, uint eId, uint loopId)
         {
             bool standAlone = false;
             if (eId == 0 || loopId == 0)
@@ -3157,10 +3161,10 @@ namespace IvyFEMProtoApp
                 return standAlone;
             }
 
-            IList<uint> workVIdList = null;
-            IList<uint> workEIdList = null;
-            GetEdgeVertexListOfLoop(cad, loopId, out workVIdList, out workEIdList);
-            if (workEIdList.IndexOf(eId) == -1)
+            IList<uint> workVIds = null;
+            IList<uint> workEIds = null;
+            GetLoopVertexsAndEdges(cad, loopId, out workVIds, out workEIds);
+            if (workEIds.IndexOf(eId) == -1)
             {
                 standAlone = true;
             }
@@ -3172,22 +3176,22 @@ namespace IvyFEMProtoApp
         /// </summary>
         /// <param name="eId"></param>
         /// <returns></returns>
-        private static bool IsEdgeSharedByLoops(CadObject2D cad, uint eId)
+        private static bool IsEdgeSharedByLoops(Cad2D cad, uint eId)
         {
             uint lLId;
             uint rLId;
-            cad.GetEdgeLoopId(out lLId, out rLId, eId);
+            cad.GetEdgeLoopId(eId, out lLId, out rLId);
             /*これは孤立した辺でもよい --> 包含関係にある場合、親ループから見て子ループの辺は孤立した辺なので
             // ループから見て孤立した辺は除外する
-            if (id_l_l != 0 && isStandAloneEdgeInsideLoop(cad, eId, id_l_l))
+            if (lLId != 0 && IsStandAloneEdgeInsideLoop(cad, eId, lLId))
             {
-                id_l_l = 0;
+                lLId = 0;
             }
-            if (id_l_r != 0 && isStandAloneEdgeInsideLoop(cad, eId, id_l_r))
+            if (rLId != 0 && IsStandAloneEdgeInsideLoop(cad, eId, rLId))
             {
-                id_l_r = 0;
+                rLId = 0;
             }
-             */
+            */
             return (lLId != 0 && rLId != 0);
         }
 
@@ -3197,23 +3201,23 @@ namespace IvyFEMProtoApp
         /// <param name="tagtEdgeId"></param>
         /// <param name="tagtLoopId"></param>
         /// <returns></returns>
-        private static uint GetNextDoorLoopId(CadObject2D cad, uint tagtEdgeId, uint tagtLoopId)
+        private static uint GetNextDoorLoopId(Cad2D cad, uint tagtEdgeId, uint tagtLoopId)
         {
             uint nextDoorLoopId = 0;
             uint lLId;
             uint rLId;
-            cad.GetEdgeLoopId(out lLId, out rLId, tagtEdgeId);
+            cad.GetEdgeLoopId(tagtEdgeId, out lLId, out rLId);
             /*これは孤立した辺でもよい --> 包含関係にある場合、親ループから見て子ループの辺は孤立した辺なので
             // ループから見て孤立した辺は除外する
-            if (id_l_l != 0 && isStandAloneEdgeInsideLoop(cad, tagtEdgeId, id_l_l))
+            if (lLId != 0 && IsStandAloneEdgeInsideLoop(cad, tagtEdgeId, lLId))
             {
-                id_l_l = 0;
+                lLId = 0;
             }
-            if (id_l_r != 0 && isStandAloneEdgeInsideLoop(cad, tagtEdgeId, id_l_r))
+            if (rLId != 0 && IsStandAloneEdgeInsideLoop(cad, tagtEdgeId, rLId))
             {
-                id_l_r = 0;
+                rLId = 0;
             }
-             */
+            */
 
             if (lLId != 0 && lLId != tagtLoopId)
             {
@@ -3233,7 +3237,7 @@ namespace IvyFEMProtoApp
         /// <param name="chkPt">チェックする点</param>
         /// <param name="loopIds">これまでに追加されたループリスト</param>
         private static void GetVertexIdBelongToLoopByCoord(
-            CadObject2D cad, OpenTK.Vector2d chkPt, IList<uint> loopIds, 
+            Cad2D cad, OpenTK.Vector2d chkPt, IList<uint> loopIds, 
             out uint outVertexId, out IList<uint> outLoopIds)
         {
             outLoopIds = new List<uint>();
@@ -3241,11 +3245,11 @@ namespace IvyFEMProtoApp
             foreach (uint workLoopId in loopIds)
             {
                 // ループの頂点、辺のIDのリストを取得する
-                IList<uint> vIdList = null;
-                IList<uint> eIdList = null;
-                CadDesign2D.GetEdgeVertexListOfLoop(cad, workLoopId, out vIdList, out eIdList);
+                IList<uint> vIds = null;
+                IList<uint> eIds = null;
+                GetLoopVertexsAndEdges(cad, workLoopId, out vIds, out eIds);
 
-                foreach (uint vId in vIdList)
+                foreach (uint vId in vIds)
                 {
                     OpenTK.Vector2d vertexPt = cad.GetVertexCoord(vId);
                     if (OpenTK.Vector2d.Distance(vertexPt, chkPt) < Constants.PrecisionLowerLimit)
@@ -3270,9 +3274,9 @@ namespace IvyFEMProtoApp
         /// <param name="cad"></param>
         /// <param name="vId"></param>
         /// <returns></returns>
-        private static IList<uint> GetEdgeIdsByVertexId(CadObject2D cad, uint vId)
+        private static IList<uint> GetEdgeIdsByVertexId(Cad2D cad, uint vId)
         {
-            IList<uint> eIdList = new List<uint>();
+            IList<uint> eIds = new List<uint>();
             if (vId != 0)
             {
                 for (VertexEdgeItr vItr = cad.GetVertexEdgeItr(vId); !vItr.IsEnd(); vItr.Next())
@@ -3284,23 +3288,23 @@ namespace IvyFEMProtoApp
                     ret = vItr.GetBehindEdgeId(out eId, out isSameDir);
                     if (ret && eId != 0)
                     {
-                        if (eIdList.IndexOf(eId) == -1)
+                        if (eIds.IndexOf(eId) == -1)
                         {
-                            eIdList.Add(eId);
+                            eIds.Add(eId);
                         }
                     }
                     eId = 0;
                     ret = vItr.GetAheadEdgeId(out eId, out isSameDir);
                     if (ret && eId != 0)
                     {
-                        if (eIdList.IndexOf(eId) == -1)
+                        if (eIds.IndexOf(eId) == -1)
                         {
-                            eIdList.Add(eId);
+                            eIds.Add(eId);
                         }
                     }
                 }
             }
-            return eIdList;
+            return eIds;
         }
 
         /// <summary>
@@ -3310,7 +3314,7 @@ namespace IvyFEMProtoApp
         /// <param name="vId1"></param>
         /// <param name="vId2"></param>
         /// <returns></returns>
-        private static uint GetEdgeIdOfVertexIds(CadObject2D cad, uint vId1, uint vId2)
+        private static uint GetEdgeIdByVertexIds(Cad2D cad, uint vId1, uint vId2)
         {
             uint retEId = 0;
 
@@ -3320,12 +3324,12 @@ namespace IvyFEMProtoApp
                 return retEId;
             }
 
-            IList<uint> eIdList1 = GetEdgeIdsByVertexId(cad, vId1);
-            IList<uint> eIdList2 = GetEdgeIdsByVertexId(cad, vId2);
+            IList<uint> eIds1 = GetEdgeIdsByVertexId(cad, vId1);
+            IList<uint> eIds2 = GetEdgeIdsByVertexId(cad, vId2);
 
-            foreach (uint workEId in eIdList1)
+            foreach (uint workEId in eIds1)
             {
-                if (eIdList2.IndexOf(workEId) >= 0)
+                if (eIds2.IndexOf(workEId) >= 0)
                 {
                     retEId = workEId;
                     break;
@@ -3337,8 +3341,9 @@ namespace IvyFEMProtoApp
             {
                 uint workVId1 = 0;
                 uint workVId2 = 0;
-                GetVertexIdsOfEdgeId(cad, retEId, out workVId1, out workVId2);
-                System.Diagnostics.Debug.Assert((workVId1 == vId1 && workVId2 == vId2) || (workVId1 == vId2 && workVId2 == vId1));
+                GetEdgeVertexId(cad, retEId, out workVId1, out workVId2);
+                System.Diagnostics.Debug.Assert(
+                    (workVId1 == vId1 && workVId2 == vId2) || (workVId1 == vId2 && workVId2 == vId1));
             }
 
 
@@ -3352,16 +3357,9 @@ namespace IvyFEMProtoApp
         /// <param name="eId"></param>
         /// <param name="vId1"></param>
         /// <param name="vId2"></param>
-        internal static void GetVertexIdsOfEdgeId(CadObject2D cad, uint eId, out uint vId1, out uint vId2)
+        internal static void GetEdgeVertexId(Cad2D cad, uint eId, out uint vId1, out uint vId2)
         {
-            cad.GetEdgeVertexId(out vId1, out vId2, eId);
-            /*
-            id_v1 = 0;
-            id_v2 = 0;
-            Edge2D edge2d =cad.GetEdge(id_e);
-            id_v1 = edge2d.GetVertexId(true);
-            id_v2 = edge2d.GetVertexId(false);
-             */
+            cad.GetEdgeVertexId(eId, out vId1, out vId2);
         }
 
         /// <summary>
@@ -3370,7 +3368,7 @@ namespace IvyFEMProtoApp
         /// <param name="cad"></param>
         /// <param name="vId"></param>
         /// <returns></returns>
-        private static bool IsVertexOwnedByEdges(CadObject2D cad, uint vId)
+        private static bool IsVertexOwnedByEdges(Cad2D cad, uint vId)
         {
             bool owned = false;
             if (vId == 0)
@@ -3411,7 +3409,7 @@ namespace IvyFEMProtoApp
         /// <param name="chkPt">チェックする点</param>
         /// <param name="loopIds">これまでに追加されたループのリスト</param>
         /// <returns></returns>
-        private static uint GetLoopIdIncludingPoint(CadObject2D cad, OpenTK.Vector2d chkPt, IList<uint> loopIds)
+        private static uint GetLoopIdIncludingPoint(Cad2D cad, OpenTK.Vector2d chkPt, IList<uint> loopIds)
         {
             uint hitLId = 0;
             foreach (uint lId in loopIds)
@@ -3434,16 +3432,16 @@ namespace IvyFEMProtoApp
         /// <param name="loopList">これまでに追加されたループのリスト</param>
         /// <returns>辺ID</returns>
         private static uint GetEdgeIdIncludingPoint(
-            CadObject2D cad, OpenTK.Vector2d chkPt, IList<uint> loopIds)
+            Cad2D cad, OpenTK.Vector2d chkPt, IList<uint> loopIds)
         {
             uint hitEId = 0;
             foreach (uint lId in loopIds)
             {
-                IList<uint> vIdList = null;
-                IList<uint> eIdList = null;
-                GetEdgeVertexListOfLoop(cad, lId, out vIdList, out eIdList);
+                IList<uint> vIds = null;
+                IList<uint> eIds = null;
+                GetLoopVertexsAndEdges(cad, lId, out vIds, out eIds);
 
-                foreach (uint eId in eIdList)
+                foreach (uint eId in eIds)
                 {
                     bool isOnEdge = IsPointOnEdge(cad, eId, chkPt);
                     if (isOnEdge)
@@ -3463,12 +3461,12 @@ namespace IvyFEMProtoApp
         /// <param name="eId">辺ID</param>
         /// <param name="chkPt">チェックするポイント</param>
         /// <returns></returns>
-        private static bool IsPointOnEdge(CadObject2D cad, uint eId, OpenTK.Vector2d chkPt)
+        private static bool IsPointOnEdge(Cad2D cad, uint eId, OpenTK.Vector2d chkPt)
         {
             bool isOnEdge = false;
             uint vId1 = 0;
             uint vId2 = 0;
-            GetVertexIdsOfEdgeId(cad, eId, out vId1, out vId2);
+            GetEdgeVertexId(cad, eId, out vId1, out vId2);
             OpenTK.Vector2d ppV1 = cad.GetVertexCoord(vId1);
             OpenTK.Vector2d ppV2 = cad.GetVertexCoord(vId2);
             isOnEdge = IsPointOnEdge(ppV1, ppV2, chkPt);
@@ -3505,14 +3503,14 @@ namespace IvyFEMProtoApp
         /// <param name="chkEId">含むかチェックする辺のID</param>
         /// <returns></returns>
         private static bool IsEdgeIncludingEdge(
-            CadObject2D cad, OpenTK.Vector2d ppV1, OpenTK.Vector2d ppV2, uint chkEId)
+            Cad2D cad, OpenTK.Vector2d ppV1, OpenTK.Vector2d ppV2, uint chkEId)
         {
             bool isIncluding = false;
 
             // チェックする辺の始点と終点を取得
             uint chkVId1 = 0;
             uint chkVId2 = 0;
-            GetVertexIdsOfEdgeId(cad, chkEId, out chkVId1, out chkVId2);
+            GetEdgeVertexId(cad, chkEId, out chkVId1, out chkVId2);
             OpenTK.Vector2d chkPPV1 = cad.GetVertexCoord(chkVId1);
             OpenTK.Vector2d chkPPV2 = cad.GetVertexCoord(chkVId2);
 
@@ -3534,27 +3532,27 @@ namespace IvyFEMProtoApp
         /// <param name="chkPt">これから作成する辺の終点ポイント</param>
         /// <param name="loopIds">これまでに追加されたループのリスト</param>
         /// <returns>辺IDのリスト</returns>
-        private static IList<uint> GetEdgeListIdIncludedByNewEdge(
-            CadObject2D cad, OpenTK.Vector2d chkPPV1, OpenTK.Vector2d chkPPV2, IList<uint> loopIds)
+        private static IList<uint> GetEdgeIdsIncludedByNewEdge(
+            Cad2D cad, OpenTK.Vector2d chkPPV1, OpenTK.Vector2d chkPPV2, IList<uint> loopIds)
         {
-            IList<uint> hitEIdList = new List<uint>();
+            IList<uint> hitEIds = new List<uint>();
 
             foreach (uint lId in loopIds)
             {
-                IList<uint> vIdList = null;
-                IList<uint> eIdList = null;
-                GetEdgeVertexListOfLoop(cad, lId, out vIdList, out eIdList);
+                IList<uint> vIds = null;
+                IList<uint> eIds = null;
+                GetLoopVertexsAndEdges(cad, lId, out vIds, out eIds);
 
-                foreach (uint eId in eIdList)
+                foreach (uint eId in eIds)
                 {
                     bool isIncluding = IsEdgeIncludingEdge(cad, chkPPV1, chkPPV2, eId);
                     if (isIncluding)
                     {
-                        hitEIdList.Add(eId);
+                        hitEIds.Add(eId);
                     }
                 }
             }
-            return hitEIdList;
+            return hitEIds;
         }
 
         /// <summary>
@@ -3566,14 +3564,14 @@ namespace IvyFEMProtoApp
         /// <param name="loopIds">これまでに追加したループのリスト</param>
         /// <param name="minDistanceVId">開始頂点ID</param>
         /// <param name="maxDistanceVId">終了頂点ID</param>
-        private static void GetIncludedEdgesStEndVId(
-            CadObject2D cad, OpenTK.Vector2d ppV1, OpenTK.Vector2d ppV2, IList<uint> loopIds,
+        private static void GetIncludedEdgesSartEndVId(
+            Cad2D cad, OpenTK.Vector2d ppV1, OpenTK.Vector2d ppV2, IList<uint> loopIds,
             out uint minDistanceVId, out uint maxDistanceVId)
         {
             minDistanceVId = 0;
             maxDistanceVId = 0;
 
-            IList<uint> includedEIds = GetEdgeListIdIncludedByNewEdge(cad, ppV1, ppV2, loopIds);
+            IList<uint> includedEIds = GetEdgeIdsIncludedByNewEdge(cad, ppV1, ppV2, loopIds);
             if (includedEIds.Count != 0)
             {
                 // 下記のみを考慮
@@ -3588,7 +3586,7 @@ namespace IvyFEMProtoApp
                     // 含まれる辺の頂点IDを取得
                     uint vId1OfIncludedEdge = 0;
                     uint vId2OfIncludedEdge = 0;
-                    GetVertexIdsOfEdgeId(cad, includedEId, out vId1OfIncludedEdge, out vId2OfIncludedEdge);
+                    GetEdgeVertexId(cad, includedEId, out vId1OfIncludedEdge, out vId2OfIncludedEdge);
                     OpenTK.Vector2d ppV1OfIncludedEdge = cad.GetVertexCoord(vId1OfIncludedEdge);
                     OpenTK.Vector2d ppV2OfIncludedEdge = cad.GetVertexCoord(vId2OfIncludedEdge);
                     // これから作成する辺の始点から頂点までの距離を取得
@@ -3626,7 +3624,7 @@ namespace IvyFEMProtoApp
         /// <param name="loopIds">これまでに追加されたループのリスト</param>
         /// <returns></returns>
         private static uint MakeLoop(
-            CadObject2D cad, IList<OpenTK.Vector2d> pps, IList<uint> loopIds, bool showErrorFlg)
+            Cad2D cad, IList<OpenTK.Vector2d> pps, IList<uint> loopIds, bool showErrorFlg)
         {
             // 多角形でループを作成するのを止める
             //uint id_l = out_cad.AddPolygon(pps, baseLoopId).id_l_add;

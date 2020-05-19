@@ -33,14 +33,14 @@ namespace IvyFEMProtoApp
             double E = 169.0e+9;
             double rho = 2300.0;
             double nu = 0.262;
-            CadObject2D cad = new CadObject2D();
+            Cad2D cad = new Cad2D();
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
                 pts.Add(new OpenTK.Vector2d(0.0, 0.0));
                 pts.Add(new OpenTK.Vector2d(beamLen, 0.0));
                 pts.Add(new OpenTK.Vector2d(beamLen, h));
                 pts.Add(new OpenTK.Vector2d(0.0, h));
-                var res = cad.AddPolygon(pts);
+                uint lId1 = cad.AddPolygon(pts).AddLId;
             }
 
             Mesher2D mesher = new Mesher2D(cad, eLen);
@@ -61,7 +61,8 @@ namespace IvyFEMProtoApp
                 if (isSaintVenant)
                 {
                     var ma = new SaintVenantHyperelasticMaterial();
-                    ma.SetYoungPoisson(E, nu);
+                    ma.Young = E;
+                    ma.Poisson = nu;
                     ma.GravityX = 0;
                     ma.GravityY = 0;
                     ma.MassDensity = rho;
@@ -70,7 +71,8 @@ namespace IvyFEMProtoApp
                 else
                 {
                     var ma = new LinearElasticMaterial();
-                    ma.SetYoungPoisson(E, nu);
+                    ma.Young = E;
+                    ma.Poisson = nu;
                     ma.GravityX = 0;
                     ma.GravityY = 0;
                     ma.MassDensity = rho;
@@ -101,12 +103,12 @@ namespace IvyFEMProtoApp
                     quantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
-                IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, false, world);
+                var faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, false, world);
                 fieldDrawerArray.Add(faceDrawer);
-                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(
+                var edgeDrawer = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, false, true, world);
                 fieldDrawerArray.Add(edgeDrawer);
-                IFieldDrawer edgeDrawer2 = new EdgeFieldDrawer(
+                var edgeDrawer2 = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, true, true, world);
                 fieldDrawerArray.Add(edgeDrawer2);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));

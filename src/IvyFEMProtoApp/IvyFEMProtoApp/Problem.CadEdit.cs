@@ -9,7 +9,7 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void CadObjLoadFromFile(string cadObjFileName, CadObject2D cad, CadEditWindow window)
+        public void CadObjLoadFromFile(string cadObjFileName, Cad2D cad, CadEditWindow window)
         {
             using (Serializer arch = new Serializer(cadObjFileName, true))
             {
@@ -20,7 +20,7 @@ namespace IvyFEMProtoApp
             window.GLControl.Update();
         }
 
-        public void CadObjSaveToFile(string cadObjFileName, CadObject2D cad)
+        public void CadObjSaveToFile(string cadObjFileName, Cad2D cad)
         {
             using (Serializer arch = new Serializer(cadObjFileName, false))
             {
@@ -44,7 +44,7 @@ namespace IvyFEMProtoApp
             }
         }
 
-        public void MeshObjFileTest(string meshObjFileName, CadObject2D cad)
+        public void MeshObjFileTest(string meshObjFileName, Cad2D cad)
         {
             double eLen = 2.0;
             Mesher2D mesher = new Mesher2D(cad, eLen);
@@ -56,7 +56,7 @@ namespace IvyFEMProtoApp
         }
 
         public void CalcSampleProblem(
-            CadObject2D cad, Camera camera, uint zeroEId, uint moveEId, CadEditWindow window)
+            Cad2D cad, Camera camera, uint zeroEId, uint moveEId, CadEditWindow window)
         {
             //double eLen = 0.1;
             double eLen = 0.02 * camera.HalfViewHeight;
@@ -77,7 +77,8 @@ namespace IvyFEMProtoApp
                 uint maId = 0;
                 {
                     var ma = new LinearElasticMaterial();
-                    ma.SetYoungPoisson(10.0, 0.3);
+                    ma.Young = 10.0;
+                    ma.Poisson = 0.3;
                     ma.GravityX = 0;
                     ma.GravityY = 0;
                     ma.MassDensity = 1.0;
@@ -105,7 +106,7 @@ namespace IvyFEMProtoApp
                     new { CadId = moveEId, CadElemType = CadElementType.Edge,
                         FixedDofIndexs = new List<uint> { 0, 1 }, Values = new List<double> { 0.0, 0.0 } }
                 };
-                IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(quantityId);
+                var fixedCads = world.GetFieldFixedCads(quantityId);
                 foreach (var data in fixedCadDatas)
                 {
                     // Vector2
@@ -130,13 +131,13 @@ namespace IvyFEMProtoApp
                 window.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
                 {
-                    IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, false, world);
+                    var faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, false, world);
                     fieldDrawerArray.Add(faceDrawer);
                 }
-                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(
+                var edgeDrawer = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, false, true, world);
                 fieldDrawerArray.Add(edgeDrawer);
-                IFieldDrawer edgeDrawer2 = new EdgeFieldDrawer(
+                var edgeDrawer2 = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, true, true, world);
                 fieldDrawerArray.Add(edgeDrawer2);
                 //camera.Fit(fieldDrawerArray.GetBoundingBox(camera.RotMatrix33()));

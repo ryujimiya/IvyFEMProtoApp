@@ -51,7 +51,7 @@ namespace IvyFEMProtoApp
             //int freqDiv = 1; // DEBUG
 
             double stripOffsetX = (waveguideWidth - stripWidth) / 2.0;
-            CadObject2D cad = new CadObject2D();
+            Cad2D cad = new Cad2D();
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
                 pts.Add(new OpenTK.Vector2d(0.0, waveguideHeight));
@@ -86,7 +86,7 @@ namespace IvyFEMProtoApp
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new CadObject2DDrawer(cad);
+            var drawer = new Cad2DDrawer(cad);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -99,7 +99,7 @@ namespace IvyFEMProtoApp
             /*
             mainWindow.IsFieldDraw = false;
             drawerArray.Clear();
-            IDrawer meshDrawer = new Mesher2DDrawer(mesher);
+            var meshDrawer = new Mesher2DDrawer(mesher);
             mainWindow.DrawerArray.Add(meshDrawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -264,13 +264,13 @@ namespace IvyFEMProtoApp
 
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
-                IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, true, world,
+                var faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, true, world,
                     valueId, FieldDerivativeType.Value);
                 fieldDrawerArray.Add(faceDrawer);
-                IFieldDrawer vectorDrawer = new VectorFieldDrawer(
+                var vectorDrawer = new VectorFieldDrawer(
                     vecValueId, FieldDerivativeType.Value, world);
                 fieldDrawerArray.Add(vectorDrawer);
-                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(
+                var edgeDrawer = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, true, false, world);
                 fieldDrawerArray.Add(edgeDrawer);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));

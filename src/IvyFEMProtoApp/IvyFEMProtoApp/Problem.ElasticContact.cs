@@ -14,14 +14,14 @@ namespace IvyFEMProtoApp
     {
         public void ElasticContactTDProblem(MainWindow mainWindow, bool isSaintVenant)
         {
-            CadObject2D cad = new CadObject2D();
+            Cad2D cad = new Cad2D();
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
                 pts.Add(new OpenTK.Vector2d(0.0, 0.0));
                 pts.Add(new OpenTK.Vector2d(1.0, 0.0));
                 pts.Add(new OpenTK.Vector2d(1.0, 5.0));
                 pts.Add(new OpenTK.Vector2d(0.0, 5.0));
-                var res = cad.AddPolygon(pts);
+                uint lId1 = cad.AddPolygon(pts).AddLId;
             }
 
             double eLen = 0.1;
@@ -47,7 +47,8 @@ namespace IvyFEMProtoApp
                 if (isSaintVenant)
                 {
                     var ma = new SaintVenantHyperelasticMaterial();
-                    ma.SetYoungPoisson(300, 0.3);
+                    ma.Young = 300;
+                    ma.Poisson = 0.3;
                     ma.GravityX = 0;
                     ma.GravityY = 0;
                     ma.MassDensity = 1.0;
@@ -56,7 +57,8 @@ namespace IvyFEMProtoApp
                 else
                 {
                     var ma = new LinearElasticMaterial();
-                    ma.SetYoungPoisson(300, 0.3);
+                    ma.Young = 300;
+                    ma.Poisson = 0.3;
                     ma.GravityX = 0;
                     ma.GravityY = 0;
                     ma.MassDensity = 1.0;
@@ -75,7 +77,7 @@ namespace IvyFEMProtoApp
                     new { CadId = (uint)3, CadElemType = CadElementType.Edge,
                         FixedDofIndexs = new List<uint> { 0, 1 }, Values = new List<double> { 0.0, 0.0 } }
                 };
-                IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(uQuantityId);
+                var fixedCads = world.GetFieldFixedCads(uQuantityId);
                 foreach (var data in fixedCadDatas)
                 {
                     // Vector2
@@ -120,12 +122,12 @@ namespace IvyFEMProtoApp
                 fieldDrawerArray.Clear();
                 ConstraintDrawer constraintDrawer = new ConstraintDrawer(lineConstraint);
                 fieldDrawerArray.Add(constraintDrawer);
-                IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, false, world);
+                var faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, false, world);
                 fieldDrawerArray.Add(faceDrawer);
-                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(
+                var edgeDrawer = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, false, true, world);
                 fieldDrawerArray.Add(edgeDrawer);
-                IFieldDrawer edgeDrawer2 = new EdgeFieldDrawer(
+                var edgeDrawer2 = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, true, true, world);
                 fieldDrawerArray.Add(edgeDrawer2);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
@@ -185,14 +187,14 @@ namespace IvyFEMProtoApp
 
         public void ElasticCircleContactTDProblem(MainWindow mainWindow, bool isSaintVenant)
         {
-            CadObject2D cad = new CadObject2D();
+            Cad2D cad = new Cad2D();
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
                 pts.Add(new OpenTK.Vector2d(0.0, 0.0));
                 pts.Add(new OpenTK.Vector2d(1.0, 0.0));
                 pts.Add(new OpenTK.Vector2d(1.0, 5.0));
                 pts.Add(new OpenTK.Vector2d(0.0, 5.0));
-                var res = cad.AddPolygon(pts);
+                uint lId1 = cad.AddPolygon(pts).AddLId;
             }
 
             double eLen = 0.1;
@@ -218,7 +220,8 @@ namespace IvyFEMProtoApp
                 if (isSaintVenant)
                 {
                     var ma = new SaintVenantHyperelasticMaterial();
-                    ma.SetYoungPoisson(300, 0.3);
+                    ma.Young = 300;
+                    ma.Poisson = 0.3;
                     ma.GravityX = 0;
                     ma.GravityY = -1.0;
                     ma.MassDensity = 1.0;
@@ -227,7 +230,8 @@ namespace IvyFEMProtoApp
                 else
                 {
                     var ma = new LinearElasticMaterial();
-                    ma.SetYoungPoisson(300, 0.3);
+                    ma.Young = 300;
+                    ma.Poisson = 0.3;
                     ma.GravityX = 0;
                     ma.GravityY = -1.0;
                     ma.MassDensity = 1.0;
@@ -271,12 +275,12 @@ namespace IvyFEMProtoApp
                 fieldDrawerArray.Clear();
                 ConstraintDrawer constraintDrawer = new ConstraintDrawer(circleConstraint);
                 fieldDrawerArray.Add(constraintDrawer);
-                IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, false, world);
+                var faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, false, world);
                 fieldDrawerArray.Add(faceDrawer);
-                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(
+                var edgeDrawer = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, false, true, world);
                 fieldDrawerArray.Add(edgeDrawer);
-                IFieldDrawer edgeDrawer2 = new EdgeFieldDrawer(
+                var edgeDrawer2 = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, true, true, world);
                 fieldDrawerArray.Add(edgeDrawer2);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));

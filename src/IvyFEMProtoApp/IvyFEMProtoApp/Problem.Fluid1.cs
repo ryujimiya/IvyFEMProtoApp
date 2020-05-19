@@ -13,7 +13,7 @@ namespace IvyFEMProtoApp
         {
             //FluidEquationType fluidEquationType = FluidEquationType.StdGNavierStokes
             //FluidEquationType fluidEquationType = FluidEquationType.SUPGNavierStokes;
-            CadObject2D cad = new CadObject2D();
+            Cad2D cad = new Cad2D();
             {
                 uint lId1 = 0;
                 {
@@ -30,7 +30,7 @@ namespace IvyFEMProtoApp
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new CadObject2DDrawer(cad);
+            var drawer = new Cad2DDrawer(cad);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -117,7 +117,7 @@ namespace IvyFEMProtoApp
                     new { CadId = (uint)3, CadElemType = CadElementType.Edge,
                         FixedDofIndexs = new List<uint> { 0, 1 }, Values = new List<double> { 0.5, 0.0 } }
                 };
-                IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(vQuantityId);
+                var fixedCads = world.GetFieldFixedCads(vQuantityId);
                 foreach (var data in fixedCadDatas)
                 {
                     // Vector2
@@ -145,13 +145,13 @@ namespace IvyFEMProtoApp
                     pQuantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
-                IFieldDrawer vectorDrawer = new VectorFieldDrawer(
+                var vectorDrawer = new VectorFieldDrawer(
                     bubbleVValueId, FieldDerivativeType.Value, world);
                 fieldDrawerArray.Add(vectorDrawer);
-                IFieldDrawer faceDrawer = new FaceFieldDrawer(pValueId, FieldDerivativeType.Value, true, world,
+                var faceDrawer = new FaceFieldDrawer(pValueId, FieldDerivativeType.Value, true, world,
                     pValueId, FieldDerivativeType.Value);
                 fieldDrawerArray.Add(faceDrawer);
-                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(
+                var edgeDrawer = new EdgeFieldDrawer(
                     vValueId, FieldDerivativeType.Value, true, false, world);
                 fieldDrawerArray.Add(edgeDrawer);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
@@ -250,7 +250,7 @@ namespace IvyFEMProtoApp
         {
             //FluidEquationType fluidEquationType = FluidEquationType.StdGNavierStokes
             //FluidEquationType fluidEquationType = FluidEquationType.SUPGNavierStokes;
-            CadObject2D cad = new CadObject2D();
+            Cad2D cad = new Cad2D();
             {
                 uint lId1 = 0;
                 {
@@ -267,7 +267,7 @@ namespace IvyFEMProtoApp
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new CadObject2DDrawer(cad);
+            var drawer = new Cad2DDrawer(cad);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -355,7 +355,7 @@ namespace IvyFEMProtoApp
                     new { CadId = (uint)3, CadElemType = CadElementType.Edge,
                         FixedDofIndexs = new List<uint> { 0, 1 }, Values = new List<double> { 0.5, 0.0 } }
                 };
-                IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(vQuantityId);
+                var fixedCads = world.GetFieldFixedCads(vQuantityId);
                 foreach (var data in fixedCadDatas)
                 {
                     // Vector2
@@ -388,13 +388,13 @@ namespace IvyFEMProtoApp
                     pQuantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
-                IFieldDrawer vectorDrawer = new VectorFieldDrawer(
+                var vectorDrawer = new VectorFieldDrawer(
                     bubbleVValueId, FieldDerivativeType.Value, world);
                 fieldDrawerArray.Add(vectorDrawer);
-                IFieldDrawer faceDrawer = new FaceFieldDrawer(pValueId, FieldDerivativeType.Value, true, world,
+                var faceDrawer = new FaceFieldDrawer(pValueId, FieldDerivativeType.Value, true, world,
                     pValueId, FieldDerivativeType.Value);
                 fieldDrawerArray.Add(faceDrawer);
-                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(
+                var edgeDrawer = new EdgeFieldDrawer(
                     vValueId, FieldDerivativeType.Value, true, false, world);
                 fieldDrawerArray.Add(edgeDrawer);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));

@@ -15,12 +15,15 @@
         <DockPanel>
             <Menu RenderTransformOrigin="0.501,-2.5" DockPanel.Dock="Top">
                 <MenuItem Header="Cad">
-                    <MenuItem Header="Cad2D" Click="Cad2DBtn_Click"/>
-                    <MenuItem Header="Coare Mesh2D" Click="CoarseMesh2DBtn_Click"/>
-                    <MenuItem Header="Mesh2D" Click="Mesh2DBtn_Click"/>
-                    <MenuItem Header="Mesh2D(Hollow Loop)" Click="Mesh2DHollowLoopBtn_Click"/>
-                    <Separator/>
+                    <MenuItem Header="Cad" Click="CadBtn_Click"/>
+                    <MenuItem Header="Coare Mesh" Click="CoarseMeshBtn_Click"/>
+                    <MenuItem Header="Mesh" Click="MeshBtn_Click"/>
+                    <MenuItem Header="Mesh(Hollow Loop)" Click="MeshHollowLoopBtn_Click"/>
                     <MenuItem Header="DrawString" Click="DrawStringBtn_Click"/>
+                    <Separator/>
+                    <MenuItem Header="Cad(3D)" Click="Cad3DBtn_Click"/>
+                    <MenuItem Header="Coare Mesh(3D)" Click="CoarseMesh3DBtn_Click"/>
+                    <MenuItem Header="Mesh(3D)" Click="Mesh3DBtn_Click"/>
                 </MenuItem>
                 <MenuItem Header="Numerics">
                     <MenuItem Header="LAPACK" Click="LapackBtn_Click"/>
@@ -78,6 +81,7 @@
                         <MenuItem Header="Mooney-Rivlin(2 Body Contact)(Time Domain)" Click="MooneyRivlinHyperelasticTwoBodyContactTDBtn_Click"/>
                         <MenuItem Header="Ogden(2 Body Contact)(Time Domain)" Click="OgdenHyperelasticTwoBodyContactTDBtn_Click"/>
                     </MenuItem>
+                    <Separator/>
                     <MenuItem Header="Truss">
                         <MenuItem Header="Truss(1)" Click="Truss1Btn_Click"/>
                         <MenuItem Header="Truss(1)(Time Domain)" Click="TrussTD1Btn_Click"/>
@@ -87,24 +91,25 @@
                     <MenuItem Header="Beam">
                         <MenuItem Header="Beam(1)" Click="Beam1Btn_Click"/>
                         <MenuItem Header="Beam(1)(Time Domain)" Click="BeamTD1Btn_Click"/>
-                        <MenuItem Header="Beam(1)(Eigen)" Click="BeamEigen1Btn_Click"/>
                         <MenuItem Header="Beam(2)" Click="Beam2Btn_Click"/>
                         <MenuItem Header="Beam(2)(Time Domain)" Click="BeamTD2Btn_Click"/>
                         <MenuItem Header="Beam(3)" Click="Beam3Btn_Click"/>
                         <MenuItem Header="Beam(3)(Time Domain)" Click="BeamTD3Btn_Click"/>
                         <Separator/>
+                        <MenuItem Header="Beam(1)(Eigen)" Click="BeamEigen1Btn_Click"/>
+                        <Separator/>
                         <MenuItem Header="Beam(1)(Timoshenko)" Click="TimoshenkoBeam1Btn_Click"/>
                         <MenuItem Header="Beam(1)(Timoshenko)(Time Domain)" Click="TimoshenkoBeamTD1Btn_Click"/>
-                        <MenuItem Header="Beam(1)(Timoshenko)(Eigen)" Click="TimoshenkoBeamEigen1Btn_Click"/>
                         <MenuItem Header="Beam(2)(Timoshenko)" Click="TimoshenkoBeam2Btn_Click"/>
                         <MenuItem Header="Beam(2)(Timoshenko)(Time Domain)" Click="TimoshenkoBeamTD2Btn_Click"/>
                         <MenuItem Header="Beam(3)(Timoshenko)" Click="TimoshenkoBeam3Btn_Click"/>
                         <MenuItem Header="Beam(3)(Timoshenko)(Time Domain)" Click="TimoshenkoBeamTD3Btn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="Beam(1)(Timoshenko)(Eigen)" Click="TimoshenkoBeamEigen1Btn_Click"/>
                     </MenuItem>
                     <MenuItem Header="Frame">
                         <MenuItem Header="Frame(0)" Click="Frame0Btn_Click"/>
                         <MenuItem Header="Frame(0)(Time Domain)" Click="FrameTD0Btn_Click"/>
-                        <MenuItem Header="Frame(0)(Eigen)" Click="FrameEigen0Btn_Click"/>
                         <MenuItem Header="Frame(1)" Click="Frame1Btn_Click"/>
                         <MenuItem Header="Frame(1)(Time Domain)" Click="FrameTD1Btn_Click"/>
                         <MenuItem Header="Frame(2)" Click="Frame2Btn_Click"/>
@@ -112,15 +117,18 @@
                         <MenuItem Header="Frame(3)" Click="Frame3Btn_Click"/>
                         <MenuItem Header="Frame(3)(Time Domain)" Click="FrameTD3Btn_Click"/>
                         <Separator/>
+                        <MenuItem Header="Frame(0)(Eigen)" Click="FrameEigen0Btn_Click"/>
+                        <Separator/>
                         <MenuItem Header="Frame(0)(Timoshenko)" Click="TimoshenkoFrame0Btn_Click"/>
                         <MenuItem Header="Frame(0)(Timoshenko)(Time Domain)" Click="TimoshenkoFrameTD0Btn_Click"/>
-                        <MenuItem Header="Frame(0)(Timoshenko)(Eigen)" Click="TimoshenkoFrameEigen0Btn_Click"/>
                         <MenuItem Header="Frame(1)(Timoshenko)" Click="TimoshenkoFrame1Btn_Click"/>
                         <MenuItem Header="Frame(1)(Timoshenko)(Time Domain)" Click="TimoshenkoFrameTD1Btn_Click"/>
                         <MenuItem Header="Frame(2)(Timoshenko)" Click="TimoshenkoFrame2Btn_Click"/>
                         <MenuItem Header="Frame(2)(Timoshenko)(Time Domain)" Click="TimoshenkoFrameTD2Btn_Click"/>
                         <MenuItem Header="Frame(3)(Timoshenko)" Click="TimoshenkoFrame3Btn_Click"/>
                         <MenuItem Header="Frame(3)(Timoshenko)(Time Domain)" Click="TimoshenkoFrameTD3Btn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="Frame(0)(Timoshenko)(Eigen)" Click="TimoshenkoFrameEigen0Btn_Click"/>
                     </MenuItem>
                     <MenuItem Header="Corotational Frame">
                         <MenuItem Header="Corotational Frame(0)" Click="CorotationalFrame0Btn_Click"/>
@@ -159,6 +167,16 @@
                         <MenuItem Header="TL Frame(2)(Timoshenko)(Time Domain)" Click="TimoshenkoTLFrameTD2Btn_Click"/>
                         <MenuItem Header="TL Frame(3)(Timoshenko)" Click="TimoshenkoTLFrame3Btn_Click"/>
                         <MenuItem Header="TL Frame(3)(Timoshenko)(Time Domain)" Click="TimoshenkoTLFrameTD3Btn_Click"/>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Plate(DKT)">
+                        <MenuItem Header="Plate(DKT)(1)" Click="DKTPlate1Btn_Click"/>
+                        <MenuItem Header="Plate(DKT)(1)(Time Domain)" Click="DKTPlateTD1Btn_Click"/>
+                        <MenuItem Header="Plate(DKT)(2)" Click="DKTPlate2Btn_Click"/>
+                        <MenuItem Header="Plate(DKT)(2)(Time Domain)" Click="DKTPlateTD2Btn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="Plate(DKT)(1)(Eigen)" Click="DKTPlateEigen1Btn_Click"/>
+                        <MenuItem Header="Plate(DKT)(2)(Eigen)" Click="DKTPlateEigen2Btn_Click"/>
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Various Equations">

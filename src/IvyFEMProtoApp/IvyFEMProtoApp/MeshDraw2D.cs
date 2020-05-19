@@ -47,7 +47,7 @@ namespace IvyFEMProtoApp
                 drawerArray.Clear();
 
                 //drawerArray.Add(BackgroundDrawer);
-                IDrawer mesh2DDrawer = new Mesher2DDrawer(mesher);
+                var mesh2DDrawer = new Mesher2DDrawer(mesher);
                 drawerArray.Add(mesh2DDrawer);
 
                 SetupRegionSize();

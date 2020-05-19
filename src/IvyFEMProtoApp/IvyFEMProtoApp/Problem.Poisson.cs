@@ -11,20 +11,19 @@ namespace IvyFEMProtoApp
     {
         public void PoissonProblem(MainWindow mainWindow)
         {
-            CadObject2D cad = new CadObject2D();
+            Cad2D cad = new Cad2D();
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
                 pts.Add(new OpenTK.Vector2d(0.0, 0.0));
                 pts.Add(new OpenTK.Vector2d(1.0, 0.0));
                 pts.Add(new OpenTK.Vector2d(1.0, 1.0));
                 pts.Add(new OpenTK.Vector2d(0.0, 1.0));
-                var res = cad.AddPolygon(pts);
-                uint addLId = res.AddLId;
-                System.Diagnostics.Debug.Assert(addLId == 1);
+                uint lId1 = cad.AddPolygon(pts).AddLId;
+                System.Diagnostics.Debug.Assert(lId1 == 1);
 
                 // ソース
-                var res2 = cad.AddCircle(new OpenTK.Vector2d(0.5, 0.5), 0.1, addLId);
-                System.Diagnostics.Debug.Assert(res2.AddLId == 2);
+                uint lId2 = cad.AddCircle(new OpenTK.Vector2d(0.5, 0.5), 0.1, lId1).AddLId;
+                System.Diagnostics.Debug.Assert(lId2 == 2);
 
                 // 導体
                 IList<OpenTK.Vector2d> pts2 = new List<OpenTK.Vector2d>();
@@ -32,14 +31,14 @@ namespace IvyFEMProtoApp
                 pts2.Add(new OpenTK.Vector2d(0.3, 0.2));
                 pts2.Add(new OpenTK.Vector2d(0.3, 0.3));
                 pts2.Add(new OpenTK.Vector2d(0.2, 0.3));
-                var res3 = cad.AddPolygon(pts2, addLId);
-                System.Diagnostics.Debug.Assert(res3.AddLId == 3);
+                uint lId3 = cad.AddPolygon(pts2, lId1).AddLId;
+                System.Diagnostics.Debug.Assert(lId3 == 3);
             }
 
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new CadObject2DDrawer(cad);
+            var drawer = new Cad2DDrawer(cad);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -59,9 +58,9 @@ namespace IvyFEMProtoApp
                 {
                     continue;
                 }
-                mesher.AddCutMeshLoopCadId(lId, eLen);
+                mesher.AddMeshingLoopCadId(lId, eLen);
             }
-            mesher.Meshing(cad);
+            mesher.MakeMesh(cad);
 
             FEWorld world = new FEWorld();
             world.Mesh = mesher;
@@ -117,10 +116,10 @@ namespace IvyFEMProtoApp
                     quantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
-                IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, true, world,
+                var faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, true, world,
                     valueId, FieldDerivativeType.Value);
                 fieldDrawerArray.Add(faceDrawer);
-                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(
+                var edgeDrawer = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, true, false, world);
                 fieldDrawerArray.Add(edgeDrawer);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));

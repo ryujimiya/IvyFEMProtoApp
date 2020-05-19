@@ -12,7 +12,7 @@ namespace IvyFEMProtoApp
         public void VorticityFluidRKTDProblem2(MainWindow mainWindow)
         {
             FluidEquationType fluidEquationType = FluidEquationType.StdGVorticity;
-            CadObject2D cad = new CadObject2D();
+            Cad2D cad = new Cad2D();
             {
                 uint lId1 = 0;
                 uint lId2 = 0;
@@ -36,7 +36,7 @@ namespace IvyFEMProtoApp
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new CadObject2DDrawer(cad);
+            var drawer = new Cad2DDrawer(cad);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -122,7 +122,7 @@ namespace IvyFEMProtoApp
             // ω(分布)を指定
             DistributedFieldFixedCad wSrcFixedCad;
             {
-                IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(wQuantityId);
+                var fixedCads = world.GetFieldFixedCads(wQuantityId);
                 var fixedCadDatas = new[]
                 {
                     new { CadId = (uint)8, CadElemType = CadElementType.Edge,
@@ -140,7 +140,7 @@ namespace IvyFEMProtoApp
 
             DistributedFieldFixedCad pSrcFixedCad;
             {
-                IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(pQuantityId);
+                var fixedCads = world.GetFieldFixedCads(pQuantityId);
                 // ψ(分布)を指定
                 {
                     var fixedCadDatas = new[]
@@ -275,13 +275,13 @@ namespace IvyFEMProtoApp
                     pQuantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
-                IFieldDrawer vectorDrawer = new VectorFieldDrawer(
+                var vectorDrawer = new VectorFieldDrawer(
                     bubbleVValueId, FieldDerivativeType.Value, world);
                 fieldDrawerArray.Add(vectorDrawer);
-                IFieldDrawer faceDrawer = new FaceFieldDrawer(wValueId, FieldDerivativeType.Value, true, world,
+                var faceDrawer = new FaceFieldDrawer(wValueId, FieldDerivativeType.Value, true, world,
                     wValueId, FieldDerivativeType.Value);
                 fieldDrawerArray.Add(faceDrawer);
-                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(
+                var edgeDrawer = new EdgeFieldDrawer(
                     wValueId, FieldDerivativeType.Value, true, false, world);
                 fieldDrawerArray.Add(edgeDrawer);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));

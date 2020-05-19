@@ -155,7 +155,7 @@ namespace IvyFEMProtoApp
             uint[] inputWgBaseLoopIds = { 1, 9, 5, 7, 3 };
 
             // Cad
-            CadObject2D cad = new CadObject2D();
+            Cad2D cad = new Cad2D();
             cad.IsSkipAssertValid = true; // AssertValidを無視する
             {
                 System.Diagnostics.Debug.Assert(Math.Abs(port10PosXB1 - 0.0) < 1.0e-12);
@@ -437,7 +437,7 @@ namespace IvyFEMProtoApp
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new CadObject2DDrawer(cad);
+            var drawer = new Cad2DDrawer(cad);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -450,7 +450,7 @@ namespace IvyFEMProtoApp
             /*
             mainWindow.IsFieldDraw = false;
             drawerArray.Clear();
-            IDrawer meshDrawer = new Mesher2DDrawer(mesher);
+            var meshDrawer = new Mesher2DDrawer(mesher);
             mainWindow.DrawerArray.Add(meshDrawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -735,10 +735,10 @@ namespace IvyFEMProtoApp
                     quantityId, false, FieldShowType.Real);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
-                IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, true, world,
+                var faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, true, world,
                     valueId, FieldDerivativeType.Value);
                 fieldDrawerArray.Add(faceDrawer);
-                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(
+                var edgeDrawer = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, true, false, world);
                 fieldDrawerArray.Add(edgeDrawer);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));

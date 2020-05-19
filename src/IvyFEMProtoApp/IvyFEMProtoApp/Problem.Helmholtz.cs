@@ -11,24 +11,23 @@ namespace IvyFEMProtoApp
     {
         public void HelmholtzProblem(MainWindow mainWindow)
         {
-            CadObject2D cad = new CadObject2D();
+            Cad2D cad = new Cad2D();
             {
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
                 pts.Add(new OpenTK.Vector2d(0.0, 0.0));
                 pts.Add(new OpenTK.Vector2d(1.0, 0.0));
                 pts.Add(new OpenTK.Vector2d(1.0, 1.0));
                 pts.Add(new OpenTK.Vector2d(0.0, 1.0));
-                var res = cad.AddPolygon(pts);
-                uint addLId = res.AddLId;
-                System.Diagnostics.Debug.Assert(addLId == 1);
-                uint addVId = cad.AddVertex(CadElementType.Loop, addLId, new OpenTK.Vector2d(0.5, 0.5)).AddVId;
+                uint lId1 = cad.AddPolygon(pts).AddLId;
+                System.Diagnostics.Debug.Assert(lId1 == 1);
+                uint addVId = cad.AddVertex(CadElementType.Loop, lId1, new OpenTK.Vector2d(0.5, 0.5)).AddVId;
                 System.Diagnostics.Debug.Assert(addVId == 5);
             }
 
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new CadObject2DDrawer(cad);
+            var drawer = new Cad2DDrawer(cad);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -85,7 +84,7 @@ namespace IvyFEMProtoApp
                     new { CadId = (uint)5, CadElemType = CadElementType.Vertex,
                         FixedDofIndexs = new List<uint> { 0 }, Values = new System.Numerics.Complex[] { 1.0 } }
                 };
-                IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(quantityId);
+                var fixedCads = world.GetFieldFixedCads(quantityId);
                 foreach (var data in fixedCadDatas)
                 {
                     // 複素数
@@ -106,10 +105,10 @@ namespace IvyFEMProtoApp
                     quantityId, false, FieldShowType.ZReal);
                 mainWindow.IsFieldDraw = true;
                 fieldDrawerArray.Clear();
-                IFieldDrawer faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, true, world,
+                var faceDrawer = new FaceFieldDrawer(valueId, FieldDerivativeType.Value, true, world,
                     valueId, FieldDerivativeType.Value);
                 fieldDrawerArray.Add(faceDrawer);
-                IFieldDrawer edgeDrawer = new EdgeFieldDrawer(
+                var edgeDrawer = new EdgeFieldDrawer(
                     valueId, FieldDerivativeType.Value, true, false, world);
                 fieldDrawerArray.Add(edgeDrawer);
                 mainWindow.Camera.Fit(fieldDrawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));

@@ -19,7 +19,7 @@ namespace IvyFEMProtoApp
             double h = 0.25 * b;
             int divCnt = 10;
             double eLen = 0.95 * beamLen / (double)divCnt;
-            CadObject2D cad = new CadObject2D();
+            Cad2D cad = new Cad2D();
             {
                 uint lId0 = 0;
                 uint vId1 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(0.0, 0.0)).AddVId;
@@ -38,7 +38,7 @@ namespace IvyFEMProtoApp
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new CadObject2DDrawer(cad);
+            var drawer = new Cad2DDrawer(cad);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -52,15 +52,15 @@ namespace IvyFEMProtoApp
                 IList<uint> eIds = cad.GetElementIds(CadElementType.Edge);
                 foreach (uint eId in eIds)
                 {
-                    mesher.AddCutMeshEdgeCadId(eId, eLen);
+                    mesher.AddMeshingEdgeCadId(eId, eLen);
                 }
             }
-            mesher.Meshing(cad);
+            mesher.MakeMesh(cad);
 
             /*
             mainWindow.IsFieldDraw = false;
             drawerArray.Clear();
-            IDrawer meshDrawer = new Mesher2DDrawer(mesher);
+            var meshDrawer = new Mesher2DDrawer(mesher);
             mainWindow.DrawerArray.Add(meshDrawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -108,7 +108,7 @@ namespace IvyFEMProtoApp
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
                     ma.Poisson = 0.262;
-                    ma.TimoshenkoShearCoefficient = 5.0 / 6.0; // 長方形断面
+                    ma.ShearCorrectionFactor = 5.0 / 6.0; // 長方形断面
                     beamMaId = world.AddMaterial(ma);
                 }
                 else
@@ -162,7 +162,7 @@ namespace IvyFEMProtoApp
                     new { CadId = (uint)2, CadElemType = CadElementType.Vertex,
                         FixedDofIndexs = new List<uint> { 0 }, Values = new List<double> { 0.0 } },
                 };
-                IList<FieldFixedCad> fixedCads = world.GetForceFieldFixedCads(dQuantityId);
+                var fixedCads = world.GetForceFieldFixedCads(dQuantityId);
                 foreach (var data in fixedCadDatas)
                 {
                     // Scalar
@@ -182,7 +182,7 @@ namespace IvyFEMProtoApp
                     new { CadId = (uint)2, CadElemType = CadElementType.Vertex,
                         FixedDofIndexs = new List<uint> { 0 }, Values = new List<double> { 0.0 } },
                 };
-                IList<FieldFixedCad> fixedCads = world.GetForceFieldFixedCads(rQuantityId);
+                var fixedCads = world.GetForceFieldFixedCads(rQuantityId);
                 foreach (var data in fixedCadDatas)
                 {
                     // Scalar
@@ -250,9 +250,9 @@ namespace IvyFEMProtoApp
                     FEM.Solver = solver;
                 }
                 FEM.Solve();
-                double[] Uwt = FEM.U;
+                double[] Uvt = FEM.U;
 
-                // 変位(u,w)へ変換する
+                // 変位(u,v)へ変換する
                 int coCnt = (int)world.GetCoordCount(dQuantityId);
                 int dNodeCnt = (int)world.GetNodeCount(dQuantityId);
                 int rNodeCnt = (int)world.GetNodeCount(rQuantityId);
@@ -263,18 +263,18 @@ namespace IvyFEMProtoApp
                 {
                     int dNodeId = world.Coord2Node(dQuantityId, coId);
                     int rNodeId = world.Coord2Node(rQuantityId, coId);
-                    double w = 0;
+                    double v = 0;
                     double theta = 0;
                     if (dNodeId != -1)
                     {
-                        w = Uwt[dNodeId];
+                        v = Uvt[dNodeId];
                     }
                     if (rNodeId != -1)
                     {
-                        theta = Uwt[rNodeId + offset];
+                        theta = Uvt[rNodeId + offset];
                     }
                     U[coId * dof + 0] = 0.0;
-                    U[coId * dof + 1] = w;
+                    U[coId * dof + 1] = v;
                 }
                 // Note: from CoordValues
                 world.UpdateFieldValueValuesFromCoordValues(valueId, FieldDerivativeType.Value, U);
@@ -296,7 +296,7 @@ namespace IvyFEMProtoApp
             double eLen = 0.95 * beamLen / (double)divCnt;
             //double loadX = beamLen * 0.5;
             double loadX = beamLen * 0.75;
-            CadObject2D cad = new CadObject2D();
+            Cad2D cad = new Cad2D();
             {
                 uint lId0 = 0;
                 uint vId1 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(0.0, 0.0)).AddVId;
@@ -315,7 +315,7 @@ namespace IvyFEMProtoApp
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new CadObject2DDrawer(cad);
+            var drawer = new Cad2DDrawer(cad);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -329,15 +329,15 @@ namespace IvyFEMProtoApp
                 IList<uint> eIds = cad.GetElementIds(CadElementType.Edge);
                 foreach (uint eId in eIds)
                 {
-                    mesher.AddCutMeshEdgeCadId(eId, eLen);
+                    mesher.AddMeshingEdgeCadId(eId, eLen);
                 }
             }
-            mesher.Meshing(cad);
+            mesher.MakeMesh(cad);
 
             /*
             mainWindow.IsFieldDraw = false;
             drawerArray.Clear();
-            IDrawer meshDrawer = new Mesher2DDrawer(mesher);
+            var meshDrawer = new Mesher2DDrawer(mesher);
             mainWindow.DrawerArray.Add(meshDrawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -385,7 +385,7 @@ namespace IvyFEMProtoApp
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
                     ma.Poisson = 0.262;
-                    ma.TimoshenkoShearCoefficient = 5.0 / 6.0; // 長方形断面
+                    ma.ShearCorrectionFactor = 5.0 / 6.0; // 長方形断面
                     beamMaId = world.AddMaterial(ma);
                 }
                 else
@@ -439,7 +439,7 @@ namespace IvyFEMProtoApp
                     new { CadId = (uint)2, CadElemType = CadElementType.Vertex,
                         FixedDofIndexs = new List<uint> { 0 }, Values = new List<double> { 0.0 } },
                 };
-                IList<FieldFixedCad> fixedCads = world.GetForceFieldFixedCads(dQuantityId);
+                var fixedCads = world.GetForceFieldFixedCads(dQuantityId);
                 foreach (var data in fixedCadDatas)
                 {
                     // Scalar
@@ -459,7 +459,7 @@ namespace IvyFEMProtoApp
                     new { CadId = (uint)2, CadElemType = CadElementType.Vertex,
                         FixedDofIndexs = new List<uint> { 0 }, Values = new List<double> { 0.0 } },
                 };
-                IList<FieldFixedCad> fixedCads = world.GetForceFieldFixedCads(rQuantityId);
+                var fixedCads = world.GetForceFieldFixedCads(rQuantityId);
                 foreach (var data in fixedCadDatas)
                 {
                     // Scalar
@@ -553,9 +553,9 @@ namespace IvyFEMProtoApp
                     FEM.Solver = solver;
                 }
                 FEM.Solve();
-                double[] Uwt = FEM.U;
+                double[] Uvt = FEM.U;
 
-                // 変位(u,w)へ変換する
+                // 変位(u,v)へ変換する
                 int coCnt = (int)world.GetCoordCount(dQuantityId);
                 int dNodeCnt = (int)world.GetNodeCount(dQuantityId);
                 int rNodeCnt = (int)world.GetNodeCount(rQuantityId);
@@ -566,18 +566,18 @@ namespace IvyFEMProtoApp
                 {
                     int dNodeId = world.Coord2Node(dQuantityId, coId);
                     int rNodeId = world.Coord2Node(rQuantityId, coId);
-                    double w = 0;
+                    double v = 0;
                     double theta = 0;
                     if (dNodeId != -1)
                     {
-                        w = Uwt[dNodeId];
+                        v = Uvt[dNodeId];
                     }
                     if (rNodeId != -1)
                     {
-                        theta = Uwt[rNodeId + offset];
+                        theta = Uvt[rNodeId + offset];
                     }
                     U[coId * dof + 0] = 0.0;
-                    U[coId * dof + 1] = w;
+                    U[coId * dof + 1] = v;
                 }
                 // Note: from CoordValues
                 world.UpdateFieldValueValuesFromCoordValues(valueId, FieldDerivativeType.Value, U);

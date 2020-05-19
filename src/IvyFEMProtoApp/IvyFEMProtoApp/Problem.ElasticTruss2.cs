@@ -17,7 +17,7 @@ namespace IvyFEMProtoApp
             double trussLen = 1.0;
             double b = 0.2 * trussLen;
             double h = 0.25 * b;
-            CadObject2D cad = new CadObject2D();
+            Cad2D cad = new Cad2D();
             {
                 uint lId0 = 0;
                 uint vId1 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(0.0, trussLen)).AddVId;
@@ -39,7 +39,7 @@ namespace IvyFEMProtoApp
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new CadObject2DDrawer(cad);
+            var drawer = new Cad2DDrawer(cad);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -49,12 +49,12 @@ namespace IvyFEMProtoApp
 
             Mesher2D mesher = new Mesher2D();
             mesher.SetMeshingModeZero(); // 最大メッシュ(分割しない)
-            mesher.Meshing(cad);
+            mesher.MakeMesh(cad);
 
             /*
             mainWindow.IsFieldDraw = false;
             drawerArray.Clear();
-            IDrawer meshDrawer = new Mesher2DDrawer(mesher);
+            var meshDrawer = new Mesher2DDrawer(mesher);
             mainWindow.DrawerArray.Add(meshDrawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -111,7 +111,7 @@ namespace IvyFEMProtoApp
                     new { CadId = (uint)2, CadElemType = CadElementType.Vertex,
                         FixedDofIndexs = new List<uint> { 0, 1 }, Values = new List<double> { 0.0, 0.0 } }
                 };
-                IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(quantityId);
+                var fixedCads = world.GetFieldFixedCads(quantityId);
                 foreach (var data in fixedCadDatas)
                 {
                     // Vector2
@@ -216,7 +216,7 @@ namespace IvyFEMProtoApp
             double trussLen = 1.0;
             double b = 0.2 * trussLen;
             double h = 0.25 * b;
-            CadObject2D cad = new CadObject2D();
+            Cad2D cad = new Cad2D();
             {
                 uint lId0 = 0;
                 uint vId1 = cad.AddVertex(CadElementType.Loop, lId0, new OpenTK.Vector2d(0.0, trussLen)).AddVId;
@@ -238,7 +238,7 @@ namespace IvyFEMProtoApp
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
-            IDrawer drawer = new CadObject2DDrawer(cad);
+            var drawer = new Cad2DDrawer(cad);
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -248,12 +248,12 @@ namespace IvyFEMProtoApp
 
             Mesher2D mesher = new Mesher2D();
             mesher.SetMeshingModeZero(); // 最大メッシュ(分割しない)
-            mesher.Meshing(cad);
+            mesher.MakeMesh(cad);
 
             /*
             mainWindow.IsFieldDraw = false;
             drawerArray.Clear();
-            IDrawer meshDrawer = new Mesher2DDrawer(mesher);
+            var meshDrawer = new Mesher2DDrawer(mesher);
             mainWindow.DrawerArray.Add(meshDrawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -310,7 +310,7 @@ namespace IvyFEMProtoApp
                     new { CadId = (uint)2, CadElemType = CadElementType.Vertex,
                         FixedDofIndexs = new List<uint> { 0, 1 }, Values = new List<double> { 0.0, 0.0 } }
                 };
-                IList<FieldFixedCad> fixedCads = world.GetFieldFixedCads(quantityId);
+                var fixedCads = world.GetFieldFixedCads(quantityId);
                 foreach (var data in fixedCadDatas)
                 {
                     // Vector2

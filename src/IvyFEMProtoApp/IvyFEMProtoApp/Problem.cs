@@ -12,6 +12,8 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
+        public int Dimension { get; set; } = 2;
+
         private ChartWindow ChartWindow1 = null;
         private ChartWindow ChartWindow2 = null;
         private ChartWindow ChartWindow3 = null;
@@ -40,6 +42,7 @@ namespace IvyFEMProtoApp
             {
                 AlertWindow1.Close();
             }
+            Dimension = 2;
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
