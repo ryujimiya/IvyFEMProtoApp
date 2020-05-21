@@ -178,6 +178,15 @@
                         <MenuItem Header="Plate(DKT)(1)(Eigen)" Click="DKTPlateEigen1Btn_Click"/>
                         <MenuItem Header="Plate(DKT)(2)(Eigen)" Click="DKTPlateEigen2Btn_Click"/>
                     </MenuItem>
+                    <MenuItem Header="Plate(Mindlin)">
+                        <MenuItem Header="Plate(Mindlin)(1)" Click="MindlinPlate1Btn_Click"/>
+                        <MenuItem Header="Plate(Mindlin)(1)(Time Domain)" Click="MindlinPlateTD1Btn_Click"/>
+                        <MenuItem Header="Plate(Mindlin)(2)" Click="MindlinPlate2Btn_Click"/>
+                        <MenuItem Header="Plate(Mindlin)(2)(Time Domain)" Click="MindlinPlateTD2Btn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="Plate(Mindlin)(1)(Eigen)" Click="MindlinPlateEigen1Btn_Click"/>
+                        <MenuItem Header="Plate(Mindlin)(2)(Eigen)" Click="MindlinPlateEigen2Btn_Click"/>
+                    </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Various Equations">
                     <MenuItem Header="Poisson" Click="PoissonBtn_Click"/>

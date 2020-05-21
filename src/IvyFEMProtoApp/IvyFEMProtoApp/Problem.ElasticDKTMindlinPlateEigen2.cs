@@ -12,7 +12,7 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void DKTPlateEigenProblem1(MainWindow mainWindow)
+        public void DKTMindlinPlateEigenProblem2(MainWindow mainWindow, bool isMindlin)
         {
             /////////////////////
             Dimension = 3; // 3次元
@@ -90,8 +90,19 @@ namespace IvyFEMProtoApp
             {
                 world.ClearMaterial();
                 uint maId = 0;
+                if (isMindlin)
                 {
-                    var ma = new PlateMaterial();
+                    var ma = new MindlinPlateMaterial();
+                    ma.Thickness = plateThickness;
+                    ma.MassDensity = 2.3e+3;
+                    ma.Young = 169.0e+9;
+                    ma.Poisson = 0.262;
+                    ma.ShearCorrectionFactor = 5.0 / 6.0; // 長方形断面
+                    maId = world.AddMaterial(ma);
+                }
+                else
+                {
+                    var ma = new DKTPlateMaterial();
                     ma.Thickness = plateThickness;
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
@@ -105,7 +116,7 @@ namespace IvyFEMProtoApp
             }
 
             // 頂点の支点
-            uint[] d1ZeroVIds = { 1, 3, 4 };
+            uint[] d1ZeroVIds = { 1, 2, 3, 4 };
             var d1ZeroFixedCads = world.GetZeroFieldFixedCads(d1QuantityId);
             foreach (uint vId in d1ZeroVIds)
             {
@@ -113,7 +124,7 @@ namespace IvyFEMProtoApp
                 var fixedCad = new FieldFixedCad(vId, CadElementType.Vertex, FieldValueType.Vector2);
                 d1ZeroFixedCads.Add(fixedCad);
             }
-            uint[] d2ZeroVIds = { 1, 3, 4 };
+            uint[] d2ZeroVIds = { 1, 2, 3, 4 };
             var d2ZeroFixedCads = world.GetZeroFieldFixedCads(d2QuantityId);
             foreach (uint vId in d2ZeroVIds)
             {
@@ -121,7 +132,7 @@ namespace IvyFEMProtoApp
                 var fixedCad = new FieldFixedCad(vId, CadElementType.Vertex, FieldValueType.Scalar);
                 d2ZeroFixedCads.Add(fixedCad);
             }
-            uint[] r1ZeroVIds = { 1, 3, 4 };
+            uint[] r1ZeroVIds = { 1, 2, 3, 4 };
             var r1ZeroFixedCads = world.GetZeroFieldFixedCads(r1QuantityId);
             foreach (uint vId in r1ZeroVIds)
             {
@@ -129,7 +140,7 @@ namespace IvyFEMProtoApp
                 var fixedCad = new FieldFixedCad(vId, CadElementType.Vertex, FieldValueType.Vector2);
                 r1ZeroFixedCads.Add(fixedCad);
             }
-            uint[] r2ZeroVIds = { 1, 3, 4 };
+            uint[] r2ZeroVIds = { 1, 2, 3, 4 };
             var r2ZeroFixedCads = world.GetZeroFieldFixedCads(r2QuantityId);
             foreach (uint vId in r2ZeroVIds)
             {

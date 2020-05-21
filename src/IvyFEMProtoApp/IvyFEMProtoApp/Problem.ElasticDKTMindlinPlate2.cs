@@ -12,7 +12,7 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void DKTPlateProblem2(MainWindow mainWindow)
+        public void DKTMindlinPlateProblem2(MainWindow mainWindow, bool isMindlin)
         {
             /////////////////////
             Dimension = 3; // 3次元
@@ -88,8 +88,19 @@ namespace IvyFEMProtoApp
             {
                 world.ClearMaterial();
                 uint maId = 0;
+                if (isMindlin)
                 {
-                    var ma = new PlateMaterial();
+                    var ma = new MindlinPlateMaterial();
+                    ma.Thickness = plateThickness;
+                    ma.MassDensity = 2.3e+3;
+                    ma.Young = 169.0e+9;
+                    ma.Poisson = 0.262;
+                    ma.ShearCorrectionFactor = 5.0 / 6.0; // 長方形断面
+                    maId = world.AddMaterial(ma);
+                }
+                else
+                {
+                    var ma = new DKTPlateMaterial();
                     ma.Thickness = plateThickness;
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
@@ -350,12 +361,12 @@ namespace IvyFEMProtoApp
 
                 var FEM = new Elastic3DFEM(world);
                 {
-                    var solver = new IvyFEM.Linear.LapackEquationSolver();
+                    //var solver = new IvyFEM.Linear.LapackEquationSolver();
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
                     //solver.IsOrderingToBandMatrix = true;
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
-                    FEM.Solver = solver;
+                    //FEM.Solver = solver;
                 }
                 {
                     //var solver = new IvyFEM.Linear.LisEquationSolver();
@@ -446,7 +457,7 @@ namespace IvyFEMProtoApp
             }
         }
 
-        public void DKTPlateTDProblem2(MainWindow mainWindow)
+        public void DKTMindlinPlateTDProblem2(MainWindow mainWindow, bool isMindlin)
         {
             /////////////////////
             Dimension = 3; // 3次元
@@ -522,8 +533,19 @@ namespace IvyFEMProtoApp
             {
                 world.ClearMaterial();
                 uint maId = 0;
+                if (isMindlin)
                 {
-                    var ma = new PlateMaterial();
+                    var ma = new MindlinPlateMaterial();
+                    ma.Thickness = plateThickness;
+                    ma.MassDensity = 2.3e+3;
+                    ma.Young = 169.0e+9;
+                    ma.Poisson = 0.262;
+                    ma.ShearCorrectionFactor = 5.0 / 6.0; // 長方形断面
+                    maId = world.AddMaterial(ma);
+                }
+                else
+                {
+                    var ma = new DKTPlateMaterial();
                     ma.Thickness = plateThickness;
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
@@ -826,12 +848,12 @@ namespace IvyFEMProtoApp
                     newmarkBeta, newmarkGamma,
                     valueIds, prevValueIds);
                 {
-                    var solver = new IvyFEM.Linear.LapackEquationSolver();
+                    //var solver = new IvyFEM.Linear.LapackEquationSolver();
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
                     //solver.IsOrderingToBandMatrix = true;
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Band;
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.PositiveDefiniteBand;
-                    FEM.Solver = solver;
+                    //FEM.Solver = solver;
                 }
                 {
                     //var solver = new IvyFEM.Linear.LisEquationSolver();

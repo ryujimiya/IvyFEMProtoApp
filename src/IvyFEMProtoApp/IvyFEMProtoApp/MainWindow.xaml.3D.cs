@@ -39,42 +39,97 @@ namespace IvyFEMProtoApp
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.DKTPlateProblem1(this);
+            bool isMindlin = false;
+            Problem.DKTMindlinPlateProblem1(this, isMindlin);
         }
 
         private void DKTPlateTD1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.DKTPlateTDProblem1(this);
+            bool isMindlin = false;
+            Problem.DKTMindlinPlateTDProblem1(this, isMindlin);
         }
 
         private void DKTPlate2Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.DKTPlateProblem2(this);
+            bool isMindlin = false;
+            Problem.DKTMindlinPlateProblem2(this, isMindlin);
         }
 
         private void DKTPlateTD2Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.DKTPlateTDProblem2(this);
+            bool isMindlin = false;
+            Problem.DKTMindlinPlateTDProblem2(this, isMindlin);
         }
 
         private void DKTPlateEigen1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.DKTPlateEigenProblem1(this);
+            bool isMindlin = false;
+            Problem.DKTMindlinPlateEigenProblem1(this, isMindlin);
         }
 
         private void DKTPlateEigen2Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.DKTPlateEigenProblem2(this);
+            bool isMindlin = false;
+            Problem.DKTMindlinPlateEigenProblem2(this, isMindlin);
         }
+
+        private void MindlinPlate1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isMindlin = true;
+            Problem.DKTMindlinPlateProblem1(this, isMindlin);
+        }
+
+        private void MindlinPlateTD1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isMindlin = true;
+            Problem.DKTMindlinPlateTDProblem1(this, isMindlin);
+        }
+
+        private void MindlinPlate2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isMindlin = true;
+            Problem.DKTMindlinPlateProblem2(this, isMindlin);
+        }
+
+        private void MindlinPlateTD2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isMindlin = true;
+            Problem.DKTMindlinPlateTDProblem2(this, isMindlin);
+        }
+
+        private void MindlinPlateEigen1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isMindlin = true;
+            Problem.DKTMindlinPlateEigenProblem1(this, isMindlin);
+        }
+
+        private void MindlinPlateEigen2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isMindlin = true;
+            Problem.DKTMindlinPlateEigenProblem2(this, isMindlin);
+        }
+
     }
 }
