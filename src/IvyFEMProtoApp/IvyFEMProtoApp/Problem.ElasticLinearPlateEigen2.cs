@@ -12,7 +12,7 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void DKTMindlinPlateEigenProblem2(MainWindow mainWindow, bool isMindlin)
+        public void LinearPlateEigenProblem2(MainWindow mainWindow, PlateKind plateKind)
         {
             /////////////////////
             Dimension = 3; // 3次元
@@ -90,7 +90,17 @@ namespace IvyFEMProtoApp
             {
                 world.ClearMaterial();
                 uint maId = 0;
-                if (isMindlin)
+                if (plateKind == PlateKind.DKTPlate)
+                {
+                    var ma = new DKTPlateMaterial();
+                    ma.Thickness = plateThickness;
+                    ma.MassDensity = 2.3e+3;
+                    ma.Young = 169.0e+9;
+                    ma.Poisson = 0.262;
+                    ma.ShearCorrectionFactor = 5.0 / 6.0; // 長方形断面
+                    maId = world.AddMaterial(ma);
+                }
+                else if (plateKind == PlateKind.MindlinPlate)
                 {
                     var ma = new MindlinPlateMaterial();
                     ma.Thickness = plateThickness;
@@ -100,15 +110,19 @@ namespace IvyFEMProtoApp
                     ma.ShearCorrectionFactor = 5.0 / 6.0; // 長方形断面
                     maId = world.AddMaterial(ma);
                 }
-                else
+                else if (plateKind == PlateKind.MITCLinearPlate)
                 {
-                    var ma = new DKTPlateMaterial();
+                    var ma = new MITCLinearPlateMaterial();
                     ma.Thickness = plateThickness;
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
                     ma.Poisson = 0.262;
-                    ma.ShearCorrectionFactor = 5.0 / 6.0; // 長方形断面
+                    ma.ShearCorrectionFactor = 1.0;
                     maId = world.AddMaterial(ma);
+                }
+                else
+                {
+                    System.Diagnostics.Debug.Assert(false);
                 }
 
                 uint lId = 1;

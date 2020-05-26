@@ -39,97 +39,144 @@ namespace IvyFEMProtoApp
         {
             InitProblem(e.Source as MenuItem);
 
-            bool isMindlin = false;
-            Problem.DKTMindlinPlateProblem1(this, isMindlin);
+            PlateKind plateKind = PlateKind.DKTPlate;
+            Problem.LinearPlateProblem1(this, plateKind);
         }
 
         private void DKTPlateTD1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            bool isMindlin = false;
-            Problem.DKTMindlinPlateTDProblem1(this, isMindlin);
+            PlateKind plateKind = PlateKind.DKTPlate;
+            Problem.LinearPlateTDProblem1(this, plateKind);
         }
 
         private void DKTPlate2Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            bool isMindlin = false;
-            Problem.DKTMindlinPlateProblem2(this, isMindlin);
+            PlateKind plateKind = PlateKind.DKTPlate;
+            Problem.LinearPlateProblem2(this, plateKind);
         }
 
         private void DKTPlateTD2Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            bool isMindlin = false;
-            Problem.DKTMindlinPlateTDProblem2(this, isMindlin);
+            PlateKind plateKind = PlateKind.DKTPlate;
+            Problem.LinearPlateTDProblem2(this, plateKind);
         }
 
         private void DKTPlateEigen1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            bool isMindlin = false;
-            Problem.DKTMindlinPlateEigenProblem1(this, isMindlin);
+            PlateKind plateKind = PlateKind.DKTPlate;
+            Problem.LinearPlateEigenProblem1(this, plateKind);
         }
 
         private void DKTPlateEigen2Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            bool isMindlin = false;
-            Problem.DKTMindlinPlateEigenProblem2(this, isMindlin);
+            PlateKind plateKind = PlateKind.DKTPlate;
+            Problem.LinearPlateEigenProblem2(this, plateKind);
         }
 
         private void MindlinPlate1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            bool isMindlin = true;
-            Problem.DKTMindlinPlateProblem1(this, isMindlin);
+            PlateKind plateKind = PlateKind.MindlinPlate;
+            Problem.LinearPlateProblem1(this, plateKind);
         }
 
         private void MindlinPlateTD1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            bool isMindlin = true;
-            Problem.DKTMindlinPlateTDProblem1(this, isMindlin);
+            PlateKind plateKind = PlateKind.MindlinPlate;
+            Problem.LinearPlateTDProblem1(this, plateKind);
         }
 
         private void MindlinPlate2Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            bool isMindlin = true;
-            Problem.DKTMindlinPlateProblem2(this, isMindlin);
+            PlateKind plateKind = PlateKind.MindlinPlate;
+            Problem.LinearPlateProblem2(this, plateKind);
         }
 
         private void MindlinPlateTD2Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            bool isMindlin = true;
-            Problem.DKTMindlinPlateTDProblem2(this, isMindlin);
+            PlateKind plateKind = PlateKind.MindlinPlate;
+            Problem.LinearPlateTDProblem2(this, plateKind);
         }
 
         private void MindlinPlateEigen1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            bool isMindlin = true;
-            Problem.DKTMindlinPlateEigenProblem1(this, isMindlin);
+            PlateKind plateKind = PlateKind.MindlinPlate;
+            Problem.LinearPlateEigenProblem1(this, plateKind);
         }
 
         private void MindlinPlateEigen2Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            bool isMindlin = true;
-            Problem.DKTMindlinPlateEigenProblem2(this, isMindlin);
+            PlateKind plateKind = PlateKind.MindlinPlate;
+            Problem.LinearPlateEigenProblem2(this, plateKind);
         }
 
+        private void MITCLinearPlate1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            PlateKind plateKind = PlateKind.MITCLinearPlate;
+            Problem.LinearPlateProblem1(this, plateKind);
+        }
+
+        private void MITCLinearPlateTD1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            PlateKind plateKind = PlateKind.MITCLinearPlate;
+            Problem.LinearPlateTDProblem1(this, plateKind);
+        }
+
+        private void MITCLinearPlate2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            PlateKind plateKind = PlateKind.MITCLinearPlate;
+            Problem.LinearPlateProblem2(this, plateKind);
+        }
+
+        private void MITCLinearPlateTD2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            PlateKind plateKind = PlateKind.MITCLinearPlate;
+            Problem.LinearPlateTDProblem2(this, plateKind);
+        }
+
+        private void MITCLinearPlateEigen1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            PlateKind plateKind = PlateKind.MITCLinearPlate;
+            Problem.LinearPlateEigenProblem1(this, plateKind);
+        }
+
+        private void MITCLinearPlateEigen2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            PlateKind plateKind = PlateKind.MITCLinearPlate;
+            Problem.LinearPlateEigenProblem2(this, plateKind);
+        }
     }
 }

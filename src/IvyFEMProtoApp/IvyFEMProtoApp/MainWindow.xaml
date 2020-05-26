@@ -187,6 +187,15 @@
                         <MenuItem Header="Plate(Mindlin)(1)(Eigen)" Click="MindlinPlateEigen1Btn_Click"/>
                         <MenuItem Header="Plate(Mindlin)(2)(Eigen)" Click="MindlinPlateEigen2Btn_Click"/>
                     </MenuItem>
+                    <MenuItem Header="Plate(MITC Linear)">
+                        <MenuItem Header="Plate(MITC Linear)(1)" Click="MITCLinearPlate1Btn_Click"/>
+                        <MenuItem Header="Plate(MITC Linear)(1)(Time Domain)" Click="MITCLinearPlateTD1Btn_Click"/>
+                        <MenuItem Header="Plate(MITC Linear)(2)" Click="MITCLinearPlate2Btn_Click"/>
+                        <MenuItem Header="Plate(MITC Linear)(2)(Time Domain)" Click="MITCLinearPlateTD2Btn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="Plate(MITC Linear)(1)(Eigen)" Click="MITCLinearPlateEigen1Btn_Click"/>
+                        <MenuItem Header="Plate(MITC Linear)(2)(Eigen)" Click="MITCLinearPlateEigen2Btn_Click"/>
+                    </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Various Equations">
                     <MenuItem Header="Poisson" Click="PoissonBtn_Click"/>

@@ -146,10 +146,10 @@
     <Compile Include="Problem.Cad3D.cs" />
     <Compile Include="Problem.ElasticBeam3.cs" />
     <Compile Include="Problem.ElasticBeam2.cs" />
-    <Compile Include="Problem.ElasticDKTMindlinPlateEigen1.cs" />
-    <Compile Include="Problem.ElasticDKTMindlinPlateEigen2.cs" />
-    <Compile Include="Problem.ElasticDKTMindlinPlate2.cs" />
-    <Compile Include="Problem.ElasticDKTMindlinPlate1.cs" />
+    <Compile Include="Problem.ElasticLinearPlateEigen1.cs" />
+    <Compile Include="Problem.ElasticLinearPlateEigen2.cs" />
+    <Compile Include="Problem.ElasticLinearPlate2.cs" />
+    <Compile Include="Problem.ElasticLinearPlate1.cs" />
     <Compile Include="Problem.ElasticTimoshenkoTLFrame1.cs" />
     <Compile Include="Problem.ElasticTimoshenkoTLFrame0.cs" />
     <Compile Include="Problem.ElasticFieldConsistentTLFrame1.cs" />
