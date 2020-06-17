@@ -146,6 +146,11 @@
     <Compile Include="Problem.Cad3D.cs" />
     <Compile Include="Problem.ElasticBeam3.cs" />
     <Compile Include="Problem.ElasticBeam2.cs" />
+    <Compile Include="Problem.ElasticMITCStVenantPlate2.cs" />
+    <Compile Include="Problem.ElasticMITCLinearPlateEigen2.cs" />
+    <Compile Include="Problem.ElasticMITCLinearPlateEigen1.cs" />
+    <Compile Include="Problem.ElasticMITCLinearPlate2.cs" />
+    <Compile Include="Problem.ElasticMITCLinearPlate1.cs" />
     <Compile Include="Problem.ElasticLinearPlateEigen1.cs" />
     <Compile Include="Problem.ElasticLinearPlateEigen2.cs" />
     <Compile Include="Problem.ElasticLinearPlate2.cs" />

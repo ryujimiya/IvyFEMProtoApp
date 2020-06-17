@@ -12,7 +12,7 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void LinearPlateProblem2(MainWindow mainWindow, PlateKind plateKind)
+        public void LinearPlateProblem2(MainWindow mainWindow, bool isMindlin)
         {
             /////////////////////
             Dimension = 3; // 3次元
@@ -88,17 +88,7 @@ namespace IvyFEMProtoApp
             {
                 world.ClearMaterial();
                 uint maId = 0;
-                if (plateKind == PlateKind.DKTPlate)
-                {
-                    var ma = new DKTPlateMaterial();
-                    ma.Thickness = plateThickness;
-                    ma.MassDensity = 2.3e+3;
-                    ma.Young = 169.0e+9;
-                    ma.Poisson = 0.262;
-                    ma.ShearCorrectionFactor = 5.0 / 6.0; // 長方形断面
-                    maId = world.AddMaterial(ma);
-                }
-                else if (plateKind == PlateKind.MindlinPlate)
+                if (isMindlin)
                 {
                     var ma = new MindlinPlateMaterial();
                     ma.Thickness = plateThickness;
@@ -108,19 +98,15 @@ namespace IvyFEMProtoApp
                     ma.ShearCorrectionFactor = 5.0 / 6.0; // 長方形断面
                     maId = world.AddMaterial(ma);
                 }
-                else if (plateKind == PlateKind.MITCLinearPlate)
+                else
                 {
-                    var ma = new MITCLinearPlateMaterial();
+                    var ma = new DKTPlateMaterial();
                     ma.Thickness = plateThickness;
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
                     ma.Poisson = 0.262;
-                    ma.ShearCorrectionFactor = 1.0;
+                    ma.ShearCorrectionFactor = 5.0 / 6.0; // 長方形断面
                     maId = world.AddMaterial(ma);
-                }
-                else
-                {
-                    System.Diagnostics.Debug.Assert(false);
                 }
 
                 uint lId = 1;
@@ -277,7 +263,7 @@ namespace IvyFEMProtoApp
             chartWin.TextBox1.Text = "";
             var model = new PlotModel();
             chartWin.Plot.Model = model;
-            model.Title = "Frame Example";
+            model.Title = "Plate Example";
             var axis1 = new LinearAxis
             {
                 Position = AxisPosition.Bottom,
@@ -471,7 +457,7 @@ namespace IvyFEMProtoApp
             }
         }
 
-        public void LinearPlateTDProblem2(MainWindow mainWindow, PlateKind plateKind)
+        public void LinearPlateTDProblem2(MainWindow mainWindow, bool isMindlin)
         {
             /////////////////////
             Dimension = 3; // 3次元
@@ -547,17 +533,7 @@ namespace IvyFEMProtoApp
             {
                 world.ClearMaterial();
                 uint maId = 0;
-                if (plateKind == PlateKind.DKTPlate)
-                {
-                    var ma = new DKTPlateMaterial();
-                    ma.Thickness = plateThickness;
-                    ma.MassDensity = 2.3e+3;
-                    ma.Young = 169.0e+9;
-                    ma.Poisson = 0.262;
-                    ma.ShearCorrectionFactor = 5.0 / 6.0; // 長方形断面
-                    maId = world.AddMaterial(ma);
-                }
-                else if (plateKind == PlateKind.MindlinPlate)
+                if (isMindlin)
                 {
                     var ma = new MindlinPlateMaterial();
                     ma.Thickness = plateThickness;
@@ -567,19 +543,15 @@ namespace IvyFEMProtoApp
                     ma.ShearCorrectionFactor = 5.0 / 6.0; // 長方形断面
                     maId = world.AddMaterial(ma);
                 }
-                else if (plateKind == PlateKind.MITCLinearPlate)
+                else
                 {
-                    var ma = new MITCLinearPlateMaterial();
+                    var ma = new DKTPlateMaterial();
                     ma.Thickness = plateThickness;
                     ma.MassDensity = 2.3e+3;
                     ma.Young = 169.0e+9;
                     ma.Poisson = 0.262;
-                    ma.ShearCorrectionFactor = 1.0;
+                    ma.ShearCorrectionFactor = 5.0 / 6.0; // 長方形断面
                     maId = world.AddMaterial(ma);
-                }
-                else
-                {
-                    System.Diagnostics.Debug.Assert(false);
                 }
 
                 uint lId = 1;
@@ -736,7 +708,7 @@ namespace IvyFEMProtoApp
             chartWin.TextBox1.Text = "";
             var model = new PlotModel();
             chartWin.Plot.Model = model;
-            model.Title = "Frame Example";
+            model.Title = "Plate Example";
             var axis1 = new LinearAxis
             {
                 Position = AxisPosition.Bottom,
@@ -951,6 +923,8 @@ namespace IvyFEMProtoApp
                 }
                 // Note: from CoordValues
                 world.UpdateFieldValueValuesFromCoordValues(valueId, FieldDerivativeType.Value, U);
+
+                FEM.UpdateFieldValuesTimeDomain();
 
                 fieldDrawerArray.Update(world);
                 mainWindow.GLControl.Invalidate();

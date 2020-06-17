@@ -12,7 +12,7 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void ElasticTwoBodyContactProblem(MainWindow mainWindow, bool isSaintVenant)
+        public void ElasticTwoBodyContactProblem(MainWindow mainWindow, bool isStVenant)
         {
             Cad2D cad = new Cad2D();
             {
@@ -52,10 +52,10 @@ namespace IvyFEMProtoApp
             {
                 world.ClearMaterial();
                 IList<uint> maIds = new List<uint>();
-                if (isSaintVenant)
+                if (isStVenant)
                 {
                     {
-                        var ma = new SaintVenantHyperelasticMaterial();
+                        var ma = new StVenantHyperelasticMaterial();
                         ma.Young = 100.0;
                         ma.Poisson = 0.3;
                         ma.GravityX = 0;
@@ -65,7 +65,7 @@ namespace IvyFEMProtoApp
                         maIds.Add(maId);
                     }
                     {
-                        var ma = new SaintVenantHyperelasticMaterial();
+                        var ma = new StVenantHyperelasticMaterial();
                         ma.Young = 50.0;
                         ma.Poisson = 0.3;
                         ma.GravityX = 0;
@@ -208,7 +208,7 @@ namespace IvyFEMProtoApp
             }
         }
 
-        public void ElasticTwoBodyContactTDProblem(MainWindow mainWindow, bool isSaintVenant)
+        public void ElasticTwoBodyContactTDProblem(MainWindow mainWindow, bool isStVenant)
         {
             Cad2D cad = new Cad2D();
             {
@@ -248,10 +248,10 @@ namespace IvyFEMProtoApp
             {
                 world.ClearMaterial();
                 IList<uint> maIds = new List<uint>();
-                if (isSaintVenant)
+                if (isStVenant)
                 {
                     {
-                        var ma = new SaintVenantHyperelasticMaterial();
+                        var ma = new StVenantHyperelasticMaterial();
                         ma.Young = 2000.0;
                         ma.Poisson = 0.3;
                         ma.GravityX = 0;
@@ -261,7 +261,7 @@ namespace IvyFEMProtoApp
                         maIds.Add(maId);
                     }
                     {
-                        var ma = new SaintVenantHyperelasticMaterial();
+                        var ma = new StVenantHyperelasticMaterial();
                         ma.Young = 2000.0;
                         ma.Poisson = 0.3;
                         ma.GravityX = 0;

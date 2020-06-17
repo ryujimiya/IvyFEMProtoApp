@@ -12,7 +12,7 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void ElasticLinearStVenantEigenProblem(MainWindow mainWindow, bool isSaintVenant)
+        public void ElasticLinearStVenantEigenProblem(MainWindow mainWindow, bool isStVenant)
         {
             double beamLen = 1.0;
             double b = 0.2 * beamLen;
@@ -20,7 +20,7 @@ namespace IvyFEMProtoApp
             // 規格化周波数 fn = b/λ
             Func<double, double> toNormalizedFreq = freq => b * freq / Constants.C0;
             double eLen = 0.2 * beamLen;
-            if (isSaintVenant)
+            if (isStVenant)
             {
                 //eLen = 0.2 * beamLen;
                 eLen = 0.04 * beamLen;
@@ -58,9 +58,9 @@ namespace IvyFEMProtoApp
             {
                 world.ClearMaterial();
                 uint maId = 0;
-                if (isSaintVenant)
+                if (isStVenant)
                 {
-                    var ma = new SaintVenantHyperelasticMaterial();
+                    var ma = new StVenantHyperelasticMaterial();
                     ma.Young = E;
                     ma.Poisson = nu;
                     ma.GravityX = 0;

@@ -12,7 +12,7 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void ElasticLinearStVenantProblem1(MainWindow mainWindow, bool isCalcStress, bool isSaintVenant)
+        public void ElasticLinearStVenantProblem1(MainWindow mainWindow, bool isCalcStress, bool isStVenant)
         {
             Cad2D cad = new Cad2D();
             {
@@ -40,9 +40,9 @@ namespace IvyFEMProtoApp
             {
                 world.ClearMaterial();
                 uint maId = 0;
-                if (isSaintVenant)
+                if (isStVenant)
                 {
-                    var ma = new SaintVenantHyperelasticMaterial();
+                    var ma = new StVenantHyperelasticMaterial();
                     ma.Young = 10.0;
                     ma.Poisson = 0.3;
                     ma.GravityX = 0;
@@ -189,7 +189,7 @@ namespace IvyFEMProtoApp
             }
         }
 
-        public void ElasticTDProblem1(MainWindow mainWindow, bool isSaintVenant)
+        public void ElasticTDProblem1(MainWindow mainWindow, bool isStVenant)
         {
             Cad2D cad = new Cad2D();
             {
@@ -216,9 +216,9 @@ namespace IvyFEMProtoApp
             {
                 world.ClearMaterial();
                 uint maId = 0;
-                if (isSaintVenant)
+                if (isStVenant)
                 {
-                    var ma = new SaintVenantHyperelasticMaterial();
+                    var ma = new StVenantHyperelasticMaterial();
                     ma.Young = 50.0;
                     ma.Poisson = 0.3;
                     ma.GravityX = 0;

@@ -10,13 +10,6 @@ using OxyPlot.Series;
 
 namespace IvyFEMProtoApp
 {
-    public enum PlateKind
-    {
-        DKTPlate,
-        MindlinPlate,
-        MITCLinearPlate
-    }
-
     partial class Problem
     {
         public int Dimension { get; set; } = 2;

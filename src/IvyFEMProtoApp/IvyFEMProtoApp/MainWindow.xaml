@@ -44,11 +44,11 @@
                         <MenuItem Header="Linear(2)(Time Domain)" Click="ElasticLinearTD2Btn_Click"/>
                         <MenuItem Header="Linear(Eigen)" Click="ElasticLinearEigenBtn_Click"/>
                         <Separator/>
-                        <MenuItem Header="Saint Venant(1)" Click="SaintVenantHyperelastic1Btn_Click"/>
-                        <MenuItem Header="Saint Venant(1)(Time Domain)" Click="SaintVenantHyperelasticTD1Btn_Click"/>
-                        <MenuItem Header="Saint Venant(2)" Click="SaintVenantHyperelastic2Btn_Click"/>
-                        <MenuItem Header="Saint Venant(2)(Time Domain)" Click="SaintVenantHyperelasticTD2Btn_Click"/>
-                        <MenuItem Header="Saint Venant(Eigen)" Click="SaintVenantHyperelasticEigenBtn_Click"/>
+                        <MenuItem Header="St.Venant(1)" Click="StVenantHyperelastic1Btn_Click"/>
+                        <MenuItem Header="St.Venant(1)(Time Domain)" Click="StVenantHyperelasticTD1Btn_Click"/>
+                        <MenuItem Header="St.Venant(2)" Click="StVenantHyperelastic2Btn_Click"/>
+                        <MenuItem Header="St.Venant(2)(Time Domain)" Click="StVenantHyperelasticTD2Btn_Click"/>
+                        <MenuItem Header="St.Venant(Eigen)" Click="StVenantHyperelasticEigenBtn_Click"/>
                         <Separator/>
                         <MenuItem Header="Mooney-Rivlin" Click="MooneyRivlinHyperelasticBtn_Click"/>
                         <MenuItem Header="Mooney-Rivlin(Time Domain)" Click="MooneyRivlinHyperelasticTDBtn_Click"/>
@@ -58,26 +58,26 @@
                     </MenuItem>
                     <MenuItem Header="Elastic(MPC)">
                         <MenuItem Header="Elastic(MPC)(Time Domain)" Click="ElasticMultipointConstraintTDBtn_Click"/>
-                        <MenuItem Header="Saint Venant(MPC)(Time Domain)" Click="SaintVenantHyperelasticMultipointConstraintTDBtn_Click"/>
+                        <MenuItem Header="St.Venant(MPC)(Time Domain)" Click="StVenantHyperelasticMultipointConstraintTDBtn_Click"/>
                         <MenuItem Header="Mooney-Rivlin(MPC)(Time Domain)" Click="MooneyRivlinHyperelasticMultipointConstraintTDBtn_Click"/>
                         <MenuItem Header="Ogden(MPC)(Time Domain)" Click="OgdenHyperelasticMultipointConstraintTDBtn_Click"/>
                     </MenuItem>
                     <MenuItem Header="Elastic(Contact)">
                         <MenuItem Header="Elastic(Contact)(Time Domain)" Click="ElasticContactTDBtn_Click"/>
-                        <MenuItem Header="Saint Venant(Contact)(Time Domain)" Click="SaintVenantHyperelasticContactTDBtn_Click"/>
+                        <MenuItem Header="St.Venant(Contact)(Time Domain)" Click="StVenantHyperelasticContactTDBtn_Click"/>
                         <MenuItem Header="Mooney-Rivlin(Contact)(Time Domain)" Click="MooneyRivlinHyperelasticContactTDBtn_Click"/>
                         <MenuItem Header="Ogden(Contact)(Time Domain)" Click="OgdenHyperelasticContactTDBtn_Click"/>
                         <Separator/>
                         <MenuItem Header="Elastic(Circle Contact)(Time Domain)" Click="ElasticCircleContactTDBtn_Click"/>
-                        <MenuItem Header="Saint Venant(Circle Contact)(Time Domain)" Click="SaintVenantHyperelasticCircleContactTDBtn_Click"/>
+                        <MenuItem Header="St.Venant(Circle Contact)(Time Domain)" Click="StVenantHyperelasticCircleContactTDBtn_Click"/>
                         <MenuItem Header="Mooney-Rivlin(Circle Contact)(Time Domain)" Click="MooneyRivlinHyperelasticCircleContactTDBtn_Click"/>
                         <MenuItem Header="Ogden(Circle Contact)(Time Domain)" Click="OgdenHyperelasticCircleContactTDBtn_Click"/>
                     </MenuItem>
                     <MenuItem Header="Elastic(2 Body Contact)">
                         <MenuItem Header="Elastic(2 Body Contact)" Click="ElasticTwoBodyContactBtn_Click"/>
                         <MenuItem Header="Elastic(2 Body Contact)(Time Domain)" Click="ElasticTwoBodyContactTDBtn_Click"/>
-                        <MenuItem Header="Saint Venant(2 Body Contact)" Click="SaintVenantHyperelasticTwoBodyContactBtn_Click"/>
-                        <MenuItem Header="Saint Venant(2 Body Contact)(Time Domain)" Click="SaintVenantHyperelasticTwoBodyContactTDBtn_Click"/>
+                        <MenuItem Header="St.Venant(2 Body Contact)" Click="StVenantHyperelasticTwoBodyContactBtn_Click"/>
+                        <MenuItem Header="St.Venant(2 Body Contact)(Time Domain)" Click="StVenantHyperelasticTwoBodyContactTDBtn_Click"/>
                         <MenuItem Header="Mooney-Rivlin(2 Body Contact)(Time Domain)" Click="MooneyRivlinHyperelasticTwoBodyContactTDBtn_Click"/>
                         <MenuItem Header="Ogden(2 Body Contact)(Time Domain)" Click="OgdenHyperelasticTwoBodyContactTDBtn_Click"/>
                     </MenuItem>
@@ -187,14 +187,18 @@
                         <MenuItem Header="Plate(Mindlin)(1)(Eigen)" Click="MindlinPlateEigen1Btn_Click"/>
                         <MenuItem Header="Plate(Mindlin)(2)(Eigen)" Click="MindlinPlateEigen2Btn_Click"/>
                     </MenuItem>
-                    <MenuItem Header="Plate(MITC Linear)">
-                        <MenuItem Header="Plate(MITC Linear)(1)" Click="MITCLinearPlate1Btn_Click"/>
-                        <MenuItem Header="Plate(MITC Linear)(1)(Time Domain)" Click="MITCLinearPlateTD1Btn_Click"/>
-                        <MenuItem Header="Plate(MITC Linear)(2)" Click="MITCLinearPlate2Btn_Click"/>
-                        <MenuItem Header="Plate(MITC Linear)(2)(Time Domain)" Click="MITCLinearPlateTD2Btn_Click"/>
+                    <MenuItem Header="Plate(MITC)(Linear)">
+                        <MenuItem Header="Plate(MITC)(Linear)(1)" Click="MITCLinearPlate1Btn_Click"/>
+                        <MenuItem Header="Plate(MITC)(Linear)(1)(Time Domain)" Click="MITCLinearPlateTD1Btn_Click"/>
+                        <MenuItem Header="Plate(MITC)(Linear)(2)" Click="MITCLinearPlate2Btn_Click"/>
+                        <MenuItem Header="Plate(MITC)(Linear)(2)(Time Domain)" Click="MITCLinearPlateTD2Btn_Click"/>
                         <Separator/>
-                        <MenuItem Header="Plate(MITC Linear)(1)(Eigen)" Click="MITCLinearPlateEigen1Btn_Click"/>
-                        <MenuItem Header="Plate(MITC Linear)(2)(Eigen)" Click="MITCLinearPlateEigen2Btn_Click"/>
+                        <MenuItem Header="Plate(MITC)(Linear)(1)(Eigen)" Click="MITCLinearPlateEigen1Btn_Click"/>
+                        <MenuItem Header="Plate(MITC)(Linear)(2)(Eigen)" Click="MITCLinearPlateEigen2Btn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Plate(MITC)(St.Venant)">
+                        <MenuItem Header="Plate(MITC)(St.Venant)(2)" Click="MITCStVenantPlate2Btn_Click"/>
+                        <MenuItem Header="Plate(MITC)(St.Venant)(2)(Time Domain)" Click="MITCStVenantPlateTD2Btn_Click"/>
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Various Equations">

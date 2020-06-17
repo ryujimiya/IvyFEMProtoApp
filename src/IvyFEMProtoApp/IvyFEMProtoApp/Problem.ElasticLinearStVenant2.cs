@@ -12,7 +12,7 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void ElasticLinearStVenantProblem2(MainWindow mainWindow, bool isSaintVenant)
+        public void ElasticLinearStVenantProblem2(MainWindow mainWindow, bool isStVenant)
         {
             double beamLen = 1.0;
             double b = 0.2 * beamLen;
@@ -46,9 +46,9 @@ namespace IvyFEMProtoApp
                 double rho  = 2.3e+3;
                 double E = 169.0e+9;
                 double nu =0.262;
-                if (isSaintVenant)
+                if (isStVenant)
                 {
-                    var ma = new SaintVenantHyperelasticMaterial();
+                    var ma = new StVenantHyperelasticMaterial();
                     ma.Young = E;
                     ma.Poisson = nu;
                     ma.GravityX = 0;
@@ -252,7 +252,7 @@ namespace IvyFEMProtoApp
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
                     FEM.Solver = solver;
                 }
-                if (isSaintVenant)
+                if (isStVenant)
                 {
                     FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6; // 収束条件を緩める
                 }
@@ -279,7 +279,7 @@ namespace IvyFEMProtoApp
             }
         }
 
-        public void ElasticTDProblem2(MainWindow mainWindow, bool isSaintVenant)
+        public void ElasticTDProblem2(MainWindow mainWindow, bool isStVenant)
         {
             double beamLen = 1.0;
             double b = 0.2 * beamLen;
@@ -312,9 +312,9 @@ namespace IvyFEMProtoApp
                 double rho = 2.3e+3;
                 double E = 169.0e+9;
                 double nu = 0.262;
-                if (isSaintVenant)
+                if (isStVenant)
                 {
-                    var ma = new SaintVenantHyperelasticMaterial();
+                    var ma = new StVenantHyperelasticMaterial();
                     ma.Young = E;
                     ma.Poisson = nu;
                     ma.GravityX = 0;
@@ -525,7 +525,7 @@ namespace IvyFEMProtoApp
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
                     FEM.Solver = solver;
                 }
-                if (isSaintVenant)
+                if (isStVenant)
                 {
                     FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6; // 収束条件を緩める
                 }

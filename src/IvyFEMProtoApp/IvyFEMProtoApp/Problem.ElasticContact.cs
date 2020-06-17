@@ -12,7 +12,7 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void ElasticContactTDProblem(MainWindow mainWindow, bool isSaintVenant)
+        public void ElasticContactTDProblem(MainWindow mainWindow, bool isStVenant)
         {
             Cad2D cad = new Cad2D();
             {
@@ -44,9 +44,9 @@ namespace IvyFEMProtoApp
             {
                 world.ClearMaterial();
                 uint maId = 0;
-                if (isSaintVenant)
+                if (isStVenant)
                 {
-                    var ma = new SaintVenantHyperelasticMaterial();
+                    var ma = new StVenantHyperelasticMaterial();
                     ma.Young = 300;
                     ma.Poisson = 0.3;
                     ma.GravityX = 0;
@@ -185,7 +185,7 @@ namespace IvyFEMProtoApp
             }
         }
 
-        public void ElasticCircleContactTDProblem(MainWindow mainWindow, bool isSaintVenant)
+        public void ElasticCircleContactTDProblem(MainWindow mainWindow, bool isStVenant)
         {
             Cad2D cad = new Cad2D();
             {
@@ -217,9 +217,9 @@ namespace IvyFEMProtoApp
             {
                 world.ClearMaterial();
                 uint maId = 0;
-                if (isSaintVenant)
+                if (isStVenant)
                 {
-                    var ma = new SaintVenantHyperelasticMaterial();
+                    var ma = new StVenantHyperelasticMaterial();
                     ma.Young = 300;
                     ma.Poisson = 0.3;
                     ma.GravityX = 0;
