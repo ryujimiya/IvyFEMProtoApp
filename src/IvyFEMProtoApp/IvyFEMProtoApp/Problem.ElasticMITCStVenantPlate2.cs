@@ -69,7 +69,7 @@ namespace IvyFEMProtoApp
             uint rQuantityId; // rotation
             {
                 uint dDof = 3; // Vector3 (u,v,w)
-                uint rDof = 3; // Vector2 (θx,θy,θz)
+                uint rDof = 3; // Vector3 (θx,θy,θz)
                 uint dFEOrder = 1;
                 uint rFEOrder = 1;
                 dQuantityId = world.AddQuantity(dDof, dFEOrder, FiniteElementType.ScalarLagrange);
@@ -293,10 +293,10 @@ namespace IvyFEMProtoApp
                 }
                 FEM.DisplacementQuantityIds = dQuantityIds.ToList();
                 FEM.AdditionalValueIds = additionalValueIds;
+                FEM.IsUseInit = true;
+                FEM.IsUseUpdate = true;
                 FEM.TimeIndexForInit = iTime;
-                FEM.InitValues();
                 FEM.Solve();
-                FEM.UpdateValues();
 
                 FieldValue uFV = world.GetFieldValue(uValueId);
                 // 変位(u,v,w)へ変換する
@@ -306,7 +306,6 @@ namespace IvyFEMProtoApp
                 int dNodeCnt = (int)world.GetNodeCount(dQuantityId);
                 int rNodeCnt = (int)world.GetNodeCount(rQuantityId);
                 int rOffset = dNodeCnt * dDof;
-                int r2Offset = rOffset + rNodeCnt * rDof;
                 int dof = 3;
                 double[] U = new double[coCnt * dof];
                 for (int coId = 0; coId < coCnt; coId++)
@@ -396,7 +395,7 @@ namespace IvyFEMProtoApp
             uint rQuantityId; // rotation
             {
                 uint dDof = 3; // Vector3 (u,v,w)
-                uint rDof = 3; // Vector2 (θx,θy,θz)
+                uint rDof = 3; // Vector3 (θx,θy,θz)
                 uint dFEOrder = 1;
                 uint rFEOrder = 1;
                 dQuantityId = world.AddQuantity(dDof, dFEOrder, FiniteElementType.ScalarLagrange);
@@ -644,10 +643,10 @@ namespace IvyFEMProtoApp
                 }
                 FEM.DisplacementQuantityIds = dQuantityIds.ToList();
                 FEM.AdditionalValueIds = additionalValueIds;
+                FEM.IsUseInit = true;
+                FEM.IsUseUpdate = true;
                 FEM.TimeIndexForInit = iTime;
-                FEM.InitValues();
                 FEM.Solve();
-                FEM.UpdateValues();
 
                 FieldValue uFV = world.GetFieldValue(uValueId);
                 // 変位(u,v,w)へ変換する
@@ -657,7 +656,6 @@ namespace IvyFEMProtoApp
                 int dNodeCnt = (int)world.GetNodeCount(dQuantityId);
                 int rNodeCnt = (int)world.GetNodeCount(rQuantityId);
                 int rOffset = dNodeCnt * dDof;
-                int r2Offset = rOffset + rNodeCnt * rDof;
                 int dof = 3;
                 double[] U = new double[coCnt * dof];
                 for (int coId = 0; coId < coCnt; coId++)

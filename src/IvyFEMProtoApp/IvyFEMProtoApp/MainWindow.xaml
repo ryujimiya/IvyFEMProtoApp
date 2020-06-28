@@ -200,6 +200,12 @@
                         <MenuItem Header="Plate(MITC)(St.Venant)(2)" Click="MITCStVenantPlate2Btn_Click"/>
                         <MenuItem Header="Plate(MITC)(St.Venant)(2)(Time Domain)" Click="MITCStVenantPlateTD2Btn_Click"/>
                     </MenuItem>
+                    <MenuItem Header="Plate(MITC)(St.Venant)(Thickness Stretch)">
+                        <MenuItem Header="Plate(MITC)(St.Venant)(Thickness Stretch)(2)" Click="MITCStVenantThicknessStretchPlate2Btn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Plate(MITC)(Mooney-Rivlin)">
+                        <MenuItem Header="Plate(MITC)(Mooney-Rivlin)(2)" Click="MITCMooneyRivlinPlate2Btn_Click"/>
+                    </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Various Equations">
                     <MenuItem Header="Poisson" Click="PoissonBtn_Click"/>

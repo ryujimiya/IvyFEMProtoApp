@@ -186,5 +186,19 @@ namespace IvyFEMProtoApp
 
             Problem.MITCStVenantPlateTDProblem2(this);
         }
+
+        private void MITCStVenantThicknessStretchPlate2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MITCStVenantThicknessStretchPlateProblem2(this);
+        }
+
+        private void MITCMooneyRivlinPlate2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MITCMooneyRivlinPlateProblem2(this);
+        }
     }
 }
