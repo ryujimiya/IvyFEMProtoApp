@@ -1270,6 +1270,13 @@ namespace IvyFEMProtoApp
             Problem.EddyCurrentTDProblem1(this);
         }
 
+        private void EddyCurrentTD2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.EddyCurrentTDProblem2(this);
+        }
+
         // mu = 0.02, 0.002 FluidEquationType.StdGNavierStokes
         // mu = 0.0002 FluidEquationType.SUPGNavierStokes
         // mu = 0.00002 Not converge

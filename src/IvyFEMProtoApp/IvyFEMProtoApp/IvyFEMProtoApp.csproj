@@ -144,7 +144,8 @@
     <Compile Include="NonlinerOptimizingProblem.cs" />
     <Compile Include="PortEdge.cs" />
     <Compile Include="Problem.Cad3D.cs" />
-    <Compile Include="Problem.EddyCurrent.cs" />
+    <Compile Include="Problem.EddyCurrent2.cs" />
+    <Compile Include="Problem.EddyCurrent1.cs" />
     <Compile Include="Problem.ElasticBeam3.cs" />
     <Compile Include="Problem.ElasticBeam2.cs" />
     <Compile Include="Problem.ElasticMITCStVenantThicknessStretchPlate2.cs" />
