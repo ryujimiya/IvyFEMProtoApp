@@ -85,7 +85,6 @@ namespace IvyFEMProtoApp
                 r1QuantityId = world.AddQuantity(r1Dof, r1FEOrder, FiniteElementType.ScalarLagrange);
                 r2QuantityId = world.AddQuantity(r2Dof, r2FEOrder, FiniteElementType.ScalarLagrange);
             }
-            uint[] dQuantityIds = { d1QuantityId, d2QuantityId };
 
             {
                 world.ClearMaterial();
@@ -177,10 +176,10 @@ namespace IvyFEMProtoApp
 
             {
                 var FEM = new Elastic3DEigenFEM(world);
-                FEM.DisplacementQuantityIds = dQuantityIds.ToList();
                 FEM.Solve();
                 System.Numerics.Complex[] freqZs = FEM.FrequencyZs;
                 System.Numerics.Complex[][] eVecZs = FEM.EVecZs;
+                FEM.AdjustPhaseEVecs(eVecZs, new List<uint> { d1QuantityId, d2QuantityId });
 
                 double freq;
                 double[] eVec;

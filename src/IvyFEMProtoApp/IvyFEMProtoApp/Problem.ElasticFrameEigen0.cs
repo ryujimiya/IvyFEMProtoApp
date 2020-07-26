@@ -101,7 +101,6 @@ namespace IvyFEMProtoApp
                 d2QuantityId = world.AddQuantity(d2Dof, d2FEOrder, FiniteElementType.ScalarHermite);
                 rQuantityId = world.AddQuantity(rDof, rFEOrder, FiniteElementType.ScalarHermite);
             }
-            uint[] dQuantityIds = { d1QuantityId, d2QuantityId };
 
             {
                 world.ClearMaterial();
@@ -197,7 +196,6 @@ namespace IvyFEMProtoApp
 
             {
                 var FEM = new Elastic2DEigenFEM(world);
-                FEM.DisplacementQuantityIds = dQuantityIds.ToList();
                 FEM.Solve();
                 System.Numerics.Complex[] freqZs = FEM.FrequencyZs;
                 System.Numerics.Complex[][] eVecZs = FEM.EVecZs;

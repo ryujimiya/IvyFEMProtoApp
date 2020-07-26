@@ -90,7 +90,6 @@ namespace IvyFEMProtoApp
                 d2QuantityId = world.AddQuantity(d2Dof, d2FEOrder, FiniteElementType.ScalarLagrange);
                 rQuantityId = world.AddQuantity(rDof, rFEOrder, FiniteElementType.ScalarLagrange);
             }
-            uint[] dQuantityIds = { d1QuantityId, d2QuantityId };
 
             {
                 world.ClearMaterial();
@@ -263,7 +262,6 @@ namespace IvyFEMProtoApp
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
                     //FEM.Solver = solver;
                 }
-                FEM.DisplacementQuantityIds = dQuantityIds.ToList();
                 FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6; // 収束条件を緩めている
                 FEM.Solve();
                 double[] Uuvt = FEM.U;
@@ -393,7 +391,6 @@ namespace IvyFEMProtoApp
                 d2QuantityId = world.AddQuantity(d2Dof, d2FEOrder, FiniteElementType.ScalarLagrange);
                 rQuantityId = world.AddQuantity(rDof, rFEOrder, FiniteElementType.ScalarLagrange);
             }
-            uint[] dQuantityIds = { d1QuantityId, d2QuantityId };
 
             {
                 world.ClearMaterial();
@@ -601,7 +598,6 @@ namespace IvyFEMProtoApp
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
                     //FEM.Solver = solver;
                 }
-                FEM.DisplacementQuantityIds = dQuantityIds.ToList();
                 FEM.ConvRatioToleranceForNonlinearIter = 1.0e-6; // 収束条件を緩めている
                 FEM.Solve();
                 double[] Uuvt = FEM.U;

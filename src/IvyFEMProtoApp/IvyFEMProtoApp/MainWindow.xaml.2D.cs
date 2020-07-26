@@ -1530,6 +1530,20 @@ namespace IvyFEMProtoApp
             Problem.VorticityFluidRKTDProblem2(this);
         }
 
+        private void ElasticLambWaveguide0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.ElasticLambWaveguideProblem0(this);
+        }
+
+        private void ElasticLambWaveguide1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.ElasticLambWaveguideProblem1(this);
+        }
+
         private void Optimize1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);

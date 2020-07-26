@@ -148,7 +148,9 @@
     <Compile Include="Problem.EddyCurrent1.cs" />
     <Compile Include="Problem.ElasticBeam3.cs" />
     <Compile Include="Problem.ElasticBeam2.cs" />
+    <Compile Include="Problem.ElasticLambWaveguide1.cs" />
     <Compile Include="Problem.ElasticMITCStVenantThicknessStretchPlate2.cs" />
+    <Compile Include="Problem.ElasticLambWaveguide0.cs" />
     <Compile Include="Problem.HyperelasticMITCMooneyRivlinPlate2.cs" />
     <Compile Include="Problem.ElasticMITCStVenantPlate2.cs" />
     <Compile Include="Problem.ElasticMITCLinearPlateEigen2.cs" />

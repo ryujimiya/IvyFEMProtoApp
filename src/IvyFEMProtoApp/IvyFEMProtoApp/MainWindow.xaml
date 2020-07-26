@@ -207,6 +207,10 @@
                         <MenuItem Header="Plate(MITC)(Mooney-Rivlin)(2)" Click="MITCMooneyRivlinPlate2Btn_Click"/>
                     </MenuItem>
                 </MenuItem>
+                <MenuItem Header="Elastic (Waveguide)">
+                    <MenuItem Header="Elastic (Waveguide)(Lamb)(0)" Click="ElasticLambWaveguide0Btn_Click"/>
+                    <MenuItem Header="Elastic (Waveguide)(Lamb)(1)" Click="ElasticLambWaveguide1Btn_Click"/>
+                </MenuItem>
                 <MenuItem Header="Various Equations">
                     <MenuItem Header="Poisson" Click="PoissonBtn_Click"/>
                     <MenuItem Header="Heat Diffusion(Poisson)" Click="DiffusionBtn_Click"/>

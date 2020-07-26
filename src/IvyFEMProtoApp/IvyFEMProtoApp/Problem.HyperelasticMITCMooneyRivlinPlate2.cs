@@ -79,7 +79,6 @@ namespace IvyFEMProtoApp
                 rQuantityId = world.AddQuantity(rDof, rFEOrder, FiniteElementType.ScalarLagrange);
                 lQuantityId = world.AddQuantity(lDof, lFEOrder, FiniteElementType.ScalarConstant);
             }
-            uint[] dQuantityIds = { dQuantityId };
 
             {
                 world.ClearMaterial();
@@ -297,7 +296,6 @@ namespace IvyFEMProtoApp
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
                     //FEM.Solver = solver;
                 }
-                FEM.DisplacementQuantityIds = dQuantityIds.ToList();
                 FEM.AdditionalValueIds = additionalValueIds;
                 FEM.IsUseInit = true;
                 FEM.IsUseUpdate = true;
