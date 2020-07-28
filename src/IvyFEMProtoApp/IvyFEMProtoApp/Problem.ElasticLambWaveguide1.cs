@@ -18,8 +18,8 @@ namespace IvyFEMProtoApp
             double halfWaveguideWidth = waveguideWidth * 0.5;
             //double crackHalfTheta = 30.0 * Math.PI / 180.0;
             double crackHalfTheta = 5.0 * Math.PI / 180.0;
-            //double crackH = 0.5 * halfWaveguideWidth;
-            //double crackH = 0.8 * halfWaveguideWidth;
+            //double crackH = 0.5 * halfWaveguideWidth; // fn=1のとき|S11|=0.4
+            //double crackH = 0.8 * halfWaveguideWidth; // fn=1のとき|S11|=0.7
             double crackH = 0.8 * halfWaveguideWidth;
             double crackHalfW = crackH * Math.Tan(crackHalfTheta);
 
@@ -283,7 +283,7 @@ namespace IvyFEMProtoApp
                 Position = AxisPosition.Left,
                 Title = "|S|",
                 Minimum = 0.0,
-                //Maximum = 1.0
+                Maximum = 1.0
             };
             model1.Axes.Add(axis11);
             model1.Axes.Add(axis12);
