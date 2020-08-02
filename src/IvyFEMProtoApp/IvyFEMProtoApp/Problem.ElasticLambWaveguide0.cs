@@ -419,7 +419,7 @@ namespace IvyFEMProtoApp
                 double freq = omega / (2.0 * Math.PI);
                 System.Diagnostics.Debug.WriteLine("ω√(ρ/μ) W/π: " + normalizedFreq);
 
-                var FEM = new ElasticWaveguide2DFEM(world);
+                var FEM = new ElasticLambWaveguide2DFEM(world);
                 {
                     var solver = new IvyFEM.Linear.LapackEquationSolver();
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;

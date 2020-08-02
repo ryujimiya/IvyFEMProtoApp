@@ -148,6 +148,7 @@
     <Compile Include="Problem.EddyCurrent1.cs" />
     <Compile Include="Problem.ElasticBeam3.cs" />
     <Compile Include="Problem.ElasticBeam2.cs" />
+    <Compile Include="Problem.ElasticSHWaveguide0.cs" />
     <Compile Include="Problem.ElasticLambWaveguide1.cs" />
     <Compile Include="Problem.ElasticMITCStVenantThicknessStretchPlate2.cs" />
     <Compile Include="Problem.ElasticLambWaveguide0.cs" />
