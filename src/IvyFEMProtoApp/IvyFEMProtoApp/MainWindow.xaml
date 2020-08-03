@@ -210,7 +210,10 @@
                 <MenuItem Header="Elastic (Waveguide)">
                     <MenuItem Header="Elastic (Waveguide)(Lamb)(0)" Click="ElasticLambWaveguide0Btn_Click"/>
                     <MenuItem Header="Elastic (Waveguide)(Lamb)(1)" Click="ElasticLambWaveguide1Btn_Click"/>
-                    <!--<MenuItem Header="Elastic (Waveguide)(SH)(0)" Click="ElasticSHWaveguide0Btn_Click"/>-->
+                    <Separator/>
+                    <MenuItem Header="Elastic (Waveguide)(SH)(0)" Click="ElasticSHWaveguide0Btn_Click"/>
+                    <MenuItem Header="Elastic (Waveguide)(SH)(1)" Click="ElasticSHWaveguide1Btn_Click"/>
+                    <MenuItem Header="Elastic (Waveguide)(SH)(2)" Click="ElasticSHWaveguide2Btn_Click"/>
                 </MenuItem>
                 <MenuItem Header="Various Equations">
                     <MenuItem Header="Poisson" Click="PoissonBtn_Click"/>

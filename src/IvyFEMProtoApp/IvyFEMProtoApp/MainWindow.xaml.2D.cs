@@ -1551,6 +1551,20 @@ namespace IvyFEMProtoApp
             Problem.ElasticSHWaveguideProblem0(this);
         }
 
+        private void ElasticSHWaveguide1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.ElasticSHWaveguideProblem1(this);
+        }
+
+        private void ElasticSHWaveguide2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.ElasticSHWaveguideProblem2(this);
+        }
+
         private void Optimize1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);

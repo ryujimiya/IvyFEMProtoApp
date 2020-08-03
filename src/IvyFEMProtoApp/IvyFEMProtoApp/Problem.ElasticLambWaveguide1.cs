@@ -26,8 +26,8 @@ namespace IvyFEMProtoApp
             //double disconLength = 2.0 * waveguideWidth;
             //double disconLength = 1.0 * waveguideWidth;
             //double disconLength = (1.0 / 2.0) * waveguideWidth;
-            //double disconLength = (1.0 / 4.0) * waveguideWidth; // 試作メモ：反射が大きくなる(2倍に増えている?) 
-            //double disconLength = (1.0 / 8.0) * waveguideWidth; // 試作メモ：基準 反射小さい // これを基準にしたい
+            //double disconLength = (1.0 / 4.0) * waveguideWidth; 
+            //double disconLength = (1.0 / 8.0) * waveguideWidth;
             //double disconLength = (1.0 / 16.0) * waveguideWidth;
             double disconLength = /*(1.0 / 8.0)*/(1.0 / 6.0) * waveguideWidth;
             System.Diagnostics.Debug.Assert(disconLength >= crackHalfW * 2.0 * 1.05);
@@ -67,7 +67,7 @@ namespace IvyFEMProtoApp
             WPFUtils.DoEvents();
 
             //double eLen = halfWaveguideWidth * (1.0 / 40.0) * 0.95;
-            //double eLen = halfWaveguideWidth * (1.0 / 20.0) * 0.95; // 試作メモ：基準
+            //double eLen = halfWaveguideWidth * (1.0 / 20.0) * 0.95;
             //double eLen = halfWaveguideWidth * (1.0 / 10.0) * 0.95;
             //double eLen = halfWaveguideWidth * (2.0 / 10.0) * 0.95;
             double eLen = halfWaveguideWidth * (1.0 / 10.0) * 0.95;

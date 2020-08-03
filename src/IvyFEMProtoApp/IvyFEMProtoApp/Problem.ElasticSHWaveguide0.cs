@@ -21,11 +21,12 @@ namespace IvyFEMProtoApp
             //double disconLength = 2.0 * waveguideWidth;
             //double disconLength = 1.0 * waveguideWidth;
             //double disconLength = (1.0 / 2.0) * waveguideWidth;
-            //double disconLength = (1.0 / 4.0) * waveguideWidth; // 試作メモ：反射が大きくなる(2倍に増えている?) 
-            double disconLength = (1.0 / 8.0) * waveguideWidth; // 試作メモ：基準 反射小さい // これを基準にしたい
+            //double disconLength = (1.0 / 4.0) * waveguideWidth; 
+            //double disconLength = (1.0 / 8.0) * waveguideWidth;
             //double disconLength = (1.0 / 16.0) * waveguideWidth;
+            double disconLength = (1.0 / 8.0) * waveguideWidth;
 
-            //double eFreq = 2.0; // ほぼ基本モードのみの周波数領域
+            //double eFreq = 1.0;
             double eFreq = 1.0;
             int freqDiv = 50;
 
@@ -52,9 +53,10 @@ namespace IvyFEMProtoApp
             WPFUtils.DoEvents();
 
             //double eLen = halfWaveguideWidth * (1.0 / 40.0) * 0.95;
-            //double eLen = halfWaveguideWidth * (1.0 / 20.0) * 0.95; // 試作メモ：基準
-            double eLen = halfWaveguideWidth * (1.0 / 10.0) * 0.95;
+            //double eLen = halfWaveguideWidth * (1.0 / 20.0) * 0.95;
+            //double eLen = halfWaveguideWidth * (1.0 / 10.0) * 0.95;
             //double eLen = halfWaveguideWidth * (2.0 / 10.0) * 0.95;
+            double eLen = halfWaveguideWidth * (1.0 / 10.0) * 0.95;
             Mesher2D mesher = new Mesher2D(cad, eLen);
 
             /*
@@ -145,13 +147,13 @@ namespace IvyFEMProtoApp
                     IList<System.Numerics.Complex> fixedValues = new List<System.Numerics.Complex>();
                     uint additionalParameterDof = 1; // for normalX
                     PortCondition portCondition = new ConstPortCondition(
-                        portEIds, FieldValueType.ZVector2, fixedDofIndexs, fixedValues, additionalParameterDof);
+                        portEIds, FieldValueType.ZScalar, fixedDofIndexs, fixedValues, additionalParameterDof);
                     portCondition.GetComplexAdditionalParameters()[0] = normalX[portId];
                     uPortConditions.Add(portCondition);
                 }
                 foreach (IList<uint> portEIds in portEIdss)
                 {
-                    PortCondition portCondition = new PortCondition(portEIds, FieldValueType.ZVector2);
+                    PortCondition portCondition = new PortCondition(portEIds, FieldValueType.ZScalar);
                     sPortConditions.Add(portCondition);
                 }
 
