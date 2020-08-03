@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IvyFEM;
+using OpenTK;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
@@ -511,6 +512,7 @@ namespace IvyFEMProtoApp
                     //}
 
                     {
+                        LineSeries[] tmpseries2 = { series21, series22 };
                         for (int iMode = 0; iMode < modeCnt; iMode++)
                         {
                             System.Numerics.Complex beta = portBetas[portId][iMode];
@@ -518,62 +520,32 @@ namespace IvyFEMProtoApp
                             {
                                 continue;
                             }
-                            if (portId == 0)
-                            {
-                                series21.Points.Add(new DataPoint(normalizedFreq, beta.Real / ks));
-                            }
-                            else if (portId == 1)
-                            {
-                                series22.Points.Add(new DataPoint(normalizedFreq, beta.Real / ks));
-                            }
-                            else
-                            {
-                                System.Diagnostics.Debug.Assert(false);
-                            }
+                            tmpseries2[portId].Points.Add(new DataPoint(normalizedFreq, beta.Real / ks));
                         }
                         model2.InvalidatePlot(true);
                         WPFUtils.DoEvents();
 
                         if (modeCnt > incidentModeIndex)
                         {
-                            if (portId == 0)
-                            {
-                                series31.Points.Clear();
-                                series32.Points.Clear();
-                            }
-                            else if (portId == 1)
-                            {
-                                series33.Points.Clear();
-                                series34.Points.Clear();
-                            }
-                            else
-                            {
-                                System.Diagnostics.Debug.Assert(false);
-                            }
+                            LineSeries[][] tmpseries3 = {
+                                new LineSeries[] { series31, series32 },
+                                new LineSeries[] { series33, series34 },
+                            };
+                            tmpseries3[portId][0].Points.Clear();
+                            tmpseries3[portId][1].Points.Clear();
                             int iMode = incidentModeIndex;
                             System.Numerics.Complex[] uEVec = portUEVecs[portId][iMode];
                             int portNodeCnt = uEVec.Length;
+                            double[] tmphalfW = { halfW1, halfW2 };
                             for (int portNodeId = 0; portNodeId < portNodeCnt; portNodeId++)
                             {
                                 int coId = world.PortNode2Coord(uQuantityId, (uint)portId, portNodeId);
                                 double[] coord = world.GetCoord(uQuantityId, coId);
-                                double ptX = coord[0];
-                                double ptY = coord[1];
+                                double ptX = coord[0] / tmphalfW[portId];
+                                double ptY = coord[1] / tmphalfW[portId];
                                 System.Numerics.Complex uz = uEVec[portNodeId];
-                                if (portId == 0)
-                                {
-                                    series31.Points.Add(new DataPoint(ptY, uz.Real));
-                                    series32.Points.Add(new DataPoint(ptY, uz.Imaginary));
-                                }
-                                else if (portId == 1)
-                                {
-                                    series33.Points.Add(new DataPoint(ptY, uz.Real));
-                                    series34.Points.Add(new DataPoint(ptY, uz.Imaginary));
-                                }
-                                else
-                                {
-                                    System.Diagnostics.Debug.Assert(false);
-                                }
+                                tmpseries3[portId][0].Points.Add(new DataPoint(ptY, uz.Real));
+                                tmpseries3[portId][1].Points.Add(new DataPoint(ptY, uz.Imaginary));
                             }
                         }
                         model3.InvalidatePlot(true);

@@ -521,8 +521,8 @@ namespace IvyFEMProtoApp
                             {
                                 int coId = world.PortNode2Coord(uQuantityId, (uint)portId, portNodeId);
                                 double[] coord = world.GetCoord(uQuantityId, coId);
-                                double ptX = coord[0];
-                                double ptY = coord[1];
+                                double ptX = coord[0] / halfWaveguideWidth;
+                                double ptY = coord[1] / halfWaveguideWidth;
                                 System.Numerics.Complex uz = uEVec[portNodeId];
                                 series31.Points.Add(new DataPoint(ptY, uz.Real));
                                 series32.Points.Add(new DataPoint(ptY, uz.Imaginary));
