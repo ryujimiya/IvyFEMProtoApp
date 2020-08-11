@@ -1565,6 +1565,53 @@ namespace IvyFEMProtoApp
             Problem.ElasticSHWaveguideProblem2(this);
         }
 
+        /*
+        private void ElasticLambWaveguideFirstOrderABC0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.ElasticLambWaveguideFirstOrderABCProblem0(this);
+        }
+
+        private void ElasticLambWaveguideFirstOrderABC1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.ElasticLambWaveguideFirstOrderABCProblem1(this);
+        }
+        */
+
+        /*
+        private void ElasticLambWaveguidePML0_0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.ElasticLambWaveguidePMLProblem0_0(this);
+        }
+
+        private void ElasticLambWaveguidePML1_0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.ElasticLambWaveguidePMLProblem1_0(this);
+        }
+        */
+
+        private void ElasticLambWaveguidePML0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.ElasticLambWaveguidePMLProblem0(this);
+        }
+
+        private void ElasticLambWaveguidePML1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.ElasticLambWaveguidePMLProblem1(this);
+        }
+
+
         private void Optimize1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);

@@ -16,7 +16,6 @@ namespace IvyFEMProtoApp
         {
             double waveguideWidth = 1.0;
             double halfWaveguideWidth = waveguideWidth * 0.5;
-            double sFreq = 0.0;
 
             //double disconLength = 2.0 * waveguideWidth;
             //double disconLength = 1.0 * waveguideWidth;
@@ -26,7 +25,7 @@ namespace IvyFEMProtoApp
             //double disconLength = (1.0 / 16.0) * waveguideWidth;
             double disconLength = (1.0 / 8.0) * waveguideWidth;
 
-            //double eFreq = 2.0; // ほぼ基本モードのみの周波数領域
+            double sFreq = 0.0;
             double eFreq = 1.0;
             int freqDiv = 50;
 

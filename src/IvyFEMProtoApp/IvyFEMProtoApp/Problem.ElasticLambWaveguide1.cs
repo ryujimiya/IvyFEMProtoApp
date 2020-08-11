@@ -29,7 +29,8 @@ namespace IvyFEMProtoApp
             //double disconLength = (1.0 / 4.0) * waveguideWidth; 
             //double disconLength = (1.0 / 8.0) * waveguideWidth;
             //double disconLength = (1.0 / 16.0) * waveguideWidth;
-            double disconLength = /*(1.0 / 8.0)*/(1.0 / 6.0) * waveguideWidth;
+            //double disconLength = (1.0 / 6.0) * waveguideWidth; // これを計算したい
+            double disconLength = (1.0 / 6.0) * waveguideWidth;
             System.Diagnostics.Debug.Assert(disconLength >= crackHalfW * 2.0 * 1.05);
             double crackPosX0 = disconLength / 2.0; // 中央
             double crackPosX1 = crackPosX0 - crackHalfW;
@@ -37,7 +38,6 @@ namespace IvyFEMProtoApp
             double crackPosY0 = halfWaveguideWidth - crackH;
 
             double sFreq = 0.0;
-            //double eFreq = 2.0; // ほぼ基本モードのみの周波数領域
             double eFreq = 1.0;
             int freqDiv = 50;
 
