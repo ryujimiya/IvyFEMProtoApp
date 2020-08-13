@@ -1565,7 +1565,6 @@ namespace IvyFEMProtoApp
             Problem.ElasticSHWaveguideProblem2(this);
         }
 
-        /*
         private void ElasticLambWaveguideFirstOrderABC0Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
@@ -1579,7 +1578,6 @@ namespace IvyFEMProtoApp
 
             Problem.ElasticLambWaveguideFirstOrderABCProblem1(this);
         }
-        */
 
         /*
         private void ElasticLambWaveguidePML0_0Btn_Click(object sender, RoutedEventArgs e)

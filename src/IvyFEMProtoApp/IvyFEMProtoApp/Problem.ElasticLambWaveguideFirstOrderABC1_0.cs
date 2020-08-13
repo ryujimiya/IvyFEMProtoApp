@@ -12,10 +12,16 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void ElasticLambWaveguidePMLProblem0(MainWindow mainWindow)
+        public void ElasticLambWaveguideFirstOrderABCProblem1_0(MainWindow mainWindow)
         {
             double waveguideWidth = 1.0;
             double halfWaveguideWidth = waveguideWidth * 0.5;
+            //double crackHalfTheta = 30.0 * Math.PI / 180.0;
+            double crackHalfTheta = 5.0 * Math.PI / 180.0;
+            //double crackH = 0.5 * halfWaveguideWidth; // fn=1のとき|S11|=0.4
+            //double crackH = 0.8 * halfWaveguideWidth; // fn=1のとき|S11|=0.7
+            double crackH = 0.8/*0.5*/ * halfWaveguideWidth;
+            double crackHalfW = crackH * Math.Tan(crackHalfTheta);
 
             //double disconLength = 2.0 * waveguideWidth;
             //double disconLength = 1.0 * waveguideWidth;
@@ -23,36 +29,19 @@ namespace IvyFEMProtoApp
             //double disconLength = (1.0 / 4.0) * waveguideWidth; 
             //double disconLength = (1.0 / 8.0) * waveguideWidth;
             //double disconLength = (1.0 / 16.0) * waveguideWidth;
-            double disconLength = /*(1.0 / 2.0)*/(1.0 / 8.0) * waveguideWidth;
+            //double disconLength = (1.0 / 6.0) * waveguideWidth; // これを計算したい
+            double disconLength = (1.0 / 2.0) * waveguideWidth;
+            System.Diagnostics.Debug.Assert(disconLength >= crackHalfW * 2.0 * 1.05);
+            double crackPosX0 = disconLength / 2.0; // 中央
+            double crackPosX1 = crackPosX0 - crackHalfW;
+            double crackPosX2 = crackPosX0 + crackHalfW;
+            double crackPosY0 = halfWaveguideWidth - crackH;
 
-            // 形状設定で使用する単位長さ
-            double unitLen = waveguideWidth / 20.0;
-            // PML層の厚さ
-            double pmlThickness = 10.0 * unitLen;
-            // 参照位置
-            double refXDistance = (1.0 / 16.0) * waveguideWidth;
-
-            // 導波路不連続領域の長さ(加算）
-            disconLength += 2.0 * pmlThickness;
-            // 導波路不連続領域の長さ(加算）
-            disconLength += 2.0 * refXDistance;
-            // PML位置
-            double port1PMLPosX = pmlThickness;
-            double port2PMLPosX = disconLength - pmlThickness;
-            // 参照位置
-            double port1RefPosX = port1PMLPosX + refXDistance;
-            double port2RefPosX = port2PMLPosX - refXDistance;
-
-            uint loopCnt = 5;
-            uint[] pmlLIds1 = { 1 };
-            uint[] pmlLIds2 = { 5 };
-            uint[][] pmlLIdss = { pmlLIds1, pmlLIds2 };
-            uint eIdRef1 = 14;
-            uint eIdRef2 = 15;
-            //uint eIdSrc = eIdRef1;// 入射面を内部領域にもってくるとNG
-            uint eIdSrc = 13;// PMLとの境界
+            // 参照面の数
+            int refPortCnt = 2;
 
             double sFreq = 0.0;
+            //double eFreq = 2.0; // ほぼ基本モードのみの周波数領域
             double eFreq = 1.0;
             int freqDiv = 50;
 
@@ -62,33 +51,12 @@ namespace IvyFEMProtoApp
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
                 pts.Add(new OpenTK.Vector2d(0.0, halfWaveguideWidth));
                 pts.Add(new OpenTK.Vector2d(0.0, 0.0));
-                pts.Add(new OpenTK.Vector2d(port1PMLPosX, 0.0));
-                pts.Add(new OpenTK.Vector2d(port1RefPosX, 0.0));
-                pts.Add(new OpenTK.Vector2d(port2RefPosX, 0.0));
-                pts.Add(new OpenTK.Vector2d(port2PMLPosX, 0.0));
                 pts.Add(new OpenTK.Vector2d(disconLength, 0.0));
                 pts.Add(new OpenTK.Vector2d(disconLength, halfWaveguideWidth));
-                pts.Add(new OpenTK.Vector2d(port2PMLPosX, halfWaveguideWidth));
-                pts.Add(new OpenTK.Vector2d(port2RefPosX, halfWaveguideWidth));
-                pts.Add(new OpenTK.Vector2d(port1RefPosX, halfWaveguideWidth));
-                pts.Add(new OpenTK.Vector2d(port1PMLPosX, halfWaveguideWidth));
-                uint _lId1 = cad.AddPolygon(pts).AddLId;
-                uint _lId2 = cad.ConnectVertexLine(3, 12).AddLId;
-                uint _lId3 = cad.ConnectVertexLine(4, 11).AddLId;
-                uint _lId4 = cad.ConnectVertexLine(5, 10).AddLId;
-                uint _lId5 = cad.ConnectVertexLine(6, 9).AddLId;
-            }
-
-            // check
-            {
-                double[] pmlColor = { 0.5, 0.5, 0.5 };
-                foreach (uint[] lIds in pmlLIdss)
-                {
-                    foreach (uint lId in lIds)
-                    {
-                        cad.SetLoopColor(lId, pmlColor);
-                    }
-                }
+                pts.Add(new OpenTK.Vector2d(crackPosX2, halfWaveguideWidth));
+                pts.Add(new OpenTK.Vector2d(crackPosX0, crackPosY0));
+                pts.Add(new OpenTK.Vector2d(crackPosX1, halfWaveguideWidth));
+                uint lId1 = cad.AddPolygon(pts).AddLId;
             }
 
             mainWindow.IsFieldDraw = false;
@@ -131,89 +99,38 @@ namespace IvyFEMProtoApp
                 uQuantityId = world.AddQuantity((uint)uDof, uFEOrder, FiniteElementType.ScalarLagrange);
             }
 
-            double rho = 1.0e+0;
-            double E = 1.0e+0;
-            double nu = 0.31;
+            uint eId1 = 1;
+            uint eId2 = 3;
+            uint eIdRef1 = eId1;
+            uint eIdRef2 = eId2;
+            uint eIdSrc = eId1;
+            int loopCnt = 1;
+            double rho;
             double lambda;
             double mu;
-            double reflection0 = 1.0e-8;
-            uint substrateMaId;
-            IList<uint> pmlMaIds = new List<uint>();
             {
                 world.ClearMaterial();
                 LinearElasticMaterial substrateMa = new LinearElasticMaterial
                 {
                     IsPlainStressLame = true,
-                    MassDensity = rho,
-                    Young = E,
-                    Poisson = nu
+                    MassDensity = 1.0e+0,
+                    Young = 1.0e+0,
+                    Poisson = 0.31//0.31
                 };
-                LinearElasticPMLMaterial pmlMa1 = new LinearElasticPMLMaterial
-                {
-                    IsPlainStressLame = true,
-                    MassDensity = rho,
-                    Young = E,
-                    Poisson = nu,
-                    // X方向PML
-                    OriginPoint = new OpenTK.Vector2d(port1PMLPosX, 0.0),
-                    XThickness = pmlThickness,
-                    YThickness = 0.0,
-                    Reflection0 = reflection0
-                };
-                LinearElasticPMLMaterial pmlMa2 = new LinearElasticPMLMaterial
-                {
-                    IsPlainStressLame = true,
-                    MassDensity = rho,
-                    Young = E,
-                    Poisson = nu,
-                    // X方向PML
-                    OriginPoint = new OpenTK.Vector2d(port2PMLPosX, 0.0),
-                    XThickness = pmlThickness,
-                    YThickness = 0.0,
-                    Reflection0 = reflection0
-                };
-
-                substrateMaId = world.AddMaterial(substrateMa);
-                uint pmlMaId1 = world.AddMaterial(pmlMa1);
-                pmlMaIds.Add(pmlMaId1);
-                uint pmlMaId2 = world.AddMaterial(pmlMa2);
-                pmlMaIds.Add(pmlMaId2);
+                uint maId = world.AddMaterial(substrateMa);
 
                 rho = substrateMa.MassDensity;
                 lambda = substrateMa.LameLambda;
                 mu = substrateMa.LameMu;
 
-                System.Diagnostics.Debug.Assert(pmlLIdss.Length == pmlMaIds.Count);
-
-                uint[] eIds = { eIdRef1, eIdRef2, eIdSrc };
+                uint[] eIds = { eId1, eId2, eIdRef1, eIdRef2, eIdSrc };
                 foreach (uint eId in eIds)
                 {
-                    uint maId = substrateMaId;
                     world.SetCadEdgeMaterial(eId, maId);
                 }
                 for (int i = 0; i < loopCnt; i++)
                 {
                     uint lId = (uint)(i + 1);
-                    uint maId = substrateMaId;
-                    int hitPMLIndex = -1;
-                    for (int pmlIndex = 0; pmlIndex < pmlLIdss.Length; pmlIndex++)
-                    {
-                        uint[] lIds = pmlLIdss[pmlIndex];
-                        if (lIds.Contains(lId))
-                        {
-                            hitPMLIndex = pmlIndex;
-                            break;
-                        }
-                    }
-                    if (hitPMLIndex != -1)
-                    {
-                        maId = pmlMaIds[hitPMLIndex];
-                    }
-                    else
-                    {
-                        maId = substrateMaId;
-                    }
-
                     world.SetCadLoopMaterial(lId, maId);
                 }
             }
@@ -223,11 +140,8 @@ namespace IvyFEMProtoApp
             {
                 IList<PortCondition> uPortConditions = world.GetPortConditions(uQuantityId);
 
-                world.SetIncidentPortId(uQuantityId, 0);
-                world.SetIncidentModeId(uQuantityId, incidentModeIndex);
-
-                uint[] eIds = { eIdRef1, eIdRef2, eIdSrc };
-                double[] normalX = { -1.0, 1.0, -1.0 };
+                uint[] eIds = { eId1, eId2, eIdRef1, eIdRef2, eIdSrc };
+                double[] normalX = { -1.0, 1.0, -1.0, 1.0, -1.0 };
                 IList<IList<uint>> portEIdss = new List<IList<uint>>();
                 foreach (uint eId in eIds)
                 {
@@ -249,7 +163,10 @@ namespace IvyFEMProtoApp
                     uPortConditions.Add(portCondition);
                 }
                 portCnt = uPortConditions.Count;
-                portCnt = portCnt - 1; // 励振源を引く
+                portCnt = portCnt - refPortCnt - 1; // 参照面と励振源を引く
+
+                world.SetIncidentPortId(uQuantityId, (0 + portCnt)); // ABCの分かさ上げ
+                world.SetIncidentModeId(uQuantityId, incidentModeIndex);
             }
 
             /*
@@ -268,14 +185,6 @@ namespace IvyFEMProtoApp
                 var fixedCadDatas = new[]
                 {
                     new { CadId = (uint)2, CadElemType = CadElementType.Edge,
-                        FixedDofIndexs = new List<uint> { 1 }, Values = new List<System.Numerics.Complex> { 0.0 } },
-                    new { CadId = (uint)3, CadElemType = CadElementType.Edge,
-                        FixedDofIndexs = new List<uint> { 1 }, Values = new List<System.Numerics.Complex> { 0.0 } },
-                    new { CadId = (uint)4, CadElemType = CadElementType.Edge,
-                        FixedDofIndexs = new List<uint> { 1 }, Values = new List<System.Numerics.Complex> { 0.0 } },
-                    new { CadId = (uint)5, CadElemType = CadElementType.Edge,
-                        FixedDofIndexs = new List<uint> { 1 }, Values = new List<System.Numerics.Complex> { 0.0 } },
-                    new { CadId = (uint)6, CadElemType = CadElementType.Edge,
                         FixedDofIndexs = new List<uint> { 1 }, Values = new List<System.Numerics.Complex> { 0.0 } }
                 };
                 var fixedCads = world.GetFieldFixedCads(uQuantityId);
@@ -289,27 +198,6 @@ namespace IvyFEMProtoApp
             }
             // 外側領域（真空）との境界
             // (σ・n=0 --> σxy = 0、[σyy=0])
-
-            //!!!!!!!!!!
-            // PML終端
-            // ux = uy = 0
-            {
-                var fixedCadDatas = new[]
-                {
-                    new { CadId = (uint)1, CadElemType = CadElementType.Edge,
-                        FixedDofIndexs = new List<uint> { 0, 1 }, Values = new List<System.Numerics.Complex> { 0.0, 0.0 } },
-                    new { CadId = (uint)7, CadElemType = CadElementType.Edge,
-                        FixedDofIndexs = new List<uint> { 0, 1 }, Values = new List<System.Numerics.Complex> { 0.0, 0.0 } }
-                };
-                var fixedCads = world.GetFieldFixedCads(uQuantityId);
-                foreach (var data in fixedCadDatas)
-                {
-                    // ZVector2
-                    var fixedCad = new ConstFieldFixedCad(data.CadId, data.CadElemType,
-                        FieldValueType.ZVector2, data.FixedDofIndexs, data.Values);
-                    fixedCads.Add(fixedCad);
-                }
-            }
 
             world.MakeElements();
 
@@ -349,7 +237,7 @@ namespace IvyFEMProtoApp
                 Position = AxisPosition.Left,
                 Title = "|S|",
                 Minimum = 0.0,
-                //Maximum = 1.0
+                Maximum = 1.0
             };
             model1.Axes.Add(axis11);
             model1.Axes.Add(axis12);
@@ -505,7 +393,7 @@ namespace IvyFEMProtoApp
                 double freq = omega / (2.0 * Math.PI);
                 System.Diagnostics.Debug.WriteLine("ω√(ρ/μ) W/π: " + normalizedFreq);
 
-                var FEM = new ElasticLambWaveguide2DPMLFEM(world);
+                var FEM = new ElasticLambWaveguide2DFirstOrderABCFEM(world);
                 {
                     var solver = new IvyFEM.Linear.LapackEquationSolver();
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
@@ -527,6 +415,7 @@ namespace IvyFEMProtoApp
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
                     //FEM.Solver = solver;
                 }
+                FEM.RefPortCount = refPortCnt;
                 FEM.Frequency = freq;
                 FEM.Solve();
                 System.Numerics.Complex[] U = FEM.U;
@@ -562,7 +451,7 @@ namespace IvyFEMProtoApp
                             maxValue = abs;
                         }
                     }
-                    double maxShowValue = 0.3 * halfWaveguideWidth;
+                    double maxShowValue = 0.1 * halfWaveguideWidth;
                     if (maxValue >= 1.0e-30)
                     {
                         for (int i = 0; i < cnt; i++)
@@ -583,7 +472,7 @@ namespace IvyFEMProtoApp
                             maxValue = abs;
                         }
                     }
-                    double maxShowValue = 0.3 * waveguideWidth;
+                    double maxShowValue = 0.1 * waveguideWidth;
                     if (maxValue >= 1.0e-30)
                     {
                         for (int i = 0; i < cnt; i++)
@@ -595,28 +484,23 @@ namespace IvyFEMProtoApp
                 //-----------------------------------------------
 
                 // eigen
-                System.Numerics.Complex[][] portBetas = new System.Numerics.Complex[portCnt][];
+                System.Numerics.Complex[][] portBetas = new System.Numerics.Complex[refPortCnt][];
                 // hat u
-                System.Numerics.Complex[][][] portHUEVecs = new System.Numerics.Complex[portCnt][][];
-                for (int portId = 0; portId < portCnt; portId++)
+                System.Numerics.Complex[][][] portHUEVecs = new System.Numerics.Complex[refPortCnt][][];
+                for (int refIndex = 0; refIndex < refPortCnt; refIndex++)
                 {
+                    int portId = refIndex + portCnt;
                     var eigenFEM = FEM.EigenFEMs[portId];
-                    portBetas[portId] = eigenFEM.Betas;
-                    portHUEVecs[portId] = eigenFEM.HUEVecs;
+                    portBetas[refIndex] = eigenFEM.Betas;
+                    portHUEVecs[refIndex] = eigenFEM.HUEVecs;
 
-                    int modeCnt = portBetas[portId].Length;
-                    // DEBUG
-                    //for (int iMode = 0; iMode < modeCnt; iMode++)
-                    //{
-                    //    System.Numerics.Complex beta = portBetas[portId][iMode];
-                    //    System.Diagnostics.Debug.WriteLine("β[{0}]:{1}", iMode, beta);
-                    //}
+                    int modeCnt = portBetas[refIndex].Length;
 
-                    if (portId == 0)
+                    if (refIndex == 0)
                     {
                         for (int iMode = 0; iMode < modeCnt; iMode++)
                         {
-                            System.Numerics.Complex beta = portBetas[portId][iMode];
+                            System.Numerics.Complex beta = portBetas[refIndex][iMode];
                             if (ks < Constants.PrecisionLowerLimit)
                             {
                                 continue;
@@ -633,7 +517,7 @@ namespace IvyFEMProtoApp
                             series33.Points.Clear();
                             series34.Points.Clear();
                             int iMode = incidentModeIndex;
-                            System.Numerics.Complex[] uEVec = portHUEVecs[portId][iMode];
+                            System.Numerics.Complex[] uEVec = portHUEVecs[refIndex][iMode];
                             int portNodeCnt = uEVec.Length / uDof;
                             for (int portNodeId = 0; portNodeId < portNodeCnt; portNodeId++)
                             {
@@ -658,16 +542,17 @@ namespace IvyFEMProtoApp
                 int targetModeId = incidentModeIndex;
                 int nodeCnt = (int)world.GetNodeCount(uQuantityId);
                 System.Numerics.Complex[] eigenU = new System.Numerics.Complex[nodeCnt];
-                for (int portId = 0; portId < portCnt; portId++)
+                for (int refIndex = 0; refIndex < refPortCnt; refIndex++)
                 {
-                    int modeCnt = portBetas[portId].Length;
+                    int portId = refIndex + portCnt;
+                    int modeCnt = portBetas[refIndex].Length;
                     if (targetModeId >= modeCnt)
                     {
-                        System.Diagnostics.Debug.WriteLine("No propagation mode found at port: " + portId);
+                        System.Diagnostics.Debug.WriteLine("No propagation mode found at port: " + refIndex);
                         continue;
                     }
-                    System.Numerics.Complex beta = portBetas[portId][targetModeId];
-                    System.Numerics.Complex[] eVec = portHUEVecs[portId][targetModeId];
+                    System.Numerics.Complex beta = portBetas[refIndex][targetModeId];
+                    System.Numerics.Complex[] eVec = portHUEVecs[refIndex][targetModeId];
                     int portNodeCnt = (int)world.GetPortNodeCount(uQuantityId, (uint)portId);
                     System.Diagnostics.Debug.Assert(portNodeCnt * uDof == eVec.Length);
                     for (int portNodeId = 0; portNodeId < portNodeCnt; portNodeId++)
