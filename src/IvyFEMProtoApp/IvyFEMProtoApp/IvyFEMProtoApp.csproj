@@ -148,8 +148,12 @@
     <Compile Include="Problem.EddyCurrent1.cs" />
     <Compile Include="Problem.ElasticBeam3.cs" />
     <Compile Include="Problem.ElasticBeam2.cs" />
+    <Compile Include="Problem.ElasticSHWaveguideFirstOrderABC0.cs" />
     <Compile Include="Problem.ElasticLambWaveguideFirstOrderABC0_0.cs" />
     <Compile Include="Problem.ElasticLambWaveguideFirstOrderABC1_0.cs" />
+    <Compile Include="Problem.ElasticSHWaveguideFirstOrderABC2 .cs" />
+    <Compile Include="Problem.ElasticSHWaveguidePML2.cs" />
+    <Compile Include="Problem.ElasticSHWaveguidePML0.cs" />
     <Compile Include="Problem.ElasticLambWaveguidePML0_0.cs" />
     <Compile Include="Problem.ElasticLambWaveguidePML1_0.cs" />
     <Compile Include="Problem.ElasticLambWaveguidePML1.cs" />

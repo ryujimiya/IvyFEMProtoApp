@@ -212,11 +212,6 @@
                         <MenuItem Header="Elastic (Waveguide)(Lamb)(0)" Click="ElasticLambWaveguide0Btn_Click"/>
                         <MenuItem Header="Elastic (Waveguide)(Lamb)(1)" Click="ElasticLambWaveguide1Btn_Click"/>
                     </MenuItem>
-                    <MenuItem Header="Elastic (Waveguide)(SH)">
-                        <MenuItem Header="Elastic (Waveguide)(SH)(0)" Click="ElasticSHWaveguide0Btn_Click"/>
-                        <MenuItem Header="Elastic (Waveguide)(SH)(1)" Click="ElasticSHWaveguide1Btn_Click"/>
-                        <MenuItem Header="Elastic (Waveguide)(SH)(2)" Click="ElasticSHWaveguide2Btn_Click"/>
-                    </MenuItem>
                     <MenuItem Header="Elastic (Waveguide)(Lamb)(ABC)">
                         <MenuItem Header="Elastic (Waveguide)(Lamb)(ABC)(0)" Click="ElasticLambWaveguideFirstOrderABC0Btn_Click"/>
                         <MenuItem Header="Elastic (Waveguide)(Lamb)(ABC)(1)" Click="ElasticLambWaveguideFirstOrderABC1Btn_Click"/>
@@ -229,6 +224,20 @@
                         -->
                         <MenuItem Header="Elastic (Waveguide)(Lamb)(PML)(0)" Click="ElasticLambWaveguidePML0Btn_Click"/>
                         <MenuItem Header="Elastic (Waveguide)(Lamb)(PML)(1)" Click="ElasticLambWaveguidePML1Btn_Click"/>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Elastic (Waveguide)(SH)">
+                        <MenuItem Header="Elastic (Waveguide)(SH)(0)" Click="ElasticSHWaveguide0Btn_Click"/>
+                        <!--<MenuItem Header="Elastic (Waveguide)(SH)(1)" Click="ElasticSHWaveguide1Btn_Click"/>-->
+                        <MenuItem Header="Elastic (Waveguide)(SH)(2)" Click="ElasticSHWaveguide2Btn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Elastic (Waveguide)(SH)(ABC)">
+                        <MenuItem Header="Elastic (Waveguide)(SH)(ABC)(0)" Click="ElasticSHWaveguideFirstOrderABC0Btn_Click"/>
+                        <MenuItem Header="Elastic (Waveguide)(SH)(ABC)(2)" Click="ElasticSHWaveguideFirstOrderABC2Btn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Elastic (Waveguide)(SH)(PML)">
+                        <MenuItem Header="Elastic (Waveguide)(SH)(PML)(0)" Click="ElasticSHWaveguidePML0Btn_Click"/>
+                        <MenuItem Header="Elastic (Waveguide)(SH)(PML)(2)" Click="ElasticSHWaveguidePML2Btn_Click"/>
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Various Equations">

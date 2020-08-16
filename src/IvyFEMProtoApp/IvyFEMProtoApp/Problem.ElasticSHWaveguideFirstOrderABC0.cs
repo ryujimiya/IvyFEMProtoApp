@@ -12,7 +12,7 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void ElasticSHWaveguideProblem0(MainWindow mainWindow)
+        public void ElasticSHWaveguideFirstOrderABCProblem0(MainWindow mainWindow)
         {
             double waveguideWidth = 1.0;
             double halfWaveguideWidth = waveguideWidth * 0.5;
@@ -25,8 +25,33 @@ namespace IvyFEMProtoApp
             //double disconLength = (1.0 / 16.0) * waveguideWidth;
             double disconLength = (1.0 / 8.0) * waveguideWidth;
 
+            double disconLength0 = disconLength;
+
+            // 参照面の数
+            int refPortCnt = 2;
+            // 入射面位置
+            //double incXDistance = (1.0 / 2.0) * waveguideWidth;
+            double incXDistance = 1.0 * waveguideWidth;
+            // 参照位置
+            //double refXDistance1 = (1.0 / 16.0) * waveguideWidth;
+            //double refXDistance2 = (1.0 / 2.0) * waveguideWidth;
+            //double refXDistance1 = (1.0 / 64.0) * waveguideWidth;
+            //double refXDistance2 = 1.0 * waveguideWidth;
+            double refXDistance1 = (1.0 / 64.0) * waveguideWidth;
+            double refXDistance2 = 1.0 * waveguideWidth;
+
+            // 導波路不連続領域の長さ(加算）
+            disconLength += incXDistance;
+            // 導波路不連続領域の長さ(加算）
+            disconLength += refXDistance1 + refXDistance2;
+            // 入射面位置
+            double incPosX = incXDistance;
+            // 参照位置
+            double port1RefPosX = incPosX + refXDistance1;
+            double port2RefPosX = disconLength - refXDistance2;
+
             double sFreq = 0.0;
-            //double eFreq = 1.0;
+            //double eFreq = 2.0; // ほぼ基本モードのみの周波数領域
             double eFreq = 1.0;
             int freqDiv = 50;
 
@@ -36,9 +61,18 @@ namespace IvyFEMProtoApp
                 IList<OpenTK.Vector2d> pts = new List<OpenTK.Vector2d>();
                 pts.Add(new OpenTK.Vector2d(0.0, halfWaveguideWidth));
                 pts.Add(new OpenTK.Vector2d(0.0, 0.0));
+                pts.Add(new OpenTK.Vector2d(incPosX, 0.0));
+                pts.Add(new OpenTK.Vector2d(port1RefPosX, 0.0));
+                pts.Add(new OpenTK.Vector2d(port2RefPosX, 0.0));
                 pts.Add(new OpenTK.Vector2d(disconLength, 0.0));
                 pts.Add(new OpenTK.Vector2d(disconLength, halfWaveguideWidth));
-                uint lId1 = cad.AddPolygon(pts).AddLId;
+                pts.Add(new OpenTK.Vector2d(port2RefPosX, halfWaveguideWidth));
+                pts.Add(new OpenTK.Vector2d(port1RefPosX, halfWaveguideWidth));
+                pts.Add(new OpenTK.Vector2d(incPosX, halfWaveguideWidth));
+                uint _lId1 = cad.AddPolygon(pts).AddLId;
+                uint _lId2 = cad.ConnectVertexLine(3, 10).AddLId;
+                uint _lId3 = cad.ConnectVertexLine(4, 9).AddLId;
+                uint _lId4 = cad.ConnectVertexLine(5, 8).AddLId;
             }
 
             mainWindow.IsFieldDraw = false;
@@ -73,23 +107,19 @@ namespace IvyFEMProtoApp
 
             FEWorld world = new FEWorld();
             world.Mesh = mesher;
-            int uDof = 1;
-            int sDof = 1;
             uint uQuantityId;
-            uint sQuantityId;
             {
+                int uDof = 1;
                 uint uFEOrder = 2;//1;
-                uint sFEOrder = 2;//1;
                 uQuantityId = world.AddQuantity((uint)uDof, uFEOrder, FiniteElementType.ScalarLagrange);
-                sQuantityId = world.AddQuantity((uint)sDof, sFEOrder, FiniteElementType.ScalarLagrange);
-
-                // σはポート境界上のみ
-                world.IsPortOnly(sQuantityId, true);
             }
 
             uint eId1 = 1;
-            uint eId2 = 3;
-            int loopCnt = 1;
+            uint eId2 = 6;
+            uint eIdRef1 = 12;
+            uint eIdRef2 = 13;
+            uint eIdSrc = 11;
+            int loopCnt = 4;
             double rho;
             double lambda;
             double mu;
@@ -108,7 +138,7 @@ namespace IvyFEMProtoApp
                 lambda = substrateMa.LameLambda;
                 mu = substrateMa.LameMu;
 
-                uint[] eIds = { eId1, eId2 };
+                uint[] eIds = { eId1, eId2, eIdRef1, eIdRef2, eIdSrc };
                 foreach (uint eId in eIds)
                 {
                     world.SetCadEdgeMaterial(eId, maId);
@@ -124,13 +154,9 @@ namespace IvyFEMProtoApp
             int portCnt;
             {
                 IList<PortCondition> uPortConditions = world.GetPortConditions(uQuantityId);
-                IList<PortCondition> sPortConditions = world.GetPortConditions(sQuantityId);
 
-                world.SetIncidentPortId(uQuantityId, 0);
-                world.SetIncidentModeId(uQuantityId, incidentModeIndex);
-
-                uint[] eIds = { eId1, eId2 };
-                double[] normalX = { -1.0, 1.0 };
+                uint[] eIds = { eId1, eId2, eIdRef1, eIdRef2, eIdSrc };
+                double[] normalX = { -1.0, 1.0, -1.0, 1.0, -1.0 };
                 IList<IList<uint>> portEIdss = new List<IList<uint>>();
                 foreach (uint eId in eIds)
                 {
@@ -151,13 +177,11 @@ namespace IvyFEMProtoApp
                     portCondition.GetComplexAdditionalParameters()[0] = normalX[portId];
                     uPortConditions.Add(portCondition);
                 }
-                foreach (IList<uint> portEIds in portEIdss)
-                {
-                    PortCondition portCondition = new PortCondition(portEIds, FieldValueType.ZScalar);
-                    sPortConditions.Add(portCondition);
-                }
-
                 portCnt = uPortConditions.Count;
+                portCnt = portCnt - refPortCnt - 1; // 参照面と励振源を引く
+
+                world.SetIncidentPortId(uQuantityId, (0 + portCnt)); // ABCの分かさ上げ
+                world.SetIncidentModeId(uQuantityId, incidentModeIndex);
             }
 
             /*
@@ -169,41 +193,25 @@ namespace IvyFEMProtoApp
                 var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.ZScalar);
                 uZeroFixedCads.Add(fixedCad);
             }
-            var sZeroFixedCads = world.GetZeroFieldFixedCads(sQuantityId);
-            foreach (uint eId in zeroEIds)
-            {
-                // 複素数
-                var fixedCad = new FieldFixedCad(eId, CadElementType.Edge, FieldValueType.ZScalar);
-                sZeroFixedCads.Add(fixedCad);
-            }
             */
 
-            // mid-planeの境界条件 σzy=0)
             /*
+            // mid-planeの境界条件 σzy=0)
             {
-                // uz
                 var fixedCadDatas = new[]
                 {
                     new { CadId = (uint)2, CadElemType = CadElementType.Edge,
+                        FixedDofIndexs = new List<uint> { }, Values = new List<System.Numerics.Complex> { } },
+                    new { CadId = (uint)3, CadElemType = CadElementType.Edge,
+                        FixedDofIndexs = new List<uint> { }, Values = new List<System.Numerics.Complex> { } },
+                    new { CadId = (uint)4, CadElemType = CadElementType.Edge,
+                        FixedDofIndexs = new List<uint> { }, Values = new List<System.Numerics.Complex> { } },
+                    new { CadId = (uint)5, CadElemType = CadElementType.Edge,
+                        FixedDofIndexs = new List<uint> { }, Values = new List<System.Numerics.Complex> { } },
+                    new { CadId = (uint)6, CadElemType = CadElementType.Edge,
                         FixedDofIndexs = new List<uint> { }, Values = new List<System.Numerics.Complex> { } }
                 };
                 var fixedCads = world.GetFieldFixedCads(uQuantityId);
-                foreach (var data in fixedCadDatas)
-                {
-                    // ZScalar
-                    var fixedCad = new ConstFieldFixedCad(data.CadId, data.CadElemType,
-                        FieldValueType.ZScalar, data.FixedDofIndexs, data.Values);
-                    fixedCads.Add(fixedCad);
-                }
-            }
-            {
-                // σzx
-                var fixedCadDatas = new[]
-                {
-                    new { CadId = (uint)2, CadElemType = CadElementType.Edge,
-                        FixedDofIndexs = new List<uint> { }, Values = new List<System.Numerics.Complex> { } }
-                };
-                var fixedCads = world.GetFieldFixedCads(sQuantityId);
                 foreach (var data in fixedCadDatas)
                 {
                     // ZScalar
@@ -215,40 +223,6 @@ namespace IvyFEMProtoApp
             */
             // 外側領域（真空）との境界
             // (σ・n=0 --> σzy = 0)
-            /*
-            {
-                // uz
-                var fixedCadDatas = new[]
-                {
-                    new { CadId = (uint)4, CadElemType = CadElementType.Edge,
-                        FixedDofIndexs = new List<uint> { }, Values = new List<System.Numerics.Complex> { } }
-                };
-                var fixedCads = world.GetFieldFixedCads(uQuantityId);
-                foreach (var data in fixedCadDatas)
-                {
-                    // ZScalar
-                    var fixedCad = new ConstFieldFixedCad(data.CadId, data.CadElemType,
-                        FieldValueType.ZScalar, data.FixedDofIndexs, data.Values);
-                    fixedCads.Add(fixedCad);
-                }
-            }
-            {
-                // σzx
-                var fixedCadDatas = new[]
-                {
-                    new { CadId = (uint)4, CadElemType = CadElementType.Edge,
-                        FixedDofIndexs = new List<uint> { }, Values = new List<System.Numerics.Complex> { } }
-                };
-                var fixedCads = world.GetFieldFixedCads(sQuantityId);
-                foreach (var data in fixedCadDatas)
-                {
-                    // ZScalar
-                    var fixedCad = new ConstFieldFixedCad(data.CadId, data.CadElemType,
-                        FieldValueType.ZScalar, data.FixedDofIndexs, data.Values);
-                    fixedCads.Add(fixedCad);
-                }
-            }
-            */
 
             world.MakeElements();
 
@@ -383,6 +357,7 @@ namespace IvyFEMProtoApp
             WPFUtils.DoEvents();
 
             uint valueId = 0;
+            uint bubbleUValueId = 0;
             var fieldDrawerArray = mainWindow.FieldDrawerArray;
             {
                 world.ClearFieldValue();
@@ -407,6 +382,7 @@ namespace IvyFEMProtoApp
 
             for (int iFreq = 0; iFreq < (freqDiv + 1); iFreq++)
             {
+
                 double normalizedFreq = sFreq + (iFreq / (double)freqDiv) * (eFreq - sFreq);
                 //!! 解けない
                 if (normalizedFreq < 1.0e-12)
@@ -421,7 +397,7 @@ namespace IvyFEMProtoApp
                 double freq = omega / (2.0 * Math.PI);
                 System.Diagnostics.Debug.WriteLine("ω√(ρ/μ) W/π: " + normalizedFreq);
 
-                var FEM = new ElasticSHWaveguide2DFEM(world);
+                var FEM = new ElasticSHWaveguide2DFirstOrderABCFEM(world);
                 {
                     var solver = new IvyFEM.Linear.LapackEquationSolver();
                     //solver.Method = IvyFEM.Linear.LapackEquationSolverMethod.Dense;
@@ -443,6 +419,7 @@ namespace IvyFEMProtoApp
                     //solver.Method = IvyFEM.Linear.IvyFEMEquationSolverMethod.NoPreconBiCGSTAB;
                     //FEM.Solver = solver;
                 }
+                FEM.RefPortCount = refPortCnt;
                 FEM.Frequency = freq;
                 FEM.Solve();
                 System.Numerics.Complex[] U = FEM.U;
@@ -474,12 +451,6 @@ namespace IvyFEMProtoApp
                     portUEVecs[portId] = eigenFEM.UEVecs;
 
                     int modeCnt = portBetas[portId].Length;
-                    // DEBUG
-                    //for (int iMode = 0; iMode < modeCnt; iMode++)
-                    //{
-                    //    System.Numerics.Complex beta = portBetas[portId][iMode];
-                    //    System.Diagnostics.Debug.WriteLine("β[{0}]:{1}", iMode, beta);
-                    //}
 
                     if (portId == 0)
                     {

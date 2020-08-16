@@ -28,7 +28,8 @@ namespace IvyFEMProtoApp
             //double disconLength = (1.0 / 4.0) * waveguideWidth; 
             //double disconLength = (1.0 / 8.0) * waveguideWidth;
             //double disconLength = (1.0 / 16.0) * waveguideWidth;
-            double disconLength = /*(1.0 / 8.0)*/(1.0 / 6.0) * waveguideWidth;
+            //double disconLength = (1.0 / 6.0) * waveguideWidth; // これを計算したい
+            double disconLength = (1.0 / 6.0) * waveguideWidth;
             double stepPosX = disconLength / 2.0; // 中央
 
             double sFreq = 0.0;
@@ -64,6 +65,7 @@ namespace IvyFEMProtoApp
             //double eLen = halfWaveguideWidth * (1.0 / 20.0) * 0.95;
             //double eLen = halfWaveguideWidth * (1.0 / 10.0) * 0.95;
             //double eLen = halfWaveguideWidth * (2.0 / 10.0) * 0.95;
+            //double eLen = halfWaveguideWidth * (1.0 / 10.0) * 0.95; // 基準
             double eLen = halfWaveguideWidth * (1.0 / 10.0) * 0.95;
             Mesher2D mesher = new Mesher2D(cad, eLen);
 

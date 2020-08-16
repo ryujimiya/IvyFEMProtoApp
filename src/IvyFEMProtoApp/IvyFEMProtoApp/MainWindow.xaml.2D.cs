@@ -1544,27 +1544,6 @@ namespace IvyFEMProtoApp
             Problem.ElasticLambWaveguideProblem1(this);
         }
 
-        private void ElasticSHWaveguide0Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.ElasticSHWaveguideProblem0(this);
-        }
-
-        private void ElasticSHWaveguide1Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.ElasticSHWaveguideProblem1(this);
-        }
-
-        private void ElasticSHWaveguide2Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.ElasticSHWaveguideProblem2(this);
-        }
-
         private void ElasticLambWaveguideFirstOrderABC0Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
@@ -1609,6 +1588,56 @@ namespace IvyFEMProtoApp
             Problem.ElasticLambWaveguidePMLProblem1(this);
         }
 
+        private void ElasticSHWaveguide0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.ElasticSHWaveguideProblem0(this);
+        }
+
+        /*
+        private void ElasticSHWaveguide1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.ElasticSHWaveguideProblem1(this);
+        }
+        */
+
+        private void ElasticSHWaveguide2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.ElasticSHWaveguideProblem2(this);
+        }
+
+        private void ElasticSHWaveguideFirstOrderABC0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.ElasticSHWaveguideFirstOrderABCProblem0(this);
+        }
+
+        private void ElasticSHWaveguideFirstOrderABC2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.ElasticSHWaveguideFirstOrderABCProblem2(this);
+        }
+
+        private void ElasticSHWaveguidePML0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.ElasticSHWaveguidePMLProblem0(this);
+        }
+
+        private void ElasticSHWaveguidePML2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.ElasticSHWaveguidePMLProblem2(this);
+        }
 
         private void Optimize1Btn_Click(object sender, RoutedEventArgs e)
         {
