@@ -135,6 +135,9 @@
     <Compile Include="ChartWindow.xaml.cs">
       <DependentUpon>ChartWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="InputWindow.xaml.cs">
+      <DependentUpon>InputWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.xaml.3D.cs" />
     <Compile Include="MainWindow.xaml.2D.cs" />
     <Compile Include="MeshDraw2D.cs" />
@@ -154,8 +157,6 @@
     <Compile Include="Problem.ElasticSHWaveguideFirstOrderABC2 .cs" />
     <Compile Include="Problem.ElasticSHWaveguidePML2.cs" />
     <Compile Include="Problem.ElasticSHWaveguidePML0.cs" />
-    <Compile Include="Problem.ElasticLambWaveguidePML0_0.cs" />
-    <Compile Include="Problem.ElasticLambWaveguidePML1_0.cs" />
     <Compile Include="Problem.ElasticLambWaveguidePML1.cs" />
     <Compile Include="Problem.ElasticLambWaveguidePML0.cs" />
     <Compile Include="Problem.ElasticLambWaveguideFirstOrderABC1.cs" />
@@ -166,6 +167,8 @@
     <Compile Include="Problem.ElasticLambWaveguide1.cs" />
     <Compile Include="Problem.ElasticMITCStVenantThicknessStretchPlate2.cs" />
     <Compile Include="Problem.ElasticLambWaveguide0.cs" />
+    <Compile Include="Problem.ElasticLambWaveguidePMLTD1_0 .cs" />
+    <Compile Include="Problem.ElasticLambWaveguidePMLTD1.cs" />
     <Compile Include="Problem.HyperelasticMITCMooneyRivlinPlate2.cs" />
     <Compile Include="Problem.ElasticMITCStVenantPlate2.cs" />
     <Compile Include="Problem.ElasticMITCLinearPlateEigen2.cs" />
@@ -311,6 +314,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ChartWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="InputWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

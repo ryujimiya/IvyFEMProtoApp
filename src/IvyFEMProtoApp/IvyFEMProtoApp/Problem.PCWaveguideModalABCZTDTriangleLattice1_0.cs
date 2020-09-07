@@ -101,7 +101,7 @@ namespace IvyFEMProtoApp
             // Note: timeLoopCnt は 2^mでなければならない
             //int timeLoopCnt = 2048;
             int timeLoopCnt = 2048 * 8; // 測定帯域が短いので全観測時間を長くする
-            double timeDelta = courantNumber * eLen / (Constants.C0 * Math.Sqrt(2.0));
+            double timeStep = courantNumber * eLen / (Constants.C0 * Math.Sqrt(2.0));
             // 励振源
             // 規格化周波数
             //double srcNormalizedFreq = 0.277;
@@ -1055,7 +1055,7 @@ namespace IvyFEMProtoApp
             var FEM = new PCWaveguide2DModalABCZTDFEM(world);
             FEM.TimeLoopCnt = timeLoopCnt;
             FEM.TimeIndex = 0;
-            FEM.TimeDelta = timeDelta;
+            FEM.TimeStep = timeStep;
             FEM.GaussianType = gaussianType;
             FEM.GaussianT0 = gaussianT0;
             FEM.GaussianTp = gaussianTp;

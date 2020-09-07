@@ -1558,22 +1558,6 @@ namespace IvyFEMProtoApp
             Problem.ElasticLambWaveguideFirstOrderABCProblem1(this);
         }
 
-        /*
-        private void ElasticLambWaveguidePML0_0Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.ElasticLambWaveguidePMLProblem0_0(this);
-        }
-
-        private void ElasticLambWaveguidePML1_0Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.ElasticLambWaveguidePMLProblem1_0(this);
-        }
-        */
-
         private void ElasticLambWaveguidePML0Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
@@ -1637,6 +1621,14 @@ namespace IvyFEMProtoApp
             InitProblem(e.Source as MenuItem);
 
             Problem.ElasticSHWaveguidePMLProblem2(this);
+        }
+
+        private void ElasticLambWaveguidePMLTD1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            //Problem.ElasticLambWaveguidePMLTDProblem1_0(this);
+            Problem.ElasticLambWaveguidePMLTDProblem1(this);
         }
 
         private void Optimize1Btn_Click(object sender, RoutedEventArgs e)

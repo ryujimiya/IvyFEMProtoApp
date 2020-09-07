@@ -307,5 +307,52 @@ namespace IvyFEMProtoApp
             string menuItemTitle = menuItem.Header.ToString();
             this.Title = menuItemTitle + " - " + TitleBase;
         }
+
+        ////////////////////////////////////////////////////////////////
+        private void ResetZoomBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Camera.Scale = 1.0;
+            GLControl_ResizeProc();
+            GLControl.Invalidate();
+        }
+
+        public void DoZoom(int count, bool zoomIn)
+        {
+            double scale = Camera.Scale;
+
+            double delta = zoomIn ?
+                30.0 * count : -30.0 * count;
+            scale *= Math.Pow(1.1, delta / 120.0);
+            Camera.Scale = scale;
+
+            GLControl_ResizeProc();
+            GLControl.Invalidate();
+            GLControl.Update();
+        }
+
+        private void ZoomInBtn_Click(object sender, RoutedEventArgs e)
+        {
+            int count = 1;
+            var window = new InputWindow();
+            window.Owner = this;
+            window.TextBox1.Text = string.Format("{0}", count);
+            window.ShowDialog();
+            count = int.Parse(window.TextBox1.Text);
+
+            DoZoom(count, true);
+        }
+
+
+        private void ZoomOutBtn_Click(object sender, RoutedEventArgs e)
+        {
+            int count = 1;
+            var window = new InputWindow();
+            window.Owner = this;
+            window.TextBox1.Text = string.Format("{0}", count);
+            window.ShowDialog();
+            count = int.Parse(window.TextBox1.Text);
+
+            DoZoom(count, false);
+        }
     }
 }

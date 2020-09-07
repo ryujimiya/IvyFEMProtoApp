@@ -207,37 +207,34 @@
                         <MenuItem Header="Plate(MITC)(Mooney-Rivlin)(2)" Click="MITCMooneyRivlinPlate2Btn_Click"/>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Header="Elastic (Waveguide)">
-                    <MenuItem Header="Elastic (Waveguide)(Lamb)">
-                        <MenuItem Header="Elastic (Waveguide)(Lamb)(0)" Click="ElasticLambWaveguide0Btn_Click"/>
-                        <MenuItem Header="Elastic (Waveguide)(Lamb)(1)" Click="ElasticLambWaveguide1Btn_Click"/>
+                <MenuItem Header="Elastic(Waveguide)">
+                    <MenuItem Header="Elastic(Waveguide)(Lamb)">
+                        <MenuItem Header="Elastic(Waveguide)(Lamb)(0)" Click="ElasticLambWaveguide0Btn_Click"/>
+                        <MenuItem Header="Elastic(Waveguide)(Lamb)(1)" Click="ElasticLambWaveguide1Btn_Click"/>
                     </MenuItem>
-                    <MenuItem Header="Elastic (Waveguide)(Lamb)(ABC)">
-                        <MenuItem Header="Elastic (Waveguide)(Lamb)(ABC)(0)" Click="ElasticLambWaveguideFirstOrderABC0Btn_Click"/>
-                        <MenuItem Header="Elastic (Waveguide)(Lamb)(ABC)(1)" Click="ElasticLambWaveguideFirstOrderABC1Btn_Click"/>
+                    <MenuItem Header="Elastic(Waveguide)(Lamb)(ABC)">
+                        <MenuItem Header="Elastic(Waveguide)(Lamb)(ABC)(0)" Click="ElasticLambWaveguideFirstOrderABC0Btn_Click"/>
+                        <MenuItem Header="Elastic(Waveguide)(Lamb)(ABC)(1)" Click="ElasticLambWaveguideFirstOrderABC1Btn_Click"/>
                     </MenuItem>
-                    <MenuItem Header="Elastic (Waveguide)(Lamb)(PML)">
-                        <!--
-                        <MenuItem Header="Elastic (Waveguide)(Lamb)(PML)(0-0)" Click="ElasticLambWaveguidePML0_0Btn_Click"/>
-                        <MenuItem Header="Elastic (Waveguide)(Lamb)(PML)(1-0)" Click="ElasticLambWaveguidePML1_0Btn_Click"/>
+                    <MenuItem Header="Elastic(Waveguide)(Lamb)(PML)">
+                        <MenuItem Header="Elastic(Waveguide)(Lamb)(PML)(0)" Click="ElasticLambWaveguidePML0Btn_Click"/>
+                        <MenuItem Header="Elastic(Waveguide)(Lamb)(PML)(1)" Click="ElasticLambWaveguidePML1Btn_Click"/>
                         <Separator/>
-                        -->
-                        <MenuItem Header="Elastic (Waveguide)(Lamb)(PML)(0)" Click="ElasticLambWaveguidePML0Btn_Click"/>
-                        <MenuItem Header="Elastic (Waveguide)(Lamb)(PML)(1)" Click="ElasticLambWaveguidePML1Btn_Click"/>
+                        <MenuItem Header="Elastic(Waveguide)(Lamb)(PML)(Time Domain)(1)" Click="ElasticLambWaveguidePMLTD1Btn_Click"/>
                     </MenuItem>
                     <Separator/>
-                    <MenuItem Header="Elastic (Waveguide)(SH)">
-                        <MenuItem Header="Elastic (Waveguide)(SH)(0)" Click="ElasticSHWaveguide0Btn_Click"/>
-                        <!--<MenuItem Header="Elastic (Waveguide)(SH)(1)" Click="ElasticSHWaveguide1Btn_Click"/>-->
-                        <MenuItem Header="Elastic (Waveguide)(SH)(2)" Click="ElasticSHWaveguide2Btn_Click"/>
+                    <MenuItem Header="Elastic(Waveguide)(SH)">
+                        <MenuItem Header="Elastic(Waveguide)(SH)(0)" Click="ElasticSHWaveguide0Btn_Click"/>
+                        <!--<MenuItem Header="Elastic(Waveguide)(SH)(1)" Click="ElasticSHWaveguide1Btn_Click"/>-->
+                        <MenuItem Header="Elastic(Waveguide)(SH)(2)" Click="ElasticSHWaveguide2Btn_Click"/>
                     </MenuItem>
-                    <MenuItem Header="Elastic (Waveguide)(SH)(ABC)">
-                        <MenuItem Header="Elastic (Waveguide)(SH)(ABC)(0)" Click="ElasticSHWaveguideFirstOrderABC0Btn_Click"/>
-                        <MenuItem Header="Elastic (Waveguide)(SH)(ABC)(2)" Click="ElasticSHWaveguideFirstOrderABC2Btn_Click"/>
+                    <MenuItem Header="Elastic(Waveguide)(SH)(ABC)">
+                        <MenuItem Header="Elastic(Waveguide)(SH)(ABC)(0)" Click="ElasticSHWaveguideFirstOrderABC0Btn_Click"/>
+                        <MenuItem Header="Elastic(Waveguide)(SH)(ABC)(2)" Click="ElasticSHWaveguideFirstOrderABC2Btn_Click"/>
                     </MenuItem>
-                    <MenuItem Header="Elastic (Waveguide)(SH)(PML)">
-                        <MenuItem Header="Elastic (Waveguide)(SH)(PML)(0)" Click="ElasticSHWaveguidePML0Btn_Click"/>
-                        <MenuItem Header="Elastic (Waveguide)(SH)(PML)(2)" Click="ElasticSHWaveguidePML2Btn_Click"/>
+                    <MenuItem Header="Elastic(Waveguide)(SH)(PML)">
+                        <MenuItem Header="Elastic(Waveguide)(SH)(PML)(0)" Click="ElasticSHWaveguidePML0Btn_Click"/>
+                        <MenuItem Header="Elastic(Waveguide)(SH)(PML)(2)" Click="ElasticSHWaveguidePML2Btn_Click"/>
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Various Equations">
@@ -376,6 +373,11 @@
                 </MenuItem>
                 <MenuItem Header="Optimizing">
                     <MenuItem Header="H-Plane Waveguide" Click="Optimize1Btn_Click"/>
+                </MenuItem>
+                <MenuItem Header="View">
+                    <MenuItem Header="Zoom In" Click="ZoomInBtn_Click"/>
+                    <MenuItem Header="Zoom Out" Click="ZoomOutBtn_Click"/>
+                    <MenuItem Header="ResetZoom" Click="ResetZoomBtn_Click"/>
                 </MenuItem>
             </Menu>
             <Grid>
