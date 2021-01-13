@@ -124,7 +124,8 @@ namespace IvyFEMProtoApp
                     IList<uint> eIds = new List<uint>();
                     eIds.Add(data.EId);
                     var portCondition = new ConstPortCondition(
-                        eIds, FieldValueType.Vector2, fixedDofIndexs, fixedValues, additionalParamDof);
+                        eIds, CadElementType.Edge, FieldValueType.Vector2,
+                        fixedDofIndexs, fixedValues, additionalParamDof);
                     portCondition.IntAdditionalParameters = new List<int> { (int)bcType };
                     double[] param = portCondition.GetDoubleAdditionalParameters();
                     System.Diagnostics.Debug.Assert(data.Parameters.Count == param.Length);
@@ -279,7 +280,7 @@ namespace IvyFEMProtoApp
             }
         }
 
-        public void ElasticTDProblem2(MainWindow mainWindow, bool isStVenant)
+        public void ElasticLinearStVenantTDProblem2(MainWindow mainWindow, bool isStVenant)
         {
             double beamLen = 1.0;
             double b = 0.2 * beamLen;
@@ -390,7 +391,8 @@ namespace IvyFEMProtoApp
                     IList<uint> eIds = new List<uint>();
                     eIds.Add(data.EId);
                     var portCondition = new ConstPortCondition(
-                        eIds, FieldValueType.Vector2, fixedDofIndexs, fixedValues, additionalParamDof);
+                        eIds, CadElementType.Edge, FieldValueType.Vector2,
+                        fixedDofIndexs, fixedValues, additionalParamDof);
                     portCondition.IntAdditionalParameters = new List<int> { (int)bcType };
                     double[] param = portCondition.GetDoubleAdditionalParameters();
                     System.Diagnostics.Debug.Assert(data.Parameters.Count == param.Length);

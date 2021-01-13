@@ -217,7 +217,7 @@ namespace IvyFEMProtoApp
                         // Scalar
                         IList<uint> eIds = new List<uint>();
                         eIds.Add(data.EId);
-                        var portCondition = new PortCondition(eIds, FieldValueType.Scalar);
+                        var portCondition = new PortCondition(eIds, CadElementType.Edge, FieldValueType.Scalar);
                         portCondition.IntAdditionalParameters = new List<int> { (int)bcType };
                         portConditions.Add(portCondition);
                     }
@@ -233,7 +233,7 @@ namespace IvyFEMProtoApp
                         // Scalar
                         IList<uint> eIds = new List<uint>();
                         eIds.Add(data.EId);
-                        var portCondition = new PortCondition(eIds, FieldValueType.Scalar);
+                        var portCondition = new PortCondition(eIds, CadElementType.Edge, FieldValueType.Scalar);
                         portCondition.IntAdditionalParameters = new List<int> { (int)bcType };
                         portConditions.Add(portCondition);
                     }
@@ -249,7 +249,7 @@ namespace IvyFEMProtoApp
                         // Scalar
                         IList<uint> eIds = new List<uint>();
                         eIds.Add(data.EId);
-                        var portCondition = new PortCondition(eIds, FieldValueType.Scalar);
+                        var portCondition = new PortCondition(eIds, CadElementType.Edge, FieldValueType.Scalar);
                         portCondition.IntAdditionalParameters = new List<int> { (int)bcType };
                         portConditions.Add(portCondition);
                     }
@@ -562,7 +562,7 @@ namespace IvyFEMProtoApp
                         // Scalar
                         IList<uint> eIds = new List<uint>();
                         eIds.Add(data.EId);
-                        var portCondition = new PortCondition(eIds, FieldValueType.Scalar);
+                        var portCondition = new PortCondition(eIds, CadElementType.Edge, FieldValueType.Scalar);
                         portCondition.IntAdditionalParameters = new List<int> { (int)bcType };
                         portConditions.Add(portCondition);
                     }
@@ -578,7 +578,7 @@ namespace IvyFEMProtoApp
                         // Scalar
                         IList<uint> eIds = new List<uint>();
                         eIds.Add(data.EId);
-                        var portCondition = new PortCondition(eIds, FieldValueType.Scalar);
+                        var portCondition = new PortCondition(eIds, CadElementType.Edge, FieldValueType.Scalar);
                         portCondition.IntAdditionalParameters = new List<int> { (int)bcType };
                         portConditions.Add(portCondition);
                     }
@@ -594,7 +594,7 @@ namespace IvyFEMProtoApp
                         // Scalar
                         IList<uint> eIds = new List<uint>();
                         eIds.Add(data.EId);
-                        var portCondition = new PortCondition(eIds, FieldValueType.Scalar);
+                        var portCondition = new PortCondition(eIds, CadElementType.Edge, FieldValueType.Scalar);
                         portCondition.IntAdditionalParameters = new List<int> { (int)bcType };
                         portConditions.Add(portCondition);
                     }

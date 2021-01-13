@@ -15,7 +15,7 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void MakeCad3D(MainWindow mainWindow)
+        public void MakeCad3D2(MainWindow mainWindow)
         {
             /////////////////////
             Dimension = 3; // 3次元
@@ -34,13 +34,36 @@ namespace IvyFEMProtoApp
                 pts.Add(new OpenTK.Vector3d(1.0, 0.0, 0.0));
                 pts.Add(new OpenTK.Vector3d(1.0, 1.0, 0.0));
                 pts.Add(new OpenTK.Vector3d(0.0, 1.0, 0.0));
-                var res = cad.AddPolygon(pts);
+                pts.Add(new OpenTK.Vector3d(0.0, 0.0, 1.0));
+                pts.Add(new OpenTK.Vector3d(1.0, 0.0, 1.0));
+                pts.Add(new OpenTK.Vector3d(1.0, 1.0, 1.0));
+                pts.Add(new OpenTK.Vector3d(0.0, 1.0, 1.0));
+                cad.AddCube(pts);
             }
+            cad.AddRectLoop(1, new OpenTK.Vector2d(0.25, 0.25), new OpenTK.Vector2d(0.75, 0.75));
+            cad.LiftLoop(1, cad.GetLoop(1).Normal * (-0.1));
+            {
+                var eIds = new List<uint> { 21, 22, 23, 24 };
+                cad.MakeRadialLoop(eIds);
+            }
+
+            cad.SetLoopColor(1, new double[3] { 0.0, 0.0, 0.0 });
+            cad.SetLoopColor(7, new double[3] { 0.0, 0.0, 0.0 });
+            cad.SetLoopColor(12, new double[3] { 1.0, 0.0, 0.0 });
+            cad.SetEdgeColor(21, new double[3] { 0.0, 0.0, 1.0 });
+            cad.SetEdgeColor(22, new double[3] { 0.0, 0.0, 1.0 });
+            cad.SetEdgeColor(23, new double[3] { 0.0, 0.0, 1.0 });
+            cad.SetEdgeColor(24, new double[3] { 0.0, 0.0, 1.0 });
+            cad.SetVertexColor(13, new double[3] { 1.0, 1.0, 0.0 });
+            cad.SetVertexColor(14, new double[3] { 1.0, 1.0, 0.0 });
+            cad.SetVertexColor(15, new double[3] { 1.0, 1.0, 0.0 });
+            cad.SetVertexColor(16, new double[3] { 1.0, 1.0, 0.0 });
 
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
             var drawer = new Cad3DDrawer(cad);
+            drawer.IsMask = true;
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -48,7 +71,7 @@ namespace IvyFEMProtoApp
             mainWindow.GLControl.Update();
         }
 
-        public void MakeCoarseMesh3D(MainWindow mainWindow)
+        public void MakeCoarseMesh3D2(MainWindow mainWindow)
         {
             /////////////////////
             Dimension = 3; // 3次元
@@ -67,8 +90,21 @@ namespace IvyFEMProtoApp
                 pts.Add(new OpenTK.Vector3d(1.0, 0.0, 0.0));
                 pts.Add(new OpenTK.Vector3d(1.0, 1.0, 0.0));
                 pts.Add(new OpenTK.Vector3d(0.0, 1.0, 0.0));
-                var res = cad.AddPolygon(pts);
+                pts.Add(new OpenTK.Vector3d(0.0, 0.0, 1.0));
+                pts.Add(new OpenTK.Vector3d(1.0, 0.0, 1.0));
+                pts.Add(new OpenTK.Vector3d(1.0, 1.0, 1.0));
+                pts.Add(new OpenTK.Vector3d(0.0, 1.0, 1.0));
+                cad.AddCube(pts);
             }
+            cad.AddRectLoop(1, new OpenTK.Vector2d(0.25, 0.25), new OpenTK.Vector2d(0.75, 0.75));
+            cad.LiftLoop(1, cad.GetLoop(1).Normal * (-0.1));
+            {
+                var eIds = new List<uint> { 21, 22, 23, 24 };
+                cad.MakeRadialLoop(eIds);
+            }
+
+            System.Diagnostics.Debug.Assert(cad.IsElementId(CadElementType.Loop, 12)); // 12までのはず
+            System.Diagnostics.Debug.Assert(!cad.IsElementId(CadElementType.Loop, 13)); // 12までのはず
 
             Mesher3D mesher = new Mesher3D(cad);
 
@@ -76,6 +112,7 @@ namespace IvyFEMProtoApp
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
             var drawer = new Mesher3DDrawer(mesher);
+            drawer.IsMask = true;
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -83,7 +120,7 @@ namespace IvyFEMProtoApp
             mainWindow.GLControl.Update();
         }
 
-        public void MakeMesh3D(MainWindow mainWindow)
+        public void MakeMesh3D2(MainWindow mainWindow)
         {
             /////////////////////
             Dimension = 3; // 3次元
@@ -102,16 +139,47 @@ namespace IvyFEMProtoApp
                 pts.Add(new OpenTK.Vector3d(1.0, 0.0, 0.0));
                 pts.Add(new OpenTK.Vector3d(1.0, 1.0, 0.0));
                 pts.Add(new OpenTK.Vector3d(0.0, 1.0, 0.0));
-                var res = cad.AddPolygon(pts);
+                pts.Add(new OpenTK.Vector3d(0.0, 0.0, 1.0));
+                pts.Add(new OpenTK.Vector3d(1.0, 0.0, 1.0));
+                pts.Add(new OpenTK.Vector3d(1.0, 1.0, 1.0));
+                pts.Add(new OpenTK.Vector3d(0.0, 1.0, 1.0));
+                cad.AddCube(pts);
+            }
+            cad.AddRectLoop(1, new OpenTK.Vector2d(0.25, 0.25), new OpenTK.Vector2d(0.75, 0.75));
+            cad.LiftLoop(1, cad.GetLoop(1).Normal * (-0.1));
+            {
+                var eIds = new List<uint> { 21, 22, 23, 24 };
+                cad.MakeRadialLoop(eIds);
             }
 
-            double eLen = 0.05;
+            System.Diagnostics.Debug.Assert(cad.IsElementId(CadElementType.Loop, 12)); // 12までのはず
+            System.Diagnostics.Debug.Assert(!cad.IsElementId(CadElementType.Loop, 13)); // 12までのはず
+            {
+                IList<uint> lIds1 = new List<uint> {
+                    1, 2, 3, 4, 5, 6,
+                    7, 8, 9, 10, 11
+                };
+                IList<OpenTK.Vector3d> holes1 = new List<OpenTK.Vector3d>();
+                IList<uint> insideVIds1 = new List<uint>();
+                uint sId1 = cad.AddSolid(lIds1, holes1, insideVIds1);
+
+                IList<uint> lIds2 = new List<uint> {
+                    7, 8, 9, 10, 11, 12
+                };
+                IList<OpenTK.Vector3d> holes2 = new List<OpenTK.Vector3d>();
+                IList<uint> insideVIds2 = new List<uint>();
+                uint sId2 = cad.AddSolid(lIds2, holes2, insideVIds2);
+            }
+
+            //double eLen = 0.05;
+            double eLen = 0.10;
             Mesher3D mesher = new Mesher3D(cad, eLen);
 
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
             drawerArray.Clear();
             var drawer = new Mesher3DDrawer(mesher);
+            drawer.IsMask = true;
             mainWindow.DrawerArray.Add(drawer);
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();

@@ -185,7 +185,7 @@ namespace IvyFEMProtoApp
                     fixedCads.Add(fixedCad);
                 }
                 forceFixedCadD2 = world.GetForceFieldFixedCads(d2QuantityId)[0];
-            }
+            }            
             /*
             // 分布荷重
             // load
@@ -208,7 +208,8 @@ namespace IvyFEMProtoApp
                     IList<uint> eIds = new List<uint>();
                     eIds.Add(data.EId);
                     var portCondition = new ConstPortCondition(
-                        eIds, FieldValueType.Vector2, fixedDofIndexs, fixedValues, additionalParamDof);
+                        eIds, CadElementType.Edge, FieldValueType.Vector2,
+                        fixedDofIndexs, fixedValues, additionalParamDof);
                     portCondition.IntAdditionalParameters = new List<int> { (int)bcType };
                     double[] param = portCondition.GetDoubleAdditionalParameters();
                     System.Diagnostics.Debug.Assert(data.Parameters.Count == param.Length);
@@ -236,7 +237,8 @@ namespace IvyFEMProtoApp
                     IList<uint> eIds = new List<uint>();
                     eIds.Add(data.EId);
                     var portCondition = new ConstPortCondition(
-                        eIds, FieldValueType.Scalar, fixedDofIndexs, fixedValues, additionalParamDof);
+                        eIds, CadElementType.Edge, FieldValueType.Scalar,
+                        fixedDofIndexs, fixedValues, additionalParamDof);
                     portCondition.IntAdditionalParameters = new List<int> { (int)bcType };
                     double[] param = portCondition.GetDoubleAdditionalParameters();
                     System.Diagnostics.Debug.Assert(data.Parameters.Count == param.Length);
@@ -651,7 +653,8 @@ namespace IvyFEMProtoApp
                     IList<uint> eIds = new List<uint>();
                     eIds.Add(data.EId);
                     var portCondition = new ConstPortCondition(
-                        eIds, FieldValueType.Vector2, fixedDofIndexs, fixedValues, additionalParamDof);
+                        eIds, CadElementType.Edge, FieldValueType.Vector2,
+                        fixedDofIndexs, fixedValues, additionalParamDof);
                     portCondition.IntAdditionalParameters = new List<int> { (int)bcType };
                     double[] param = portCondition.GetDoubleAdditionalParameters();
                     System.Diagnostics.Debug.Assert(data.Parameters.Count == param.Length);
@@ -679,7 +682,8 @@ namespace IvyFEMProtoApp
                     IList<uint> eIds = new List<uint>();
                     eIds.Add(data.EId);
                     var portCondition = new ConstPortCondition(
-                        eIds, FieldValueType.Scalar, fixedDofIndexs, fixedValues, additionalParamDof);
+                        eIds, CadElementType.Edge, FieldValueType.Scalar,
+                        fixedDofIndexs, fixedValues, additionalParamDof);
                     portCondition.IntAdditionalParameters = new List<int> { (int)bcType };
                     double[] param = portCondition.GetDoubleAdditionalParameters();
                     System.Diagnostics.Debug.Assert(data.Parameters.Count == param.Length);

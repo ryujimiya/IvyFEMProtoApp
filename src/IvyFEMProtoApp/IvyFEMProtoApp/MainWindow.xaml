@@ -20,10 +20,27 @@
                     <MenuItem Header="Mesh" Click="MeshBtn_Click"/>
                     <MenuItem Header="Mesh(Hollow Loop)" Click="MeshHollowLoopBtn_Click"/>
                     <MenuItem Header="DrawString" Click="DrawStringBtn_Click"/>
+                </MenuItem>
+                <MenuItem Header="Cad(3D)">
+                    <MenuItem Header="Cad(3D)(Plate Only)" Click="Cad3DPlateOnlyBtn_Click"/>
+                    <MenuItem Header="Coare Mesh(3D)(Plate Only)" Click="CoarseMesh3DPlateOnlyBtn_Click"/>
+                    <MenuItem Header="Mesh(3D)(Plate Only)" Click="Mesh3DPlateOnlyBtn_Click"/>
                     <Separator/>
-                    <MenuItem Header="Cad(3D)" Click="Cad3DBtn_Click"/>
-                    <MenuItem Header="Coare Mesh(3D)" Click="CoarseMesh3DBtn_Click"/>
-                    <MenuItem Header="Mesh(3D)" Click="Mesh3DBtn_Click"/>
+                    <MenuItem Header="Cad(3D)(1)" Click="Cad3D1Btn_Click"/>
+                    <MenuItem Header="Coare Mesh(3D)(1)" Click="CoarseMesh3D1Btn_Click"/>
+                    <MenuItem Header="Mesh(3D)(1)" Click="Mesh3D1Btn_Click"/>
+                    <Separator/>
+                    <MenuItem Header="Cad(3D)(2)" Click="Cad3D2Btn_Click"/>
+                    <MenuItem Header="Coare Mesh(3D)(2)" Click="CoarseMesh3D2Btn_Click"/>
+                    <MenuItem Header="Mesh(3D)(2)" Click="Mesh3D2Btn_Click"/>
+                    <Separator/>
+                    <MenuItem Header="Cad(3D)(3)" Click="Cad3D3Btn_Click"/>
+                    <MenuItem Header="Coare Mesh(3D)(3)" Click="CoarseMesh3D3Btn_Click"/>
+                    <MenuItem Header="Mesh(3D)(3)" Click="Mesh3D3Btn_Click"/>
+                    <Separator/>
+                    <MenuItem Header="Cad(3D)(4)" Click="Cad3D4Btn_Click"/>
+                    <MenuItem Header="Coare Mesh(3D)(4)" Click="CoarseMesh3D4Btn_Click"/>
+                    <MenuItem Header="Mesh(3D)(4)" Click="Mesh3D4Btn_Click"/>
                 </MenuItem>
                 <MenuItem Header="Numerics">
                     <MenuItem Header="LAPACK" Click="LapackBtn_Click"/>
@@ -81,7 +98,8 @@
                         <MenuItem Header="Mooney-Rivlin(2 Body Contact)(Time Domain)" Click="MooneyRivlinHyperelasticTwoBodyContactTDBtn_Click"/>
                         <MenuItem Header="Ogden(2 Body Contact)(Time Domain)" Click="OgdenHyperelasticTwoBodyContactTDBtn_Click"/>
                     </MenuItem>
-                    <Separator/>
+                </MenuItem>
+                <MenuItem Header="Elastic(Beam/Plate)">
                     <MenuItem Header="Truss">
                         <MenuItem Header="Truss(1)" Click="Truss1Btn_Click"/>
                         <MenuItem Header="Truss(1)(Time Domain)" Click="TrussTD1Btn_Click"/>
@@ -207,6 +225,15 @@
                         <MenuItem Header="Plate(MITC)(Mooney-Rivlin)(2)" Click="MITCMooneyRivlinPlate2Btn_Click"/>
                     </MenuItem>
                 </MenuItem>
+                <MenuItem Header="Elastic(3D)">
+                    <MenuItem Header="Elastic(3D)">
+                        <MenuItem Header="Linear(3D)(1)" Click="ElasticLinear3D1Btn_Click"/>
+                        <MenuItem Header="Linear(3D)(1)(Time Domain)" Click="ElasticLinear3DTD1Btn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="St.Venant(3D)(1)" Click="StVenantHyperelastic3D1Btn_Click"/>
+                        <MenuItem Header="St.Venant(3D)(1)(Time Domain)" Click="StVenantHyperelastic3DTD1Btn_Click"/>
+                    </MenuItem>
+                </MenuItem>
                 <MenuItem Header="Elastic(Waveguide)">
                     <MenuItem Header="Elastic(Waveguide)(Lamb)">
                         <MenuItem Header="Elastic(Waveguide)(Lamb)(0)" Click="ElasticLambWaveguide0Btn_Click"/>
@@ -236,14 +263,6 @@
                         <MenuItem Header="Elastic(Waveguide)(SH)(PML)(0)" Click="ElasticSHWaveguidePML0Btn_Click"/>
                         <MenuItem Header="Elastic(Waveguide)(SH)(PML)(2)" Click="ElasticSHWaveguidePML2Btn_Click"/>
                     </MenuItem>
-                </MenuItem>
-                <MenuItem Header="Various Equations">
-                    <MenuItem Header="Poisson" Click="PoissonBtn_Click"/>
-                    <MenuItem Header="Heat Diffusion(Poisson)" Click="DiffusionBtn_Click"/>
-                    <MenuItem Header="Heat Diffusion(Time Domain)" Click="DiffusionTDBtn_Click"/>
-                    <MenuItem Header="Advection Diffusion" Click="AdvectionDiffusionBtn_Click"/>
-                    <MenuItem Header="Advection Diffusion(Time Domain)" Click="AdvectionDiffusionTDBtn_Click"/>
-                    <MenuItem Header="Helmholtz" Click="HelmholtzBtn_Click"/>
                 </MenuItem>
                 <MenuItem Header="ElectroMagnetic">
                     <MenuItem Header="ElectroMagnetic(Waveguide)">
@@ -370,6 +389,28 @@
                         <MenuItem Header="Vorticity(RK)(1)(Time Domain)" Click="StdGVorticityFluid1RKTDBtn_Click"/>
                         <MenuItem Header="Vorticity(RK)(2)(Time Domain)" Click="StdGVorticityFluid2RKTDBtn_Click"/>
                     </MenuItem>
+                </MenuItem>
+                <MenuItem Header="Various Equations">
+                    <MenuItem Header="Poisson" Click="PoissonBtn_Click"/>
+                    <Separator/>
+                    <MenuItem Header="Heat Diffusion(Poisson)" Click="DiffusionBtn_Click"/>
+                    <MenuItem Header="Heat Diffusion(Time Domain)" Click="DiffusionTDBtn_Click"/>
+                    <Separator/>
+                    <MenuItem Header="Advection Diffusion" Click="AdvectionDiffusionBtn_Click"/>
+                    <MenuItem Header="Advection Diffusion(Time Domain)" Click="AdvectionDiffusionTDBtn_Click"/>
+                    <Separator/>
+                    <MenuItem Header="Helmholtz" Click="HelmholtzBtn_Click"/>
+                </MenuItem>
+                <MenuItem Header="Various Equations(3D)">
+                    <MenuItem Header="Poisson(3D)" Click="Poisson3DBtn_Click"/>
+                    <Separator/>
+                    <MenuItem Header="Heat Diffusion(3D)(Poisson)" Click="Diffusion3DBtn_Click"/>
+                    <MenuItem Header="Heat Diffusion(3D)(Time Domain)" Click="Diffusion3DTDBtn_Click"/>
+                    <Separator/>
+                    <MenuItem Header="Advection Diffusion(3D)" Click="AdvectionDiffusion3DBtn_Click"/>
+                    <MenuItem Header="Advection Diffusion(3D)(Time Domain)" Click="AdvectionDiffusion3DTDBtn_Click"/>
+                    <Separator/>
+                    <MenuItem Header="Helmholtz(3D)" Click="Helmholtz3DBtn_Click"/>
                 </MenuItem>
                 <MenuItem Header="Optimizing">
                     <MenuItem Header="H-Plane Waveguide" Click="Optimize1Btn_Click"/>

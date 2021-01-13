@@ -74,7 +74,7 @@ namespace IvyFEMProtoApp
                 {
                     abcEIds.Add(eId);
                 }
-                PortCondition portCondition = new PortCondition(abcEIds, FieldValueType.ZScalar);
+                PortCondition portCondition = new PortCondition(abcEIds, CadElementType.Edge, FieldValueType.ZScalar);
                 portConditions.Add(portCondition);
             }
 

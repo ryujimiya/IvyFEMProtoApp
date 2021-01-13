@@ -331,7 +331,8 @@ namespace IvyFEMProtoApp
                     veloValues[coId * veloDof + 1] = (x - 0.5);
                 }
 
-                var FEM = new AdvectionDiffusion2DTDFEM(world, veloValueId,
+                var FEM = new AdvectionDiffusion2DTDFEM(
+                    world, veloValueId,
                     dt,
                     newmarkBeta, newmarkGamma,
                     valueId, prevValueId);

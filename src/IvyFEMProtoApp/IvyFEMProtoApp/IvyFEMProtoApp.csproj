@@ -146,11 +146,17 @@
     </Compile>
     <Compile Include="NonlinerOptimizingProblem.cs" />
     <Compile Include="PortEdge.cs" />
-    <Compile Include="Problem.Cad3D.cs" />
+    <Compile Include="Problem.Cad3D4.cs" />
+    <Compile Include="Problem.Cad3D3.cs" />
+    <Compile Include="Problem.Cad3D2.cs" />
+    <Compile Include="Problem.Cad3DPlateOnly.cs" />
+    <Compile Include="Problem.Cad3D1.cs" />
+    <Compile Include="Problem.AdvectionDiffusion3D.cs" />
     <Compile Include="Problem.EddyCurrent2.cs" />
     <Compile Include="Problem.EddyCurrent1.cs" />
     <Compile Include="Problem.ElasticBeam3.cs" />
     <Compile Include="Problem.ElasticBeam2.cs" />
+    <Compile Include="Problem.ElasticLinearStVenant3D1.cs" />
     <Compile Include="Problem.ElasticSHWaveguideFirstOrderABC0.cs" />
     <Compile Include="Problem.ElasticLambWaveguideFirstOrderABC0_0.cs" />
     <Compile Include="Problem.ElasticLambWaveguideFirstOrderABC1_0.cs" />
@@ -269,6 +275,9 @@
     <Compile Include="Problem.PCWaveguideTriangleLattice1_0.cs" />
     <Compile Include="Problem.PCWaveguideSquareLattice1.cs" />
     <Compile Include="Problem.PCWaveguideSquareLattice1_0.cs" />
+    <Compile Include="Problem.Diffusion3D.cs" />
+    <Compile Include="Problem.Helmholtz3D.cs" />
+    <Compile Include="Problem.Poisson3D.cs" />
     <Compile Include="Problem.PressurePoissonWithBellFluidRK2.cs" />
     <Compile Include="Problem.PressurePoissonWithBellFluidRK1.cs" />
     <Compile Include="Problem.PressurePoissonWithBellFluid2.cs" />
@@ -410,6 +419,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="OouraFFTDll.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tetgen.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

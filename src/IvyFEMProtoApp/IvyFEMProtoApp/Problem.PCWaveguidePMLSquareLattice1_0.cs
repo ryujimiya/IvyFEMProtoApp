@@ -594,6 +594,7 @@ namespace IvyFEMProtoApp
                     IList<uint> bcEIds2 = wgPortInfo.BcEdgeIds2;
                     // 複素数
                     PortCondition portCondition = new PortCondition(
+                        CadElementType.Edge,
                         lIds, bcEIds1, bcEIds2, FieldValueType.ZScalar, new List<uint> { 0 }, 0);
                     portConditions.Add(portCondition);
                 }

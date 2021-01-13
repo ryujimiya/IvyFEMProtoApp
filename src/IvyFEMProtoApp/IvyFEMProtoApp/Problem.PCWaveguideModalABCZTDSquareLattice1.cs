@@ -626,7 +626,7 @@ namespace IvyFEMProtoApp
                         // ABCは通常の導波路として扱う
                         PCWaveguidePortInfo wgPortInfo = wgPortInfos[portId];
                         IList<uint> bcEIds1 = wgPortInfo.BcEdgeIds1;
-                        PortCondition portCondition = new PortCondition(bcEIds1, FieldValueType.Scalar);
+                        PortCondition portCondition = new PortCondition(bcEIds1, CadElementType.Edge, FieldValueType.Scalar);
                         portConditions.Add(portCondition);
                         wgPortInfos[portId] = null; // クリアする
                     }
@@ -639,6 +639,7 @@ namespace IvyFEMProtoApp
                         IList<uint> bcEIds1 = wgPortInfo.BcEdgeIds1;
                         IList<uint> bcEIds2 = wgPortInfo.BcEdgeIds2;
                         PortCondition portCondition = new PortCondition(
+                            CadElementType.Edge,
                             lIds, bcEIds1, bcEIds2, FieldValueType.Scalar, new List<uint> { 0 }, 0);
                         portConditions.Add(portCondition);
                     }

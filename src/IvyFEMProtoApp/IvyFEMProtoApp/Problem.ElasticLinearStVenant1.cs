@@ -189,7 +189,7 @@ namespace IvyFEMProtoApp
             }
         }
 
-        public void ElasticTDProblem1(MainWindow mainWindow, bool isStVenant)
+        public void ElasticLinearStVenantTDProblem1(MainWindow mainWindow, bool isStVenant)
         {
             Cad2D cad = new Cad2D();
             {

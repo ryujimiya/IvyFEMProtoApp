@@ -102,7 +102,7 @@ namespace IvyFEMProtoApp
             InitProblem(e.Source as MenuItem);
 
             bool isStVenant = false;
-            Problem.ElasticTDProblem1(this, isStVenant);
+            Problem.ElasticLinearStVenantTDProblem1(this, isStVenant);
         }
 
         private void ElasticLinear2Btn_Click(object sender, RoutedEventArgs e)
@@ -118,7 +118,7 @@ namespace IvyFEMProtoApp
             InitProblem(e.Source as MenuItem);
 
             bool isStVenant = false;
-            Problem.ElasticTDProblem2(this, isStVenant);
+            Problem.ElasticLinearStVenantTDProblem2(this, isStVenant);
         }
 
         private void ElasticLinearEigenBtn_Click(object sender, RoutedEventArgs e)
@@ -142,7 +142,7 @@ namespace IvyFEMProtoApp
             InitProblem(e.Source as MenuItem);
 
             bool isStVenant = true;
-            Problem.ElasticTDProblem1(this, isStVenant);
+            Problem.ElasticLinearStVenantTDProblem1(this, isStVenant);
         }
 
         private void StVenantHyperelastic2Btn_Click(object sender, RoutedEventArgs e)
@@ -158,7 +158,7 @@ namespace IvyFEMProtoApp
             InitProblem(e.Source as MenuItem);
 
             bool isStVenant = true;
-            Problem.ElasticTDProblem2(this, isStVenant);
+            Problem.ElasticLinearStVenantTDProblem2(this, isStVenant);
         }
 
         private void StVenantHyperelasticEigenBtn_Click(object sender, RoutedEventArgs e)
@@ -872,46 +872,105 @@ namespace IvyFEMProtoApp
             Problem.TimoshenkoTLFrameTDProblem3(this);
         }
 
-        private void PoissonBtn_Click(object sender, RoutedEventArgs e)
+        private void ElasticLambWaveguide0Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.PoissonProblem(this);
+            Problem.ElasticLambWaveguideProblem0(this);
         }
 
-        private void DiffusionBtn_Click(object sender, RoutedEventArgs e)
+        private void ElasticLambWaveguide1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.DiffusionProblem(this);
+            Problem.ElasticLambWaveguideProblem1(this);
         }
 
-        private void DiffusionTDBtn_Click(object sender, RoutedEventArgs e)
+        private void ElasticLambWaveguideFirstOrderABC0Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.DiffusionTDProblem(this);
+            Problem.ElasticLambWaveguideFirstOrderABCProblem0(this);
         }
 
-        private void AdvectionDiffusionBtn_Click(object sender, RoutedEventArgs e)
+        private void ElasticLambWaveguideFirstOrderABC1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.AdvectionDiffusionProblem(this);
+            Problem.ElasticLambWaveguideFirstOrderABCProblem1(this);
         }
 
-        private void AdvectionDiffusionTDBtn_Click(object sender, RoutedEventArgs e)
+        private void ElasticLambWaveguidePML0Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.AdvectionDiffusionTDProblem(this);
+            Problem.ElasticLambWaveguidePMLProblem0(this);
         }
 
-        private void HelmholtzBtn_Click(object sender, RoutedEventArgs e)
+        private void ElasticLambWaveguidePML1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.HelmholtzProblem(this);
+            Problem.ElasticLambWaveguidePMLProblem1(this);
+        }
+
+        private void ElasticSHWaveguide0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.ElasticSHWaveguideProblem0(this);
+        }
+
+        /*
+        private void ElasticSHWaveguide1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.ElasticSHWaveguideProblem1(this);
+        }
+        */
+
+        private void ElasticSHWaveguide2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.ElasticSHWaveguideProblem2(this);
+        }
+
+        private void ElasticSHWaveguideFirstOrderABC0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.ElasticSHWaveguideFirstOrderABCProblem0(this);
+        }
+
+        private void ElasticSHWaveguideFirstOrderABC2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.ElasticSHWaveguideFirstOrderABCProblem2(this);
+        }
+
+        private void ElasticSHWaveguidePML0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.ElasticSHWaveguidePMLProblem0(this);
+        }
+
+        private void ElasticSHWaveguidePML2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.ElasticSHWaveguidePMLProblem2(this);
+        }
+
+        private void ElasticLambWaveguidePMLTD1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            //Problem.ElasticLambWaveguidePMLTDProblem1_0(this);
+            Problem.ElasticLambWaveguidePMLTDProblem1(this);
         }
 
         private void HPlaneWaveguide1Btn_Click(object sender, RoutedEventArgs e)
@@ -1530,105 +1589,46 @@ namespace IvyFEMProtoApp
             Problem.VorticityFluidRKTDProblem2(this);
         }
 
-        private void ElasticLambWaveguide0Btn_Click(object sender, RoutedEventArgs e)
+        private void PoissonBtn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.ElasticLambWaveguideProblem0(this);
+            Problem.PoissonProblem(this);
         }
 
-        private void ElasticLambWaveguide1Btn_Click(object sender, RoutedEventArgs e)
+        private void DiffusionBtn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.ElasticLambWaveguideProblem1(this);
+            Problem.DiffusionProblem(this);
         }
 
-        private void ElasticLambWaveguideFirstOrderABC0Btn_Click(object sender, RoutedEventArgs e)
+        private void DiffusionTDBtn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.ElasticLambWaveguideFirstOrderABCProblem0(this);
+            Problem.DiffusionTDProblem(this);
         }
 
-        private void ElasticLambWaveguideFirstOrderABC1Btn_Click(object sender, RoutedEventArgs e)
+        private void AdvectionDiffusionBtn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.ElasticLambWaveguideFirstOrderABCProblem1(this);
+            Problem.AdvectionDiffusionProblem(this);
         }
 
-        private void ElasticLambWaveguidePML0Btn_Click(object sender, RoutedEventArgs e)
+        private void AdvectionDiffusionTDBtn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.ElasticLambWaveguidePMLProblem0(this);
+            Problem.AdvectionDiffusionTDProblem(this);
         }
 
-        private void ElasticLambWaveguidePML1Btn_Click(object sender, RoutedEventArgs e)
+        private void HelmholtzBtn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.ElasticLambWaveguidePMLProblem1(this);
-        }
-
-        private void ElasticSHWaveguide0Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.ElasticSHWaveguideProblem0(this);
-        }
-
-        /*
-        private void ElasticSHWaveguide1Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.ElasticSHWaveguideProblem1(this);
-        }
-        */
-
-        private void ElasticSHWaveguide2Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.ElasticSHWaveguideProblem2(this);
-        }
-
-        private void ElasticSHWaveguideFirstOrderABC0Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.ElasticSHWaveguideFirstOrderABCProblem0(this);
-        }
-
-        private void ElasticSHWaveguideFirstOrderABC2Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.ElasticSHWaveguideFirstOrderABCProblem2(this);
-        }
-
-        private void ElasticSHWaveguidePML0Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.ElasticSHWaveguidePMLProblem0(this);
-        }
-
-        private void ElasticSHWaveguidePML2Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.ElasticSHWaveguidePMLProblem2(this);
-        }
-
-        private void ElasticLambWaveguidePMLTD1Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            //Problem.ElasticLambWaveguidePMLTDProblem1_0(this);
-            Problem.ElasticLambWaveguidePMLTDProblem1(this);
+            Problem.HelmholtzProblem(this);
         }
 
         private void Optimize1Btn_Click(object sender, RoutedEventArgs e)

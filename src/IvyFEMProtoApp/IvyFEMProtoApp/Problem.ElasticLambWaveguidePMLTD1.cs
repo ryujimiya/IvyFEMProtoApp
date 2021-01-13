@@ -357,7 +357,8 @@ namespace IvyFEMProtoApp
                     IList<double> fixedValues = new List<double>();
                     uint additionalParameterDof = 1; // for normalX
                     PortCondition portCondition = new ConstPortCondition(
-                        portEIds, FieldValueType.Vector2, fixedDofIndexs, fixedValues, additionalParameterDof);
+                        portEIds, CadElementType.Edge, FieldValueType.Vector2,
+                        fixedDofIndexs, fixedValues, additionalParameterDof);
                     portCondition.GetDoubleAdditionalParameters()[0] = normalX[portId];
                     uPortConditions.Add(portCondition);
                 }

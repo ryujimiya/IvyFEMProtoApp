@@ -146,13 +146,14 @@ namespace IvyFEMProtoApp
                     IList<System.Numerics.Complex> fixedValues = new List<System.Numerics.Complex>();
                     uint additionalParameterDof = 1; // for normalX
                     PortCondition portCondition = new ConstPortCondition(
-                        portEIds, FieldValueType.ZVector2, fixedDofIndexs, fixedValues, additionalParameterDof);
+                        portEIds, CadElementType.Edge, FieldValueType.ZVector2,
+                        fixedDofIndexs, fixedValues, additionalParameterDof);
                     portCondition.GetComplexAdditionalParameters()[0] = normalX[portId];
                     uPortConditions.Add(portCondition);
                 }
                 foreach (IList<uint> portEIds in portEIdss)
                 {
-                    PortCondition portCondition = new PortCondition(portEIds, FieldValueType.ZVector2);
+                    PortCondition portCondition = new PortCondition(portEIds, CadElementType.Edge, FieldValueType.ZVector2);
                     sPortConditions.Add(portCondition);
                 }
 

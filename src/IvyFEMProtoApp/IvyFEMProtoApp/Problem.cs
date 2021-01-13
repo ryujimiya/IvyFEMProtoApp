@@ -54,6 +54,8 @@ namespace IvyFEMProtoApp
 
             var fieldDrawerArray = mainWindow.FieldDrawerArray;
             fieldDrawerArray.Clear();
+            var fieldDrawerArrayA = mainWindow.FieldDrawerArrayA;
+            fieldDrawerArrayA.Clear();
         }
 
         private void ChartWindow1_Closing(object sender, System.ComponentModel.CancelEventArgs e)

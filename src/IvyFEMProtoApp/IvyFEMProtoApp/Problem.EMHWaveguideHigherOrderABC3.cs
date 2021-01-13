@@ -433,7 +433,7 @@ namespace IvyFEMProtoApp
                 foreach (IList<uint> portEIds in portEIdss)
                 {
                     // 複素数
-                    PortCondition portCondition = new PortCondition(portEIds, FieldValueType.ZScalar);
+                    PortCondition portCondition = new PortCondition(portEIds, CadElementType.Edge, FieldValueType.ZScalar);
                     portConditions.Add(portCondition);
                 }
 

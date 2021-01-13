@@ -14,25 +14,141 @@ namespace IvyFEMProtoApp
 {
     partial class MainWindow
     {
-        private void Cad3DBtn_Click(object sender, RoutedEventArgs e)
+        private void Cad3DPlateOnlyBtn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.MakeCad3D(this);
+            Problem.MakeCad3DPlateOnly(this);
         }
 
-        private void CoarseMesh3DBtn_Click(object sender, RoutedEventArgs e)
+        private void CoarseMesh3DPlateOnlyBtn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.MakeCoarseMesh3D(this);
+            Problem.MakeCoarseMesh3DPlateOnly(this);
         }
 
-        private void Mesh3DBtn_Click(object sender, RoutedEventArgs e)
+        private void Mesh3DPlateOnlyBtn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
-            Problem.MakeMesh3D(this);
+            Problem.MakeMesh3DPlateOnly(this);
+        }
+
+        private void Cad3D1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MakeCad3D1(this);
+        }
+
+        private void CoarseMesh3D1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MakeCoarseMesh3D1(this);
+        }
+
+        private void Mesh3D1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MakeMesh3D1(this);
+        }
+
+        private void Cad3D2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MakeCad3D2(this);
+        }
+
+        private void CoarseMesh3D2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MakeCoarseMesh3D2(this);
+        }
+
+        private void Mesh3D2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MakeMesh3D2(this);
+        }
+
+        private void Cad3D3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MakeCad3D3(this);
+        }
+
+        private void CoarseMesh3D3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MakeCoarseMesh3D3(this);
+        }
+
+        private void Mesh3D3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MakeMesh3D3(this);
+        }
+
+        private void Cad3D4Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MakeCad3D4(this);
+        }
+
+        private void CoarseMesh3D4Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MakeCoarseMesh3D4(this);
+        }
+
+        private void Mesh3D4Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MakeMesh3D4(this);
+        }
+
+        private void ElasticLinear3D1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isStVenant = false;
+            Problem.ElasticLinearStVenant3DProblem1(this, isStVenant);
+        }
+
+        private void ElasticLinear3DTD1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isStVenant = false;
+            Problem.ElasticLinearStVenant3DTDProblem1(this, isStVenant);
+        }
+
+        private void StVenantHyperelastic3D1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isStVenant = true;
+            Problem.ElasticLinearStVenant3DProblem1(this, isStVenant);
+        }
+
+        private void StVenantHyperelastic3DTD1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isStVenant = true;
+            Problem.ElasticLinearStVenant3DTDProblem1(this, isStVenant);
         }
 
         private void DKTPlate1Btn_Click(object sender, RoutedEventArgs e)
@@ -199,6 +315,48 @@ namespace IvyFEMProtoApp
             InitProblem(e.Source as MenuItem);
 
             Problem.MITCMooneyRivlinPlateProblem2(this);
+        }
+
+        private void Poisson3DBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.Poisson3DProblem(this);
+        }
+
+        private void Diffusion3DBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.Diffusion3DProblem(this);
+        }
+
+        private void Diffusion3DTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.Diffusion3DTDProblem(this);
+        }
+
+        private void AdvectionDiffusion3DBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.AdvectionDiffusion3DProblem(this);
+        }
+
+        private void AdvectionDiffusion3DTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.AdvectionDiffusion3DTDProblem(this);
+        }
+
+        private void Helmholtz3DBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.Helmholtz3DProblem(this);
         }
     }
 }

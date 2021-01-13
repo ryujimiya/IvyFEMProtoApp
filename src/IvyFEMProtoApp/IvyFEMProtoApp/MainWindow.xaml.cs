@@ -70,6 +70,7 @@ namespace IvyFEMProtoApp
         /// </summary>
         internal DrawerArray DrawerArray { get; private set; } = new DrawerArray();
         internal FieldDrawerArray FieldDrawerArray { get; private set; } = new FieldDrawerArray();
+        internal FieldDrawerArray FieldDrawerArrayA { get; private set; } = new FieldDrawerArray();
 
         /// <summary>
         /// コンストラクタ
@@ -283,6 +284,7 @@ namespace IvyFEMProtoApp
             if (IsFieldDraw)
             {
                 FieldDrawerArray.Draw();
+                FieldDrawerArrayA.Draw();
             }
             else
             {

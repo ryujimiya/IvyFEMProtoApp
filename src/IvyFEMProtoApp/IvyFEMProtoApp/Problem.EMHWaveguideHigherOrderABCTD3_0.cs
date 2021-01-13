@@ -480,7 +480,7 @@ namespace IvyFEMProtoApp
                 foreach (IList<uint> portEIds in portEIdss)
                 {
                     // スカラー
-                    PortCondition portCondition = new PortCondition(portEIds, FieldValueType.Scalar);
+                    PortCondition portCondition = new PortCondition(portEIds, CadElementType.Edge, FieldValueType.Scalar);
                     portConditions.Add(portCondition);
                 }
             }

@@ -199,7 +199,7 @@ namespace IvyFEMProtoApp
             IList<PortCondition> portConditions = world.GetPortConditions(tQuantityId);
             foreach (uint[] portEIds in portEIdss)
             {
-                PortCondition portCondition = new PortCondition(portEIds, FieldValueType.ZScalar);
+                PortCondition portCondition = new PortCondition(portEIds, CadElementType.Edge, FieldValueType.ZScalar);
                 portConditions.Add(portCondition);
             }
 
