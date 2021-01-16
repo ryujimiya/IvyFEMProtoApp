@@ -19,17 +19,7 @@ namespace IvyFEMProtoApp
             double h = 0.25 * b;
             // 規格化周波数 fn = b/λ
             Func<double, double> toNormalizedFreq = freq => b * freq / Constants.C0;
-            double eLen = 0.2 * beamLen;
-            if (isStVenant)
-            {
-                //eLen = 0.2 * beamLen;
-                eLen = 0.04 * beamLen;
-            }
-            else
-            {
-                //eLen = 0.2 * beamLen; //!!まだ収束してない ただ大回転になるため線形弾性体では限界がある
-                eLen = 0.04 * beamLen;
-            }
+            double eLen = 0.04 * beamLen;
             double E = 169.0e+9;
             double rho = 2300.0;
             double nu = 0.262;

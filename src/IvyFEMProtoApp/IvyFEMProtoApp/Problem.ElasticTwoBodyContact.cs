@@ -42,7 +42,6 @@ namespace IvyFEMProtoApp
             {
                 uint uDof = 2; // Vector2
                 uint uFEOrder = 1;
-                //uint cDof = 1; // Scalar
                 uint cDof = 2; // Vector2 for mortar
                 uint cFEOrder = 1;
                 uQuantityId = world.AddQuantity(uDof, uFEOrder, FiniteElementType.ScalarLagrange);
@@ -238,7 +237,6 @@ namespace IvyFEMProtoApp
             {
                 uint uDof = 2; // Vector2
                 uint uFEOrder = 1;
-                //uint cDof = 1; // Scalar
                 uint cDof = 2; // Vector2 for mortar
                 uint cFEOrder = 1;
                 uQuantityId = world.AddQuantity(uDof, uFEOrder, FiniteElementType.ScalarLagrange);

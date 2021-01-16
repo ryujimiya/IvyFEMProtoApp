@@ -58,7 +58,8 @@ namespace IvyFEMProtoApp
             mainWindow.GLControl.Update();
             WPFUtils.DoEvents();
 
-            double eLen = 0.1;
+            //double eLen = 0.1;
+            double eLen = 0.2;
             Mesher3D mesher = new Mesher3D(cad, eLen);
 
             FEWorld world = new FEWorld();
@@ -118,7 +119,7 @@ namespace IvyFEMProtoApp
 
             FieldFixedCad fixedCadXYZ;
             {
-                // FixedDofIndex 0: X 1: Y
+                // FixedDofIndex 0: X 1: Y 2: Z
                 var fixedCadDatas = new[]
                 {
                     new { CadId = (uint)3, CadElemType = CadElementType.Loop,
@@ -138,12 +139,9 @@ namespace IvyFEMProtoApp
             world.MakeElements();
 
             uint valueId = 0;
-            uint eqStressValueId = 0;
-            uint stressValueId = 0;
             FaceFieldDrawer faceDrawer;
             EdgeFieldDrawer edgeDrawer;
             //EdgeFieldDrawer edgeDrawer2;
-            VectorFieldDrawer vectorDrawer = null;
             var fieldDrawerArray = mainWindow.FieldDrawerArray;
             {
                 world.ClearFieldValue();
@@ -256,7 +254,8 @@ namespace IvyFEMProtoApp
             mainWindow.GLControl.Update();
             WPFUtils.DoEvents();
 
-            double eLen = 0.1;
+            //double eLen = 0.1;
+            double eLen = 0.2;
             Mesher3D mesher = new Mesher3D(cad, eLen);
 
             FEWorld world = new FEWorld();
@@ -316,7 +315,7 @@ namespace IvyFEMProtoApp
 
             FieldFixedCad fixedCadXYZ;
             {
-                // FixedDofIndex 0: X 1: Y
+                // FixedDofIndex 0: X 1: Y 2: Z
                 var fixedCadDatas = new[]
                 {
                     new { CadId = (uint)3, CadElemType = CadElementType.Loop,

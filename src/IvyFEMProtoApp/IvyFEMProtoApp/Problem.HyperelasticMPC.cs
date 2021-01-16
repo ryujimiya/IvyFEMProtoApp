@@ -46,44 +46,41 @@ namespace IvyFEMProtoApp
             }
             world.TriIntegrationPointCount = TriangleIntegrationPointCount.Point3;
 
-            if (isMooney)
             {
-                // Mooney-Rivlin
                 world.ClearMaterial();
                 uint maId = 0;
-                var ma = new MooneyRivlinHyperelasticMaterial();
-                ma.IsCompressible = false;
-                //ma.IsCompressible = true;
-                //ma.D1 = 1.0; // 非圧縮性のときは必要なし
-                ma.C1 = 400;
-                ma.C2 = 400;
-                ma.GravityX = 0;
-                ma.GravityY = 0;
-                ma.MassDensity = 1.0;
-                maId = world.AddMaterial(ma);
-
-                uint lId = 1;
-                world.SetCadLoopMaterial(lId, maId);
-            }
-            else
-            {
-                // Odgen
-                world.ClearMaterial();
-                uint maId = 0;
-                var ma = new OgdenHyperelasticMaterial();
-                //double[] alphas = { 1.3, 5.0, -2.0 };
-                //double[] mus = { 6300e3, 1.2e3, -10e3 };
-                double[] alphas = { 2.0, -2.0 };
-                double[] mus = { 800, -800 };
-                System.Diagnostics.Debug.Assert(alphas.Length == mus.Length);
-                ma.IsCompressible = false;
-                //ma.IsCompressible = true;
-                //ma.D1 = 1.0; // 非圧縮性のときは必要なし
-                ma.SetAlphaMu(alphas.Length, alphas, mus);
-                ma.GravityX = 0;
-                ma.GravityY = 0;
-                ma.MassDensity = 1.0;
-                maId = world.AddMaterial(ma);
+                if (isMooney)
+                {
+                    // Mooney-Rivlin
+                    var ma = new MooneyRivlinHyperelasticMaterial();
+                    ma.IsCompressible = false;
+                    //ma.IsCompressible = true;
+                    //ma.D1 = 1.0; // 非圧縮性のときは必要なし
+                    ma.C1 = 400;
+                    ma.C2 = 400;
+                    ma.GravityX = 0;
+                    ma.GravityY = 0;
+                    ma.MassDensity = 1.0;
+                    maId = world.AddMaterial(ma);
+                }
+                else
+                {
+                    // Odgen
+                    var ma = new OgdenHyperelasticMaterial();
+                    //double[] alphas = { 1.3, 5.0, -2.0 };
+                    //double[] mus = { 6300e3, 1.2e3, -10e3 };
+                    double[] alphas = { 2.0, -2.0 };
+                    double[] mus = { 800, -800 };
+                    System.Diagnostics.Debug.Assert(alphas.Length == mus.Length);
+                    ma.IsCompressible = false;
+                    //ma.IsCompressible = true;
+                    //ma.D1 = 1.0; // 非圧縮性のときは必要なし
+                    ma.SetAlphaMu(alphas.Length, alphas, mus);
+                    ma.GravityX = 0;
+                    ma.GravityY = 0;
+                    ma.MassDensity = 1.0;
+                    maId = world.AddMaterial(ma);
+                }
 
                 uint lId = 1;
                 world.SetCadLoopMaterial(lId, maId);

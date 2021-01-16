@@ -119,6 +119,27 @@ namespace IvyFEMProtoApp
             Problem.MakeMesh3D4(this);
         }
 
+        private void Cad3D5Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MakeCad3D5(this);
+        }
+
+        private void CoarseMesh3D5Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MakeCoarseMesh3D5(this);
+        }
+
+        private void Mesh3D5Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MakeMesh3D5(this);
+        }
+
         private void ElasticLinear3D1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
@@ -135,6 +156,30 @@ namespace IvyFEMProtoApp
             Problem.ElasticLinearStVenant3DTDProblem1(this, isStVenant);
         }
 
+        private void ElasticLinear3D2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isStVenant = false;
+            Problem.ElasticLinearStVenant3DProblem2(this, isStVenant);
+        }
+
+        private void ElasticLinear3DTD2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isStVenant = false;
+            Problem.ElasticLinearStVenant3DTDProblem2(this, isStVenant);
+        }
+
+        private void ElasticLinearEigen3DBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isStVenant = false;
+            Problem.ElasticLinearStVenantEigen3DProblem(this, isStVenant);
+        }
+
         private void StVenantHyperelastic3D1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
@@ -149,6 +194,160 @@ namespace IvyFEMProtoApp
 
             bool isStVenant = true;
             Problem.ElasticLinearStVenant3DTDProblem1(this, isStVenant);
+        }
+
+        private void StVenantHyperelastic3D2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isStVenant = true;
+            Problem.ElasticLinearStVenant3DProblem2(this, isStVenant);
+        }
+
+        private void StVenantHyperelastic3DTD2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isStVenant = true;
+            Problem.ElasticLinearStVenant3DTDProblem2(this, isStVenant);
+        }
+
+        private void StVenantHyperelasticEigen3DBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isStVenant = true;
+            Problem.ElasticLinearStVenantEigen3DProblem(this, isStVenant);
+        }
+
+        private void MooneyRivlinHyperelastic3DBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isMooney = true;
+            Problem.Hyperelastic3DProblem(this, isMooney);
+        }
+
+        private void MooneyRivlinHyperelastic3DTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isMooney = true;
+            Problem.Hyperelastic3DTDProblem(this, isMooney);
+        }
+
+        private void OgdenHyperelastic3DBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isMooney = false; // Ogden
+            Problem.Hyperelastic3DProblem(this, isMooney);
+        }
+
+        private void OgdenHyperelastic3DTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isMooney = false; // Ogden
+            Problem.Hyperelastic3DTDProblem(this, isMooney);
+        }
+
+        private void ElasticMultipointConstraint3DTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isStVenant = false;
+            Problem.ElasticMultipointConstraint3DTDProblem(this, isStVenant);
+        }
+
+        private void StVenantHyperelasticMultipointConstraint3DTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isStVenant = true;
+            Problem.ElasticMultipointConstraint3DTDProblem(this, isStVenant);
+        }
+
+        private void MooneyRivlinHyperelasticMultipointConstraint3DTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isMooney = true;
+            Problem.HyperelasticMultipointConstraint3DTDProblem(this, isMooney);
+        }
+
+        private void OgdenHyperelasticMultipointConstraint3DTDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isMooney = false; // Ogden
+            Problem.HyperelasticMultipointConstraint3DTDProblem(this, isMooney);
+        }
+
+        private void ElasticContact3DTD1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isStVenant = false;
+            Problem.ElasticContact3DTD1Problem(this, isStVenant);
+        }
+
+        private void StVenantHyperelasticContact3DTD1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isStVenant = true;
+            Problem.ElasticContact3DTD1Problem(this, isStVenant);
+        }
+
+        private void MooneyRivlinHyperelasticContact3DTD1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isMooney = true;
+            Problem.HyperelasticContact3DTD1Problem(this, isMooney);
+        }
+
+        private void OgdenHyperelasticContact3DTD1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            // Ogden
+            bool isMooney = false;
+            Problem.HyperelasticContact3DTD1Problem(this, isMooney);
+        }
+
+        private void ElasticContact3DTD2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isStVenant = false;
+            Problem.ElasticContact3DTD2Problem(this, isStVenant);
+        }
+
+        private void StVenantHyperelasticContact3DTD2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isStVenant = true;
+            Problem.ElasticContact3DTD2Problem(this, isStVenant);
+        }
+
+        private void MooneyRivlinHyperelasticContact3DTD2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            bool isMooney = true;
+            Problem.HyperelasticContact3DTD2Problem(this, isMooney);
+        }
+
+        private void OgdenHyperelasticContact3DTD2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            // Ogden
+            bool isMooney = false;
+            Problem.HyperelasticContact3DTD2Problem(this, isMooney);
         }
 
         private void DKTPlate1Btn_Click(object sender, RoutedEventArgs e)
