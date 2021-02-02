@@ -182,6 +182,9 @@
     <Compile Include="Problem.ElasticLambWaveguide0.cs" />
     <Compile Include="Problem.ElasticLambWaveguidePMLTD1_0 .cs" />
     <Compile Include="Problem.ElasticLambWaveguidePMLTD1.cs" />
+    <Compile Include="Problem.ElasticTwoBodyContact3D2.cs" />
+    <Compile Include="Problem.ElasticTwoBodyContact3D1.cs" />
+    <Compile Include="Problem.ElasticTwoBodyContact2.cs" />
     <Compile Include="Problem.Hyperelastic3D.cs" />
     <Compile Include="Problem.HyperelasticContact3D2.cs" />
     <Compile Include="Problem.HyperelasticContact3D1.cs" />
@@ -256,6 +259,7 @@
     <Compile Include="Problem.EMWaveguide2DEigen2.cs" />
     <Compile Include="Problem.FFT.cs" />
     <Compile Include="Problem.HyperelasticMPC3D.cs" />
+    <Compile Include="Problem.HyperelasticTwoBodyContact3D2.cs" />
     <Compile Include="Problem.OptimizeProblem1.cs" />
     <Compile Include="Problem.EMWaveguide2DEigen1.cs" />
     <Compile Include="Problem.PBGTriangleLattice2.cs" />
@@ -304,9 +308,9 @@
     <Compile Include="Problem.VorticityFluid1.cs" />
     <Compile Include="Problem.Fluid2.cs" />
     <Compile Include="Problem.Fluid1.cs" />
-    <Compile Include="Problem.ElasticTwoBodyContact.cs" />
+    <Compile Include="Problem.ElasticTwoBodyContact1.cs" />
     <Compile Include="Problem.ElasticContact1.cs" />
-    <Compile Include="Problem.HyperelasticTwoBodyContact.cs" />
+    <Compile Include="Problem.HyperelasticTwoBodyContact2.cs" />
     <Compile Include="Problem.HyperelasticContact1.cs" />
     <Compile Include="Problem.HyperelasticMPC.cs" />
     <Compile Include="Problem.Hyperelastic.cs" />

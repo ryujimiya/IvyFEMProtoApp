@@ -238,7 +238,7 @@ namespace IvyFEMProtoApp
             InitProblem(e.Source as MenuItem);
 
             bool isStVenant = false;
-            Problem.ElasticContactTD1Problem(this, isStVenant);
+            Problem.ElasticContactTDProblem1(this, isStVenant);
         }
 
         private void StVenantHyperelasticContactTD1Btn_Click(object sender, RoutedEventArgs e)
@@ -246,7 +246,7 @@ namespace IvyFEMProtoApp
             InitProblem(e.Source as MenuItem);
 
             bool isStVenant = true;
-            Problem.ElasticContactTD1Problem(this, isStVenant);
+            Problem.ElasticContactTDProblem1(this, isStVenant);
         }
 
         private void MooneyRivlinHyperelasticContactTD1Btn_Click(object sender, RoutedEventArgs e)
@@ -254,7 +254,7 @@ namespace IvyFEMProtoApp
             InitProblem(e.Source as MenuItem);
 
             bool isMooney = true;
-            Problem.HyperelasticContactTD1Problem(this, isMooney);
+            Problem.HyperelasticContactTDProblem1(this, isMooney);
         }
 
         private void OgdenHyperelasticContactTD1Btn_Click(object sender, RoutedEventArgs e)
@@ -263,7 +263,7 @@ namespace IvyFEMProtoApp
 
             // Ogden
             bool isMooney = false;
-            Problem.HyperelasticContactTD1Problem(this, isMooney);
+            Problem.HyperelasticContactTDProblem1(this, isMooney);
         }
 
         private void ElasticContactTD2Btn_Click(object sender, RoutedEventArgs e)
@@ -271,7 +271,7 @@ namespace IvyFEMProtoApp
             InitProblem(e.Source as MenuItem);
 
             bool isStVenant = false;
-            Problem.ElasticContactTD2Problem(this, isStVenant);
+            Problem.ElasticContactTDProblem2(this, isStVenant);
         }
 
         private void StVenantHyperelasticContactTD2Btn_Click(object sender, RoutedEventArgs e)
@@ -279,7 +279,7 @@ namespace IvyFEMProtoApp
             InitProblem(e.Source as MenuItem);
 
             bool isStVenant = true;
-            Problem.ElasticContactTD2Problem(this, isStVenant);
+            Problem.ElasticContactTDProblem2(this, isStVenant);
         }
 
         private void MooneyRivlinHyperelasticContactTD2Btn_Click(object sender, RoutedEventArgs e)
@@ -287,7 +287,7 @@ namespace IvyFEMProtoApp
             InitProblem(e.Source as MenuItem);
 
             bool isMooney = true;
-            Problem.HyperelasticContactTD2Problem(this, isMooney);
+            Problem.HyperelasticContactTDProblem2(this, isMooney);
         }
 
         private void OgdenHyperelasticContactTD2Btn_Click(object sender, RoutedEventArgs e)
@@ -296,56 +296,56 @@ namespace IvyFEMProtoApp
 
             // Ogden
             bool isMooney = false;
-            Problem.HyperelasticContactTD2Problem(this, isMooney);
+            Problem.HyperelasticContactTDProblem2(this, isMooney);
         }
 
-        private void ElasticTwoBodyContactBtn_Click(object sender, RoutedEventArgs e)
+        private void ElasticTwoBodyContact1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
             bool isStVenant = false;
-            Problem.ElasticTwoBodyContactProblem(this, isStVenant);
+            Problem.ElasticTwoBodyContactProblem1(this, isStVenant);
         }
 
-        private void ElasticTwoBodyContactTDBtn_Click(object sender, RoutedEventArgs e)
+        private void ElasticTwoBodyContactTD2Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
             bool isStVenant = false;
-            Problem.ElasticTwoBodyContactTDProblem(this, isStVenant);
+            Problem.ElasticTwoBodyContactTDProblem2(this, isStVenant);
         }
 
-        private void StVenantHyperelasticTwoBodyContactBtn_Click(object sender, RoutedEventArgs e)
+        private void StVenantHyperelasticTwoBodyContact1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
             bool isStVenant = true;
-            Problem.ElasticTwoBodyContactProblem(this, isStVenant);
+            Problem.ElasticTwoBodyContactProblem1(this, isStVenant);
         }
 
-        private void StVenantHyperelasticTwoBodyContactTDBtn_Click(object sender, RoutedEventArgs e)
+        private void StVenantHyperelasticTwoBodyContactTD2Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
             bool isStVenant = true;
-            Problem.ElasticTwoBodyContactTDProblem(this, isStVenant);
+            Problem.ElasticTwoBodyContactTDProblem2(this, isStVenant);
         }
 
-        private void MooneyRivlinHyperelasticTwoBodyContactTDBtn_Click(object sender, RoutedEventArgs e)
+        private void MooneyRivlinHyperelasticTwoBodyContactTD2Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
             bool isMooney = true;
-            Problem.HyperelasticTwoBodyContactTDProblem(this, isMooney);
+            Problem.HyperelasticTwoBodyContactTDProblem2(this, isMooney);
         }
 
-        private void OgdenHyperelasticTwoBodyContactTDBtn_Click(object sender, RoutedEventArgs e)
+        private void OgdenHyperelasticTwoBodyContactTD2Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
 
             // Ogden
             bool isMooney = false;
-            Problem.HyperelasticTwoBodyContactTDProblem(this, isMooney);
+            Problem.HyperelasticTwoBodyContactTDProblem2(this, isMooney);
         }
 
         private void Truss1Btn_Click(object sender, RoutedEventArgs e)

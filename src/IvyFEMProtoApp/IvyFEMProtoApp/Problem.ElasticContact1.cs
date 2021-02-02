@@ -12,7 +12,7 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void ElasticContactTD1Problem(MainWindow mainWindow, bool isStVenant)
+        public void ElasticContactTDProblem1(MainWindow mainWindow, bool isStVenant)
         {
             Cad2D cad = new Cad2D();
             {

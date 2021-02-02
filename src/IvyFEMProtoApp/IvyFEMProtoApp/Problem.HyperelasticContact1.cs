@@ -12,7 +12,7 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void HyperelasticContactTD1Problem(MainWindow mainWindow, bool isMooney)
+        public void HyperelasticContactTDProblem1(MainWindow mainWindow, bool isMooney)
         {
             Cad2D cad = new Cad2D();
             {

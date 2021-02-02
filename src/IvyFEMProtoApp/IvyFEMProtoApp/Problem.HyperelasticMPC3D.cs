@@ -199,15 +199,15 @@ namespace IvyFEMProtoApp
             }
 
             double t = 0;
-            double dt = 0.05;
+            double dt = 0.05 * 4.0;
             double newmarkBeta = 1.0 / 4.0;
             double newmarkGamma = 1.0 / 2.0;
             for (int iTime = 0; iTime <= 50; iTime++)
             {
                 double[] fixedValueXYZ = fixedCadXYZ.GetDoubleValues();
-                fixedValueXYZ[0] = -Math.Sin(t * 2.0 * Math.PI * 0.4);
+                fixedValueXYZ[0] = -Math.Sin(t * 2.0 * Math.PI * 0.1);
                 fixedValueXYZ[1] = 0.0;
-                fixedValueXYZ[2] = Math.Sin(t * 2.0 * Math.PI * 0.4);
+                fixedValueXYZ[2] = Math.Sin(t * 2.0 * Math.PI * 0.1);
 
                 var FEM = new Elastic3DTDFEM(world, dt,
                     newmarkBeta, newmarkGamma,

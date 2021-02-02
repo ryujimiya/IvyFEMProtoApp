@@ -104,15 +104,15 @@
                         <MenuItem Header="Ogden(Contact)(2)(Time Domain)" Click="OgdenHyperelasticContactTD2Btn_Click"/>
                     </MenuItem>
                     <MenuItem Header="Elastic(2 Body Contact)">
-                        <MenuItem Header="Elastic(2 Body Contact)" Click="ElasticTwoBodyContactBtn_Click"/>
-                        <MenuItem Header="Elastic(2 Body Contact)(Time Domain)" Click="ElasticTwoBodyContactTDBtn_Click"/>
+                        <MenuItem Header="Elastic(2 Body Contact)(1)" Click="ElasticTwoBodyContact1Btn_Click"/>
+                        <MenuItem Header="Elastic(2 Body Contact)(2)(Time Domain)" Click="ElasticTwoBodyContactTD2Btn_Click"/>
                         <Separator/>
-                        <MenuItem Header="St.Venant(2 Body Contact)" Click="StVenantHyperelasticTwoBodyContactBtn_Click"/>
-                        <MenuItem Header="St.Venant(2 Body Contact)(Time Domain)" Click="StVenantHyperelasticTwoBodyContactTDBtn_Click"/>
+                        <MenuItem Header="St.Venant(2 Body Contact)(1)" Click="StVenantHyperelasticTwoBodyContact1Btn_Click"/>
+                        <MenuItem Header="St.Venant(2 Body Contact)(2)(Time Domain)" Click="StVenantHyperelasticTwoBodyContactTD2Btn_Click"/>
                         <Separator/>
-                        <MenuItem Header="Mooney-Rivlin(2 Body Contact)(Time Domain)" Click="MooneyRivlinHyperelasticTwoBodyContactTDBtn_Click"/>
+                        <MenuItem Header="Mooney-Rivlin(2 Body Contact)(2)(Time Domain)" Click="MooneyRivlinHyperelasticTwoBodyContactTD2Btn_Click"/>
                         <Separator/>
-                        <MenuItem Header="Ogden(2 Body Contact)(Time Domain)" Click="OgdenHyperelasticTwoBodyContactTDBtn_Click"/>
+                        <MenuItem Header="Ogden(2 Body Contact)(2)(Time Domain)" Click="OgdenHyperelasticTwoBodyContactTD2Btn_Click"/>
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Elastic(Beam/Plate)">
@@ -279,6 +279,17 @@
                         <Separator/>
                         <MenuItem Header="Ogden(3D)(Contact)(1)(Time Domain)" Click="OgdenHyperelasticContact3DTD1Btn_Click"/>
                         <MenuItem Header="Ogden(3D)(Contact)(2)(Time Domain)" Click="OgdenHyperelasticContact3DTD2Btn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Elastic(3D)(2 Body Contact)">
+                        <MenuItem Header="Elastic(3D)(2 Body Contact)(1)" Click="ElasticTwoBodyContact3D1Btn_Click"/>
+                        <MenuItem Header="Elastic(3D)(2 Body Contact)(2)(Time Domain)" Click="ElasticTwoBodyContact3DTD2Btn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="St.Venant(3D)(2 Body Contact)(1)" Click="StVenantHyperelasticTwoBodyContact3D1Btn_Click"/>
+                        <MenuItem Header="St.Venant(3D)(2 Body Contact)(2)(Time Domain)" Click="StVenantHyperelasticTwoBodyContact3DTD2Btn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="Mooney-Rivlin(3D)(2 Body Contact)(2)(Time Domain)" Click="MooneyRivlinHyperelasticTwoBodyContact3DTD2Btn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="Ogden(3D)(2 Body Contact)(2)(Time Domain)" Click="OgdenHyperelasticTwoBodyContact3DTD2Btn_Click"/>
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Elastic(Waveguide)">
