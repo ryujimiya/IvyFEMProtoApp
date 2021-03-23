@@ -448,6 +448,18 @@
                         <MenuItem Header="Vorticity(RK)(2)(Time Domain)" Click="StdGVorticityFluid2RKTDBtn_Click"/>
                     </MenuItem>
                 </MenuItem>
+                <MenuItem Header="Fluid(3D)">
+                    <!--
+                    <MenuItem Header="Fluid(3D)">
+                        <MenuItem Header="Fluid(3D)(1)" Click="StdGFluid3D1Btn_Click"/>
+                        <MenuItem Header="Fluid(3D)(1)(Time Domain)" Click="StdGFluid3D1TDBtn_Click"/>
+                    </MenuItem>
+                    -->
+                    <MenuItem Header="Fluid(3D)(SUPG)">
+                        <MenuItem Header="Fluid(3D)(SUPG)(1)" Click="SUPGFluid3D1Btn_Click"/>
+                        <MenuItem Header="Fluid(3D)(SUPG)(1)(Time Domain)" Click="SUPGFluid3D1TDBtn_Click"/>
+                    </MenuItem>
+                </MenuItem>
                 <MenuItem Header="Various Equations">
                     <MenuItem Header="Poisson" Click="PoissonBtn_Click"/>
                     <Separator/>

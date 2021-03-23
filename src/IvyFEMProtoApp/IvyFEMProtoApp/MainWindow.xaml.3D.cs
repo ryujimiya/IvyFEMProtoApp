@@ -565,6 +565,63 @@ namespace IvyFEMProtoApp
             Problem.MITCMooneyRivlinPlateProblem2(this);
         }
 
+        // mu = 0.02, 0.002 FluidEquationType.StdGNavierStokes
+        // mu = 0.0002 FluidEquationType.SUPGNavierStokes
+        // mu = 0.00002 Not converge
+        private void StdGFluid3D1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            FluidEquationType fluidEquationType = FluidEquationType.StdGNavierStokes;
+            Problem.Fluid3DProblem1(this, fluidEquationType);
+        }
+
+        private void StdGFluid3D1TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            FluidEquationType fluidEquationType = FluidEquationType.StdGNavierStokes;
+            Problem.Fluid3DTDProblem1(this, fluidEquationType);
+        }
+
+        private void StdGFluid3D2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+            /*
+            InitProblem(e.Source as MenuItem);
+
+            FluidEquationType fluidEquationType = FluidEquationType.StdGNavierStokes;
+            Problem.Fluid3DProblem2(this, fluidEquationType);
+            */
+        }
+
+        private void StdGFluid3D2TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+            /*
+            InitProblem(e.Source as MenuItem);
+
+            FluidEquationType fluidEquationType = FluidEquationType.StdGNavierStokes;
+            Problem.Fluid3DTDProblem2(this, fluidEquationType);
+            */
+        }
+
+        private void SUPGFluid3D1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            FluidEquationType fluidEquationType = FluidEquationType.SUPGNavierStokes;
+            Problem.Fluid3DProblem1(this, fluidEquationType);
+        }
+
+        private void SUPGFluid3D1TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            FluidEquationType fluidEquationType = FluidEquationType.SUPGNavierStokes;
+            Problem.Fluid3DTDProblem1(this, fluidEquationType);
+        }
+
         private void Poisson3DBtn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);

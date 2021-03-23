@@ -185,6 +185,7 @@
     <Compile Include="Problem.ElasticTwoBodyContact3D2.cs" />
     <Compile Include="Problem.ElasticTwoBodyContact3D1.cs" />
     <Compile Include="Problem.ElasticTwoBodyContact2.cs" />
+    <Compile Include="Problem.Fluid3D1.cs" />
     <Compile Include="Problem.Hyperelastic3D.cs" />
     <Compile Include="Problem.HyperelasticContact3D2.cs" />
     <Compile Include="Problem.HyperelasticContact3D1.cs" />
