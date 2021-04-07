@@ -448,6 +448,17 @@
                         <MenuItem Header="Vorticity(RK)(2)(Time Domain)" Click="StdGVorticityFluid2RKTDBtn_Click"/>
                     </MenuItem>
                 </MenuItem>
+                <MenuItem Header="Fluid(Displacement)">
+                    <!--
+                    <MenuItem Header="Fluid(Displacement)">
+                        <MenuItem Header="Fluid(Displacement)(1)(Time Domain)" Click="FluidDisplacement1TDBtn_Click"/>
+                    </MenuItem>
+                    -->
+                    <MenuItem Header="Fluid(FIC)">
+                        <MenuItem Header="Fluid(FIC)(1)(Time Domain)" Click="FluidFIC1TDBtn_Click"/>
+                        <!--<MenuItem Header="Fluid(FIC)(2)(Time Domain)" Click="FluidFIC2TDBtn_Click"/>-->
+                    </MenuItem>
+                </MenuItem>
                 <MenuItem Header="Fluid(3D)">
                     <!--
                     <MenuItem Header="Fluid(3D)">

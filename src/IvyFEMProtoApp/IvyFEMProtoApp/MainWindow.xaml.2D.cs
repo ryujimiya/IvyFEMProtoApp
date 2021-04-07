@@ -1589,6 +1589,27 @@ namespace IvyFEMProtoApp
             Problem.VorticityFluidRKTDProblem2(this);
         }
 
+        private void FluidDisplacement1TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.FluidDisplacementTDProblem1(this); // SUPG NS
+        }
+
+        private void FluidFIC1TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.FluidFICTDProblem1(this);  // FIC(Finite Calculus)
+        }
+
+        private void FluidFIC2TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.FluidFICTDProblem2(this);  // FIC(Finite Calculus)
+        }
+
         private void PoissonBtn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
