@@ -1617,6 +1617,48 @@ namespace IvyFEMProtoApp
             Problem.FluidRANSTDProblem2(this);
         }
 
+        private void FluidLES0TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.FluidLESTDProblem0(this);
+        }
+
+        private void FluidLES1TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.FluidLESTDProblem1(this);
+        }
+
+        private void FluidLES2TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.FluidLESTDProblem2(this);
+        }
+
+        private void FluidRANSDroplet1TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.FluidRANSDropletTDProblem1(this);
+        }
+
+        private void FluidLESDroplet1TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.FluidLESDropletTDProblem1(this);
+        }
+
+        private void FluidNSDroplet1TDBtn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.FluidNSDropletTDProblem1(this);
+        }
+
         private void PoissonBtn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);

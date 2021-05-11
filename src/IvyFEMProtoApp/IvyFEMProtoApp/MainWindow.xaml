@@ -458,6 +458,18 @@
                         <MenuItem Header="Fluid(RANS)(1)(Time Domain)" Click="FluidRANS1TDBtn_Click"/>
                         <MenuItem Header="Fluid(RANS)(2)(Time Domain)" Click="FluidRANS2TDBtn_Click"/>
                     </MenuItem>
+                    <MenuItem Header="Fluid(LES)">
+                        <MenuItem Header="Fluid(LES)(0)(Time Domain)" Click="FluidLES0TDBtn_Click"/>
+                        <MenuItem Header="Fluid(LES)(1)(Time Domain)" Click="FluidLES1TDBtn_Click"/>
+                        <MenuItem Header="Fluid(LES)(2)(Time Domain)" Click="FluidLES2TDBtn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Fluid(Flow Droplet)">
+                        <MenuItem Header="Fluid(RANS Droplet)(1)(Time Domain)" Click="FluidRANSDroplet1TDBtn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="Fluid(LES Droplet)(1)(Time Domain)" Click="FluidLESDroplet1TDBtn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="Fluid(NS Droplet)(1)(Time Domain)" Click="FluidNSDroplet1TDBtn_Click"/>
+                    </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Fluid(3D)">
                     <!--

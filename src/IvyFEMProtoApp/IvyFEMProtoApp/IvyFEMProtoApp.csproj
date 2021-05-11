@@ -185,7 +185,14 @@
     <Compile Include="Problem.ElasticTwoBodyContact3D2.cs" />
     <Compile Include="Problem.ElasticTwoBodyContact3D1.cs" />
     <Compile Include="Problem.ElasticTwoBodyContact2.cs" />
+    <Compile Include="Problem.FluidLES0.cs" />
+    <Compile Include="Problem.FluidLESDroplet1.cs" />
     <Compile Include="Problem.FluidRANS0.cs" />
+    <Compile Include="Problem.FluidLESDroplet1_New.cs" />
+    <Compile Include="Problem.FluidNSDroplet1.cs" />
+    <Compile Include="Problem.FluidRANSDroplet1.cs" />
+    <Compile Include="Problem.FluidLES1.cs" />
+    <Compile Include="Problem.FluidLES2.cs" />
     <Compile Include="Problem.FluidRANS2.cs" />
     <Compile Include="Problem.FluidRANS1.cs" />
     <Compile Include="Problem.FluidFIC1.cs" />
