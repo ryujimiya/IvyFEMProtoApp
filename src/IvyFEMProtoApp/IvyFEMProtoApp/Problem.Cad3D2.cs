@@ -41,19 +41,19 @@ namespace IvyFEMProtoApp
                 cad.AddCube(pts);
             }
             cad.AddRectLoop(1, new OpenTK.Vector2d(0.25, 0.25), new OpenTK.Vector2d(0.75, 0.75));
-            cad.LiftLoop(1, cad.GetLoop(1).Normal * (-0.1));
+            cad.LiftLoop(7, cad.GetLoop(7).Normal * (+0.1));
             {
-                var eIds = new List<uint> { 21, 22, 23, 24 };
+                var eIds = new List<uint> { 13, 14, 15, 16 };
                 cad.MakeRadialLoop(eIds);
             }
 
             cad.SetLoopColor(1, new double[3] { 0.0, 0.0, 0.0 });
             cad.SetLoopColor(7, new double[3] { 0.0, 0.0, 0.0 });
             cad.SetLoopColor(12, new double[3] { 1.0, 0.0, 0.0 });
-            cad.SetEdgeColor(21, new double[3] { 0.0, 0.0, 1.0 });
-            cad.SetEdgeColor(22, new double[3] { 0.0, 0.0, 1.0 });
-            cad.SetEdgeColor(23, new double[3] { 0.0, 0.0, 1.0 });
-            cad.SetEdgeColor(24, new double[3] { 0.0, 0.0, 1.0 });
+            cad.SetEdgeColor(13, new double[3] { 0.0, 0.0, 1.0 });
+            cad.SetEdgeColor(14, new double[3] { 0.0, 0.0, 1.0 });
+            cad.SetEdgeColor(15, new double[3] { 0.0, 0.0, 1.0 });
+            cad.SetEdgeColor(16, new double[3] { 0.0, 0.0, 1.0 });
             cad.SetVertexColor(13, new double[3] { 1.0, 1.0, 0.0 });
             cad.SetVertexColor(14, new double[3] { 1.0, 1.0, 0.0 });
             cad.SetVertexColor(15, new double[3] { 1.0, 1.0, 0.0 });
@@ -97,9 +97,9 @@ namespace IvyFEMProtoApp
                 cad.AddCube(pts);
             }
             cad.AddRectLoop(1, new OpenTK.Vector2d(0.25, 0.25), new OpenTK.Vector2d(0.75, 0.75));
-            cad.LiftLoop(1, cad.GetLoop(1).Normal * (-0.1));
+            cad.LiftLoop(7, cad.GetLoop(7).Normal * (+0.1));
             {
-                var eIds = new List<uint> { 21, 22, 23, 24 };
+                var eIds = new List<uint> { 13, 14, 15, 16 };
                 cad.MakeRadialLoop(eIds);
             }
 
@@ -146,9 +146,9 @@ namespace IvyFEMProtoApp
                 cad.AddCube(pts);
             }
             cad.AddRectLoop(1, new OpenTK.Vector2d(0.25, 0.25), new OpenTK.Vector2d(0.75, 0.75));
-            cad.LiftLoop(1, cad.GetLoop(1).Normal * (-0.1));
+            cad.LiftLoop(7, cad.GetLoop(7).Normal * (+0.1));
             {
-                var eIds = new List<uint> { 21, 22, 23, 24 };
+                var eIds = new List<uint> { 13, 14, 15, 16 };
                 cad.MakeRadialLoop(eIds);
             }
 

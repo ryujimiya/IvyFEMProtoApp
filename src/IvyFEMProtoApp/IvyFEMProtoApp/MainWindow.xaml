@@ -52,6 +52,21 @@
                         <MenuItem Header="Coare Mesh(3D)(5)" Click="CoarseMesh3D5Btn_Click"/>
                         <MenuItem Header="Mesh(3D)(5)" Click="Mesh3D5Btn_Click"/>
                     </MenuItem>
+                    <MenuItem Header="Cad(3D)(6)">
+                        <MenuItem Header="Cad(3D)(6)" Click="Cad3D6Btn_Click"/>
+                        <MenuItem Header="Coare Mesh(3D)(6)" Click="CoarseMesh3D6Btn_Click"/>
+                        <MenuItem Header="Mesh(3D)(6)" Click="Mesh3D6Btn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Cad(3D)(7)">
+                        <MenuItem Header="Cad(3D)(7)" Click="Cad3D7Btn_Click"/>
+                        <MenuItem Header="Coare Mesh(3D)(7)" Click="CoarseMesh3D7Btn_Click"/>
+                        <MenuItem Header="Mesh(3D)(7)" Click="Mesh3D7Btn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Cad(3D)(8)">
+                        <MenuItem Header="Cad(3D)(8)" Click="Cad3D8Btn_Click"/>
+                        <MenuItem Header="Coare Mesh(3D)(8)" Click="CoarseMesh3D8Btn_Click"/>
+                        <MenuItem Header="Mesh(3D)(8)" Click="Mesh3D8Btn_Click"/>
+                    </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Numerics">
                     <MenuItem Header="LAPACK" Click="LapackBtn_Click"/>
@@ -397,6 +412,19 @@
                     <MenuItem Header="Eddy Current">
                         <MenuItem Header="Eddy Current(1)(Time Domain)" Click="EddyCurrentTD1Btn_Click"/>
                         <MenuItem Header="Eddy Current(2)(Time Domain)" Click="EddyCurrentTD2Btn_Click"/>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="ElectroMagnetic(3D)">
+                    <MenuItem Header="Cavity(3D)(Eigen)">
+                        <MenuItem Header="Cavity(3D)(1)" Click="EMCavity3DEigen1Btn_Click"/>
+                        <MenuItem Header="Cavity(3D)(2)" Click="EMCavity3DEigen2Btn_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Waveguide(3D)">
+                        <MenuItem Header="Waveguide(3D)(0)" Click="EMWaveguide3D0Btn_Click"/>
+                        <MenuItem Header="Waveguide(3D)(1)" Click="EMWaveguide3D1Btn_Click"/>
+                        <MenuItem Header="Waveguide(3D)(2)" Click="EMWaveguide3D2Btn_Click"/>
+                        <MenuItem Header="Waveguide(3D)(3-0)" Click="EMWaveguide3D3_0Btn_Click"/>
+                        <MenuItem Header="Waveguide(3D)(3)" Click="EMWaveguide3D3Btn_Click"/>
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Fluid">

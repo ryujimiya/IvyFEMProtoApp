@@ -140,6 +140,69 @@ namespace IvyFEMProtoApp
             Problem.MakeMesh3D5(this);
         }
 
+        private void Cad3D6Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MakeCad3D6(this);
+        }
+
+        private void CoarseMesh3D6Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MakeCoarseMesh3D6(this);
+        }
+
+        private void Mesh3D6Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MakeMesh3D6(this);
+        }
+
+        private void Cad3D7Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MakeCad3D7(this);
+        }
+
+        private void CoarseMesh3D7Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MakeCoarseMesh3D7(this);
+        }
+
+        private void Mesh3D7Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MakeMesh3D7(this);
+        }
+
+        private void Cad3D8Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MakeCad3D8(this);
+        }
+
+        private void CoarseMesh3D8Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MakeCoarseMesh3D8(this);
+        }
+
+        private void Mesh3D8Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.MakeMesh3D8(this);
+        }
+
         private void ElasticLinear3D1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
@@ -563,6 +626,55 @@ namespace IvyFEMProtoApp
             InitProblem(e.Source as MenuItem);
 
             Problem.MITCMooneyRivlinPlateProblem2(this);
+        }
+
+        private void EMCavity3DEigen1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.EMCavityEigen3DProblem1(this);
+        }
+
+        private void EMCavity3DEigen2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.EMCavityEigen3DProblem2(this);
+        }
+
+        private void EMWaveguide3D0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.EMWaveguide3DProblem0(this);
+        }
+
+        private void EMWaveguide3D1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.EMWaveguide3DProblem1(this);
+        }
+
+        private void EMWaveguide3D2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.EMWaveguide3DProblem2(this);
+        }
+
+        private void EMWaveguide3D3_0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.EMWaveguide3DProblem3_0(this);
+        }
+
+        private void EMWaveguide3D3Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.EMWaveguide3DProblem3(this);
         }
 
         // mu = 0.02, 0.002 FluidEquationType.StdGNavierStokes

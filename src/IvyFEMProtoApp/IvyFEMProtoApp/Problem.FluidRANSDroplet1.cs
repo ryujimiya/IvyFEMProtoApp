@@ -65,9 +65,9 @@ namespace IvyFEMProtoApp
             mainWindow.DrawerArray.Add(drawer2);
             {
                 double displayR1 = 0.1;
-                var pair1 = new KeyValuePair<OpenTK.Vector2d, double>(
-                    new OpenTK.Vector2d(xd[0], xd[1]), displayR1);
-                drawer2.PointRadiuss = new KeyValuePair<OpenTK.Vector2d, double>[1] { pair1 };
+                var pair1 = new KeyValuePair<double[], double>(
+                    xd, displayR1);
+                drawer2.PointRadiuss = new KeyValuePair<double[], double>[1] { pair1 };
             }
             mainWindow.Camera.Fit(drawerArray.GetBoundingBox(mainWindow.Camera.RotMatrix33()));
             mainWindow.GLControl_ResizeProc();
@@ -466,9 +466,9 @@ namespace IvyFEMProtoApp
                 {
                     //double displayR1 = FEM.Rp;
                     double displayR1 = 0.1;
-                    var pair1 = new KeyValuePair<OpenTK.Vector2d, double>(
-                        new OpenTK.Vector2d(xd[0], xd[1]), displayR1);
-                    pointsDrawer.PointRadiuss = new KeyValuePair<OpenTK.Vector2d, double>[1] { pair1 };
+                    var pair1 = new KeyValuePair<double[], double>(
+                        xd, displayR1);
+                    pointsDrawer.PointRadiuss = new KeyValuePair<double[], double>[1] { pair1 };
                 }
 
                 fieldDrawerArray.Update(world);

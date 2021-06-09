@@ -41,7 +41,7 @@ namespace IvyFEMProtoApp
                 cad.AddCube(pts);
             }
             cad.AddRectLoop(1, new OpenTK.Vector2d(0.25, 0.25), new OpenTK.Vector2d(0.75, 0.75));
-            cad.LiftLoop(1, cad.GetLoop(1).Normal * (-0.1));
+            cad.LiftLoop(7, cad.GetLoop(7).Normal * (+0.1));
 
             cad.SetLoopColor(1, new double[3] { 0.0, 0.0, 0.0 });
             cad.SetLoopColor(7, new double[3] { 0.0, 0.0, 0.0 }); // LiftLoop
@@ -96,7 +96,7 @@ namespace IvyFEMProtoApp
                 cad.AddCube(pts);
             }
             cad.AddRectLoop(1, new OpenTK.Vector2d(0.25, 0.25), new OpenTK.Vector2d(0.75, 0.75));
-            cad.LiftLoop(1, cad.GetLoop(1).Normal * (-0.1));
+            cad.LiftLoop(7, cad.GetLoop(7).Normal * (+0.1));
 
             System.Diagnostics.Debug.Assert(cad.IsElementId(CadElementType.Loop, 11)); // 11までのはず
             System.Diagnostics.Debug.Assert(!cad.IsElementId(CadElementType.Loop, 12)); // 11までのはず
@@ -141,7 +141,7 @@ namespace IvyFEMProtoApp
                 cad.AddCube(pts);
             }
             cad.AddRectLoop(1, new OpenTK.Vector2d(0.25, 0.25), new OpenTK.Vector2d(0.75, 0.75));
-            cad.LiftLoop(1, cad.GetLoop(1).Normal * (-0.1));
+            cad.LiftLoop(7, cad.GetLoop(7).Normal * (+0.1));
 
             System.Diagnostics.Debug.Assert(cad.IsElementId(CadElementType.Loop, 11)); // 11までのはず
             System.Diagnostics.Debug.Assert(!cad.IsElementId(CadElementType.Loop, 12)); // 11までのはず

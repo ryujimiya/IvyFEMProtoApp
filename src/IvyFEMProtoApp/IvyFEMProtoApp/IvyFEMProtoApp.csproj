@@ -146,6 +146,9 @@
     </Compile>
     <Compile Include="NonlinerOptimizingProblem.cs" />
     <Compile Include="PortEdge.cs" />
+    <Compile Include="Problem.Cad3D8.cs" />
+    <Compile Include="Problem.Cad3D7.cs" />
+    <Compile Include="Problem.Cad3D6.cs" />
     <Compile Include="Problem.Cad3D5.cs" />
     <Compile Include="Problem.Cad3D4.cs" />
     <Compile Include="Problem.Cad3D3.cs" />
@@ -185,6 +188,15 @@
     <Compile Include="Problem.ElasticTwoBodyContact3D2.cs" />
     <Compile Include="Problem.ElasticTwoBodyContact3D1.cs" />
     <Compile Include="Problem.ElasticTwoBodyContact2.cs" />
+    <Compile Include="Problem.EMWaveguide3D3_Half_0.cs" />
+    <Compile Include="Problem.EMWaveguide3D3_Half.cs" />
+    <Compile Include="Problem.EMWaveguide3D3_Whole.cs" />
+    <Compile Include="Problem.EMWaveguide3D3_Half_Tmp.cs" />
+    <Compile Include="Problem.EMWaveguide3D2.cs" />
+    <Compile Include="Problem.EMWaveguide3D1.cs" />
+    <Compile Include="Problem.EMWaveguide3D0.cs" />
+    <Compile Include="Problem.EMCavityEigen3D1.cs" />
+    <Compile Include="Problem.EMCavityEigen3D2.cs" />
     <Compile Include="Problem.FluidLES0.cs" />
     <Compile Include="Problem.FluidLESDroplet1.cs" />
     <Compile Include="Problem.FluidRANS0.cs" />

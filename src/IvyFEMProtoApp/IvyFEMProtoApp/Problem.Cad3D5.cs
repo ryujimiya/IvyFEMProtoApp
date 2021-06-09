@@ -163,7 +163,7 @@ namespace IvyFEMProtoApp
                 uint sId1 = cad.AddSolid(lIds1, holes1, insideVIds1);
                 
                 IList<uint> lIds2 = new List<uint> {
-                    11, 7, 8, 9, 10, 6
+                    11, 6, 7, 8, 9, 10
                 };
                 IList<OpenTK.Vector3d> holes2 = new List<OpenTK.Vector3d>();
                 IList<uint> insideVIds2 = new List<uint>();
