@@ -12,7 +12,7 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void EMWaveguide3DProblem2(MainWindow mainWindow)
+        public void EMWaveguide3DProblem2(MainWindow mainWindow, uint feOrder)
         {
             /////////////////////
             Dimension = 3; // 3次元
@@ -92,11 +92,23 @@ namespace IvyFEMProtoApp
             mainWindow.GLControl.Update();
             WPFUtils.DoEvents();
 
-            //double eLen = 0.05;
-            //double eLen = 0.20;
-            //double eLen = 0.10;
-            //double eLen = 0.15;
-            double eLen = 0.15;//0.15;
+            double eLen = 0.0;
+            if (feOrder == 1)
+            {
+                //eLen = 0.05;
+                //eLen = 0.20;
+                //eLen = 0.10;
+                //eLen = 0.15;
+                eLen = 0.15;//0.15;
+            }
+            else if (feOrder == 2)
+            {
+                eLen = 0.25;
+            }
+            else
+            {
+                System.Diagnostics.Debug.Assert(false);
+            }
             Mesher3D mesher = new Mesher3D(cad, eLen);
 
             /*
@@ -119,8 +131,8 @@ namespace IvyFEMProtoApp
             {
                 uint dof1 = 1; // スカラー
                 uint dof2 = 1;
-                uint feOrder1 = 1;
-                uint feOrder2 = 1;
+                uint feOrder1 = feOrder;
+                uint feOrder2 = feOrder;
                 quantityId = world.AddQuantity(dof1, feOrder1, FiniteElementType.Edge);
                 scalarQuantityId = world.AddQuantity(dof2, feOrder2, FiniteElementType.ScalarLagrange);
             }

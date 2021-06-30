@@ -9,7 +9,7 @@ namespace IvyFEMProtoApp
 {
     partial class Problem
     {
-        public void EMCavityEigen3DProblem2(MainWindow mainWindow)
+        public void EMCavityEigen3DProblem2(MainWindow mainWindow, uint feOrder)
         {
             /////////////////////
             Dimension = 3; // 3次元
@@ -34,6 +34,21 @@ namespace IvyFEMProtoApp
                 double normalizedFreq = k0 * WA;
                 return normalizedFreq;
             };
+
+            bool isSymmetricBandSolver = true;
+            if (feOrder == 1)
+            {
+                isSymmetricBandSolver = true;
+            }
+            else if (feOrder == 2)
+            {
+                // 対称バンド行列版だと失敗するので一般版を使う
+                isSymmetricBandSolver = false;
+            }
+            else
+            {
+                System.Diagnostics.Debug.Assert(false);
+            }
 
             Cad3D cad = new Cad3D();
             {
@@ -96,19 +111,31 @@ namespace IvyFEMProtoApp
             mainWindow.GLControl.Update();
             WPFUtils.DoEvents();
 
-            //double eLen = 0.05;
-            //double eLen = 0.20;
-            //double eLen = 0.10;
-            double eLen = 0.20;
+            double eLen = 0.0;
+            if (feOrder == 1)
+            {
+                //eLen = 0.05;
+                //eLen = 0.20;
+                //eLen = 0.10;
+                eLen = 0.20;
+            }
+            else if (feOrder == 2)
+            {
+                eLen = 0.40;
+            }
+            else
+            {
+                System.Diagnostics.Debug.Assert(false);
+            }
             Mesher3D mesher = new Mesher3D(cad, eLen);
 
             FEWorld world = new FEWorld();
             world.Mesh = mesher;
             uint quantityId;
             {
-                uint dof = 1; // スカラー
-                uint feOrder = 1;
-                quantityId = world.AddQuantity(dof, feOrder, FiniteElementType.Edge);
+                uint dof1 = 1; // スカラー
+                uint feOrder1 = feOrder;
+                quantityId = world.AddQuantity(dof1, feOrder1, FiniteElementType.Edge);
             }
 
             {
@@ -181,6 +208,7 @@ namespace IvyFEMProtoApp
 
             {
                 var FEM = new EMCavity3DEigenFEM(world);
+                FEM.IsSymmetricBandSolver = isSymmetricBandSolver;
                 FEM.Solve();
                 System.Numerics.Complex[] freqZs = FEM.Frequencys;
                 System.Numerics.Complex[][] eVecZs = FEM.EVecs;

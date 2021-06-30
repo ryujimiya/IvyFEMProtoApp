@@ -67,6 +67,11 @@
                         <MenuItem Header="Coare Mesh(3D)(8)" Click="CoarseMesh3D8Btn_Click"/>
                         <MenuItem Header="Mesh(3D)(8)" Click="Mesh3D8Btn_Click"/>
                     </MenuItem>
+                    <MenuItem Header="Cad(3D)(9)">
+                        <MenuItem Header="Cad(3D)(9)" Click="Cad3D9Btn_Click"/>
+                        <MenuItem Header="Coare Mesh(3D)(9)" Click="CoarseMesh3D9Btn_Click"/>
+                        <MenuItem Header="Mesh(3D)(9)" Click="Mesh3D9Btn_Click"/>
+                    </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Numerics">
                     <MenuItem Header="LAPACK" Click="LapackBtn_Click"/>
@@ -369,16 +374,16 @@
                         <MenuItem Header="Waveguide 2D Eigen(2)" Click="Waveguide2DEigen2Btn_Click"/>
                         <MenuItem Header="Waveguide 2D Eigen(3)" Click="Waveguide2DEigen3Btn_Click"/>
                         <Separator/>
-                        <MenuItem Header="Waveguide 2D Eigen 2nd Order(1)" Click="Waveguide2DEigen2ndOrder1Btn_Click"/>
-                        <MenuItem Header="Waveguide 2D Eigen 2nd Order(2)" Click="Waveguide2DEigen2ndOrder2Btn_Click"/>
-                        <MenuItem Header="Waveguide 2D Eigen 2nd Order(3)" Click="Waveguide2DEigen2ndOrder3Btn_Click"/>
+                        <MenuItem Header="Waveguide 2D Eigen(1)(2nd Order)" Click="Waveguide2DEigen2ndOrder1Btn_Click"/>
+                        <MenuItem Header="Waveguide 2D Eigen(2)(2nd Order)" Click="Waveguide2DEigen2ndOrder2Btn_Click"/>
+                        <MenuItem Header="Waveguide 2D Eigen(3)(2nd Order)" Click="Waveguide2DEigen2ndOrder3Btn_Click"/>
                     </MenuItem>
                     <MenuItem Header="ElectroMagnetic(Waveguide2D Eigen,Open)">
                         <MenuItem Header="Waveguide 2D Eigen Open(2)" Click="Waveguide2DEigenOpen2Btn_Click"/>
                         <MenuItem Header="Waveguide 2D Eigen Open(3)" Click="Waveguide2DEigenOpen3Btn_Click"/>
                         <Separator/>
-                        <MenuItem Header="Waveguide 2D Eigen 2nd Order(2)" Click="Waveguide2DEigenOpen2ndOrder2Btn_Click"/>
-                        <MenuItem Header="Waveguide 2D Eigen 2nd Order(3)" Click="Waveguide2DEigenOpen2ndOrder3Btn_Click"/>
+                        <MenuItem Header="Waveguide 2D Eigen Open(2)(2nd Order)" Click="Waveguide2DEigenOpen2ndOrder2Btn_Click"/>
+                        <MenuItem Header="Waveguide 2D Eigen Open(3)(2nd Order)" Click="Waveguide2DEigenOpen2ndOrder3Btn_Click"/>
                     </MenuItem>
                     <MenuItem Header="Photonic Crystal(Eigen)">
                         <MenuItem Header="PC Waveguide(Eigen)(Square Lattice)" Click="SquareLatticePCWaveguideEigen1Btn_Click"/>
@@ -418,6 +423,9 @@
                     <MenuItem Header="Cavity(3D)(Eigen)">
                         <MenuItem Header="Cavity(3D)(1)" Click="EMCavity3DEigen1Btn_Click"/>
                         <MenuItem Header="Cavity(3D)(2)" Click="EMCavity3DEigen2Btn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="Cavity(3D)(1)(2nd Order)" Click="EMCavity3DEigen2ndOrder1Btn_Click"/>
+                        <MenuItem Header="Cavity(3D)(2)(2nd Order)" Click="EMCavity3DEigen2ndOrder2Btn_Click"/>
                     </MenuItem>
                     <MenuItem Header="Waveguide(3D)">
                         <MenuItem Header="Waveguide(3D)(0)" Click="EMWaveguide3D0Btn_Click"/>
@@ -425,6 +433,18 @@
                         <MenuItem Header="Waveguide(3D)(2)" Click="EMWaveguide3D2Btn_Click"/>
                         <MenuItem Header="Waveguide(3D)(3-0)" Click="EMWaveguide3D3_0Btn_Click"/>
                         <MenuItem Header="Waveguide(3D)(3)" Click="EMWaveguide3D3Btn_Click"/>
+                        <MenuItem Header="Waveguide(3D)(4)" Click="EMWaveguide3D4Btn_Click"/>
+                        <MenuItem Header="Waveguide(3D)(5)" Click="EMWaveguide3D5Btn_Click"/>
+                        <MenuItem Header="Waveguide(3D)(6)" Click="EMWaveguide3D6Btn_Click"/>
+                        <Separator/>
+                        <MenuItem Header="Waveguide(3D)(0)(2nd Order)" Click="EMWaveguide3D2ndOrder0Btn_Click"/>
+                        <MenuItem Header="Waveguide(3D)(1)(2nd Order)" Click="EMWaveguide3D2ndOrder1Btn_Click"/>
+                        <MenuItem Header="Waveguide(3D)(2)(2nd Order)" Click="EMWaveguide3D2ndOrder2Btn_Click"/>
+                        <MenuItem Header="Waveguide(3D)(3-0)(2nd Order)" Click="EMWaveguide3D2ndOrder3_0Btn_Click"/>
+                        <MenuItem Header="Waveguide(3D)(3)(2nd Order)" Click="EMWaveguide3D2ndOrder3Btn_Click"/>
+                        <MenuItem Header="Waveguide(3D)(4)(2nd Order)" Click="EMWaveguide3D2ndOrder4Btn_Click"/>
+                        <MenuItem Header="Waveguide(3D)(5)(2nd Order)" Click="EMWaveguide3D2ndOrder5Btn_Click"/>
+                        <MenuItem Header="Waveguide(3D)(6)(2nd Order)" Click="EMWaveguide3D2ndOrder6Btn_Click"/>
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Fluid">
