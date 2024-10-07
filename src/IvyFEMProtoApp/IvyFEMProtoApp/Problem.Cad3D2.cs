@@ -34,30 +34,29 @@ namespace IvyFEMProtoApp
                 pts.Add(new OpenTK.Vector3d(1.0, 0.0, 0.0));
                 pts.Add(new OpenTK.Vector3d(1.0, 1.0, 0.0));
                 pts.Add(new OpenTK.Vector3d(0.0, 1.0, 0.0));
+
                 pts.Add(new OpenTK.Vector3d(0.0, 0.0, 1.0));
                 pts.Add(new OpenTK.Vector3d(1.0, 0.0, 1.0));
                 pts.Add(new OpenTK.Vector3d(1.0, 1.0, 1.0));
                 pts.Add(new OpenTK.Vector3d(0.0, 1.0, 1.0));
-                cad.AddCube(pts);
-            }
-            cad.AddRectLoop(1, new OpenTK.Vector2d(0.25, 0.25), new OpenTK.Vector2d(0.75, 0.75));
-            cad.LiftLoop(7, cad.GetLoop(7).Normal * (+0.1));
-            {
-                var eIds = new List<uint> { 13, 14, 15, 16 };
-                cad.MakeRadialLoop(eIds);
+
+                pts.Add(new OpenTK.Vector3d(0.0, 0.0, 2.0));
+                pts.Add(new OpenTK.Vector3d(1.0, 0.0, 2.0));
+                pts.Add(new OpenTK.Vector3d(1.0, 1.0, 2.0));
+                pts.Add(new OpenTK.Vector3d(0.0, 1.0, 2.0));
+                uint layerCnt = 2;
+                cad.AddCubeWithMultiLayers(pts, layerCnt);
             }
 
             cad.SetLoopColor(1, new double[3] { 0.0, 0.0, 0.0 });
-            cad.SetLoopColor(7, new double[3] { 0.0, 0.0, 0.0 });
-            cad.SetLoopColor(12, new double[3] { 1.0, 0.0, 0.0 });
-            cad.SetEdgeColor(13, new double[3] { 0.0, 0.0, 1.0 });
-            cad.SetEdgeColor(14, new double[3] { 0.0, 0.0, 1.0 });
-            cad.SetEdgeColor(15, new double[3] { 0.0, 0.0, 1.0 });
-            cad.SetEdgeColor(16, new double[3] { 0.0, 0.0, 1.0 });
-            cad.SetVertexColor(13, new double[3] { 1.0, 1.0, 0.0 });
-            cad.SetVertexColor(14, new double[3] { 1.0, 1.0, 0.0 });
-            cad.SetVertexColor(15, new double[3] { 1.0, 1.0, 0.0 });
-            cad.SetVertexColor(16, new double[3] { 1.0, 1.0, 0.0 });
+            cad.SetLoopColor(10, new double[3] { 0.0, 0.0, 0.0 });
+            cad.SetLoopColor(11, new double[3] { 1.0, 0.0, 1.0 });
+            cad.SetEdgeColor(12, new double[3] { 0.0, 0.0, 1.0 });
+            cad.SetEdgeColor(20, new double[3] { 0.0, 0.0, 1.0 });
+            cad.SetVertexColor(5, new double[3] { 1.0, 1.0, 0.0 });
+            cad.SetVertexColor(6, new double[3] { 1.0, 1.0, 0.0 });
+            cad.SetVertexColor(7, new double[3] { 1.0, 1.0, 0.0 });
+            cad.SetVertexColor(8, new double[3] { 1.0, 1.0, 0.0 });
 
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
@@ -90,21 +89,21 @@ namespace IvyFEMProtoApp
                 pts.Add(new OpenTK.Vector3d(1.0, 0.0, 0.0));
                 pts.Add(new OpenTK.Vector3d(1.0, 1.0, 0.0));
                 pts.Add(new OpenTK.Vector3d(0.0, 1.0, 0.0));
+
                 pts.Add(new OpenTK.Vector3d(0.0, 0.0, 1.0));
                 pts.Add(new OpenTK.Vector3d(1.0, 0.0, 1.0));
                 pts.Add(new OpenTK.Vector3d(1.0, 1.0, 1.0));
                 pts.Add(new OpenTK.Vector3d(0.0, 1.0, 1.0));
-                cad.AddCube(pts);
-            }
-            cad.AddRectLoop(1, new OpenTK.Vector2d(0.25, 0.25), new OpenTK.Vector2d(0.75, 0.75));
-            cad.LiftLoop(7, cad.GetLoop(7).Normal * (+0.1));
-            {
-                var eIds = new List<uint> { 13, 14, 15, 16 };
-                cad.MakeRadialLoop(eIds);
-            }
 
-            System.Diagnostics.Debug.Assert(cad.IsElementId(CadElementType.Loop, 12)); // 12までのはず
-            System.Diagnostics.Debug.Assert(!cad.IsElementId(CadElementType.Loop, 13)); // 12までのはず
+                pts.Add(new OpenTK.Vector3d(0.0, 0.0, 2.0));
+                pts.Add(new OpenTK.Vector3d(1.0, 0.0, 2.0));
+                pts.Add(new OpenTK.Vector3d(1.0, 1.0, 2.0));
+                pts.Add(new OpenTK.Vector3d(0.0, 1.0, 2.0));
+                uint layerCnt = 2;
+                cad.AddCubeWithMultiLayers(pts, layerCnt);
+            }
+            System.Diagnostics.Debug.Assert(cad.IsElementId(CadElementType.Loop, 11)); // 11までのはず
+            System.Diagnostics.Debug.Assert(!cad.IsElementId(CadElementType.Loop, 12)); // 11までのはず
 
             Mesher3D mesher = new Mesher3D(cad);
 
@@ -139,36 +138,36 @@ namespace IvyFEMProtoApp
                 pts.Add(new OpenTK.Vector3d(1.0, 0.0, 0.0));
                 pts.Add(new OpenTK.Vector3d(1.0, 1.0, 0.0));
                 pts.Add(new OpenTK.Vector3d(0.0, 1.0, 0.0));
+
                 pts.Add(new OpenTK.Vector3d(0.0, 0.0, 1.0));
                 pts.Add(new OpenTK.Vector3d(1.0, 0.0, 1.0));
                 pts.Add(new OpenTK.Vector3d(1.0, 1.0, 1.0));
                 pts.Add(new OpenTK.Vector3d(0.0, 1.0, 1.0));
-                cad.AddCube(pts);
-            }
-            cad.AddRectLoop(1, new OpenTK.Vector2d(0.25, 0.25), new OpenTK.Vector2d(0.75, 0.75));
-            cad.LiftLoop(7, cad.GetLoop(7).Normal * (+0.1));
-            {
-                var eIds = new List<uint> { 13, 14, 15, 16 };
-                cad.MakeRadialLoop(eIds);
+
+                pts.Add(new OpenTK.Vector3d(0.0, 0.0, 2.0));
+                pts.Add(new OpenTK.Vector3d(1.0, 0.0, 2.0));
+                pts.Add(new OpenTK.Vector3d(1.0, 1.0, 2.0));
+                pts.Add(new OpenTK.Vector3d(0.0, 1.0, 2.0));
+                uint layerCnt = 2;
+                cad.AddCubeWithMultiLayers(pts, layerCnt);
             }
 
-            System.Diagnostics.Debug.Assert(cad.IsElementId(CadElementType.Loop, 12)); // 12までのはず
-            System.Diagnostics.Debug.Assert(!cad.IsElementId(CadElementType.Loop, 13)); // 12までのはず
+            System.Diagnostics.Debug.Assert(cad.IsElementId(CadElementType.Loop, 11)); // 11までのはず
+            System.Diagnostics.Debug.Assert(!cad.IsElementId(CadElementType.Loop, 12)); // 11までのはず
             {
                 IList<uint> lIds1 = new List<uint> {
-                    1, 2, 3, 4, 5, 6,
-                    7, 8, 9, 10, 11
+                    1, 2, 3, 4, 5, 11
                 };
                 IList<OpenTK.Vector3d> holes1 = new List<OpenTK.Vector3d>();
                 IList<uint> insideVIds1 = new List<uint>();
                 uint sId1 = cad.AddSolid(lIds1, holes1, insideVIds1);
-
+                
                 IList<uint> lIds2 = new List<uint> {
-                    7, 8, 9, 10, 11, 12
+                    11, 6, 7, 8, 9, 10
                 };
                 IList<OpenTK.Vector3d> holes2 = new List<OpenTK.Vector3d>();
                 IList<uint> insideVIds2 = new List<uint>();
-                uint sId2 = cad.AddSolid(lIds2, holes2, insideVIds2);
+                uint sId2 = cad.AddSolid(lIds2, holes2, insideVIds1);
             }
 
             //double eLen = 0.05;

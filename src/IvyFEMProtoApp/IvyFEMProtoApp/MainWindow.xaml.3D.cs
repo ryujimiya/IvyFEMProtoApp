@@ -98,132 +98,6 @@ namespace IvyFEMProtoApp
             Problem.MakeMesh3D3(this);
         }
 
-        private void Cad3D4Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.MakeCad3D4(this);
-        }
-
-        private void CoarseMesh3D4Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.MakeCoarseMesh3D4(this);
-        }
-
-        private void Mesh3D4Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.MakeMesh3D4(this);
-        }
-
-        private void Cad3D5Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.MakeCad3D5(this);
-        }
-
-        private void CoarseMesh3D5Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.MakeCoarseMesh3D5(this);
-        }
-
-        private void Mesh3D5Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.MakeMesh3D5(this);
-        }
-
-        private void Cad3D6Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.MakeCad3D6(this);
-        }
-
-        private void CoarseMesh3D6Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.MakeCoarseMesh3D6(this);
-        }
-
-        private void Mesh3D6Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.MakeMesh3D6(this);
-        }
-
-        private void Cad3D7Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.MakeCad3D7(this);
-        }
-
-        private void CoarseMesh3D7Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.MakeCoarseMesh3D7(this);
-        }
-
-        private void Mesh3D7Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.MakeMesh3D7(this);
-        }
-
-        private void Cad3D8Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.MakeCad3D8(this);
-        }
-
-        private void CoarseMesh3D8Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.MakeCoarseMesh3D8(this);
-        }
-
-        private void Mesh3D8Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.MakeMesh3D8(this);
-        }
-
-        private void Cad3D9Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.MakeCad3D9(this);
-        }
-
-        private void CoarseMesh3D9Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.MakeCoarseMesh3D9(this);
-        }
-
-        private void Mesh3D9Btn_Click(object sender, RoutedEventArgs e)
-        {
-            InitProblem(e.Source as MenuItem);
-
-            Problem.MakeMesh3D9(this);
-        }
-
         private void ElasticLinear3D1Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
@@ -745,6 +619,13 @@ namespace IvyFEMProtoApp
             Problem.EMWaveguide3DProblem6(this, feOrder);
         }
 
+        private void EMWaveguide3D7Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            Problem.EMWaveguide3DProblem7(this);
+        }
+
         private void EMWaveguide3D2ndOrder0Btn_Click(object sender, RoutedEventArgs e)
         {
             InitProblem(e.Source as MenuItem);
@@ -807,6 +688,71 @@ namespace IvyFEMProtoApp
 
             uint feOrder = 2;
             Problem.EMWaveguide3DProblem6(this, feOrder);
+        }
+
+
+        private void EMWaveguide3DPML0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            uint feOrder = 1;
+            Problem.EMWaveguide3DPMLProblem0(this, feOrder);
+        }
+
+        private void EMWaveguide3DPML1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            uint feOrder = 1;
+            Problem.EMWaveguide3DPMLProblem1(this, feOrder);
+        }
+
+        private void EMWaveguide3DFirstOrderABCTD1_0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            uint feOrder = 1;
+            Problem.EMWaveguide3DFirstOrderABCTDProblem1_0(this, feOrder);
+        }
+
+        private void EMWaveguide3DFirstOrderABCTD1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            uint feOrder = 1;
+            Problem.EMWaveguide3DFirstOrderABCTDProblem1(this, feOrder);
+        }
+
+        private void EMWaveguide3DFirstOrderABCTDWithRefCenterPoints1_0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            uint feOrder = 1;
+            Problem.EMWaveguide3DFirstOrderABCTDWithRefCenterPointsProblem1_0(this, feOrder);
+        }
+
+        private void EMWaveguide3DFirstOrderABCTDWithRefCenterPoints1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            uint feOrder = 1;
+            Problem.EMWaveguide3DFirstOrderABCTDWithRefCenterPointsProblem1(this, feOrder);
+        }
+
+        private void EMWaveguide3DPMLTD1_0Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            uint feOrder = 1;
+            Problem.EMWaveguide3DPMLTDProblem1_0(this, feOrder);
+        }
+
+        private void EMWaveguide3DPMLTD1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            InitProblem(e.Source as MenuItem);
+
+            uint feOrder = 1;
+            Problem.EMWaveguide3DPMLTDProblem1(this, feOrder);
         }
 
         // mu = 0.02, 0.002 FluidEquationType.StdGNavierStokes

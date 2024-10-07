@@ -27,13 +27,46 @@ namespace IvyFEMProtoApp
             camera3D.RotQuat = q1 * q2;
             /////////////////////
 
+            double a = 1.0;
+            double b = 0.5;
+            double d = 0.2;
+            double x1 = d;
+            double x2 = d + a;
+            double y1 = a;
+            double y2 = -d;
+
             Cad3D cad = new Cad3D();
             {
-                OpenTK.Vector3d cPt = new OpenTK.Vector3d(0.0, 0.0, 0.0);
-                double r = 1.0;
-                int div = 10;
-                var res = cad.AddSphere(cPt, r, div);
+                IList<OpenTK.Vector3d> pts = new List<OpenTK.Vector3d>();
+                pts.Add(new OpenTK.Vector3d(0.0, 0.0, 0.0));
+                pts.Add(new OpenTK.Vector3d(x1, 0.0, 0.0));
+                pts.Add(new OpenTK.Vector3d(x1, y2, 0.0));
+                pts.Add(new OpenTK.Vector3d(x2, y2, 0.0));
+                pts.Add(new OpenTK.Vector3d(x2, y1, 0.0));
+                pts.Add(new OpenTK.Vector3d(0.0, y1, 0.0));
+
+                pts.Add(new OpenTK.Vector3d(0.0, 0.0, b));
+                pts.Add(new OpenTK.Vector3d(x1, 0.0, b));
+                pts.Add(new OpenTK.Vector3d(x1, y2, b));
+                pts.Add(new OpenTK.Vector3d(x2, y2, b));
+                pts.Add(new OpenTK.Vector3d(x2, y1, b));
+                pts.Add(new OpenTK.Vector3d(0.0, y1, b));
+                cad.AddCube(pts);
             }
+
+            cad.SetLoopColor(1, new double[] { 0.0, 0.0, 0.0 });
+            cad.SetLoopColor(2, new double[] { 0.0, 0.0, 0.0 });
+            cad.SetLoopColor(3, new double[] { 0.0, 0.0, 0.0 });
+            cad.SetLoopColor(5, new double[] { 0.0, 0.0, 0.0 });
+            cad.SetLoopColor(6, new double[] { 0.0, 0.0, 0.0 });
+            cad.SetLoopColor(8, new double[] { 0.0, 0.0, 0.0 });
+
+            cad.SetLoopColor(7, new double[] { 1.0, 0.0, 0.0 });
+            cad.SetEdgeColor(6, new double[] { 0.0, 0.0, 1.0 });
+            cad.SetEdgeColor(7, new double[] { 0.0, 0.0, 1.0 });
+            cad.SetLoopColor(4, new double[] { 1.0, 0.0, 0.0 });
+            cad.SetEdgeColor(3, new double[] { 0.0, 0.0, 1.0 });
+            cad.SetEdgeColor(9, new double[] { 0.0, 0.0, 1.0 });
 
             mainWindow.IsFieldDraw = false;
             var drawerArray = mainWindow.DrawerArray;
@@ -59,12 +92,31 @@ namespace IvyFEMProtoApp
             camera3D.RotQuat = q1 * q2;
             /////////////////////
 
+            double a = 1.0;
+            double b = 0.5;
+            double d = 0.2;
+            double x1 = d;
+            double x2 = d + a;
+            double y1 = a;
+            double y2 = -d;
+
             Cad3D cad = new Cad3D();
             {
-                OpenTK.Vector3d cPt = new OpenTK.Vector3d(0.0, 0.0, 0.0);
-                double r = 1.0;
-                int div = 10;
-                var res = cad.AddSphere(cPt, r, div);
+                IList<OpenTK.Vector3d> pts = new List<OpenTK.Vector3d>();
+                pts.Add(new OpenTK.Vector3d(0.0, 0.0, 0.0));
+                pts.Add(new OpenTK.Vector3d(x1, 0.0, 0.0));
+                pts.Add(new OpenTK.Vector3d(x1, y2, 0.0));
+                pts.Add(new OpenTK.Vector3d(x2, y2, 0.0));
+                pts.Add(new OpenTK.Vector3d(x2, y1, 0.0));
+                pts.Add(new OpenTK.Vector3d(0.0, y1, 0.0));
+
+                pts.Add(new OpenTK.Vector3d(0.0, 0.0, b));
+                pts.Add(new OpenTK.Vector3d(x1, 0.0, b));
+                pts.Add(new OpenTK.Vector3d(x1, y2, b));
+                pts.Add(new OpenTK.Vector3d(x2, y2, b));
+                pts.Add(new OpenTK.Vector3d(x2, y1, b));
+                pts.Add(new OpenTK.Vector3d(0.0, y1, b));
+                cad.AddCube(pts);
             }
 
             Mesher3D mesher = new Mesher3D(cad);
@@ -93,16 +145,37 @@ namespace IvyFEMProtoApp
             camera3D.RotQuat = q1 * q2;
             /////////////////////
 
-            IList<uint> lIds1;
+            double a = 1.0;
+            double b = 0.5;
+            double d = 0.2;
+            double x1 = d;
+            double x2 = d + a;
+            double y1 = a;
+            double y2 = -d;
+
             Cad3D cad = new Cad3D();
             {
-                OpenTK.Vector3d cPt = new OpenTK.Vector3d(0.0, 0.0, 0.0);
-                double r = 1.0;
-                int div = 10;
-                var res = cad.AddSphere(cPt, r, div);
-                lIds1 = res.AddLIds;
+                IList<OpenTK.Vector3d> pts = new List<OpenTK.Vector3d>();
+                pts.Add(new OpenTK.Vector3d(0.0, 0.0, 0.0));
+                pts.Add(new OpenTK.Vector3d(x1, 0.0, 0.0));
+                pts.Add(new OpenTK.Vector3d(x1, y2, 0.0));
+                pts.Add(new OpenTK.Vector3d(x2, y2, 0.0));
+                pts.Add(new OpenTK.Vector3d(x2, y1, 0.0));
+                pts.Add(new OpenTK.Vector3d(0.0, y1, 0.0));
+
+                pts.Add(new OpenTK.Vector3d(0.0, 0.0, b));
+                pts.Add(new OpenTK.Vector3d(x1, 0.0, b));
+                pts.Add(new OpenTK.Vector3d(x1, y2, b));
+                pts.Add(new OpenTK.Vector3d(x2, y2, b));
+                pts.Add(new OpenTK.Vector3d(x2, y1, b));
+                pts.Add(new OpenTK.Vector3d(0.0, y1, b));
+                cad.AddCube(pts);
             }
+
             {
+                IList<uint> lIds1 = new List<uint> {
+                    1, 2, 3, 4, 5, 6, 7, 8
+                };
                 IList<OpenTK.Vector3d> holes1 = new List<OpenTK.Vector3d>();
                 IList<uint> insideVIds1 = new List<uint>();
                 uint sId1 = cad.AddSolid(lIds1, holes1, insideVIds1);
